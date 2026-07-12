@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect, useMemo } from "react";
 
 // ---------- Branding ----------
@@ -5,8 +7,15 @@ const BRAND = {
   academy: "آکادمی روان‌شناختی دکتر مجتبی عقیلی",
   name: "دکتر مجتبی عقیلی",
   credential: "استاد دانشگاه، دانشیار روان‌شناسی سلامت، پژوهشگر ممتاز سه دوره‌ی دانشگاه",
+  phone: "۰۹۰۱۵۰۹۱۳۴۶",
+  instagram: "dr_mojtaba_aghili",
+  city: "گرگان",
 };
 const ADMIN_PASS = "AGHILI-PANEL";
+// لینکِ خریدِ بسته‌ی آموزشی/وبینار (برایِ سطحِ متوسط) — این را با لینکِ واقعیِ خودتان جایگزین کنید
+const WEBINAR_PACKAGE_LINK = "https://zarinp.al/your-webinar-link";
+// لینکِ رزروِ جلسه‌ی مشاوره (برایِ سطحِ پرخطر) — این را با لینکِ واقعیِ خودتان جایگزین کنید
+const CONSULT_BOOKING_LINK = "https://zarinp.al/your-consult-link";
 
 // ---------- Content ----------
 const DOMAINS = [
@@ -205,6 +214,12 @@ const DOMAINS = [
       { t: "موضوعِ نیازها و ترجیحاتِ جنسی‌مان را می‌توانیم با هم صادقانه مطرح کنیم.", type: "p" },
       { t: "در رابطه‌ی جنسی‌مان احساسِ کشش یا صمیمیتِ کافی نمی‌کنم.", type: "r" },
       { t: "به دلیلِ کمبودِ رضایتِ جنسی، گاهی افکارم به‌سمتِ گزینه‌های دیگر می‌رود.", type: "r" },
+      { t: "خجالت یا شرم مانع از این می‌شود که نیازهای جنسی‌ام را با همسرم در میان بگذارم.", type: "r" },
+      { t: "احساسِ جذابیتِ جسمیِ من نسبت به همسرم هنوز قوی است.", type: "p" },
+      { t: "با وجودِ باورها یا محدودیت‌های فرهنگی/مذهبیِ خودمان، توانسته‌ایم درباره‌ی رابطه‌ی جنسی‌مان به تفاهمِ مشترک برسیم.", type: "p" },
+      { t: "تجربه یا آموزشِ نادرستِ گذشته (پیش از ازدواج) هنوز روی احساسِ من نسبت به رابطه‌ی جنسی اثرِ منفی دارد.", type: "r" },
+      { t: "اگر در رابطه‌ی جنسی‌مان مشکلی پیش بیاید، احتمالِ این‌که آن را سرکوب یا کتمان کنم، بیشتر از گفتنش به همسرم است.", type: "r" },
+      { t: "یکی از ما معمولاً میلِ جنسیِ بیشتری نسبت به دیگری دارد، و این تفاوت گاهی باعثِ تنش می‌شود.", type: "r" },
     ],
     action: {
       low: [
@@ -213,11 +228,14 @@ const DOMAINS = [
         "🗣️ گفتگو: به‌جای فرض‌کردنِ نیازِ همسر، مستقیم از او بپرسید.",
         "🎯 تمرین: یک زمانِ آرام (نه بعد از دعوا) برای این گفتگو انتخاب کنید.",
         "🧑‍⚕️ حرفه‌ای: اگر عاملِ جسمی/پزشکی مطرح است، مراجعه به متخصص را در نظر بگیرید.",
+        "🚧 مرزگذاری: اگر شرم مانعِ گفتگو می‌شود، ابتدا با یک جمله‌ی کوچک شروع کنید، نه افشایِ کامل یک‌جا.",
+        "🧑‍⚕️ حرفه‌ای: اگر باورهای فرهنگی/مذهبی باعثِ سرکوبِ این نیاز شده‌اند، گفتگو با یک مشاورِ آشنا به این حساسیت‌ها می‌تواند کمک کند.",
       ],
       mid: [
         "🗣️ گفتگو: این هفته یک‌بار درباره‌ی آنچه برایتان لذت‌بخش است، با هم گفتگو کنید.",
         "🗣️ گفتگو: به‌جای فرض‌کردنِ نیازِ همسر، مستقیم از او بپرسید.",
         "🚧 مرزگذاری: یک فضای امن (بدون قضاوت) برای ابرازِ نیازها ایجاد کنید.",
+        "🎯 تمرین: دفعه‌ی بعد که مشکلی پیش آمد، به‌جایِ کتمان‌کردن، همان لحظه یا کمی بعد مطرحش کنید.",
       ],
       high: [
         "🌱 تقویت: این هم‌خوانی و صمیمیت را قدر بدانید و فضای امن برای بیانِ نیازها را حفظ کنید.",
@@ -319,6 +337,7 @@ const RISK_PATTERNS = [
   {
     id: "drift",
     title: "الگویِ فاصله‌گیریِ خزنده",
+    domains: ["emotional", "exposure"],
     trigger: (a) => a.emotional < 55 && a.exposure < 60,
     mechanism:
       "افتِ صمیمیتِ روزمره همراه با مواجهه‌ی بالا با گزینه‌های بیرونی، دقیقاً الگوی رایجِ «رانده‌شدنِ تدریجی» است — نه یک تصمیمِ ناگهانی، بلکه فاصله‌ای که آرام‌آرام با چیزِ دیگری پر می‌شود.",
@@ -332,6 +351,7 @@ const RISK_PATTERNS = [
   {
     id: "conflict-avoidant",
     title: "الگویِ تعارض‌گریزی",
+    domains: ["conflict", "emotional"],
     trigger: (a) => a.conflict < 55 && a.emotional >= 50,
     mechanism:
       "زوج‌هایی که از تعارضِ آشکار پرهیز می‌کنند، نارضایتی را زیرِ سطح نگه می‌دارند. این نوع از سرکوبِ خزنده، یکی از مسیرهای شناخته‌شده به‌سمتِ رابطه‌ی موازی است — دقیقاً چون از بیرون همه‌چیز «آرام» به‌نظر می‌رسد.",
@@ -345,6 +365,7 @@ const RISK_PATTERNS = [
   {
     id: "compensatory",
     title: "الگویِ جبرانِ نیازِ ناکام‌مانده",
+    domains: ["sexual", "exposure"],
     trigger: (a) => a.sexual < 55 && a.exposure < 65,
     mechanism:
       "کمبودِ رضایتِ جنسی در کنارِ مواجهه‌ی بالا با گزینه‌های بیرونی، ریسکِ جبرانِ نیازِ ناکام‌مانده از مسیرِ رابطه‌ی موازی را بالا می‌برد.",
@@ -358,6 +379,7 @@ const RISK_PATTERNS = [
   {
     id: "validation-seeking",
     title: "الگویِ تاییدطلبیِ دلبستگی",
+    domains: ["vulnerability"],
     trigger: (a) => a.vulnerability < 55,
     mechanism:
       "وقتی حسِ ارزشمندی از داخلِ رابطه تامین نمی‌شود، برخی افراد ناخودآگاه به‌سمتِ تاییدِ بیرونی کشیده می‌شوند. این مسیر معمولاً با قصدِ نقضِ تعهد شروع نمی‌شود، بلکه با یک خلأِ عاطفیِ حل‌نشده.",
@@ -371,6 +393,7 @@ const RISK_PATTERNS = [
   {
     id: "boundary-erosion",
     title: "الگویِ فرسایشِ مرزها",
+    domains: ["boundaries", "exposure"],
     trigger: (a) => a.boundaries < 55 && a.exposure < 65,
     mechanism:
       "ترکیبِ پنهان‌کاری و مواجهه‌ی بالا، همان مسیرِ کلاسیکِ «دیوارها و پنجره‌ها»ست: مرزها آرام‌آرام فرسوده می‌شوند تا جایی که یک رابطه‌ی نامناسب به‌طور طبیعی شکل می‌گیرد.",
@@ -578,6 +601,39 @@ export default function App() {
   const [saveWarning, setSaveWarning] = useState("");
   const [adminPassInput, setAdminPassInput] = useState("");
   const [adminRows, setAdminRows] = useState(null);
+  const [prevResultInput, setPrevResultInput] = useState("");
+  const [prevResultText, setPrevResultText] = useState("");
+  const [showPrevInput, setShowPrevInput] = useState(false);
+  const [viaJoinLink, setViaJoinLink] = useState(false);
+  const [linkCopyStatus, setLinkCopyStatus] = useState("idle");
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const joinData = params.get("join");
+      if (joinData) {
+        const decoded = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(joinData)))));
+        setCode(decoded.c || genCode());
+        setAns1(decoded.a1 || {});
+        setSd1(decoded.s1 || {});
+        setContext(decoded.ctx || { duration: "", age: "", children: "" });
+        setPartner(2);
+        setDomainIdx(0);
+        setViaJoinLink(true);
+        setScreen("handoff");
+        window.history.replaceState({}, "", window.location.pathname);
+      }
+    } catch (e) {
+      console.error("join-link decode failed", e);
+    }
+  }, []);
+
+  function buildJoinUrl() {
+    const base = window.location.origin + window.location.pathname;
+    const payload = { c: code, a1: ans1, s1: sd1, ctx: context };
+    const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(payload)))));
+    return `${base}?join=${encoded}`;
+  }
 
   const isSdPage = domainIdx === DOMAINS.length;
   const domain = isSdPage ? null : DOMAINS[domainIdx];
@@ -678,11 +734,11 @@ export default function App() {
       if (partner === 1) {
         res = await saveState({ createdAt: Date.now(), ans1, ans1Done: true, ans2, ans2Done: false, sd1 });
         if (!res.ok) setSaveWarning(`⚠ ذخیره‌سازیِ پس‌زمینه (برایِ پژوهشگر) ناموفق بود؛ اما پاسخ‌های شما همچنان محفوظ است و می‌توانید ادامه دهید. جزئیاتِ فنی: ${res.detail}`);
-        setPartner(2); setDomainIdx(0); setScreen("handoff");
+        setScreen("privateResult");
       } else {
         res = await saveState({ ans1, ans1Done: true, ans2, ans2Done: true, sd1, sd2 });
         if (!res.ok) setSaveWarning(`⚠ ذخیره‌سازیِ پس‌زمینه (برایِ پژوهشگر) ناموفق بود؛ نتیجه‌ی زیر همچنان کاملاً معتبر است. جزئیاتِ فنی: ${res.detail}`);
-        setScreen("results");
+        setScreen("privateResult");
       }
       setBusy(false);
     }
@@ -730,8 +786,11 @@ export default function App() {
             <div style={{ textAlign: "center", marginBottom: 8 }}>
               <div style={{ fontSize: 34, marginBottom: 6 }}>🌿</div>
               <p style={{ fontSize: 11, color: "#8CA3B0", margin: "0 0 4px", fontWeight: 700 }}>{BRAND.academy}</p>
-              <h1 style={{ fontSize: 21, color: "#1F2D3D", margin: "0 0 6px", fontWeight: 800 }}>نقشه‌ی رابطه</h1>
-              <p style={{ fontSize: 13.5, color: "#5A7080", lineHeight: 1.9, margin: 0 }}>
+              <h1 style={{ fontSize: 21, color: "#1F2D3D", margin: "0 0 6px", fontWeight: 800 }}>نقشه‌ی رابطه‌یِ ما</h1>
+              <p style={{ fontSize: 13.5, color: "#5A7080", lineHeight: 1.9, margin: 0, fontWeight: 600 }}>
+                زندگی من چه خواهد شد؟ زیر‌پوست رابطه ما چه می‌گذرد و چه آسیب‌هایی رابطه ما را تهدید می‌کند؟
+              </p>
+              <p style={{ fontSize: 12.5, color: "#8CA3B0", lineHeight: 1.9, margin: "8px 0 0" }}>
                 یک سنجش سریع و مشترک برای شناخت نقاط قوت و آسیب‌پذیریِ رابطه — هرکدام از شما جداگانه پاسخ می‌دهد، سپس نقشه‌ی مشترکتان ساخته می‌شود.
               </p>
             </div>
@@ -739,6 +798,24 @@ export default function App() {
             <button onClick={startNew} style={{ width: "100%", marginTop: 24, padding: "15px", borderRadius: 14, border: "none", background: "#2B6777", color: "#fff", fontSize: 15.5, fontWeight: 700, cursor: "pointer" }}>
               شروع سنجشِ جدید برای یک زوج
             </button>
+
+            <button onClick={() => setShowPrevInput((v) => !v)} className="no-print"
+              style={{ width: "100%", marginTop: 10, background: "none", border: "none", color: "#5A7080", fontSize: 11.5, cursor: "pointer", textDecoration: "underline" }}>
+              {showPrevInput ? "بستن" : "بازآزماییِ دوره‌ای؟ نتیجه‌ی قبلی را برایِ مقایسه بچسبانید (اختیاری)"}
+            </button>
+            {showPrevInput && (
+              <div style={{ marginTop: 8 }}>
+                <textarea value={prevResultInput} onChange={(e) => setPrevResultInput(e.target.value)} rows={3}
+                  placeholder="متنِ ذخیره‌شده از سنجشِ قبلی (شروع‌شونده با CPL1|...)"
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 10.5, fontFamily: "monospace", direction: "ltr", resize: "vertical" }} />
+                <button onClick={() => { setPrevResultText(prevResultInput.trim()); setShowPrevInput(false); }}
+                  disabled={!prevResultInput.trim()}
+                  style={{ width: "100%", marginTop: 6, padding: "9px", borderRadius: 10, border: "none", background: prevResultInput.trim() ? "#2B6777" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: prevResultInput.trim() ? "pointer" : "not-allowed", fontSize: 12 }}>
+                  ثبتِ نتیجه‌ی قبلی برایِ مقایسه
+                </button>
+                {prevResultText && <p style={{ fontSize: 10.5, color: "#4C7A5E", marginTop: 6 }}>✅ ثبت شد؛ در پایانِ این سنجش، مقایسه نمایش داده می‌شود.</p>}
+              </div>
+            )}
 
             <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "22px 0" }}>
               <div style={{ flex: 1, height: 1, background: "#DCEAF2" }} />
@@ -761,8 +838,17 @@ export default function App() {
             <button onClick={() => setScreen("adminLogin")} className="no-print" style={{ marginTop: 18, background: "none", border: "none", color: "#B7C6CE", fontSize: 10.5, cursor: "pointer", textDecoration: "underline" }}>
               پنل آموزشی
             </button>
+
+            <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
+              <p style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{BRAND.name}</p>
+              <p style={{ fontSize: 11, color: "#5A7080", margin: "0 0 10px", lineHeight: 1.8 }}>{BRAND.credential}</p>
+              <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📞 {BRAND.phone}</p>
+              <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📷 instagram.com/{BRAND.instagram}</p>
+              <p style={{ fontSize: 12, color: "#5A7080", margin: 0 }}>📍 {BRAND.city}</p>
+            </div>
+
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: مستقل و میزبانی‌شده — با پایگاه‌دادهٔ واقعی و ذخیره‌سازیِ کاملاً خودکار
+              نسخه: ۲۰۲۶-۰۷-۱۰ / ارسالِ لینکِ دعوتِ همسر هم از طریقِ پیامک
             </p>
           </Card>
         )}
@@ -850,12 +936,102 @@ export default function App() {
           </Card>
         )}
 
+        {screen === "privateResult" && (() => {
+          const myAns = partner === 1 ? ans1 : ans2;
+          const myScores = {};
+          DOMAINS.forEach((d) => { myScores[d.key] = scoreDomain(myAns[d.key] || {}, d.items); });
+          const myOverall = Math.round(DOMAINS.reduce((s, d) => s + myScores[d.key], 0) / DOMAINS.length);
+          const allFlags = detectCriticalFlags(ans1, ans2);
+          const myFlags = allFlags.filter((f) => f.partner === partner);
+          const hasHighSeverity = myFlags.some((f) => f.severity === "بالا");
+
+          function goNext() {
+            if (partner === 1) { setPartner(2); setDomainIdx(0); setScreen("handoff"); }
+            else { setScreen("results"); }
+          }
+
+          return (
+            <Card>
+              <div style={{ textAlign: "center", marginBottom: 14 }}>
+                <div style={{ fontSize: 30, marginBottom: 6 }}>🔒</div>
+                <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>نتیجه‌ی شخصیِ شما (نفرِ {partner === 1 ? "اول" : "دوم"})</h2>
+                <p style={{ fontSize: 11.5, color: "#8CA3B0", lineHeight: 1.85 }}>
+                  این صفحه فقط برایِ خودِ شماست؛ همسرتان این جزئیات را نمی‌بیند. نتیجه‌ی مشترک (بدونِ این جزئیاتِ شخصی) در قدمِ بعد نمایش داده می‌شود.
+                </p>
+              </div>
+
+              <div style={{ background: "#EAF4FB", borderRadius: 12, padding: "12px", textAlign: "center", marginBottom: 16 }}>
+                <span style={{ fontSize: 11.5, color: "#5A7080" }}>امتیازِ کلیِ شخصیِ شما</span>
+                <div style={{ fontSize: 24, fontWeight: 800, color: LEVEL_COLOR[level(myOverall)] }}>{myOverall} از ۱۰۰</div>
+              </div>
+
+              {DOMAINS.map((d) => (
+                <div key={d.key} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: 11.5, width: 70, color: "#4B6070" }}>{d.short}</span>
+                  <div style={{ flex: 1, height: 8, background: "#EAF4FB", borderRadius: 4, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${myScores[d.key]}%`, background: LEVEL_COLOR[level(myScores[d.key])] }} />
+                  </div>
+                  <span style={{ fontSize: 11, color: "#8CA3B0", width: 26 }}>{myScores[d.key]}</span>
+                </div>
+              ))}
+
+              {myFlags.length > 0 && (
+                <div style={{ marginTop: 16 }}>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: "#A6432F", marginBottom: 8 }}>نکاتِ ویژه‌ی شما:</p>
+                  {myFlags.map((f, i) => (
+                    <div key={i} style={{ fontSize: 11.5, color: "#4B6070", marginBottom: 8, background: f.severity === "بالا" ? "#FBEAE7" : "#F7FAFC", borderRadius: 10, padding: "9px 11px" }}>
+                      <div style={{ fontWeight: 700, color: "#1F2D3D", marginBottom: 4 }}>🔺 {f.label}</div>
+                      <p style={{ margin: 0, lineHeight: 1.85, color: "#2B6777" }}>➜ {f.action}</p>
+                    </div>
+                  ))}
+                  {hasHighSeverity && (
+                    <p style={{ fontSize: 12, color: "#A6432F", lineHeight: 1.9, background: "#FBEAE7", borderRadius: 10, padding: "10px 12px", fontWeight: 600 }}>
+                      ⚠ پیشنهاد می‌شود پیش از دیدنِ نتیجه‌ی مشترک با همسرتان، این موارد را با یک متخصص در میان بگذارید.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {partner === 1 && (
+                <div style={{ marginTop: 20, background: "#F7FAFC", borderRadius: 12, padding: "14px" }}>
+                  <p style={{ fontSize: 12.5, color: "#4B6070", lineHeight: 1.9, marginBottom: 10, fontWeight: 700 }}>
+                    📤 یا به‌جایِ دادنِ همین گوشی، لینک را برایِ همسرتان با پیامک بفرستید تا با گوشیِ خودش ادامه دهد:
+                  </p>
+                  <a href={`sms:${/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream ? "&" : "?"}body=${encodeURIComponent(buildJoinUrl())}`}
+                    style={{ display: "block", width: "100%", padding: "12px", borderRadius: 10, background: "#2B6777", color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13, marginBottom: 8 }}>
+                    💬 ارسالِ لینک با پیامک برایِ همسر
+                  </a>
+                  <p style={{ fontSize: 10, color: "#9AAEB9", marginBottom: 10 }}>
+                    برنامه‌ی پیامک باز می‌شود؛ فقط شماره‌ی همسرتان را انتخاب و «ارسال» را بزنید.
+                  </p>
+                  <textarea readOnly value={buildJoinUrl()} rows={2} onFocus={(e) => e.target.select()}
+                    style={{ width: "100%", padding: "8px 10px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
+                  <button onClick={async () => {
+                    try { await navigator.clipboard.writeText(buildJoinUrl()); setLinkCopyStatus("copied"); } catch (e) { setLinkCopyStatus("failed"); }
+                  }} style={{ width: "100%", marginTop: 8, padding: "10px", borderRadius: 10, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
+                    {linkCopyStatus === "copied" ? "✅ کپی شد! برایِ همسرتان بفرستید" : linkCopyStatus === "failed" ? "❌ کپیِ خودکار کار نکرد — از باکسِ بالا با انگشت انتخاب کنید" : "📋 اگر پیامک باز نشد: کپیِ لینک"}
+                  </button>
+                  <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 8, lineHeight: 1.7 }}>
+                    وقتی همسرتان این لینک را باز کند، پاسخ‌های شما از قبل بارگذاری شده و او فقط پاسخ‌های خودش را کامل می‌کند؛ در پایان، هر دویِ شما نقشه‌ی مشترک را (روی گوشیِ او) می‌بینید.
+                  </p>
+                </div>
+              )}
+
+              <button onClick={goNext} style={{ width: "100%", marginTop: 20, padding: "14px", borderRadius: 14, border: "none", background: partner === 1 ? "#2B6777" : "#E8975C", color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                {partner === 1 ? "یا: ادامه با همینِ گوشی (دادنِ دستگاه به همسر)" : "متوجه شدم — دیدنِ نتیجه‌ی مشترک"}
+              </button>
+            </Card>
+          );
+        })()}
+
         {screen === "handoff" && (
           <Card style={{ textAlign: "center", padding: "36px 24px" }}>
             <div style={{ fontSize: 38, marginBottom: 10 }}>🤝</div>
             <h2 style={{ fontSize: 18, fontWeight: 800, color: "#1F2D3D", margin: "0 0 10px" }}>نوبت نفر دوم است</h2>
             <p style={{ fontSize: 13.5, color: "#5A7080", lineHeight: 1.9, marginBottom: 18 }}>
-              لطفاً دستگاه را به همسرتان بدهید. پاسخ‌های نفر اول ذخیره شد و بعد از تکمیل پاسخ‌های نفر دوم، نقشه‌ی مشترک نمایش داده می‌شود.
+              {viaJoinLink
+                ? "همسرتان شما را برای تکمیلِ این ارزیابی دعوت کرده. پاسخِ نفرِ اول قبلاً ثبت شده و بعد از تکمیلِ پاسخ‌هایِ شما، نقشه‌ی مشترک نمایش داده می‌شود."
+                : "لطفاً دستگاه را به همسرتان بدهید. پاسخ‌های نفر اول ذخیره شد و بعد از تکمیل پاسخ‌های نفر دوم، نقشه‌ی مشترک نمایش داده می‌شود."}
             </p>
             <div style={{ background: "#EAF4FB", borderRadius: 12, padding: "12px", marginBottom: 16 }}>
               <span style={{ fontSize: 11.5, color: "#5A7080" }}>کدِ رابطه‌ی شما</span>
@@ -873,7 +1049,7 @@ export default function App() {
         )}
 
         {screen === "results" && (
-          <ResultsView code={code} scores={scores} context={context} sd1={sd1} sd2={sd2} ans1={ans1} ans2={ans2} saveWarning={saveWarning} onGoAdmin={() => setScreen("adminLogin")} />
+          <ResultsView code={code} scores={scores} context={context} sd1={sd1} sd2={sd2} ans1={ans1} ans2={ans2} saveWarning={saveWarning} onGoAdmin={() => setScreen("adminLogin")} prevResultText={prevResultText} />
         )}
 
         {screen === "adminLogin" && (
@@ -914,11 +1090,12 @@ function compositeRiskBand(s1, s2) {
   return { band: "بالا", color: "#A6432F", score: compositeSafety };
 }
 
-function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning, onGoAdmin }) {
+function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning, onGoAdmin, prevResultText }) {
   const { s1, s2 } = scores;
   const overall = Math.round(DOMAINS.reduce((s, d) => s + s1[d.key] + s2[d.key], 0) / (DOMAINS.length * 2));
   const sdAvg1 = sdAverage(sd1), sdAvg2 = sdAverage(sd2);
   const idealized1 = sdAvg1 >= 4.3, idealized2 = sdAvg2 >= 4.3;
+  const [copyStatus, setCopyStatus] = useState("idle");
 
   function rawDataText() {
     // فرمتِ فوق‌فشرده: هر گویه فقط یک رقم (۰ تا ۵، ۰=بدون‌پاسخ)
@@ -933,19 +1110,43 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
     return `CPL1|${code}|${digits}`;
   }
 
+  function smsLink() {
+    const number = "+989015091346";
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const sep = isIOS ? "&" : "?";
+    return `sms:${number}${sep}body=${encodeURIComponent(rawDataText())}`;
+  }
+
   return (
     <div id="print-area">
       {saveWarning && (
         <Card style={{ marginBottom: 10, background: "#FBF3E7", border: "1px solid #F0DDBB" }}>
           <p style={{ fontSize: 12.5, color: "#7A5B2E", lineHeight: 1.9, margin: "0 0 12px", fontWeight: 700 }}>
-            📌 برای رساندنِ این نتیجه به پژوهشگر، متنِ زیر را با انگشت انتخاب و کپی کنید، سپس در پیامک/واتساپ/تلگرام بچسبانید و بفرستید:
+            📌 نتیجه‌ی این زوج را برایِ دفتر بفرستید:
           </p>
-          <textarea readOnly value={rawDataText()} rows={4} onFocus={(e) => e.target.select()}
-            className="no-print"
-            style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "2px solid #2B6777", fontSize: 11, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
-          <p style={{ fontSize: 11, color: "#5A7080", marginTop: 10, lineHeight: 1.9 }}>
-            <b>راهنما:</b> انگشت را رویِ متنِ بالا نگه دارید تا گزینه‌ی «Select All / انتخابِ همه» ظاهر شود ← آن را بزنید ← «Copy / کپی» را بزنید ← برنامه‌ی پیامک یا واتساپِ خودتان را باز کنید ← بچسبانید ← بفرستید.
+          <a href={smsLink()} className="no-print"
+            style={{ display: "block", width: "100%", padding: "13px", borderRadius: 12, background: "#2B6777", color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13.5, marginBottom: 8 }}>
+            💬 ارسالِ خودکار با پیامک به دفتر
+          </a>
+          <p style={{ fontSize: 10.5, color: "#9AAEB9", marginBottom: 10, textAlign: "center" }}>
+            با زدنِ این دکمه، برنامه‌ی پیامکِ گوشی‌تان با شماره و متنِ آماده باز می‌شود؛ فقط دکمه‌ی «ارسال» را بزنید.
           </p>
+          <button onClick={async () => {
+            try { await navigator.clipboard.writeText(rawDataText()); setCopyStatus("copied"); } catch (e) { setCopyStatus("failed"); }
+          }} className="no-print"
+            style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer", fontSize: 12.5, marginBottom: 8 }}>
+            {copyStatus === "copied" ? "✅ کپی شد! حالا در پیامک/واتساپ بچسبانید و بفرستید" : copyStatus === "failed" ? "❌ کپی نشد — از باکسِ زیر با انگشت انتخاب کنید" : "📋 اگر پیامکِ خودکار باز نشد: کپیِ نتیجه"}
+          </button>
+          {copyStatus === "failed" && (
+            <>
+              <textarea readOnly value={rawDataText()} rows={4} onFocus={(e) => e.target.select()}
+                className="no-print"
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "2px solid #2B6777", fontSize: 11, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
+              <p style={{ fontSize: 11, color: "#5A7080", marginTop: 10, lineHeight: 1.9 }}>
+                <b>راهنما:</b> انگشت را رویِ متنِ بالا نگه دارید تا گزینه‌ی «Select All / انتخابِ همه» ظاهر شود ← «Copy / کپی» را بزنید.
+              </p>
+            </>
+          )}
         </Card>
       )}
       <Card>
@@ -960,6 +1161,97 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
             </p>
           )}
         </div>
+
+        {(() => {
+          const withAvgOv = DOMAINS.map((d) => ({ d, avg: Math.round((s1[d.key] + s2[d.key]) / 2) }));
+          const weakestOv = [...withAvgOv].sort((a, b) => a.avg - b.avg)[0];
+          const anyHighFlagOv = detectCriticalFlags(ans1 || {}, ans2 || {}).some((f) => f.severity === "بالا");
+          const patternCountOv = detectPatterns(s1, s2).length;
+
+          let severity, sevColor, treatability;
+          if (anyHighFlagOv || overall < 40) {
+            severity = "بحرانی"; sevColor = "#A6432F";
+            treatability = "نیازمندِ پیگیریِ فوریِ حرفه‌ای — تاخیر، ریسک را افزایش می‌دهد.";
+          } else if (patternCountOv > 0 || overall < 60) {
+            severity = "قابلِ توجه"; sevColor = "#B9822F";
+            treatability = "قابلِ بهبود با اقدامِ به‌موقع و آگاهانه.";
+          } else if (overall < 75) {
+            severity = "خفیف"; sevColor = "#B9822F";
+            treatability = "قابلِ بهبود با اقدامِ به‌موقع و آگاهانه.";
+          } else {
+            severity = "در حدِ طبیعی"; sevColor = "#4C7A5E";
+            treatability = "وضعیتِ پایدار؛ حفظِ روندِ فعلی کافی است.";
+          }
+
+          return (
+            <div style={{ background: "#F7FAFC", borderRadius: 14, padding: "16px", marginBottom: 18 }}>
+              <p style={{ fontSize: 12.5, fontWeight: 800, color: "#1F2D3D", textAlign: "center", margin: "0 0 12px" }}>📋 نمای کلی</p>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: LEVEL_COLOR[level(overall)] }}>{overall}٪</div>
+                  <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>درصدِ وضعیتِ کلی</div>
+                </div>
+                <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "#2B6777" }}>{weakestOv.d.short}</div>
+                  <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>بیشترین مشکل در این ناحیه</div>
+                </div>
+                <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: sevColor }}>{severity}</div>
+                  <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>شدتِ وضعیت</div>
+                </div>
+                <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#2B6777", lineHeight: 1.5 }}>{treatability}</div>
+                  <div style={{ fontSize: 10.5, color: "#8CA3B0", marginTop: 4 }}>چشم‌اندازِ بهبود</div>
+                </div>
+              </div>
+              <p style={{ fontSize: 10, color: "#9AAEB9", lineHeight: 1.8, marginTop: 12, textAlign: "center" }}>
+                برایِ مرجع: زوج‌درمانیِ استاندارد معمولاً بینِ ۸ تا ۲۰ جلسه طول می‌کشد (آمارِ کلیِ حرفه‌ای، نه پیش‌بینیِ اختصاصیِ این آزمون برایِ رابطه‌ی شما).
+              </p>
+            </div>
+          );
+        })()}
+
+        {prevResultText && (() => {
+          let prev;
+          try {
+            prev = parseCoupleRaw(prevResultText);
+          } catch (e) {
+            return (
+              <div style={{ background: "#FBEAE7", borderRadius: 12, padding: "12px 14px", marginBottom: 16, fontSize: 12, color: "#A6432F" }}>
+                متنِ نتیجه‌ی قبلی خوانده نشد؛ لطفاً از صحتِ آن مطمئن شوید.
+              </div>
+            );
+          }
+          const prevS1 = {}, prevS2 = {};
+          DOMAINS.forEach((d) => {
+            prevS1[d.key] = scoreDomain(prev.ans1[d.key] || {}, d.items);
+            prevS2[d.key] = scoreDomain(prev.ans2[d.key] || {}, d.items);
+          });
+          const prevOverall = Math.round(DOMAINS.reduce((s, d) => s + prevS1[d.key] + prevS2[d.key], 0) / (DOMAINS.length * 2));
+          const deltaOverall = overall - prevOverall;
+          return (
+            <div style={{ marginBottom: 18, background: "#EAF4FB", borderRadius: 12, padding: "14px" }}>
+              <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>📊 مقایسه با سنجشِ قبلی</p>
+              <p style={{ fontSize: 12.5, color: "#4B6070", marginBottom: 10 }}>
+                امتیازِ کلی: از <b>{prevOverall}</b> به <b>{overall}</b>{" "}
+                <span style={{ color: deltaOverall > 0 ? "#4C7A5E" : deltaOverall < 0 ? "#A6432F" : "#8CA3B0", fontWeight: 700 }}>
+                  ({deltaOverall > 0 ? "+" : ""}{deltaOverall})
+                </span>
+              </p>
+              {DOMAINS.map((d) => {
+                const oldAvg = Math.round((prevS1[d.key] + prevS2[d.key]) / 2);
+                const newAvg = Math.round((s1[d.key] + s2[d.key]) / 2);
+                const delta = newAvg - oldAvg;
+                return (
+                  <div key={d.key} style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5, color: "#4B6070", marginBottom: 4 }}>
+                    <span>{d.short}</span>
+                    <span>{oldAvg} ← {newAvg} <b style={{ color: delta > 0 ? "#4C7A5E" : delta < 0 ? "#A6432F" : "#8CA3B0" }}>({delta > 0 ? "+" : ""}{delta})</b></span>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
 
         {(() => {
           const withAvg = DOMAINS.map((d) => ({ d, avg: Math.round((s1[d.key] + s2[d.key]) / 2) }));
@@ -1024,16 +1316,26 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
             return (
               <div style={{ marginBottom: 14 }}>
                 <p style={{ fontSize: 12, fontWeight: 700, color: "#A6432F", margin: "0 0 8px" }}>الگوهای شناسایی‌شده (بر پایه‌ی ترکیبِ چند حیطه، نه یک حیطه‌ی تنها):</p>
-                {patterns.map((p) => (
-                  <div key={p.id} style={{ background: "#FBF3E7", border: "1px solid #F0DDBB", borderRadius: 12, padding: "10px 14px", marginBottom: 8 }}>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: "#7A5B2E", marginBottom: 4 }}>⚠ {p.title}</div>
-                    <p style={{ fontSize: 11.5, color: "#5A4B33", lineHeight: 1.85, margin: "0 0 8px" }}>{p.mechanism}</p>
-                    <p style={{ fontSize: 11, fontWeight: 700, color: "#2B6777", margin: "0 0 5px" }}>راهکارهایِ فوری:</p>
-                    {p.actions.map((a, i) => (
-                      <div key={i} style={{ fontSize: 11.5, color: "#2B6777", lineHeight: 1.85, marginBottom: 3 }}>➜ {a}</div>
-                    ))}
-                  </div>
-                ))}
+                {patterns.map((p) => {
+                  const scoreStr = p.domains
+                    .map((dk) => {
+                      const dom = DOMAINS.find((x) => x.key === dk);
+                      const a = Math.round((s1[dk] + s2[dk]) / 2);
+                      return `${dom.short}=${a}`;
+                    })
+                    .join("، ");
+                  return (
+                    <div key={p.id} style={{ background: "#FBF3E7", border: "1px solid #F0DDBB", borderRadius: 12, padding: "10px 14px", marginBottom: 8 }}>
+                      <div style={{ fontSize: 13, fontWeight: 800, color: "#7A5B2E", marginBottom: 4 }}>⚠ {p.title}</div>
+                      <p style={{ fontSize: 10.5, color: "#8C6D3F", margin: "0 0 6px", fontFamily: "monospace", direction: "ltr", textAlign: "right" }}>نمره‌هایِ شما: {scoreStr}</p>
+                      <p style={{ fontSize: 11.5, color: "#5A4B33", lineHeight: 1.85, margin: "0 0 8px" }}>{p.mechanism}</p>
+                      <p style={{ fontSize: 11, fontWeight: 700, color: "#2B6777", margin: "0 0 5px" }}>راهکارهایِ فوری:</p>
+                      {p.actions.map((a, i) => (
+                        <div key={i} style={{ fontSize: 11.5, color: "#2B6777", lineHeight: 1.85, marginBottom: 3 }}>➜ {a}</div>
+                      ))}
+                    </div>
+                  );
+                })}
               </div>
             );
           })()}
@@ -1056,53 +1358,147 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           {(() => {
             const flags = detectCriticalFlags(ans1 || {}, ans2 || {});
             if (flags.length === 0) return null;
+            const seen = new Set();
+            const deduped = flags.filter((f) => {
+              const k = f.domain + f.idx;
+              if (seen.has(k)) return false;
+              seen.add(k);
+              return true;
+            });
             return (
               <div>
-                <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", margin: "0 0 8px" }}>گویه‌های نقطه‌ایِ پرخطر (مستقلِ از میانگینِ حیطه):</p>
-                {flags.map((f, i) => (
+                <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", margin: "0 0 8px" }}>حیطه‌هایِ نیازمندِ توجهِ فوری (مستقلِ از میانگینِ کلی):</p>
+                {deduped.map((f, i) => (
                   <div key={i} style={{ fontSize: 11.5, color: "#4B6070", marginBottom: 8, background: f.severity === "بالا" ? "#FBEAE7" : "#F7FAFC", borderRadius: 10, padding: "9px 11px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                      <span style={{ fontWeight: 700, color: "#1F2D3D" }}>🔺 نفرِ {f.partner} — {f.label}</span>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontWeight: 700, color: "#1F2D3D" }}>🔺 {f.label}</span>
                       <span style={{ fontWeight: 700, color: f.severity === "بالا" ? "#A6432F" : "#B9822F", fontSize: 10.5, flexShrink: 0, marginRight: 8 }}>{f.severity}</span>
                     </div>
-                    <p style={{ margin: 0, lineHeight: 1.85, color: "#2B6777" }}>➜ {f.action}</p>
                   </div>
                 ))}
                 <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 6, lineHeight: 1.7 }}>
-                  این موارد حتی اگر میانگینِ حیطه‌شان متوسط باشد، به‌دلیلِ اهمیتِ بالینیِ خودشان جدا پرچم‌گذاری شده‌اند.
+                  این موارد به‌دلیلِ اهمیتِ بالینیِ خودشان جدا پرچم‌گذاری شده‌اند و مستقل از این‌که کدامتان مطرح کرده، پیشنهاد می‌شود با یک متخصص در میان گذاشته شوند. جزئیاتِ دقیق‌تر و شخصی‌شده در صفحه‌ی نتیجه‌ی خصوصیِ هرکدام از شما (که قبل از این صفحه دیدید) موجود بود.
                 </p>
               </div>
             );
           })()}
         </div>
 
-        {DOMAINS.map((d) => {
-          const avg = Math.round((s1[d.key] + s2[d.key]) / 2);
-          const lv = level(avg);
-          const gap = Math.abs(s1[d.key] - s2[d.key]);
+        {(() => {
+          const anyHighFlag = detectCriticalFlags(ans1 || {}, ans2 || {}).some((f) => f.severity === "بالا");
+          const patternCount = detectPatterns(s1, s2).length;
+          let tier, tierColor, tierText, actionLink, actionLabel;
+          if (anyHighFlag || overall < 45) {
+            tier = "نیازمندِ پیگیریِ حرفه‌ای";
+            tierColor = "#A6432F";
+            tierText = `بر اساسِ نتیجه‌ی شما، پیشنهاد می‌شود در اسرع‌وقت یک جلسه‌ی مشاوره با ${BRAND.name} یا یک متخصصِ زوج‌درمانی داشته باشید — تماس: ${BRAND.phone}`;
+            actionLink = CONSULT_BOOKING_LINK;
+            actionLabel = "📅 رزروِ جلسه‌ی مشاوره";
+          } else if (patternCount > 0 || overall < 65) {
+            tier = "پیشنهادِ آموزشِ تکمیلی";
+            tierColor = "#B9822F";
+            tierText = `نتیجه‌ی شما نشان می‌دهد شرکت در وبینارها/کارگاه‌های آموزشیِ ${BRAND.academy} می‌تواند کمک‌کننده باشد — برای اطلاع از برنامه‌ها، اینستاگرام instagram.com/${BRAND.instagram} را دنبال کنید.`;
+            actionLink = WEBINAR_PACKAGE_LINK;
+            actionLabel = "🎓 خریدِ بسته‌ی آموزشی/وبینار";
+          } else {
+            tier = "روندِ خوب — ادامه دهید";
+            tierColor = "#4C7A5E";
+            tierText = "وضعیتِ کلیِ رابطه‌ی شما مطلوب است؛ توصیه می‌شود همین روند را حفظ کنید و سنجشِ مجدد را در ۳ ماهِ دیگر تکرار کنید.";
+            actionLink = null;
+          }
           return (
-            <div key={d.key} style={{ padding: "14px 0", borderBottom: "1px solid #EEF3F6" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                <h3 style={{ fontSize: 14.5, fontWeight: 700, color: "#1F2D3D", margin: 0 }}>{d.title}</h3>
-                <span style={{ fontSize: 12, fontWeight: 700, color: LEVEL_COLOR[lv] }}>{LEVEL_LABEL[lv]}</span>
-              </div>
-              <div style={{ display: "flex", gap: 10, fontSize: 11.5, color: "#8CA3B0", margin: "4px 0" }}>
-                <span style={{ color: "#2B6777" }}>نفر اول: {s1[d.key]}</span>
-                <span style={{ color: "#E8975C" }}>نفر دوم: {s2[d.key]}</span>
-                {gap >= 20 && <span style={{ color: "#A6432F" }}>· شکاف ادراکی</span>}
-              </div>
-              <div style={{ fontSize: 12.5, color: "#4B6070", lineHeight: 1.8, margin: "6px 0 0", background: "#F7FAFC", padding: "8px 10px", borderRadius: 8 }}>
-                {d.action[lv].map((a, i) => (
-                  <div key={i} style={{ marginBottom: i < d.action[lv].length - 1 ? 4 : 0 }}>💡 {a}</div>
-                ))}
-              </div>
+            <div style={{ background: "#FFFFFF", border: `2px solid ${tierColor}`, borderRadius: 12, padding: "14px", marginBottom: 18 }}>
+              <p style={{ fontSize: 13, fontWeight: 800, color: tierColor, margin: "0 0 6px" }}>🧭 مسیرِ پیشنهادی: {tier}</p>
+              <p style={{ fontSize: 12, color: "#4B6070", lineHeight: 1.9, margin: actionLink ? "0 0 12px" : 0 }}>{tierText}</p>
+              {actionLink && (
+                <a href={actionLink} target="_blank" rel="noopener noreferrer" className="no-print"
+                  style={{ display: "block", width: "100%", padding: "11px", borderRadius: 10, background: tierColor, color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13 }}>
+                  {actionLabel}
+                </a>
+              )}
             </div>
           );
-        })}
+        })()}
+
+        {(() => {
+          const threeMonthsLater = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
+          const fmt = (d) => d.toISOString().slice(0, 10).replace(/-/g, "");
+          const startStr = `${fmt(threeMonthsLater)}`;
+          const endDate = new Date(threeMonthsLater.getTime() + 24 * 60 * 60 * 1000);
+          const endStr = `${fmt(endDate)}`;
+          const calText = encodeURIComponent("بازآزماییِ نقشه‌ی رابطه");
+          const calDetails = encodeURIComponent(`سنجشِ مجددِ رابطه با کدِ قبلی: ${code}\nمتنِ ذخیره‌ی نتیجه‌ی این دوره را برایِ مقایسه نگه دارید.`);
+          const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${calText}&dates=${startStr}/${endStr}&details=${calDetails}`;
+          return (
+            <div style={{ background: "#F7FAFC", borderRadius: 12, padding: "14px", marginBottom: 18 }}>
+              <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>🔁 بازآزماییِ سه‌ماهه</p>
+              <p style={{ fontSize: 11.5, color: "#5A7080", lineHeight: 1.9, marginBottom: 10 }}>
+                برای دیدنِ پیشرفتِ رابطه، توصیه می‌شود ۳ ماهِ دیگر دوباره همین سنجش را پر کنید. متنِ زیر را (که همان کدِ خامِ نتیجه‌ی این دوره است) ذخیره کنید و آن زمان، در صفحه‌ی شروع، بخشِ «مقایسه با نتیجه‌ی قبلی» جای‌گذاری کنید:
+              </p>
+              <textarea readOnly value={rawDataText()} rows={3} onFocus={(e) => e.target.select()}
+                className="no-print"
+                style={{ width: "100%", padding: "8px 10px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff", marginBottom: 8 }} />
+              <a href={calUrl} target="_blank" rel="noopener noreferrer" className="no-print"
+                style={{ display: "block", width: "100%", padding: "10px", borderRadius: 10, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 12.5 }}>
+                📅 افزودنِ یادآوری به تقویمِ گوگل (۳ ماهِ دیگر)
+              </a>
+            </div>
+          );
+        })()}
+
+        {(() => {
+          const withAvg2 = DOMAINS.map((d) => ({ d, avg: Math.round((s1[d.key] + s2[d.key]) / 2) }));
+          const sorted = [...withAvg2].sort((a, b) => a.avg - b.avg);
+          const weakestKey = sorted[0].d.key;
+          const strongestKey = sorted[sorted.length - 1].d.key;
+
+          return DOMAINS.map((d) => {
+            const s1val = s1[d.key], s2val = s2[d.key];
+            const avg = Math.round((s1val + s2val) / 2);
+            const lv = level(avg);
+            const gap = Math.abs(s1val - s2val);
+            const higherPartner = s1val > s2val ? 1 : 2;
+
+            let rankNote = "";
+            if (d.key === weakestKey && sorted.length > 1) {
+              rankNote = `این حیطه، در مقایسه با ۵ حیطه‌ی دیگرِ شما، پایین‌ترین امتیاز را دارد — یعنی نقطه‌ی شروعِ منطقیِ کار همین‌جاست.`;
+            } else if (d.key === strongestKey && sorted.length > 1) {
+              rankNote = `این حیطه، در مقایسه با بقیه‌ی حیطه‌های شما، بالاترین امتیاز را دارد.`;
+            } else {
+              rankNote = `نسبت به میانگینِ کلیِ رابطه‌ی شما (${overall})، این حیطه ${avg >= overall ? "کمی بالاتر" : "کمی پایین‌تر"} است.`;
+            }
+
+            let gapNote = "";
+            if (gap >= 25) {
+              gapNote = ` نکته‌ی مهم: بینِ نمره‌ی نفرِ اول (${s1val}) و نفرِ دوم (${s2val})، ${gap} امتیاز فاصله است — یعنی نفرِ ${higherPartner === 1 ? 2 : 1} این حیطه را به‌مراتب پرخطرتر از نفرِ ${higherPartner} می‌بیند.`;
+            } else if (gap >= 15) {
+              gapNote = ` نمره‌ی شما (${s1val}) و همسرتان (${s2val}) کمی متفاوت است (${gap} امتیاز فاصله)، ارزشِ گفتگو دارد.`;
+            } else {
+              gapNote = ` نمره‌ی شما (${s1val}) و همسرتان (${s2val}) به هم نزدیک است — برداشتِ مشابهی از این حیطه دارید.`;
+            }
+
+            return (
+              <div key={d.key} style={{ padding: "14px 0", borderBottom: "1px solid #EEF3F6" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                  <h3 style={{ fontSize: 14.5, fontWeight: 700, color: "#1F2D3D", margin: 0 }}>{d.title}</h3>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: LEVEL_COLOR[lv] }}>{LEVEL_LABEL[lv]} · {avg}</span>
+                </div>
+                <p style={{ fontSize: 11.5, color: "#5A7080", lineHeight: 1.9, margin: "6px 0 0" }}>
+                  {rankNote}{gapNote}
+                </p>
+                <div style={{ fontSize: 12.5, color: "#4B6070", lineHeight: 1.8, margin: "8px 0 0", background: "#F7FAFC", padding: "8px 10px", borderRadius: 8 }}>
+                  {d.action[lv].map((a, i) => (
+                    <div key={i} style={{ marginBottom: i < d.action[lv].length - 1 ? 4 : 0 }}>💡 {a}</div>
+                  ))}
+                </div>
+              </div>
+            );
+          });
+        })()}
 
         <button onClick={() => window.print()} className="no-print"
           style={{ width: "100%", marginTop: 20, padding: "13px", borderRadius: 14, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-          🖨 چاپ / ذخیره به‌صورتِ PDF
+          🖨 چاپ / ذخیره به‌صورت PDF
         </button>
 
         <p style={{ fontSize: 10.5, color: "#9AAEB9", marginTop: 16, lineHeight: 1.8, textAlign: "center" }}>
@@ -1111,9 +1507,14 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
         <button onClick={onGoAdmin} className="no-print" style={{ display: "block", margin: "10px auto 0", background: "none", border: "none", color: "#B7C6CE", fontSize: 10.5, cursor: "pointer", textDecoration: "underline" }}>
           (برایِ پژوهشگر) رفتن به پنلِ آموزشی — همین نشست
         </button>
-        <p style={{ fontSize: 10.5, color: "#B7C6CE", marginTop: 10, textAlign: "center" }}>
-          {BRAND.name} — {BRAND.credential}
-        </p>
+
+        <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
+          <p style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{BRAND.name}</p>
+          <p style={{ fontSize: 11, color: "#5A7080", margin: "0 0 10px", lineHeight: 1.8 }}>{BRAND.credential}</p>
+          <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📞 {BRAND.phone}</p>
+          <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📷 instagram.com/{BRAND.instagram}</p>
+          <p style={{ fontSize: 12, color: "#5A7080", margin: 0 }}>📍 {BRAND.city}</p>
+        </div>
       </Card>
     </div>
   );
