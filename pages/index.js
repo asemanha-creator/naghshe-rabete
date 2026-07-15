@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useMemo } from "react";
 
 // ---------- Branding ----------
@@ -603,6 +601,27 @@ export default function App() {
   const [adminRows, setAdminRows] = useState(null);
   const [prevResultInput, setPrevResultInput] = useState("");
   const [prevResultText, setPrevResultText] = useState("");
+  const [resultsSent, setResultsSent] = useState(false);
+  const [smsClicked, setSmsClicked] = useState(false);
+  const [gateCopyStatus, setGateCopyStatus] = useState("idle");
+
+  function gateRawDataText() {
+    let digits = "";
+    DOMAINS.forEach((d) => {
+      d.items.forEach((_, i) => { digits += String((ans1[d.key] || {})[i] ?? 0); });
+    });
+    DOMAINS.forEach((d) => {
+      d.items.forEach((_, i) => { digits += String((ans2[d.key] || {})[i] ?? 0); });
+    });
+    return `CPL1|${code}|${digits}`;
+  }
+
+  function gateSmsLink() {
+    const number = "+989015091346";
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const sep = isIOS ? "&" : "?";
+    return `sms:${number}${sep}body=${encodeURIComponent(gateRawDataText())}`;
+  }
   const [showPrevInput, setShowPrevInput] = useState(false);
   const [viaJoinLink, setViaJoinLink] = useState(false);
   const [linkCopyStatus, setLinkCopyStatus] = useState("idle");
@@ -848,7 +867,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۷-۱۰ / ارسالِ لینکِ دعوتِ همسر هم از طریقِ پیامک
+              نسخه: ۲۰۲۶-۰۷-۱۴-پ / پیامِ گیت انگیزه‌بخش‌تر شد
             </p>
           </Card>
         )}
@@ -1048,7 +1067,37 @@ export default function App() {
           </Card>
         )}
 
-        {screen === "results" && (
+        {screen === "results" && !resultsSent && (
+          <Card style={{ textAlign: "center", padding: "34px 22px", border: "3px solid #2B6777" }}>
+            <div style={{ fontSize: 40, marginBottom: 10 }}>📩</div>
+            <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1F2D3D", margin: "0 0 10px" }}>پیش از دیدنِ نقشه‌ی مشترک</h2>
+            <p style={{ fontSize: 13.5, color: "#7A5B2E", fontWeight: 700, lineHeight: 1.9, marginBottom: 18 }}>
+              💌 برایِ این‌که دکتر عقیلی بتواند بر اساسِ نتیجه‌ی دقیقِ شما راهنمایی‌تان کند و در این مسیر کنارتان بماند، همین الان نتیجه را برایش بفرستید — این تنها راهی است که واقعاً می‌تواند به شما کمک کند، فقط چند ثانیه طول می‌کشد.
+            </p>
+            <a href={gateSmsLink()} onClick={() => setSmsClicked(true)}
+              style={{ display: "block", width: "100%", padding: "16px", borderRadius: 14, background: "#2B6777", color: "#fff", fontWeight: 800, textAlign: "center", textDecoration: "none", fontSize: 15, marginBottom: 10 }}>
+              ✅ ۱) ارسال از طریقِ پیامک
+            </a>
+            <button onClick={async () => {
+              try { await navigator.clipboard.writeText(gateRawDataText()); setGateCopyStatus("copied"); } catch (e) { setGateCopyStatus("failed"); }
+            }} style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #C9DEE8", background: "#fff", color: "#5A7080", fontWeight: 600, cursor: "pointer", fontSize: 12, marginBottom: 8 }}>
+              {gateCopyStatus === "copied" ? "✅ کپی شد! حالا در پیامک بچسبانید و بفرستید" : gateCopyStatus === "failed" ? "❌ کپی نشد — از باکسِ زیر با انگشت انتخاب کنید" : "📋 اگر پیامک باز نشد: کپیِ دستیِ نتیجه"}
+            </button>
+            {gateCopyStatus === "failed" && (
+              <textarea readOnly value={gateRawDataText()} rows={3} onFocus={(e) => e.target.select()}
+                style={{ width: "100%", padding: "8px 10px", borderRadius: 10, border: "2px solid #2B6777", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff", marginBottom: 10 }} />
+            )}
+            <div style={{ borderTop: "1px dashed #E8DCC8", margin: "18px 0", paddingTop: 18 }}>
+              <p style={{ fontSize: 11.5, color: "#9AAEB9", marginBottom: 12 }}>۲) بعد از ارسال، این دکمه را بزنید:</p>
+              <button onClick={() => setResultsSent(true)} disabled={!smsClicked}
+                style={{ width: "100%", padding: "15px", borderRadius: 14, border: "none", background: smsClicked ? "#4C7A5E" : "#D6E3EA", color: "#fff", fontSize: 15, fontWeight: 700, cursor: smsClicked ? "pointer" : "not-allowed" }}>
+                {smsClicked ? "فرستادم — نمایشِ نقشه‌ی مشترک" : "ابتدا دکمه‌ی «ارسال از طریقِ پیامک» را بزنید"}
+              </button>
+            </div>
+          </Card>
+        )}
+
+        {screen === "results" && resultsSent && (
           <ResultsView code={code} scores={scores} context={context} sd1={sd1} sd2={sd2} ans1={ans1} ans2={ans2} saveWarning={saveWarning} onGoAdmin={() => setScreen("adminLogin")} prevResultText={prevResultText} />
         )}
 
