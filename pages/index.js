@@ -914,7 +914,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۷-۱۵-ع / دستورالعملِ کوتاه برایِ هر باکس
+              نسخه: ۲۰۲۶-۰۷-۱۶-ب / پیش‌نمایشِ انگیزه‌بخش قبل از ارسال (هر دو حالت)
             </p>
             </div>
           </Card>
@@ -1112,10 +1112,29 @@ export default function App() {
           const hasHighSeverity = myFlags.some((f) => f.severity === "بالا");
 
           if (!soloSmsClicked) {
+            const teaserWeakest = [...DOMAINS].sort((a, b) => myScores[a.key] - myScores[b.key])[0];
             return (
               <Card style={{ textAlign: "center", padding: "34px 22px", border: "3px solid #2B6777" }}>
-                <div style={{ fontSize: 40, marginBottom: 10 }}>📩</div>
-                <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1F2D3D", margin: "0 0 10px" }}>پیش از دیدنِ نتیجه</h2>
+                <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
+                <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>پاسخ‌هایتان ثبت شد</h2>
+                <p style={{ fontSize: 12.5, color: "#8CA3B0", marginBottom: 16 }}>پیش‌نمایشِ کوتاهِ نتیجه‌ی شما:</p>
+
+                <div style={{ background: "#EAF4FB", borderRadius: 14, padding: "16px", marginBottom: 18 }}>
+                  <div style={{ display: "flex", justifyContent: "center", gap: 24 }}>
+                    <div>
+                      <div style={{ fontSize: 26, fontWeight: 800, color: LEVEL_COLOR[level(myOverall)] }}>{myOverall}٪</div>
+                      <div style={{ fontSize: 10.5, color: "#5A7080" }}>وضعیتِ کلی</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: "#2B6777", marginTop: 4 }}>{teaserWeakest.short}</div>
+                      <div style={{ fontSize: 10.5, color: "#5A7080" }}>بیشترین نیاز به توجه</div>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 11.5, color: "#5A7080", lineHeight: 1.85, marginTop: 12, marginBottom: 0 }}>
+                    تحلیلِ کاملِ هر ۶ حیطه، الگوهایِ رفتاری، و راهکارهایِ عملی — بعد از ارسالِ نتیجه برایِ دفتر، همین‌جا برایتان باز می‌شود.
+                  </p>
+                </div>
+
                 <p style={{ fontSize: 13.5, color: "#7A5B2E", fontWeight: 700, lineHeight: 1.9, marginBottom: 18 }}>
                   💌 برایِ این‌که دکتر عقیلی بتواند بر اساسِ نتیجه‌ی دقیقِ شما راهنمایی‌تان کند، همین الان نتیجه را برایش بفرستید — فقط چند ثانیه طول می‌کشد.
                 </p>
@@ -1136,7 +1155,7 @@ export default function App() {
                   <p style={{ fontSize: 11.5, color: "#9AAEB9", marginBottom: 12 }}>۲) وقتی مطمئن شدید پیامک واقعاً ارسال شد، این دکمه را بزنید:</p>
                   <button onClick={() => setSoloSmsClicked(true)} disabled={!soloSmsAttempted}
                     style={{ width: "100%", padding: "15px", borderRadius: 14, border: "none", background: soloSmsAttempted ? "#4C7A5E" : "#D6E3EA", color: "#fff", fontSize: 15, fontWeight: 700, cursor: soloSmsAttempted ? "pointer" : "not-allowed" }}>
-                    {soloSmsAttempted ? "فرستادم — نمایشِ نتیجه" : "ابتدا مرحله‌ی ۱ را انجام دهید"}
+                    {soloSmsAttempted ? "فرستادم — نمایشِ نتیجه‌ی کامل" : "ابتدا مرحله‌ی ۱ را انجام دهید"}
                   </button>
                 </div>
               </Card>
@@ -1151,23 +1170,113 @@ export default function App() {
                 <p style={{ fontSize: 11.5, color: "#8CA3B0", lineHeight: 1.85 }}>کدِ شما: <b style={{ color: "#2B6777" }}>{code}</b></p>
               </div>
 
-              <div style={{ background: "#EAF4FB", borderRadius: 12, padding: "12px", textAlign: "center", marginBottom: 16 }}>
-                <span style={{ fontSize: 11.5, color: "#5A7080" }}>امتیازِ کلیِ شما</span>
-                <div style={{ fontSize: 24, fontWeight: 800, color: LEVEL_COLOR[level(myOverall)] }}>{myOverall} از ۱۰۰</div>
-              </div>
-
-              {DOMAINS.map((d) => (
-                <div key={d.key} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-                  <span style={{ fontSize: 11.5, width: 70, color: "#4B6070" }}>{d.short}</span>
-                  <div style={{ flex: 1, height: 8, background: "#EAF4FB", borderRadius: 4, overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${myScores[d.key]}%`, background: LEVEL_COLOR[level(myScores[d.key])] }} />
+              {(() => {
+                const withAvgOv = DOMAINS.map((d) => ({ d, avg: myScores[d.key] }));
+                const weakestOv = [...withAvgOv].sort((a, b) => a.avg - b.avg)[0];
+                const anyHighFlagOv = hasHighSeverity;
+                const patternsForOverview = detectPatterns(myScores, myScores);
+                let severity, sevColor, treatability;
+                if (anyHighFlagOv || myOverall < 40) {
+                  severity = "بحرانی"; sevColor = "#A6432F";
+                  treatability = "نیازمندِ پیگیریِ فوریِ حرفه‌ای — تاخیر، ریسک را افزایش می‌دهد.";
+                } else if (patternsForOverview.length > 0 || myOverall < 60) {
+                  severity = "قابلِ توجه"; sevColor = "#B9822F";
+                  treatability = "قابلِ بهبود با اقدامِ به‌موقع و آگاهانه.";
+                } else if (myOverall < 75) {
+                  severity = "خفیف"; sevColor = "#B9822F";
+                  treatability = "قابلِ بهبود با اقدامِ به‌موقع و آگاهانه.";
+                } else {
+                  severity = "در حدِ طبیعی"; sevColor = "#4C7A5E";
+                  treatability = "وضعیتِ پایدار؛ حفظِ روندِ فعلی کافی است.";
+                }
+                return (
+                  <div style={{ background: "#F7FAFC", borderRadius: 14, padding: "16px", marginBottom: 18 }}>
+                    <p style={{ fontSize: 12.5, fontWeight: 800, color: "#1F2D3D", textAlign: "center", margin: "0 0 12px" }}>📋 نمای کلی</p>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                      <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+                        <div style={{ fontSize: 20, fontWeight: 800, color: LEVEL_COLOR[level(myOverall)] }}>{myOverall}٪</div>
+                        <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>درصدِ وضعیتِ کلی</div>
+                      </div>
+                      <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+                        <div style={{ fontSize: 14, fontWeight: 800, color: "#2B6777" }}>{weakestOv.d.short}</div>
+                        <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>بیشترین مشکل در این ناحیه</div>
+                      </div>
+                      <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+                        <div style={{ fontSize: 14, fontWeight: 800, color: sevColor }}>{severity}</div>
+                        <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>شدتِ وضعیت</div>
+                      </div>
+                      <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "#2B6777", lineHeight: 1.5 }}>{treatability}</div>
+                        <div style={{ fontSize: 10.5, color: "#8CA3B0", marginTop: 4 }}>چشم‌اندازِ بهبود</div>
+                      </div>
+                    </div>
                   </div>
-                  <span style={{ fontSize: 11, color: "#8CA3B0", width: 26 }}>{myScores[d.key]}</span>
-                </div>
-              ))}
+                );
+              })()}
+
+              <h3 style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 10px" }}>تحلیلِ اختصاصیِ هر حیطه</h3>
+              {(() => {
+                const withAvg2 = DOMAINS.map((d) => ({ d, avg: myScores[d.key] }));
+                const sorted = [...withAvg2].sort((a, b) => a.avg - b.avg);
+                const weakestKey = sorted[0].d.key;
+                const strongestKey = sorted[sorted.length - 1].d.key;
+                return DOMAINS.map((d) => {
+                  const avg = myScores[d.key];
+                  const lv = level(avg);
+                  let rankNote = "";
+                  if (d.key === weakestKey) {
+                    rankNote = "این حیطه، در مقایسه با ۵ حیطه‌ی دیگرِ شما، پایین‌ترین امتیاز را دارد — نقطه‌ی شروعِ منطقیِ کار همین‌جاست.";
+                  } else if (d.key === strongestKey) {
+                    rankNote = "این حیطه، در مقایسه با بقیه‌ی حیطه‌های شما، بالاترین امتیاز را دارد.";
+                  } else {
+                    rankNote = `نسبت به میانگینِ کلیِ شما (${myOverall})، این حیطه ${avg >= myOverall ? "کمی بالاتر" : "کمی پایین‌تر"} است.`;
+                  }
+                  return (
+                    <div key={d.key} style={{ padding: "12px 0", borderBottom: "1px solid #EEF3F6" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                        <h4 style={{ fontSize: 13.5, fontWeight: 700, color: "#1F2D3D", margin: 0 }}>{d.title}</h4>
+                        <span style={{ fontSize: 11.5, fontWeight: 700, color: LEVEL_COLOR[lv] }}>{LEVEL_LABEL[lv]} · {avg}</span>
+                      </div>
+                      <p style={{ fontSize: 11, color: "#5A7080", lineHeight: 1.85, margin: "5px 0 0" }}>{rankNote}</p>
+                      <div style={{ fontSize: 12, color: "#4B6070", lineHeight: 1.8, margin: "7px 0 0", background: "#F7FAFC", padding: "8px 10px", borderRadius: 8 }}>
+                        {d.action[lv].map((a, i) => (
+                          <div key={i} style={{ marginBottom: i < d.action[lv].length - 1 ? 4 : 0 }}>💡 {a}</div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+
+              {(() => {
+                const patterns = detectPatterns(myScores, myScores);
+                if (patterns.length === 0) return null;
+                return (
+                  <div style={{ marginTop: 18 }}>
+                    <p style={{ fontSize: 12, fontWeight: 700, color: "#A6432F", margin: "0 0 8px" }}>الگوهای شناسایی‌شده (بر پایه‌ی ترکیبِ چند حیطه):</p>
+                    {patterns.map((p) => {
+                      const scoreStr = p.domains.map((dk) => {
+                        const dom = DOMAINS.find((x) => x.key === dk);
+                        return `${dom.short}=${myScores[dk]}`;
+                      }).join("، ");
+                      return (
+                        <div key={p.id} style={{ background: "#FBF3E7", border: "1px solid #F0DDBB", borderRadius: 12, padding: "10px 14px", marginBottom: 8 }}>
+                          <div style={{ fontSize: 13, fontWeight: 800, color: "#7A5B2E", marginBottom: 4 }}>⚠ {p.title}</div>
+                          <p style={{ fontSize: 10.5, color: "#8C6D3F", margin: "0 0 6px", fontFamily: "monospace", direction: "ltr", textAlign: "right" }}>نمره‌هایِ شما: {scoreStr}</p>
+                          <p style={{ fontSize: 11.5, color: "#5A4B33", lineHeight: 1.85, margin: "0 0 8px" }}>{p.mechanism}</p>
+                          <p style={{ fontSize: 11, fontWeight: 700, color: "#2B6777", margin: "0 0 5px" }}>راهکارهایِ فوری:</p>
+                          {p.actions.map((a, i) => (
+                            <div key={i} style={{ fontSize: 11.5, color: "#2B6777", lineHeight: 1.85, marginBottom: 3 }}>➜ {a}</div>
+                          ))}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
 
               {myFlags.length > 0 && (
-                <div style={{ marginTop: 16 }}>
+                <div style={{ marginTop: 18 }}>
                   <p style={{ fontSize: 12, fontWeight: 700, color: "#A6432F", marginBottom: 8 }}>نکاتِ ویژه‌ی شما:</p>
                   {myFlags.map((f, i) => (
                     <div key={i} style={{ fontSize: 11.5, color: "#4B6070", marginBottom: 8, background: f.severity === "بالا" ? "#FBEAE7" : "#F7FAFC", borderRadius: 10, padding: "9px 11px" }}>
@@ -1183,9 +1292,51 @@ export default function App() {
                 </div>
               )}
 
-              <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
+              {(() => {
+                const patternCount = detectPatterns(myScores, myScores).length;
+                let tier, tierColor, tierText, actionLink, actionLabel;
+                if (hasHighSeverity || myOverall < 45) {
+                  tier = "نیازمندِ پیگیریِ حرفه‌ای";
+                  tierColor = "#A6432F";
+                  tierText = `بر اساسِ نتیجه‌ی شما، پیشنهاد می‌شود در اسرع‌وقت یک جلسه‌ی مشاوره با ${BRAND.name} داشته باشید.`;
+                  actionLink = CONSULT_BOOKING_LINK;
+                  actionLabel = "📅 رزروِ جلسه‌ی مشاوره";
+                } else if (patternCount > 0 || myOverall < 65) {
+                  tier = "پیشنهادِ آموزشِ تکمیلی";
+                  tierColor = "#B9822F";
+                  tierText = `شرکت در وبینارها/کارگاه‌های آموزشیِ ${BRAND.academy} می‌تواند کمک‌کننده باشد.`;
+                  actionLink = WEBINAR_PACKAGE_LINK;
+                  actionLabel = "🎓 خریدِ بسته‌ی آموزشی/وبینار";
+                } else {
+                  tier = "روندِ خوب — ادامه دهید";
+                  tierColor = "#4C7A5E";
+                  tierText = "وضعیتِ کلیِ شما مطلوب است؛ توصیه می‌شود همین روند را حفظ کنید.";
+                  actionLink = null;
+                }
+                return (
+                  <div style={{ background: "#FFFFFF", border: `2px solid ${tierColor}`, borderRadius: 12, padding: "14px", marginTop: 18 }}>
+                    <p style={{ fontSize: 13, fontWeight: 800, color: tierColor, margin: "0 0 6px" }}>🧭 مسیرِ پیشنهادی: {tier}</p>
+                    <p style={{ fontSize: 12, color: "#4B6070", lineHeight: 1.9, margin: actionLink ? "0 0 12px" : 0 }}>{tierText}</p>
+                    {actionLink && (
+                      <a href={actionLink} target="_blank" rel="noopener noreferrer" className="no-print"
+                        style={{ display: "block", width: "100%", padding: "11px", borderRadius: 10, background: tierColor, color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13 }}>
+                        {actionLabel}
+                      </a>
+                    )}
+                  </div>
+                );
+              })()}
+
+              <div style={{ marginTop: 18, background: "#EAF4FB", borderRadius: 12, padding: "16px", textAlign: "center" }}>
+                <p style={{ fontSize: 12.5, color: "#2B6777", lineHeight: 1.9, fontWeight: 700, margin: "0 0 4px" }}>
+                  برایِ بحث و بررسیِ تکمیلیِ این نتیجه، می‌توانید از دفترِ {BRAND.name} وقتِ مشاوره بگیرید.
+                </p>
+              </div>
+
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
                 <p style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{BRAND.name}</p>
                 <p style={{ fontSize: 12, color: "#2B6777", margin: "6px 0 4px", fontWeight: 600 }}>📞 {BRAND.phone}</p>
+                <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📷 instagram.com/{BRAND.instagram}</p>
               </div>
 
               <button onClick={() => { setScreen("start"); setSoloSmsClicked(false); setSoloSmsAttempted(false); setSoloCopyStatus("idle"); }}
@@ -1220,10 +1371,31 @@ export default function App() {
           </Card>
         )}
 
-        {screen === "results" && !resultsSent && (
+        {screen === "results" && !resultsSent && (() => {
+          const gateOverall = Math.round(DOMAINS.reduce((s, d) => s + scores.s1[d.key] + scores.s2[d.key], 0) / (DOMAINS.length * 2));
+          const gateWeakest = [...DOMAINS].sort((a, b) => (scores.s1[a.key] + scores.s2[a.key]) - (scores.s1[b.key] + scores.s2[b.key]))[0];
+          return (
           <Card style={{ textAlign: "center", padding: "34px 22px", border: "3px solid #2B6777" }}>
-            <div style={{ fontSize: 40, marginBottom: 10 }}>📩</div>
-            <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1F2D3D", margin: "0 0 10px" }}>پیش از دیدنِ نقشه‌ی مشترک</h2>
+            <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
+            <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>پاسخ‌هایتان ثبت شد</h2>
+            <p style={{ fontSize: 12.5, color: "#8CA3B0", marginBottom: 16 }}>پیش‌نمایشِ کوتاهِ نتیجه‌ی مشترک:</p>
+
+            <div style={{ background: "#EAF4FB", borderRadius: 14, padding: "16px", marginBottom: 18 }}>
+              <div style={{ display: "flex", justifyContent: "center", gap: 24 }}>
+                <div>
+                  <div style={{ fontSize: 26, fontWeight: 800, color: LEVEL_COLOR[level(gateOverall)] }}>{gateOverall}٪</div>
+                  <div style={{ fontSize: 10.5, color: "#5A7080" }}>وضعیتِ کلیِ رابطه</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: "#2B6777", marginTop: 4 }}>{gateWeakest.short}</div>
+                  <div style={{ fontSize: 10.5, color: "#5A7080" }}>بیشترین نیاز به توجه</div>
+                </div>
+              </div>
+              <p style={{ fontSize: 11.5, color: "#5A7080", lineHeight: 1.85, marginTop: 12, marginBottom: 0 }}>
+                نقشه‌ی کاملِ رابطه، مقایسه‌ی دو نفر، الگوها، و راهکارها — بعد از ارسالِ نتیجه برایِ دفتر، همین‌جا برایتان باز می‌شود.
+              </p>
+            </div>
+
             <p style={{ fontSize: 13.5, color: "#7A5B2E", fontWeight: 700, lineHeight: 1.9, marginBottom: 18 }}>
               💌 برایِ این‌که دکتر عقیلی بتواند بر اساسِ نتیجه‌ی دقیقِ شما راهنمایی‌تان کند و در این مسیر کنارتان بماند، همین الان نتیجه را برایش بفرستید — این تنها راهی است که واقعاً می‌تواند به شما کمک کند، فقط چند ثانیه طول می‌کشد.
             </p>
@@ -1248,7 +1420,8 @@ export default function App() {
               </button>
             </div>
           </Card>
-        )}
+          );
+        })()}
 
         {screen === "results" && resultsSent && (
           <ResultsView code={code} scores={scores} context={context} sd1={sd1} sd2={sd2} ans1={ans1} ans2={ans2} saveWarning={saveWarning} onGoAdmin={() => setScreen("adminLogin")} prevResultText={prevResultText} />
