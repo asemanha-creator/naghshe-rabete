@@ -603,6 +603,10 @@ export default function App() {
   const [prevResultText, setPrevResultText] = useState("");
   const [resultsSent, setResultsSent] = useState(false);
   const [smsClicked, setSmsClicked] = useState(false);
+  const [soloMode, setSoloMode] = useState(false);
+  const [soloSmsClicked, setSoloSmsClicked] = useState(false);
+  const [soloSmsAttempted, setSoloSmsAttempted] = useState(false);
+  const [soloCopyStatus, setSoloCopyStatus] = useState("idle");
   const [gateCopyStatus, setGateCopyStatus] = useState("idle");
 
   function gateRawDataText() {
@@ -705,6 +709,18 @@ export default function App() {
     setConsentChecked(false);
     setPartner(1);
     setDomainIdx(0);
+    setSoloMode(false);
+    setScreen("consent");
+  }
+
+  function startSolo() {
+    setCode(genCode());
+    setAns1({}); setAns2({}); setSd1({}); setSd2({});
+    setContext({ duration: "", age: "", children: "" });
+    setConsentChecked(false);
+    setPartner(1);
+    setDomainIdx(0);
+    setSoloMode(true);
     setScreen("consent");
   }
 
@@ -750,7 +766,11 @@ export default function App() {
       setBusy(true);
       setErr("");
       let res;
-      if (partner === 1) {
+      if (soloMode) {
+        res = await saveState({ createdAt: Date.now(), ans1, ans1Done: true, ans2: {}, ans2Done: false, sd1 });
+        if (!res.ok) setSaveWarning(`⚠ ذخیره‌سازیِ پس‌زمینه (برایِ پژوهشگر) ناموفق بود؛ اما پاسخ‌های شما همچنان محفوظ است. جزئیاتِ فنی: ${res.detail}`);
+        setScreen("soloResult");
+      } else if (partner === 1) {
         res = await saveState({ createdAt: Date.now(), ans1, ans1Done: true, ans2, ans2Done: false, sd1 });
         if (!res.ok) setSaveWarning(`⚠ ذخیره‌سازیِ پس‌زمینه (برایِ پژوهشگر) ناموفق بود؛ اما پاسخ‌های شما همچنان محفوظ است و می‌توانید ادامه دهید. جزئیاتِ فنی: ${res.detail}`);
         setScreen("privateResult");
@@ -801,25 +821,49 @@ export default function App() {
 
       <div style={{ maxWidth: 480, margin: "0 auto" }}>
         {screen === "start" && (
-          <Card>
-            <div style={{ textAlign: "center", marginBottom: 8 }}>
-              <div style={{ fontSize: 34, marginBottom: 6 }}>🌿</div>
-              <p style={{ fontSize: 11, color: "#8CA3B0", margin: "0 0 4px", fontWeight: 700 }}>{BRAND.academy}</p>
-              <h1 style={{ fontSize: 21, color: "#1F2D3D", margin: "0 0 6px", fontWeight: 800 }}>نقشه‌ی رابطه‌یِ ما</h1>
-              <p style={{ fontSize: 13.5, color: "#5A7080", lineHeight: 1.9, margin: 0, fontWeight: 600 }}>
-                زندگی من چه خواهد شد؟ زیر‌پوست رابطه ما چه می‌گذرد و چه آسیب‌هایی رابطه ما را تهدید می‌کند؟
+          <Card style={{ padding: 0, overflow: "hidden" }}>
+            <div style={{
+              background: "radial-gradient(circle at 78% 82%, rgba(240,197,120,0.55) 0%, rgba(240,197,120,0) 6%), radial-gradient(circle at 15% 70%, rgba(240,197,120,0.4) 0%, rgba(240,197,120,0) 5%), radial-gradient(circle at 60% 30%, rgba(240,197,120,0.35) 0%, rgba(240,197,120,0) 4%), radial-gradient(circle at 22% 18%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.18) 9%, rgba(255,255,255,0) 20%), linear-gradient(115deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 22%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.4) 100%), linear-gradient(160deg, #16305E 0%, #2E5590 45%, #5F8FCC 80%, #96BADF 100%)",
+              padding: "9px 10px 8px", textAlign: "center"
+            }}>
+              <div style={{ width: 30, height: 30, margin: "0 auto 5px", borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: 15, lineHeight: 1 }}>🌿</span>
+              </div>
+              <p style={{ fontSize: 13, color: "#D6E4F0", margin: "0 0 4px", fontWeight: 700 }}>{BRAND.academy}</p>
+              <h1 style={{ fontSize: 25, color: "#fff", margin: "0 0 10px", fontWeight: 800 }}>کجای راهم؟</h1>
+              <p style={{ fontSize: 16, color: "#EAF2F9", lineHeight: 1.9, margin: "0 0 11px", fontWeight: 500 }}>
+                سنجشِ رابطه‌یِ ما
               </p>
-              <p style={{ fontSize: 12.5, color: "#8CA3B0", lineHeight: 1.9, margin: "8px 0 0" }}>
-                یک سنجش سریع و مشترک برای شناخت نقاط قوت و آسیب‌پذیریِ رابطه — هرکدام از شما جداگانه پاسخ می‌دهد، سپس نقشه‌ی مشترکتان ساخته می‌شود.
+              <p style={{ fontSize: 15, color: "#DCE8F3", lineHeight: 1.9, margin: 0, fontWeight: 500 }}>
+                می‌خواهم بدانم که زندگی من چگونه پیش می‌رود؟<br />و من کجای زندگی خودم هستم و چقدر از همسرم دور یا نزدیکم؟
               </p>
             </div>
 
-            <button onClick={startNew} style={{ width: "100%", marginTop: 24, padding: "15px", borderRadius: 14, border: "none", background: "#2B6777", color: "#fff", fontSize: 15.5, fontWeight: 700, cursor: "pointer" }}>
-              شروع سنجشِ جدید برای یک زوج
-            </button>
+            <div style={{ padding: "22px 20px 20px" }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#8CA3B0", textAlign: "center", margin: "0 0 14px" }}>
+                یکی از این دو روش را انتخاب کنید
+              </p>
+
+              <button onClick={startNew} style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, textAlign: "right", padding: "16px", borderRadius: 16, border: "1px solid #D9E8EA", background: "#F7FAFC", cursor: "pointer", marginBottom: 10 }}>
+                <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 12, background: "#2B6777", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>👫</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "#1F2D3D" }}>زوجی — نقشه‌ی مشترک</div>
+                  <div style={{ fontSize: 11, color: "#8CA3B0", marginTop: 2 }}>هردویتان پاسخ می‌دهید، نقشه‌ی مشترک می‌بینید</div>
+                </div>
+                <div style={{ fontSize: 18, color: "#2B6777" }}>‹</div>
+              </button>
+
+              <button onClick={startSolo} style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, textAlign: "right", padding: "16px", borderRadius: 16, border: "1px solid #F0DDBB", background: "#FBF3E7", cursor: "pointer" }}>
+                <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 12, background: "#E8975C", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>🧍</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "#1F2D3D" }}>فردی و مستقل</div>
+                  <div style={{ fontSize: 11, color: "#8CA3B0", marginTop: 2 }}>بدونِ نیازِ همسر؛ فقط نتیجه‌ی خودتان</div>
+                </div>
+                <div style={{ fontSize: 18, color: "#E8975C" }}>‹</div>
+              </button>
 
             <button onClick={() => setShowPrevInput((v) => !v)} className="no-print"
-              style={{ width: "100%", marginTop: 10, background: "none", border: "none", color: "#5A7080", fontSize: 11.5, cursor: "pointer", textDecoration: "underline" }}>
+              style={{ width: "100%", marginTop: 14, background: "none", border: "none", color: "#5A7080", fontSize: 11.5, cursor: "pointer", textDecoration: "underline" }}>
               {showPrevInput ? "بستن" : "بازآزماییِ دوره‌ای؟ نتیجه‌ی قبلی را برایِ مقایسه بچسبانید (اختیاری)"}
             </button>
             {showPrevInput && (
@@ -842,7 +886,10 @@ export default function App() {
               <div style={{ flex: 1, height: 1, background: "#DCEAF2" }} />
             </div>
 
-            <p style={{ fontSize: 12.5, color: "#5A7080", marginBottom: 8 }}>بازگشت با کدِ قبلی رابطه‌تان:</p>
+            <p style={{ fontSize: 12.5, color: "#5A7080", marginBottom: 4 }}>بازگشت با کدِ قبلی رابطه‌تان:</p>
+            <p style={{ fontSize: 10.5, color: "#9AAEB9", marginBottom: 8, lineHeight: 1.7 }}>
+              اگر قبلاً شروع کرده‌اید، کدِ ۶ حرفی‌تان را اینجا وارد کنید تا دقیقاً از همان‌جا ادامه دهید یا نتیجه را دوباره ببینید.
+            </p>
             <div style={{ display: "flex", gap: 8 }}>
               <input value={codeInput} onChange={(e) => setCodeInput(e.target.value.toUpperCase())} placeholder="مثلاً: A2K9QZ"
                 style={{ flex: 1, padding: "12px 14px", borderRadius: 12, border: "1px solid #C9DEE8", fontSize: 14, textAlign: "center", letterSpacing: 2, ...FONT }} maxLength={6} />
@@ -855,7 +902,7 @@ export default function App() {
               پاسخ‌ها با یک کدِ اختصاصی ذخیره می‌شود؛ هرکس این کد را داشته باشد می‌تواند نتیجه را ببیند، پس آن را نزد خود نگه دارید.
             </p>
             <button onClick={() => setScreen("adminLogin")} className="no-print" style={{ marginTop: 18, background: "none", border: "none", color: "#B7C6CE", fontSize: 10.5, cursor: "pointer", textDecoration: "underline" }}>
-              پنل آموزشی
+              پنل آموزشی (فقط برایِ پژوهشگر)
             </button>
 
             <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
@@ -867,8 +914,9 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۷-۱۴-پ / پیامِ گیت انگیزه‌بخش‌تر شد
+              نسخه: ۲۰۲۶-۰۷-۱۵-ع / دستورالعملِ کوتاه برایِ هر باکس
             </p>
+            </div>
           </Card>
         )}
 
@@ -1038,6 +1086,111 @@ export default function App() {
 
               <button onClick={goNext} style={{ width: "100%", marginTop: 20, padding: "14px", borderRadius: 14, border: "none", background: partner === 1 ? "#2B6777" : "#E8975C", color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
                 {partner === 1 ? "یا: ادامه با همینِ گوشی (دادنِ دستگاه به همسر)" : "متوجه شدم — دیدنِ نتیجه‌ی مشترک"}
+              </button>
+            </Card>
+          );
+        })()}
+
+        {screen === "soloResult" && (() => {
+          function soloRawDataText() {
+            let digits = "";
+            DOMAINS.forEach((d) => {
+              d.items.forEach((_, i) => { digits += String((ans1[d.key] || {})[i] ?? 0); });
+            });
+            return `SOLO1|${code}|${digits}`;
+          }
+          function soloSmsLink() {
+            const number = "+989015091346";
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const sep = isIOS ? "&" : "?";
+            return `sms:${number}${sep}body=${encodeURIComponent(soloRawDataText())}`;
+          }
+          const myScores = {};
+          DOMAINS.forEach((d) => { myScores[d.key] = scoreDomain(ans1[d.key] || {}, d.items); });
+          const myOverall = Math.round(DOMAINS.reduce((s, d) => s + myScores[d.key], 0) / DOMAINS.length);
+          const myFlags = detectCriticalFlags(ans1, {}).filter((f) => f.partner === 1);
+          const hasHighSeverity = myFlags.some((f) => f.severity === "بالا");
+
+          if (!soloSmsClicked) {
+            return (
+              <Card style={{ textAlign: "center", padding: "34px 22px", border: "3px solid #2B6777" }}>
+                <div style={{ fontSize: 40, marginBottom: 10 }}>📩</div>
+                <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1F2D3D", margin: "0 0 10px" }}>پیش از دیدنِ نتیجه</h2>
+                <p style={{ fontSize: 13.5, color: "#7A5B2E", fontWeight: 700, lineHeight: 1.9, marginBottom: 18 }}>
+                  💌 برایِ این‌که دکتر عقیلی بتواند بر اساسِ نتیجه‌ی دقیقِ شما راهنمایی‌تان کند، همین الان نتیجه را برایش بفرستید — فقط چند ثانیه طول می‌کشد.
+                </p>
+                <a href={soloSmsLink()} onClick={() => setSoloSmsAttempted(true)}
+                  style={{ display: "block", width: "100%", padding: "16px", borderRadius: 14, background: "#2B6777", color: "#fff", fontWeight: 800, textAlign: "center", textDecoration: "none", fontSize: 15, marginBottom: 10 }}>
+                  ✅ ۱) ارسال از طریقِ پیامک
+                </a>
+                <button onClick={async () => {
+                  try { await navigator.clipboard.writeText(soloRawDataText()); setSoloCopyStatus("copied"); setSoloSmsAttempted(true); } catch (e) { setSoloCopyStatus("failed"); }
+                }} style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #C9DEE8", background: "#fff", color: "#5A7080", fontWeight: 600, cursor: "pointer", fontSize: 12, marginBottom: 8 }}>
+                  {soloCopyStatus === "copied" ? "✅ کپی شد! حالا در پیامک بچسبانید و بفرستید" : soloCopyStatus === "failed" ? "❌ کپی نشد — از باکسِ زیر با انگشت انتخاب کنید" : "📋 اگر پیامک باز نشد: کپیِ دستیِ نتیجه"}
+                </button>
+                {soloCopyStatus === "failed" && (
+                  <textarea readOnly value={soloRawDataText()} rows={3} onFocus={(e) => e.target.select()}
+                    style={{ width: "100%", padding: "8px 10px", borderRadius: 10, border: "2px solid #2B6777", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff", marginBottom: 10 }} />
+                )}
+                <div style={{ borderTop: "1px dashed #E8DCC8", margin: "18px 0", paddingTop: 18 }}>
+                  <p style={{ fontSize: 11.5, color: "#9AAEB9", marginBottom: 12 }}>۲) وقتی مطمئن شدید پیامک واقعاً ارسال شد، این دکمه را بزنید:</p>
+                  <button onClick={() => setSoloSmsClicked(true)} disabled={!soloSmsAttempted}
+                    style={{ width: "100%", padding: "15px", borderRadius: 14, border: "none", background: soloSmsAttempted ? "#4C7A5E" : "#D6E3EA", color: "#fff", fontSize: 15, fontWeight: 700, cursor: soloSmsAttempted ? "pointer" : "not-allowed" }}>
+                    {soloSmsAttempted ? "فرستادم — نمایشِ نتیجه" : "ابتدا مرحله‌ی ۱ را انجام دهید"}
+                  </button>
+                </div>
+              </Card>
+            );
+          }
+
+          return (
+            <Card>
+              <div style={{ textAlign: "center", marginBottom: 14 }}>
+                <div style={{ fontSize: 30, marginBottom: 6 }}>✅</div>
+                <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>نتیجه‌ی شما</h2>
+                <p style={{ fontSize: 11.5, color: "#8CA3B0", lineHeight: 1.85 }}>کدِ شما: <b style={{ color: "#2B6777" }}>{code}</b></p>
+              </div>
+
+              <div style={{ background: "#EAF4FB", borderRadius: 12, padding: "12px", textAlign: "center", marginBottom: 16 }}>
+                <span style={{ fontSize: 11.5, color: "#5A7080" }}>امتیازِ کلیِ شما</span>
+                <div style={{ fontSize: 24, fontWeight: 800, color: LEVEL_COLOR[level(myOverall)] }}>{myOverall} از ۱۰۰</div>
+              </div>
+
+              {DOMAINS.map((d) => (
+                <div key={d.key} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                  <span style={{ fontSize: 11.5, width: 70, color: "#4B6070" }}>{d.short}</span>
+                  <div style={{ flex: 1, height: 8, background: "#EAF4FB", borderRadius: 4, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${myScores[d.key]}%`, background: LEVEL_COLOR[level(myScores[d.key])] }} />
+                  </div>
+                  <span style={{ fontSize: 11, color: "#8CA3B0", width: 26 }}>{myScores[d.key]}</span>
+                </div>
+              ))}
+
+              {myFlags.length > 0 && (
+                <div style={{ marginTop: 16 }}>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: "#A6432F", marginBottom: 8 }}>نکاتِ ویژه‌ی شما:</p>
+                  {myFlags.map((f, i) => (
+                    <div key={i} style={{ fontSize: 11.5, color: "#4B6070", marginBottom: 8, background: f.severity === "بالا" ? "#FBEAE7" : "#F7FAFC", borderRadius: 10, padding: "9px 11px" }}>
+                      <div style={{ fontWeight: 700, color: "#1F2D3D", marginBottom: 4 }}>🔺 {f.label}</div>
+                      <p style={{ margin: 0, lineHeight: 1.85, color: "#2B6777" }}>➜ {f.action}</p>
+                    </div>
+                  ))}
+                  {hasHighSeverity && (
+                    <p style={{ fontSize: 12, color: "#A6432F", lineHeight: 1.9, background: "#FBEAE7", borderRadius: 10, padding: "10px 12px", fontWeight: 600 }}>
+                      ⚠ پیشنهاد می‌شود این موارد را با یک متخصص در میان بگذارید.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
+                <p style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{BRAND.name}</p>
+                <p style={{ fontSize: 12, color: "#2B6777", margin: "6px 0 4px", fontWeight: 600 }}>📞 {BRAND.phone}</p>
+              </div>
+
+              <button onClick={() => { setScreen("start"); setSoloSmsClicked(false); setSoloSmsAttempted(false); setSoloCopyStatus("idle"); }}
+                style={{ width: "100%", marginTop: 16, padding: "12px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer" }}>
+                بازگشت به صفحه‌ی شروع
               </button>
             </Card>
           );
@@ -1570,21 +1723,29 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
 }
 
 function exportRawCSV(rows) {
-  const completed = (rows || []).filter((r) => r.ans1Done && r.ans2Done);
   const header = ["code", "partner", "duration", "age", "children"];
   DOMAINS.forEach((d) => d.items.forEach((_, i) => header.push(`${d.key}_${i + 1}`)));
   SD_ITEMS.forEach((_, i) => header.push(`sd_${i + 1}`));
 
   const lines = [header.join(",")];
-  completed.forEach((r) => {
-    [1, 2].forEach((p) => {
-      const ans = p === 1 ? r.ans1 : r.ans2;
-      const sd = p === 1 ? r.sd1 : r.sd2;
-      const row = [r.code, p, r.context?.duration || "", r.context?.age || "", r.context?.children || ""];
-      DOMAINS.forEach((d) => d.items.forEach((_, i) => row.push((ans[d.key] || {})[i] ?? "")));
-      SD_ITEMS.forEach((_, i) => row.push((sd || {})[i] ?? ""));
+  (rows || []).forEach((r) => {
+    if (r.ans1Done && r.ans2Done) {
+      // couple: export both partners
+      [1, 2].forEach((p) => {
+        const ans = p === 1 ? r.ans1 : r.ans2;
+        const sd = p === 1 ? r.sd1 : r.sd2;
+        const row = [r.code, p, r.context?.duration || "", r.context?.age || "", r.context?.children || ""];
+        DOMAINS.forEach((d) => d.items.forEach((_, i) => row.push((ans[d.key] || {})[i] ?? "")));
+        SD_ITEMS.forEach((_, i) => row.push((sd || {})[i] ?? ""));
+        lines.push(row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
+      });
+    } else if (r.ans1Done && !r.ans2Done && r.solo) {
+      // solo: single independent respondent
+      const row = [r.code, 1, r.context?.duration || "", r.context?.age || "", r.context?.children || ""];
+      DOMAINS.forEach((d) => d.items.forEach((_, i) => row.push((r.ans1[d.key] || {})[i] ?? "")));
+      SD_ITEMS.forEach((_, i) => row.push((r.sd1 || {})[i] ?? ""));
       lines.push(row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
-    });
+    }
   });
 
   const csv = "\uFEFF" + lines.join("\n");
@@ -1620,12 +1781,32 @@ function parseCoupleRaw(text) {
   return { code, ans1, ans2, ans1Done: true, ans2Done: true, context: {}, createdAt: Date.now() };
 }
 
+function parseSoloRaw(text) {
+  const clean = text.trim();
+  const parts = clean.split("|").map((p) => p.trim());
+  if (parts[0] !== "SOLO1") throw new Error("invalid format");
+  const code = parts[1] || "UNKNOWN";
+  const digits = (parts[2] || "").replace(/\D/g, "");
+  const totalItems = DOMAINS.reduce((s, d) => s + d.items.length, 0);
+  if (digits.length < totalItems) throw new Error("incomplete data");
+  const ans1 = {};
+  let pos = 0;
+  DOMAINS.forEach((d) => {
+    ans1[d.key] = {};
+    d.items.forEach((_, i) => { ans1[d.key][i] = Number(digits[pos]); pos++; });
+  });
+  return { code, ans1, ans2: {}, sd1: {}, sd2: {}, ans1Done: true, ans2Done: false, solo: true, context: {}, createdAt: Date.now() };
+}
+
 function parseCoupleRawBatch(bigText) {
-  const chunks = bigText.split(/(?=CPL1\|)/g).map((c) => c.trim()).filter((c) => c.startsWith("CPL1|"));
+  const chunks = bigText.split(/(?=CPL1\||SOLO1\|)/g).map((c) => c.trim()).filter((c) => c.startsWith("CPL1|") || c.startsWith("SOLO1|"));
   const parsed = [];
   let failedCount = 0;
   chunks.forEach((c) => {
-    try { parsed.push(parseCoupleRaw(c)); } catch (e) { failedCount++; }
+    try {
+      if (c.startsWith("CPL1|")) parsed.push(parseCoupleRaw(c));
+      else parsed.push(parseSoloRaw(c));
+    } catch (e) { failedCount++; }
   });
   return { parsed, failedCount };
 }
@@ -1636,6 +1817,7 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
   const [pasteErr, setPasteErr] = useState("");
   const allRows = [...(rows || []), ...manualRows];
   const completed = allRows.filter((r) => r.ans1Done && r.ans2Done);
+  const soloCount = allRows.filter((r) => r.ans1Done && !r.ans2Done && r.solo).length;
   const domainAvgAll = {};
   DOMAINS.forEach((d) => {
     const vals = completed.map((r) => {
@@ -1661,7 +1843,7 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
           <p style={{ fontSize: 11.5, color: "#5A7080", marginBottom: 8, lineHeight: 1.85 }}>
             متنی که زوج از دکمه‌ی «کپیِ داده‌ی خام» در صفحه‌ی نتیجه گرفته را اینجا جای‌گذاری کنید (می‌توانید چند زوج را پشتِ‌سرِهم پیست کنید):
           </p>
-          <textarea value={pasteText} onChange={(e) => setPasteText(e.target.value)} rows={4} placeholder="CPL1|A2K9QZ|4235142351..."
+          <textarea value={pasteText} onChange={(e) => setPasteText(e.target.value)} rows={4} placeholder="CPL1|A2K9QZ|4235142351... یا SOLO1|B7X2QK|423514235..."
             style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 11.5, marginBottom: 8, direction: "ltr", resize: "vertical" }} />
           <button onClick={() => {
             const { parsed, failedCount } = parseCoupleRawBatch(pasteText);
@@ -1689,6 +1871,10 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
             <div style={{ flex: 1, background: "#EAF4FB", borderRadius: 12, padding: "12px", textAlign: "center" }}>
               <div style={{ fontSize: 20, fontWeight: 800, color: "#2B6777" }}>{completed.length}</div>
               <div style={{ fontSize: 10.5, color: "#5A7080" }}>زوج‌های تکمیل‌شده</div>
+            </div>
+            <div style={{ flex: 1, background: "#EAF4FB", borderRadius: 12, padding: "12px", textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#2B6777" }}>{soloCount}</div>
+              <div style={{ fontSize: 10.5, color: "#5A7080" }}>پاسخ‌دهندگانِ فردی</div>
             </div>
           </div>
 
