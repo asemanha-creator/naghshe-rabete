@@ -662,6 +662,7 @@ export default function App() {
       sd2: patch.sd2 ?? sd2,
       ans1Done: patch.ans1Done ?? false,
       ans2Done: patch.ans2Done ?? false,
+      solo: patch.solo ?? false,
     };
     try {
       const r = await fetch("/api/save", {
@@ -743,7 +744,7 @@ export default function App() {
       setErr("");
       let res;
       if (soloMode) {
-        res = await saveState({ createdAt: Date.now(), ans1, ans1Done: true, ans2: {}, ans2Done: false, sd1 });
+        res = await saveState({ createdAt: Date.now(), ans1, ans1Done: true, ans2: {}, ans2Done: false, sd1, solo: true });
         if (!res.ok) setSaveWarning(`⚠ ذخیره‌سازیِ پس‌زمینه (برایِ پژوهشگر) ناموفق بود؛ اما پاسخ‌های شما همچنان محفوظ است. جزئیاتِ فنی: ${res.detail}`);
         setScreen("soloResult");
       } else if (partner === 1) {
@@ -890,7 +891,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۷-۲۴-پ / افزودنِ کپیِ متنِ CSV به‌عنوانِ جایگزینِ دانلود
+              نسخه: ۲۰۲۶-۰۷-۲۶ / رفعِ باگِ مهم: پاسخ‌هایِ فردی از CSV حذف می‌شدند
             </p>
             </div>
           </Card>
@@ -1772,7 +1773,7 @@ function buildRawCSV(rows) {
         SD_ITEMS.forEach((_, i) => row.push((sd || {})[i] ?? ""));
         lines.push(row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
       });
-    } else if (r.ans1Done && !r.ans2Done && r.solo) {
+    } else if (r.ans1Done && !r.ans2Done) {
       // solo: single independent respondent
       const row = [r.code, 1, r.context?.duration || "", r.context?.age || "", r.context?.children || ""];
       DOMAINS.forEach((d) => d.items.forEach((_, i) => row.push((r.ans1[d.key] || {})[i] ?? "")));
@@ -1855,7 +1856,7 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
   const [csvCopyStatus, setCsvCopyStatus] = useState("idle");
   const allRows = [...(rows || []), ...manualRows];
   const completed = allRows.filter((r) => r.ans1Done && r.ans2Done);
-  const soloCount = allRows.filter((r) => r.ans1Done && !r.ans2Done && r.solo).length;
+  const soloCount = allRows.filter((r) => r.ans1Done && !r.ans2Done).length;
   const domainAvgAll = {};
   DOMAINS.forEach((d) => {
     const vals = completed.map((r) => {
