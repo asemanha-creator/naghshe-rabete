@@ -1,11 +1,12 @@
-import { kv } from "@vercel/kv";
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
 
 export default async function handler(req, res) {
-  if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
   try {
     const { code } = req.query;
-    if (!code) return res.status(400).json({ error: "missing code" });
-    const raw = await kv.get(`couple:${String(code).toUpperCase()}`);
+    if (!code) return res.status(400).json({ error: "code لازم است" });
+    const raw = await redis.get(`couple:${code}`);
     if (!raw) return res.status(404).json({ error: "not found" });
     const data = typeof raw === "string" ? JSON.parse(raw) : raw;
     res.status(200).json({ data });
