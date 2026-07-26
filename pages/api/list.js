@@ -1,21 +1,22 @@
-import { kv } from "@vercel/kv";
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
 
 export default async function handler(req, res) {
-  if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
   try {
-    const codes = (await kv.smembers("couple:index")) || [];
+    const codes = await redis.smembers("couple:index");
     const rows = [];
-    for (const code of codes) {
-      const raw = await kv.get(`couple:${code}`);
-      if (raw) {
-        try {
-          rows.push(typeof raw === "string" ? JSON.parse(raw) : raw);
-        } catch (e) {}
-      }
+    for (const code of codes || []) {
+      try {
+        const raw = await redis.get(`couple:${code}`);
+        if (!raw) continue;
+        const d = typeof raw === "string" ? JSON.parse(raw) : raw;
+        rows.push(d);
+      } catch (e) {}
     }
     res.status(200).json({ rows });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: e.message || "unknown error" });
+    res.status(500).json({ rows: [], error: e.message || "unknown error" });
   }
 }
