@@ -891,7 +891,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۷-۲۶ / رفعِ باگِ مهم: پاسخ‌هایِ فردی از CSV حذف می‌شدند
+              نسخه: ۲۰۲۶-۰۷-۲۶-ب / دو دکمه: کپیِ همه، یا فقط داده‌هایِ جدید
             </p>
             </div>
           </Card>
@@ -1854,7 +1854,21 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
   const [pasteText, setPasteText] = useState("");
   const [pasteErr, setPasteErr] = useState("");
   const [csvCopyStatus, setCsvCopyStatus] = useState("idle");
+  const [newCsvCopyStatus, setNewCsvCopyStatus] = useState("idle");
+  const [lastExportAt, setLastExportAt] = useState(0);
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("naghshe_last_export_at");
+      if (saved) setLastExportAt(Number(saved));
+    } catch (e) {}
+  }, []);
+  function markExported() {
+    const now = Date.now();
+    setLastExportAt(now);
+    try { localStorage.setItem("naghshe_last_export_at", String(now)); } catch (e) {}
+  }
   const allRows = [...(rows || []), ...manualRows];
+  const newRows = allRows.filter((r) => (r.createdAt || 0) > lastExportAt);
   const completed = allRows.filter((r) => r.ans1Done && r.ans2Done);
   const soloCount = allRows.filter((r) => r.ans1Done && !r.ans2Done).length;
   const domainAvgAll = {};
@@ -1953,21 +1967,47 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
           <button onClick={onRefresh} style={{ width: "100%", marginTop: 14, padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer" }}>
             بروزرسانی داده‌ها
           </button>
+
+          <p style={{ fontSize: 11.5, fontWeight: 700, color: "#1F2D3D", marginTop: 16, marginBottom: 6 }}>۱) همه‌ی داده‌ها (از ابتدا تا الان)</p>
           <button onClick={() => exportRawCSV(allRows)} disabled={!completed.length && !soloCount}
-            style={{ width: "100%", marginTop: 8, padding: "11px", borderRadius: 12, border: "none", background: (completed.length || soloCount) ? "#2B6777" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: (completed.length || soloCount) ? "pointer" : "not-allowed" }}>
-            ⬇ دانلود داده‌ی خام (CSV) برای تحلیل آماری
+            style={{ width: "100%", padding: "11px", borderRadius: 12, border: "none", background: (completed.length || soloCount) ? "#2B6777" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: (completed.length || soloCount) ? "pointer" : "not-allowed" }}>
+            ⬇ دانلودِ همه‌ی داده‌ها (CSV)
           </button>
           <button onClick={async () => {
             try { await navigator.clipboard.writeText(buildRawCSV(allRows)); setCsvCopyStatus("copied"); } catch (e) { setCsvCopyStatus("failed"); }
           }} disabled={!completed.length && !soloCount}
             style={{ width: "100%", marginTop: 8, padding: "10px", borderRadius: 12, border: "1px solid #C9DEE8", background: "#fff", color: "#5A7080", fontWeight: 600, cursor: (completed.length || soloCount) ? "pointer" : "not-allowed", fontSize: 12.5 }}>
-            {csvCopyStatus === "copied" ? "✅ کپی شد! در یک نُتِ جدید Paste و با پسوندِ .csv ذخیره کنید" : csvCopyStatus === "failed" ? "❌ کپی نشد — از باکسِ زیر با انگشت انتخاب کنید" : "📋 اگر دانلود کار نکرد: کپیِ متنِ CSV"}
+            {csvCopyStatus === "copied" ? "✅ کپی شد! در یک نُتِ جدید Paste و با پسوندِ .csv ذخیره کنید" : csvCopyStatus === "failed" ? "❌ کپی نشد — از باکسِ زیر با انگشت انتخاب کنید" : "📋 اگر دانلود کار نکرد: کپیِ متنِ همه‌ی داده‌ها"}
           </button>
           {csvCopyStatus === "failed" && (
             <textarea readOnly value={buildRawCSV(allRows)} rows={5} onFocus={(e) => e.target.select()}
               style={{ width: "100%", padding: "8px 10px", marginTop: 8, borderRadius: 10, border: "2px solid #2B6777", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
           )}
-          <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 8, textAlign: "center", lineHeight: 1.7 }}>
+
+          <div style={{ borderTop: "1px dashed #DCE8F0", margin: "18px 0 14px" }} />
+
+          <p style={{ fontSize: 11.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 2 }}>۲) فقط داده‌هایِ جدید (از آخرین کپی)</p>
+          <p style={{ fontSize: 10.5, color: "#8CA3B0", marginBottom: 8 }}>
+            {lastExportAt ? `آخرین کپی: ${new Date(lastExportAt).toLocaleString("fa-IR")}` : "هنوز کپی نکرده‌اید"} — {newRows.length} نفرِ جدید
+          </p>
+          <button onClick={async () => {
+            try { await navigator.clipboard.writeText(buildRawCSV(newRows)); setNewCsvCopyStatus("copied"); markExported(); } catch (e) { setNewCsvCopyStatus("failed"); }
+          }} disabled={!newRows.length}
+            style={{ width: "100%", padding: "11px", borderRadius: 12, border: "none", background: newRows.length ? "#E8975C" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: newRows.length ? "pointer" : "not-allowed" }}>
+            📋 کپیِ فقط داده‌هایِ جدید ({newRows.length} نفر)
+          </button>
+          {newCsvCopyStatus === "copied" && (
+            <p style={{ fontSize: 11, color: "#4C7A5E", marginTop: 6, textAlign: "center", fontWeight: 600 }}>✅ کپی شد و به‌عنوانِ «دیده‌شده» علامت خورد</p>
+          )}
+          {newCsvCopyStatus === "failed" && (
+            <textarea readOnly value={buildRawCSV(newRows)} rows={5} onFocus={(e) => e.target.select()}
+              style={{ width: "100%", padding: "8px 10px", marginTop: 8, borderRadius: 10, border: "2px solid #E8975C", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
+          )}
+          <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 4, lineHeight: 1.7 }}>
+            این دکمه فقط پاسخ‌هایی را می‌گیرد که بعد از آخرین‌بارِ کپی‌کردن اضافه شده‌اند (بر اساسِ زمانِ ذخیره‌شده در همین مرورگر).
+          </p>
+
+          <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 12, textAlign: "center", lineHeight: 1.7 }}>
             این فایل، پاسخِ تک‌تکِ گویه‌ها برای هر نفر را دارد — همان چیزی که برای آلفای کرونباخ و تحلیل عاملی لازم است.
           </p>
           {!allRows.length && (
