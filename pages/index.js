@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import import React, { useState, useEffect, useMemo } from "react";
 
 // ---------- Branding ----------
 const BRAND = {
@@ -890,7 +890,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۷-۲۳ / حذفِ گیتِ پیامک — ذخیره‌سازیِ خودکار جایگزین شد
+              نسخه: ۲۰۲۶-۰۷-۲۴ / رفعِ باگِ دکمه‌ی دانلودِ CSV غیرفعال
             </p>
             </div>
           </Card>
@@ -1731,10 +1731,20 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           });
         })()}
 
-        <button onClick={() => window.print()} className="no-print"
-          style={{ width: "100%", marginTop: 20, padding: "13px", borderRadius: 14, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
-          🖨 چاپ / ذخیره به‌صورت PDF
-        </button>
+        <details className="no-print" style={{ marginTop: 20 }}>
+          <summary style={{ fontSize: 13, color: "#2B6777", fontWeight: 700, cursor: "pointer", textAlign: "center", listStyle: "none", padding: "13px", border: "1px solid #2B6777", borderRadius: 14 }}>
+            🖨 چاپ / ذخیره به‌صورتِ PDF
+          </summary>
+          <div style={{ marginTop: 10, background: "#F7FAFC", borderRadius: 12, padding: "12px 14px" }}>
+            <p style={{ fontSize: 12, color: "#4B6070", lineHeight: 2, margin: 0 }}>
+              دکمه‌ی چاپِ داخلِ اپ در برخی مرورگرها کار نمی‌کند؛ به‌جایش از منویِ خودِ مرورگرتان استفاده کنید:
+            </p>
+            <p style={{ fontSize: 12, color: "#2B6777", lineHeight: 2, margin: "8px 0 0", fontWeight: 600 }}>
+              📱 کروم/اندروید: سه‌نقطه‌ی بالا سمتِ راست ← Share ← Print<br />
+              🍎 سافاری/آیفون: دکمه‌ی Share (پایینِ صفحه) ← Print
+            </p>
+          </div>
+        </details>
 
         <p style={{ fontSize: 10.5, color: "#9AAEB9", marginTop: 16, lineHeight: 1.8, textAlign: "center" }}>
           این ابزار یک غربالگری سریع است و جایگزین ارزیابی بالینی تخصصی نیست. کدِ «{code}» را نگه دارید تا هر زمان بخواهید به این نتیجه بازگردید.
@@ -1947,13 +1957,18 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
           <button onClick={onRefresh} style={{ width: "100%", marginTop: 14, padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer" }}>
             بروزرسانی داده‌ها
           </button>
-          <button onClick={() => exportRawCSV(allRows)} disabled={!completed.length}
-            style={{ width: "100%", marginTop: 8, padding: "11px", borderRadius: 12, border: "none", background: completed.length ? "#2B6777" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: completed.length ? "pointer" : "not-allowed" }}>
+          <button onClick={() => exportRawCSV(allRows)} disabled={!completed.length && !soloCount}
+            style={{ width: "100%", marginTop: 8, padding: "11px", borderRadius: 12, border: "none", background: (completed.length || soloCount) ? "#2B6777" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: (completed.length || soloCount) ? "pointer" : "not-allowed" }}>
             ⬇ دانلود داده‌ی خام (CSV) برای تحلیل آماری
           </button>
           <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 8, textAlign: "center", lineHeight: 1.7 }}>
             این فایل، پاسخِ تک‌تکِ گویه‌ها برای هر نفر را دارد — همان چیزی که برای آلفای کرونباخ و تحلیل عاملی لازم است.
           </p>
+          {!allRows.length && (
+            <p style={{ fontSize: 11, color: "#A6432F", marginTop: 8, textAlign: "center", lineHeight: 1.8, fontWeight: 600 }}>
+              ⚠ هنوز داده‌ای بارگذاری نشده — ابتدا «بروزرسانی داده‌ها» را بزنید، سپس دوباره دانلود را امتحان کنید.
+            </p>
+          )}
         </>
       )}
     </Card>
