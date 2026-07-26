@@ -890,7 +890,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۷-۲۴-ب / رفعِ دکمه‌ی چاپ + دکمه‌ی مشاوره وصل به تماسِ تلفنی
+              نسخه: ۲۰۲۶-۰۷-۲۴-پ / افزودنِ کپیِ متنِ CSV به‌عنوانِ جایگزینِ دانلود
             </p>
             </div>
           </Card>
@@ -1755,7 +1755,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
   );
 }
 
-function exportRawCSV(rows) {
+function buildRawCSV(rows) {
   const header = ["code", "partner", "duration", "age", "children"];
   DOMAINS.forEach((d) => d.items.forEach((_, i) => header.push(`${d.key}_${i + 1}`)));
   SD_ITEMS.forEach((_, i) => header.push(`sd_${i + 1}`));
@@ -1781,7 +1781,11 @@ function exportRawCSV(rows) {
     }
   });
 
-  const csv = "\uFEFF" + lines.join("\n");
+  return lines.join("\n");
+}
+
+function exportRawCSV(rows) {
+  const csv = "\uFEFF" + buildRawCSV(rows);
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -1848,6 +1852,7 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
   const [manualRows, setManualRows] = useState([]);
   const [pasteText, setPasteText] = useState("");
   const [pasteErr, setPasteErr] = useState("");
+  const [csvCopyStatus, setCsvCopyStatus] = useState("idle");
   const allRows = [...(rows || []), ...manualRows];
   const completed = allRows.filter((r) => r.ans1Done && r.ans2Done);
   const soloCount = allRows.filter((r) => r.ans1Done && !r.ans2Done && r.solo).length;
@@ -1951,6 +1956,16 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
             style={{ width: "100%", marginTop: 8, padding: "11px", borderRadius: 12, border: "none", background: (completed.length || soloCount) ? "#2B6777" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: (completed.length || soloCount) ? "pointer" : "not-allowed" }}>
             ⬇ دانلود داده‌ی خام (CSV) برای تحلیل آماری
           </button>
+          <button onClick={async () => {
+            try { await navigator.clipboard.writeText(buildRawCSV(allRows)); setCsvCopyStatus("copied"); } catch (e) { setCsvCopyStatus("failed"); }
+          }} disabled={!completed.length && !soloCount}
+            style={{ width: "100%", marginTop: 8, padding: "10px", borderRadius: 12, border: "1px solid #C9DEE8", background: "#fff", color: "#5A7080", fontWeight: 600, cursor: (completed.length || soloCount) ? "pointer" : "not-allowed", fontSize: 12.5 }}>
+            {csvCopyStatus === "copied" ? "✅ کپی شد! در یک نُتِ جدید Paste و با پسوندِ .csv ذخیره کنید" : csvCopyStatus === "failed" ? "❌ کپی نشد — از باکسِ زیر با انگشت انتخاب کنید" : "📋 اگر دانلود کار نکرد: کپیِ متنِ CSV"}
+          </button>
+          {csvCopyStatus === "failed" && (
+            <textarea readOnly value={buildRawCSV(allRows)} rows={5} onFocus={(e) => e.target.select()}
+              style={{ width: "100%", padding: "8px 10px", marginTop: 8, borderRadius: 10, border: "2px solid #2B6777", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
+          )}
           <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 8, textAlign: "center", lineHeight: 1.7 }}>
             این فایل، پاسخِ تک‌تکِ گویه‌ها برای هر نفر را دارد — همان چیزی که برای آلفای کرونباخ و تحلیل عاملی لازم است.
           </p>
