@@ -1,4 +1,4 @@
-import import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 
 // ---------- Branding ----------
 const BRAND = {
@@ -13,7 +13,7 @@ const ADMIN_PASS = "AGHILI-PANEL";
 // لینکِ خریدِ بسته‌ی آموزشی/وبینار (برایِ سطحِ متوسط) — این را با لینکِ واقعیِ خودتان جایگزین کنید
 const WEBINAR_PACKAGE_LINK = "https://zarinp.al/your-webinar-link";
 // لینکِ رزروِ جلسه‌ی مشاوره (برایِ سطحِ پرخطر) — این را با لینکِ واقعیِ خودتان جایگزین کنید
-const CONSULT_BOOKING_LINK = "https://zarinp.al/your-consult-link";
+const CONSULT_BOOKING_LINK = "tel:+989015091346"; // تا آماده‌شدنِ درگاهِ پرداخت، تماسِ مستقیم
 
 // ---------- Content ----------
 const DOMAINS = [
@@ -890,7 +890,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۷-۲۴ / رفعِ باگِ دکمه‌ی دانلودِ CSV غیرفعال
+              نسخه: ۲۰۲۶-۰۷-۲۴-ب / رفعِ دکمه‌ی چاپ + دکمه‌ی مشاوره وصل به تماسِ تلفنی
             </p>
             </div>
           </Card>
@@ -1212,7 +1212,7 @@ export default function App() {
                   tierColor = "#A6432F";
                   tierText = `بر اساسِ نتیجه‌ی شما، پیشنهاد می‌شود در اسرع‌وقت یک جلسه‌ی مشاوره با ${BRAND.name} داشته باشید.`;
                   actionLink = CONSULT_BOOKING_LINK;
-                  actionLabel = "📅 رزروِ جلسه‌ی مشاوره";
+                  actionLabel = "📞 تماس برای رزروِ مشاوره";
                 } else if (patternCount > 0 || myOverall < 65) {
                   tier = "پیشنهادِ آموزشِ تکمیلی";
                   tierColor = "#B9822F";
@@ -1628,7 +1628,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
             tierColor = "#A6432F";
             tierText = `بر اساسِ نتیجه‌ی شما، پیشنهاد می‌شود در اسرع‌وقت یک جلسه‌ی مشاوره با ${BRAND.name} یا یک متخصصِ زوج‌درمانی داشته باشید — تماس: ${BRAND.phone}`;
             actionLink = CONSULT_BOOKING_LINK;
-            actionLabel = "📅 رزروِ جلسه‌ی مشاوره";
+            actionLabel = "📞 تماس برای رزروِ مشاوره";
           } else if (patternCount > 0 || overall < 65) {
             tier = "پیشنهادِ آموزشِ تکمیلی";
             tierColor = "#B9822F";
@@ -1731,20 +1731,10 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           });
         })()}
 
-        <details className="no-print" style={{ marginTop: 20 }}>
-          <summary style={{ fontSize: 13, color: "#2B6777", fontWeight: 700, cursor: "pointer", textAlign: "center", listStyle: "none", padding: "13px", border: "1px solid #2B6777", borderRadius: 14 }}>
-            🖨 چاپ / ذخیره به‌صورتِ PDF
-          </summary>
-          <div style={{ marginTop: 10, background: "#F7FAFC", borderRadius: 12, padding: "12px 14px" }}>
-            <p style={{ fontSize: 12, color: "#4B6070", lineHeight: 2, margin: 0 }}>
-              دکمه‌ی چاپِ داخلِ اپ در برخی مرورگرها کار نمی‌کند؛ به‌جایش از منویِ خودِ مرورگرتان استفاده کنید:
-            </p>
-            <p style={{ fontSize: 12, color: "#2B6777", lineHeight: 2, margin: "8px 0 0", fontWeight: 600 }}>
-              📱 کروم/اندروید: سه‌نقطه‌ی بالا سمتِ راست ← Share ← Print<br />
-              🍎 سافاری/آیفون: دکمه‌ی Share (پایینِ صفحه) ← Print
-            </p>
-          </div>
-        </details>
+        <button onClick={() => window.print()} className="no-print"
+          style={{ width: "100%", marginTop: 20, padding: "13px", borderRadius: 14, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
+          🖨 چاپ / ذخیره به‌صورت PDF
+        </button>
 
         <p style={{ fontSize: 10.5, color: "#9AAEB9", marginTop: 16, lineHeight: 1.8, textAlign: "center" }}>
           این ابزار یک غربالگری سریع است و جایگزین ارزیابی بالینی تخصصی نیست. کدِ «{code}» را نگه دارید تا هر زمان بخواهید به این نتیجه بازگردید.
