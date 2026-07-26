@@ -601,31 +601,7 @@ export default function App() {
   const [adminRows, setAdminRows] = useState(null);
   const [prevResultInput, setPrevResultInput] = useState("");
   const [prevResultText, setPrevResultText] = useState("");
-  const [resultsSent, setResultsSent] = useState(false);
-  const [smsClicked, setSmsClicked] = useState(false);
   const [soloMode, setSoloMode] = useState(false);
-  const [soloSmsClicked, setSoloSmsClicked] = useState(false);
-  const [soloSmsAttempted, setSoloSmsAttempted] = useState(false);
-  const [soloCopyStatus, setSoloCopyStatus] = useState("idle");
-  const [gateCopyStatus, setGateCopyStatus] = useState("idle");
-
-  function gateRawDataText() {
-    let digits = "";
-    DOMAINS.forEach((d) => {
-      d.items.forEach((_, i) => { digits += String((ans1[d.key] || {})[i] ?? 0); });
-    });
-    DOMAINS.forEach((d) => {
-      d.items.forEach((_, i) => { digits += String((ans2[d.key] || {})[i] ?? 0); });
-    });
-    return `CPL1|${code}|${digits}`;
-  }
-
-  function gateSmsLink() {
-    const number = "+989015091346";
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    const sep = isIOS ? "&" : "?";
-    return `sms:${number}${sep}body=${encodeURIComponent(gateRawDataText())}`;
-  }
   const [showPrevInput, setShowPrevInput] = useState(false);
   const [viaJoinLink, setViaJoinLink] = useState(false);
   const [linkCopyStatus, setLinkCopyStatus] = useState("idle");
@@ -914,7 +890,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۷-۱۶-ب / پیش‌نمایشِ انگیزه‌بخش قبل از ارسال (هر دو حالت)
+              نسخه: ۲۰۲۶-۰۷-۲۳ / حذفِ گیتِ پیامک — ذخیره‌سازیِ خودکار جایگزین شد
             </p>
             </div>
           </Card>
@@ -1092,75 +1068,11 @@ export default function App() {
         })()}
 
         {screen === "soloResult" && (() => {
-          function soloRawDataText() {
-            let digits = "";
-            DOMAINS.forEach((d) => {
-              d.items.forEach((_, i) => { digits += String((ans1[d.key] || {})[i] ?? 0); });
-            });
-            return `SOLO1|${code}|${digits}`;
-          }
-          function soloSmsLink() {
-            const number = "+989015091346";
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            const sep = isIOS ? "&" : "?";
-            return `sms:${number}${sep}body=${encodeURIComponent(soloRawDataText())}`;
-          }
           const myScores = {};
           DOMAINS.forEach((d) => { myScores[d.key] = scoreDomain(ans1[d.key] || {}, d.items); });
           const myOverall = Math.round(DOMAINS.reduce((s, d) => s + myScores[d.key], 0) / DOMAINS.length);
           const myFlags = detectCriticalFlags(ans1, {}).filter((f) => f.partner === 1);
           const hasHighSeverity = myFlags.some((f) => f.severity === "بالا");
-
-          if (!soloSmsClicked) {
-            const teaserWeakest = [...DOMAINS].sort((a, b) => myScores[a.key] - myScores[b.key])[0];
-            return (
-              <Card style={{ textAlign: "center", padding: "34px 22px", border: "3px solid #2B6777" }}>
-                <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
-                <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>پاسخ‌هایتان ثبت شد</h2>
-                <p style={{ fontSize: 12.5, color: "#8CA3B0", marginBottom: 16 }}>پیش‌نمایشِ کوتاهِ نتیجه‌ی شما:</p>
-
-                <div style={{ background: "#EAF4FB", borderRadius: 14, padding: "16px", marginBottom: 18 }}>
-                  <div style={{ display: "flex", justifyContent: "center", gap: 24 }}>
-                    <div>
-                      <div style={{ fontSize: 26, fontWeight: 800, color: LEVEL_COLOR[level(myOverall)] }}>{myOverall}٪</div>
-                      <div style={{ fontSize: 10.5, color: "#5A7080" }}>وضعیتِ کلی</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 16, fontWeight: 800, color: "#2B6777", marginTop: 4 }}>{teaserWeakest.short}</div>
-                      <div style={{ fontSize: 10.5, color: "#5A7080" }}>بیشترین نیاز به توجه</div>
-                    </div>
-                  </div>
-                  <p style={{ fontSize: 11.5, color: "#5A7080", lineHeight: 1.85, marginTop: 12, marginBottom: 0 }}>
-                    تحلیلِ کاملِ هر ۶ حیطه، الگوهایِ رفتاری، و راهکارهایِ عملی — بعد از ارسالِ نتیجه برایِ دفتر، همین‌جا برایتان باز می‌شود.
-                  </p>
-                </div>
-
-                <p style={{ fontSize: 13.5, color: "#7A5B2E", fontWeight: 700, lineHeight: 1.9, marginBottom: 18 }}>
-                  💌 برایِ این‌که دکتر عقیلی بتواند بر اساسِ نتیجه‌ی دقیقِ شما راهنمایی‌تان کند، همین الان نتیجه را برایش بفرستید — فقط چند ثانیه طول می‌کشد.
-                </p>
-                <a href={soloSmsLink()} onClick={() => setSoloSmsAttempted(true)}
-                  style={{ display: "block", width: "100%", padding: "16px", borderRadius: 14, background: "#2B6777", color: "#fff", fontWeight: 800, textAlign: "center", textDecoration: "none", fontSize: 15, marginBottom: 10 }}>
-                  ✅ ۱) ارسال از طریقِ پیامک
-                </a>
-                <button onClick={async () => {
-                  try { await navigator.clipboard.writeText(soloRawDataText()); setSoloCopyStatus("copied"); setSoloSmsAttempted(true); } catch (e) { setSoloCopyStatus("failed"); }
-                }} style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #C9DEE8", background: "#fff", color: "#5A7080", fontWeight: 600, cursor: "pointer", fontSize: 12, marginBottom: 8 }}>
-                  {soloCopyStatus === "copied" ? "✅ کپی شد! حالا در پیامک بچسبانید و بفرستید" : soloCopyStatus === "failed" ? "❌ کپی نشد — از باکسِ زیر با انگشت انتخاب کنید" : "📋 اگر پیامک باز نشد: کپیِ دستیِ نتیجه"}
-                </button>
-                {soloCopyStatus === "failed" && (
-                  <textarea readOnly value={soloRawDataText()} rows={3} onFocus={(e) => e.target.select()}
-                    style={{ width: "100%", padding: "8px 10px", borderRadius: 10, border: "2px solid #2B6777", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff", marginBottom: 10 }} />
-                )}
-                <div style={{ borderTop: "1px dashed #E8DCC8", margin: "18px 0", paddingTop: 18 }}>
-                  <p style={{ fontSize: 11.5, color: "#9AAEB9", marginBottom: 12 }}>۲) وقتی مطمئن شدید پیامک واقعاً ارسال شد، این دکمه را بزنید:</p>
-                  <button onClick={() => setSoloSmsClicked(true)} disabled={!soloSmsAttempted}
-                    style={{ width: "100%", padding: "15px", borderRadius: 14, border: "none", background: soloSmsAttempted ? "#4C7A5E" : "#D6E3EA", color: "#fff", fontSize: 15, fontWeight: 700, cursor: soloSmsAttempted ? "pointer" : "not-allowed" }}>
-                    {soloSmsAttempted ? "فرستادم — نمایشِ نتیجه‌ی کامل" : "ابتدا مرحله‌ی ۱ را انجام دهید"}
-                  </button>
-                </div>
-              </Card>
-            );
-          }
 
           return (
             <Card>
@@ -1339,7 +1251,7 @@ export default function App() {
                 <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📷 instagram.com/{BRAND.instagram}</p>
               </div>
 
-              <button onClick={() => { setScreen("start"); setSoloSmsClicked(false); setSoloSmsAttempted(false); setSoloCopyStatus("idle"); }}
+              <button onClick={() => { setScreen("start"); }}
                 style={{ width: "100%", marginTop: 16, padding: "12px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer" }}>
                 بازگشت به صفحه‌ی شروع
               </button>
@@ -1371,59 +1283,7 @@ export default function App() {
           </Card>
         )}
 
-        {screen === "results" && !resultsSent && (() => {
-          const gateOverall = Math.round(DOMAINS.reduce((s, d) => s + scores.s1[d.key] + scores.s2[d.key], 0) / (DOMAINS.length * 2));
-          const gateWeakest = [...DOMAINS].sort((a, b) => (scores.s1[a.key] + scores.s2[a.key]) - (scores.s1[b.key] + scores.s2[b.key]))[0];
-          return (
-          <Card style={{ textAlign: "center", padding: "34px 22px", border: "3px solid #2B6777" }}>
-            <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
-            <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>پاسخ‌هایتان ثبت شد</h2>
-            <p style={{ fontSize: 12.5, color: "#8CA3B0", marginBottom: 16 }}>پیش‌نمایشِ کوتاهِ نتیجه‌ی مشترک:</p>
-
-            <div style={{ background: "#EAF4FB", borderRadius: 14, padding: "16px", marginBottom: 18 }}>
-              <div style={{ display: "flex", justifyContent: "center", gap: 24 }}>
-                <div>
-                  <div style={{ fontSize: 26, fontWeight: 800, color: LEVEL_COLOR[level(gateOverall)] }}>{gateOverall}٪</div>
-                  <div style={{ fontSize: 10.5, color: "#5A7080" }}>وضعیتِ کلیِ رابطه</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 16, fontWeight: 800, color: "#2B6777", marginTop: 4 }}>{gateWeakest.short}</div>
-                  <div style={{ fontSize: 10.5, color: "#5A7080" }}>بیشترین نیاز به توجه</div>
-                </div>
-              </div>
-              <p style={{ fontSize: 11.5, color: "#5A7080", lineHeight: 1.85, marginTop: 12, marginBottom: 0 }}>
-                نقشه‌ی کاملِ رابطه، مقایسه‌ی دو نفر، الگوها، و راهکارها — بعد از ارسالِ نتیجه برایِ دفتر، همین‌جا برایتان باز می‌شود.
-              </p>
-            </div>
-
-            <p style={{ fontSize: 13.5, color: "#7A5B2E", fontWeight: 700, lineHeight: 1.9, marginBottom: 18 }}>
-              💌 برایِ این‌که دکتر عقیلی بتواند بر اساسِ نتیجه‌ی دقیقِ شما راهنمایی‌تان کند و در این مسیر کنارتان بماند، همین الان نتیجه را برایش بفرستید — این تنها راهی است که واقعاً می‌تواند به شما کمک کند، فقط چند ثانیه طول می‌کشد.
-            </p>
-            <a href={gateSmsLink()} onClick={() => setSmsClicked(true)}
-              style={{ display: "block", width: "100%", padding: "16px", borderRadius: 14, background: "#2B6777", color: "#fff", fontWeight: 800, textAlign: "center", textDecoration: "none", fontSize: 15, marginBottom: 10 }}>
-              ✅ ۱) ارسال از طریقِ پیامک
-            </a>
-            <button onClick={async () => {
-              try { await navigator.clipboard.writeText(gateRawDataText()); setGateCopyStatus("copied"); } catch (e) { setGateCopyStatus("failed"); }
-            }} style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #C9DEE8", background: "#fff", color: "#5A7080", fontWeight: 600, cursor: "pointer", fontSize: 12, marginBottom: 8 }}>
-              {gateCopyStatus === "copied" ? "✅ کپی شد! حالا در پیامک بچسبانید و بفرستید" : gateCopyStatus === "failed" ? "❌ کپی نشد — از باکسِ زیر با انگشت انتخاب کنید" : "📋 اگر پیامک باز نشد: کپیِ دستیِ نتیجه"}
-            </button>
-            {gateCopyStatus === "failed" && (
-              <textarea readOnly value={gateRawDataText()} rows={3} onFocus={(e) => e.target.select()}
-                style={{ width: "100%", padding: "8px 10px", borderRadius: 10, border: "2px solid #2B6777", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff", marginBottom: 10 }} />
-            )}
-            <div style={{ borderTop: "1px dashed #E8DCC8", margin: "18px 0", paddingTop: 18 }}>
-              <p style={{ fontSize: 11.5, color: "#9AAEB9", marginBottom: 12 }}>۲) بعد از ارسال، این دکمه را بزنید:</p>
-              <button onClick={() => setResultsSent(true)} disabled={!smsClicked}
-                style={{ width: "100%", padding: "15px", borderRadius: 14, border: "none", background: smsClicked ? "#4C7A5E" : "#D6E3EA", color: "#fff", fontSize: 15, fontWeight: 700, cursor: smsClicked ? "pointer" : "not-allowed" }}>
-                {smsClicked ? "فرستادم — نمایشِ نقشه‌ی مشترک" : "ابتدا دکمه‌ی «ارسال از طریقِ پیامک» را بزنید"}
-              </button>
-            </div>
-          </Card>
-          );
-        })()}
-
-        {screen === "results" && resultsSent && (
+        {screen === "results" && (
           <ResultsView code={code} scores={scores} context={context} sd1={sd1} sd2={sd2} ans1={ans1} ans2={ans2} saveWarning={saveWarning} onGoAdmin={() => setScreen("adminLogin")} prevResultText={prevResultText} />
         )}
 
