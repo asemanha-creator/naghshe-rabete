@@ -582,6 +582,82 @@ function DomainBarChart({ p1, p2, domains }) {
 }
 
 // ---------- Main App ----------
+function ChatWidget({ scores, overall, mode }) {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  async function send() {
+    const text = input.trim();
+    if (!text || busy) return;
+    const newMessages = [...messages, { role: "user", content: text }];
+    setMessages(newMessages);
+    setInput("");
+    setBusy(true);
+    setErr("");
+    try {
+      const r = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: newMessages, scores, overall, mode }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setMessages([...newMessages, { role: "assistant", content: data.reply }]);
+    } catch (e) {
+      setErr(e.message || "ارتباط برقرار نشد");
+    }
+    setBusy(false);
+  }
+
+  return (
+    <>
+      <button onClick={() => setOpen(!open)} className="no-print"
+        style={{ position: "fixed", bottom: 20, left: 20, width: 56, height: 56, borderRadius: "50%", background: "#2B6777", color: "#fff", border: "none", fontSize: 24, boxShadow: "0 4px 14px rgba(0,0,0,0.2)", cursor: "pointer", zIndex: 1000 }}>
+        {open ? "✕" : "💬"}
+      </button>
+      {open && (
+        <div className="no-print" style={{ position: "fixed", bottom: 86, left: 20, width: 320, maxWidth: "88vw", height: 420, background: "#fff", borderRadius: 16, boxShadow: "0 8px 30px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column", zIndex: 1000, overflow: "hidden" }}>
+          <div style={{ background: "#2B6777", color: "#fff", padding: "12px 14px", fontSize: 13, fontWeight: 700 }}>
+            💬 پرسش درباره‌ی نتیجه‌ی شما
+          </div>
+          <div style={{ flex: 1, overflowY: "auto", padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8 }}>
+            {messages.length === 0 && (
+              <p style={{ fontSize: 11.5, color: "#8CA3B0", lineHeight: 1.9 }}>
+                هرچیزی درباره‌ی نتیجه‌ی خودتان (مثلاً معنایِ یک حیطه، یا این‌که چرا نمره‌تان پایین/بالاست) بپرسید.
+              </p>
+            )}
+            {messages.map((m, i) => (
+              <div key={i} style={{
+                alignSelf: m.role === "user" ? "flex-end" : "flex-start",
+                background: m.role === "user" ? "#2B6777" : "#F7FAFC",
+                color: m.role === "user" ? "#fff" : "#1F2D3D",
+                borderRadius: 12, padding: "8px 12px", fontSize: 12.5, maxWidth: "85%", lineHeight: 1.8,
+              }}>
+                {m.content}
+              </div>
+            ))}
+            {busy && <div style={{ fontSize: 11.5, color: "#8CA3B0" }}>در حالِ نوشتن...</div>}
+            {err && <div style={{ fontSize: 11.5, color: "#A6432F" }}>⚠ {err}</div>}
+          </div>
+          <div style={{ display: "flex", borderTop: "1px solid #EEF3F6", padding: 8, gap: 6 }}>
+            <input value={input} onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") send(); }}
+              placeholder="سوالتان را بنویسید..."
+              style={{ flex: 1, border: "1px solid #DCE8F0", borderRadius: 10, padding: "8px 10px", fontSize: 12.5 }} />
+            <button onClick={send} disabled={busy}
+              style={{ padding: "8px 14px", borderRadius: 10, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
+              ارسال
+            </button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function App() {
   const [screen, setScreen] = useState("start");
   const [code, setCode] = useState("");
@@ -891,7 +967,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۷-۲۶-ب / دو دکمه: کپیِ همه، یا فقط داده‌هایِ جدید
+              نسخه: ۲۰۲۶-۰۸-۰۱ / افزودنِ چت‌باتِ توضیح‌دهنده‌ی نتیجه
             </p>
             </div>
           </Card>
@@ -1076,6 +1152,7 @@ export default function App() {
           const hasHighSeverity = myFlags.some((f) => f.severity === "بالا");
 
           return (
+            <>
             <Card>
               <div style={{ textAlign: "center", marginBottom: 14 }}>
                 <div style={{ fontSize: 30, marginBottom: 6 }}>✅</div>
@@ -1257,6 +1334,8 @@ export default function App() {
                 بازگشت به صفحه‌ی شروع
               </button>
             </Card>
+            <ChatWidget scores={myScores} overall={myOverall} mode="solo" />
+            </>
           );
         })()}
 
@@ -1752,6 +1831,11 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           <p style={{ fontSize: 12, color: "#5A7080", margin: 0 }}>📍 {BRAND.city}</p>
         </div>
       </Card>
+      <ChatWidget
+        scores={Object.fromEntries(DOMAINS.map((d) => [d.key, Math.round((s1[d.key] + s2[d.key]) / 2)]))}
+        overall={overall}
+        mode="couple"
+      />
     </div>
   );
 }
