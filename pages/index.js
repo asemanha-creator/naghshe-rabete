@@ -99,16 +99,19 @@ const DOMAINS = [
     title: "الگوی تعارض و دلبستگی",
     short: "تعارض",
     items: [
-      { t: "وقتی دعوا می‌کنیم، یکی از ما سکوت می‌کند و دیگری اصرار به حرف‌زدن دارد.", type: "r" },
+      { t: "بعد از دعوا، معمولاً یکی‌مان می‌خواهد حرف بزند و دیگری ترجیح می‌دهد فعلاً چیزی نگوید.", type: "r" },
       { t: "بعد از دعواهایمان، تا مدت‌ها فاصله و کینه بین من و همسرم باقی می‌ماند.", type: "r" },
       { t: "می‌توانیم بعد از تعارض، دوباره با آرامش با هم صحبت کنیم.", type: "p" },
-      { t: "نگرانم که همسرم هر لحظه ممکن است از این رابطه بیرون بزند.", type: "r" },
-      { t: "ترجیح می‌دهم به‌جای وابستگی، مستقل و بی‌نیاز از همسرم باشم.", type: "r" },
+      { t: "نگرانم که همسرم هر لحظه ممکن است از این رابطه بیرون بزند.", type: "r", excludeFromScore: true },
+      { t: "ترجیح می‌دهم به‌جای وابستگی، مستقل و بی‌نیاز از همسرم باشم.", type: "r", excludeFromScore: true },
       { t: "در تعارض‌ها احساس می‌کنم واقعاً شنیده می‌شوم.", type: "p" },
       { t: "وقتی همسرم ناراحت است، معمولاً می‌توانم او را آرام کنم.", type: "p" },
-      { t: "در دعواها به نقاط ضعف همسرم حمله می‌کنم.", type: "r" },
-      { t: "نگرانم که وابستگیِ زیاد به همسرم، من را در برابر او آسیب‌پذیر کند.", type: "r" },
+      { t: "گاهی در دعوا حرف‌هایی می‌زنم که بعداً از گفتنش پشیمان می‌شوم.", type: "r" },
+      { t: "نگرانم که وابستگیِ زیاد به همسرم، من را در برابر او آسیب‌پذیر کند.", type: "r", excludeFromScore: true },
       { t: "بعد از یک تعارض، هردوی ما برای جبران تلاش می‌کنیم.", type: "p" },
+      { t: "وقتی با هم اختلاف داریم، معمولاً می‌توانیم به یک راه‌حلِ مشترک برسیم.", type: "p" },
+      { t: "بعضی از دعواهایمان، بدونِ این‌که واقعاً حل شوند، فقط فروکش می‌کنند.", type: "r" },
+      { t: "وقتی اشتباه می‌کنم، برایم سخت نیست که عذرخواهی کنم.", type: "p" },
     ],
     action: {
       low: [
@@ -172,16 +175,20 @@ const DOMAINS = [
     title: "سابقه و آسیب‌پذیری زمینه‌ای",
     short: "زمینه",
     items: [
-      { t: "در گذشته (این رابطه یا رابطه‌ی قبلی) به تعهدم پایبند نمانده‌ام یا طرفِ مقابلم به تعهدش پایبند نمانده است.", type: "r" },
-      { t: "در خانواده‌ی اصلی‌ام سابقه‌ی نقضِ تعهد و بی‌وفاییِ زناشویی وجود داشته است.", type: "r" },
-      { t: "سابقه‌ی گرایش شدید به فضای مجازی یا محتوای نامتناسب (مثل محتوای جنسی آنلاین) داشته‌ام.", type: "r" },
+      { t: "در گذشته (این رابطه یا رابطه‌ی قبلی) به تعهدم پایبند نمانده‌ام یا طرفِ مقابلم به تعهدش پایبند نمانده است.", type: "r", excludeFromScore: true },
+      { t: "در خانواده‌ی اصلی‌ام سابقه‌ی نقضِ تعهد و بی‌وفاییِ زناشویی وجود داشته است.", type: "r", excludeFromScore: true },
+      { t: "سابقه‌ی گرایش شدید به فضای مجازی یا محتوای نامتناسب (مثل محتوای جنسی آنلاین) داشته‌ام.", type: "r", excludeFromScore: true },
       { t: "برای تنظیم هیجانات منفی‌ام به محرک‌های پرخطر (الکل، فضای مجازی، روابط جدید) پناه می‌برم.", type: "r" },
       { t: "به این رابطه و آینده‌ی مشترک‌مان امیدوارم.", type: "p" },
       { t: "وقتی احساس بی‌ارزشی می‌کنم، به تاییدگرفتن از افراد بیرون از رابطه تمایل پیدا می‌کنم.", type: "r" },
       { t: "وقتی احساسات منفی دارم، ترجیح می‌دهم آن‌ها را در خودم نگه دارم تا اینکه به همسرم بگویم.", type: "r" },
       { t: "زندگی مشترک‌مان را نسبت به بیشتر زوج‌های اطرافم موفق‌تر می‌دانم.", type: "p" },
-      { t: "تجربه‌ی دوران کودکی‌ام (مثل طلاق والدین یا نقضِ تعهد در خانواده) هنوز روی نگاهم به تعهد اثر دارد.", type: "r" },
+      { t: "تجربه‌ی دوران کودکی‌ام (مثل طلاق والدین یا نقضِ تعهد در خانواده) هنوز روی نگاهم به تعهد اثر دارد.", type: "r", excludeFromScore: true },
       { t: "برای حفظ این رابطه، حاضرم روی خودم کار کنم.", type: "p" },
+      { t: "این روزها، فشارهایِ زندگی (کاری، مالی، خانوادگی) انرژیِ کمی برایِ رابطه‌ام باقی می‌گذارد.", type: "r" },
+      { t: "زمانِ باکیفیتی که فقط برایِ دومان (بدونِ فرزندان/کار) می‌گذاریم، کم است.", type: "r" },
+      { t: "در محیطِ اطرافم (دوستان، همکاران)، افرادی هستند که بی‌وفایی را رفتارِ عادی جلوه می‌دهند.", type: "r" },
+      { t: "احساس می‌کنم می‌توانم رویِ همسرم برایِ حمایتِ هیجانی حساب کنم.", type: "p" },
     ],
     action: {
       low: [
@@ -275,7 +282,10 @@ function seedFromString(str) {
 }
 
 function scoreDomain(answers, items) {
-  const vals = items.map((it, i) => {
+  const scored = items
+    .map((it, i) => ({ it, i }))
+    .filter(({ it }) => !it.excludeFromScore);
+  const vals = scored.map(({ it, i }) => {
     const v = answers[i] ?? 3;
     return it.type === "r" ? 6 - v : v;
   });
@@ -307,12 +317,18 @@ const CRITICAL_FLAGS = [
     action: "یک برگه بردارید و بنویسید: «چه رفتاری از خانواده‌ام دیدم که نمی‌خوام تکرار کنم؟» این را با همسرتان هم در میان بگذارید تا آگاهانه از آن الگو فاصله بگیرید." },
   { domain: "vulnerability", idx: 5, threshold: 4, label: "گرایش به کسبِ تاییدِ بیرونی هنگامِ حسِ بی‌ارزشی", severity: "متوسط",
     action: "دفعه‌ی بعد که این حس آمد، به‌جای جست‌وجوی تاییدِ بیرونی، این را مستقیم به همسرتان بگویید: «امشب یه چیزی می‌خوام بشنوم؛ می‌تونی بگی چی درباره‌ام دوست داری؟»" },
+  { domain: "vulnerability", idx: 2, threshold: 4, label: "سابقه‌ی گرایش شدید به فضای مجازی یا محتوای نامتناسب", severity: "بالا",
+    action: "اگر این هنوز ادامه دارد، صادقانه با همسرتان یا یک متخصص در میان بگذارید؛ مخفی‌نگه‌داشتنِ آن، ریسکِ اصلی‌اش را بیشتر می‌کند، نه خودِ رفتار." },
+  { domain: "vulnerability", idx: 8, threshold: 4, label: "اثرِ تجربه‌ی کودکی/طلاقِ والدین بر نگاهِ فعلی به تعهد", severity: "متوسط",
+    action: "با یک متخصص یا حتی در گفتگو با همسرتان، مشخص کنید کدام باورِ به‌ارث‌رسیده از خانواده، امروز واقعاً به‌دردتان نمی‌خورد." },
   { domain: "boundaries", idx: 2, threshold: 4, label: "پنهان‌کاریِ عمدی و فعال", severity: "بالا",
     action: "همان موردِ پنهان‌شده را مشخص کنید و طیِ همین هفته، بدونِ اتهام به خودتان، مطرحش کنید: «یه چیزی هست که تا حالا نگفته بودم و می‌خوام روشنش کنم.»" },
   { domain: "conflict", idx: 3, threshold: 4, label: "اضطرابِ ترک‌شدن (نشانه‌ی دلبستگیِ اضطرابی)", severity: "متوسط",
     action: "به‌جای پرسیدنِ مکررِ «هنوز دوستم داری؟»، از همسرتان بخواهید یک نشانه‌ی ثابتِ روزانه تعریف کند (مثلاً یک پیامِ کوتاهِ صبحگاهی) که نیازی به پرسیدن نباشد." },
   { domain: "conflict", idx: 4, threshold: 4, label: "اجتناب از وابستگی (نشانه‌ی دلبستگیِ اجتنابی)", severity: "متوسط",
     action: "امروز یک نیازِ کوچک را مستقیم از همسرتان بخواهید (نه انجامش خودتان). جمله‌ی پیشنهادی: «می‌شه کمکم کنی با این موضوع؟» — این تمرینِ کوچکِ وابستگیِ سالم است." },
+  { domain: "conflict", idx: 8, threshold: 4, label: "ترسِ از آسیب‌پذیرشدن به‌خاطرِ وابستگیِ زیاد", severity: "متوسط",
+    action: "به‌جای پنهان‌کردنِ نیازتان، یک بارِ کوچک امروز آن را بروزِ دهید — وابستگیِ سالم، ضعف نیست، بخشی از صمیمیت است." },
   { domain: "sexual", idx: 4, threshold: 3, label: "افکارِ معطوف به گزینه‌های دیگر به‌دلیلِ نارضایتیِ جنسی", severity: "بالا",
     action: "این افکار را به‌عنوانِ علامتِ «نیازِ ناگفته»، نه یک رازِ شرم‌آور، ببینید. همین هفته گفتگو را با این جمله شروع کنید: «می‌خوام درباره‌ی نیازهای جنسی‌مون راحت‌تر حرف بزنیم.»" },
   { domain: "emotional", idx: 8, threshold: 4, label: "حسِ غریبگی با همسر", severity: "متوسط",
@@ -588,13 +604,9 @@ function ChatWidget({ scores, overall, mode }) {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [opened, setOpened] = useState(false);
 
-  async function send() {
-    const text = input.trim();
-    if (!text || busy) return;
-    const newMessages = [...messages, { role: "user", content: text }];
-    setMessages(newMessages);
-    setInput("");
+  async function sendTo(newMessages) {
     setBusy(true);
     setErr("");
     try {
@@ -612,9 +624,27 @@ function ChatWidget({ scores, overall, mode }) {
     setBusy(false);
   }
 
+  function send() {
+    const text = input.trim();
+    if (!text || busy) return;
+    const newMessages = [...messages, { role: "user", content: text }];
+    setMessages(newMessages);
+    setInput("");
+    sendTo(newMessages);
+  }
+
+  function handleToggle() {
+    const next = !open;
+    setOpen(next);
+    if (next && !opened) {
+      setOpened(true);
+      sendTo([]); // اولین‌بار که باز می‌شود، خودِ چت‌بات با سوالِ کاوشی شروع می‌کند
+    }
+  }
+
   return (
     <>
-      <button onClick={() => setOpen(!open)} className="no-print"
+      <button onClick={handleToggle} className="no-print"
         style={{ position: "fixed", bottom: 20, left: 20, width: 56, height: 56, borderRadius: "50%", background: "#2B6777", color: "#fff", border: "none", fontSize: 24, boxShadow: "0 4px 14px rgba(0,0,0,0.2)", cursor: "pointer", zIndex: 1000 }}>
         {open ? "✕" : "💬"}
       </button>
@@ -624,7 +654,7 @@ function ChatWidget({ scores, overall, mode }) {
             💬 پرسش درباره‌ی نتیجه‌ی شما
           </div>
           <div style={{ flex: 1, overflowY: "auto", padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8 }}>
-            {messages.length === 0 && (
+            {messages.length === 0 && !busy && (
               <p style={{ fontSize: 11.5, color: "#8CA3B0", lineHeight: 1.9 }}>
                 هرچیزی درباره‌ی نتیجه‌ی خودتان (مثلاً معنایِ یک حیطه، یا این‌که چرا نمره‌تان پایین/بالاست) بپرسید.
               </p>
@@ -668,7 +698,7 @@ export default function App() {
   const [ans2, setAns2] = useState({});
   const [sd1, setSd1] = useState({});
   const [sd2, setSd2] = useState({});
-  const [context, setContext] = useState({ duration: "", age: "", children: "" });
+  const [context, setContext] = useState({ duration: "", age: "", gender: "", children: "", researchConsent: false, contact: "" });
   const [consentChecked, setConsentChecked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -758,7 +788,7 @@ export default function App() {
   function startNew() {
     setCode(genCode());
     setAns1({}); setAns2({}); setSd1({}); setSd2({});
-    setContext({ duration: "", age: "", children: "" });
+    setContext({ duration: "", age: "", gender: "", children: "", researchConsent: false, contact: "" });
     setConsentChecked(false);
     setPartner(1);
     setDomainIdx(0);
@@ -769,7 +799,7 @@ export default function App() {
   function startSolo() {
     setCode(genCode());
     setAns1({}); setAns2({}); setSd1({}); setSd2({});
-    setContext({ duration: "", age: "", children: "" });
+    setContext({ duration: "", age: "", gender: "", children: "", researchConsent: false, contact: "" });
     setConsentChecked(false);
     setPartner(1);
     setDomainIdx(0);
@@ -967,7 +997,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۰۱ / افزودنِ چت‌باتِ توضیح‌دهنده‌ی نتیجه
+              نسخه: ۲۰۲۶-۰۸-۰۳-ب / چت‌بات فعال‌تر: شروعِ خودکار با سوالِ کاوشیِ شخصی‌سازی‌شده
             </p>
             </div>
           </Card>
@@ -999,6 +1029,14 @@ export default function App() {
                 <option>زیر ۲۵</option><option>۲۵ تا ۳۴</option><option>۳۵ تا ۴۴</option><option>۴۵ به بالا</option>
               </select>
             </div>
+            <div style={{ marginBottom: 10 }}>
+              <label style={{ fontSize: 12.5, color: "#5A7080", display: "block", marginBottom: 5 }}>جنسیتِ شما</label>
+              <select value={context.gender} onChange={(e) => setContext({ ...context, gender: e.target.value })}
+                style={{ width: "100%", padding: "10px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 13, ...FONT }}>
+                <option value="">انتخاب کنید</option>
+                <option>زن</option><option>مرد</option><option>ترجیح می‌دهم نگویم</option>
+              </select>
+            </div>
             <div style={{ marginBottom: 16 }}>
               <label style={{ fontSize: 12.5, color: "#5A7080", display: "block", marginBottom: 5 }}>فرزند؟</label>
               <select value={context.children} onChange={(e) => setContext({ ...context, children: e.target.value })}
@@ -1006,6 +1044,18 @@ export default function App() {
                 <option value="">انتخاب کنید</option>
                 <option>ندارند</option><option>یک فرزند</option><option>دو فرزند یا بیشتر</option>
               </select>
+            </div>
+
+            <div style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 18 }}>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: "#7A5B2E", cursor: "pointer", fontWeight: 600 }}>
+                <input type="checkbox" checked={context.researchConsent} onChange={(e) => setContext({ ...context, researchConsent: e.target.checked })} style={{ marginTop: 3 }} />
+                <span>(اختیاری) مایلم در پژوهش‌های آتیِ همین طرح هم شرکت کنم و در صورتِ لزوم با من تماس گرفته شود.</span>
+              </label>
+              {context.researchConsent && (
+                <input value={context.contact} onChange={(e) => setContext({ ...context, contact: e.target.value })}
+                  placeholder="شماره تماس یا ایمیل (اختیاری)"
+                  style={{ width: "100%", marginTop: 10, padding: "9px 10px", borderRadius: 10, border: "1px solid #E8DCC8", fontSize: 12.5, ...FONT }} />
+              )}
             </div>
 
             <label style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12.5, color: "#4B6070", marginBottom: 18, cursor: "pointer" }}>
@@ -1841,7 +1891,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
 }
 
 function buildRawCSV(rows) {
-  const header = ["code", "partner", "duration", "age", "children"];
+  const header = ["code", "partner", "duration", "age", "gender", "children", "researchConsent", "contact"];
   DOMAINS.forEach((d) => d.items.forEach((_, i) => header.push(`${d.key}_${i + 1}`)));
   SD_ITEMS.forEach((_, i) => header.push(`sd_${i + 1}`));
 
@@ -1852,14 +1902,14 @@ function buildRawCSV(rows) {
       [1, 2].forEach((p) => {
         const ans = p === 1 ? r.ans1 : r.ans2;
         const sd = p === 1 ? r.sd1 : r.sd2;
-        const row = [r.code, p, r.context?.duration || "", r.context?.age || "", r.context?.children || ""];
+        const row = [r.code, p, r.context?.duration || "", r.context?.age || "", r.context?.gender || "", r.context?.children || "", r.context?.researchConsent ? "بله" : "", r.context?.contact || ""];
         DOMAINS.forEach((d) => d.items.forEach((_, i) => row.push((ans[d.key] || {})[i] ?? "")));
         SD_ITEMS.forEach((_, i) => row.push((sd || {})[i] ?? ""));
         lines.push(row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
       });
     } else if (r.ans1Done && !r.ans2Done) {
       // solo: single independent respondent
-      const row = [r.code, 1, r.context?.duration || "", r.context?.age || "", r.context?.children || ""];
+      const row = [r.code, 1, r.context?.duration || "", r.context?.age || "", r.context?.gender || "", r.context?.children || "", r.context?.researchConsent ? "بله" : "", r.context?.contact || ""];
       DOMAINS.forEach((d) => d.items.forEach((_, i) => row.push((r.ans1[d.key] || {})[i] ?? "")));
       SD_ITEMS.forEach((_, i) => row.push((r.sd1 || {})[i] ?? ""));
       lines.push(row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
