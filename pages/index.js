@@ -15,6 +15,27 @@ const WEBINAR_PACKAGE_LINK = "https://zarinp.al/your-webinar-link";
 // لینکِ رزروِ جلسه‌ی مشاوره (برایِ سطحِ پرخطر) — این را با لینکِ واقعیِ خودتان جایگزین کنید
 const CONSULT_BOOKING_LINK = "tel:+989015091346"; // تا آماده‌شدنِ درگاهِ پرداخت، تماسِ مستقیم
 
+// بسته‌های درمانیِ زوج‌درمانی (ACT/EFT/گاتمن) — قیمت‌ها بر اساسِ تعرفه‌ی رسمیِ سازمانِ نظام (سطحِ دکتری) محاسبه شده‌اند
+const TREATMENT_PACKAGES = {
+  moderate: {
+    label: "بسته‌ی متوسط",
+    sessions: 4,
+    price: 4500000,
+    inPersonEquivalent: 7500000,
+    note: "برایِ چالش‌هایی که نیاز به کارِ متمرکز و کوتاه‌مدت دارند",
+  },
+  advanced: {
+    label: "بسته‌ی پیشرفته",
+    sessions: 8,
+    price: 8000000,
+    inPersonEquivalent: 15000000,
+    note: "برایِ چالش‌هایِ ریشه‌دارتر که نیاز به روندِ کامل‌ترِ درمانی دارند",
+  },
+};
+function toman(n) {
+  return n.toLocaleString("fa-IR") + " تومان";
+}
+
 // ---------- Content ----------
 const DOMAINS = [
   {
@@ -613,6 +634,44 @@ function DomainBarChart({ p1, p2, domains }) {
 }
 
 // ---------- Main App ----------
+function PricingTiers({ tier }) {
+  if (tier === "healthy") return null;
+  const pkg = tier === "critical" ? TREATMENT_PACKAGES.advanced : TREATMENT_PACKAGES.moderate;
+  const savings = pkg.inPersonEquivalent - pkg.price;
+  return (
+    <div style={{
+      marginTop: 18, padding: "16px 16px 14px", borderRadius: 18,
+      background: tier === "critical" ? "#FBF0EC" : "#F3F8F5",
+      border: `1px solid ${tier === "critical" ? "#E8C9BC" : "#CFE6D8"}`,
+    }}>
+      <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>
+        {tier === "critical" ? "🕊️ زمانِ یک قدمِ جدی‌تر است" : "🌱 آماده‌اید یک قدم بردارید؟"}
+      </p>
+      <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
+        {tier === "critical"
+          ? "با توجه به نتیجه‌ی امروز، یک روندِ درمانیِ کامل‌تر می‌تواند کمکِ واقعی به رابطه‌ی شما بکند. "
+          : "با توجه به نتیجه‌ی امروز، یک روندِ کوتاه و متمرکز می‌تواند تفاوتِ محسوسی ایجاد کند. "}
+        این جلسات با رویکردهایِ علمیِ ACT، EFT و گاتمن، مستقیم با دکتر عقیلی برگزار می‌شود.
+      </p>
+      <div style={{ background: "#fff", borderRadius: 14, padding: "12px 14px", marginBottom: 10 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
+          <span style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D" }}>{pkg.label} ({pkg.sessions} جلسه)</span>
+          <span style={{ fontSize: 15, fontWeight: 800, color: "#2B6777" }}>{toman(pkg.price)}</span>
+        </div>
+        <p style={{ fontSize: 11, color: "#8CA3B0", margin: "0 0 6px" }}>{pkg.note}</p>
+        <p style={{ fontSize: 11, color: "#5A7080", margin: 0 }}>
+          معادلِ حضوری: <span style={{ textDecoration: "line-through" }}>{toman(pkg.inPersonEquivalent)}</span>{" "}
+          <span style={{ color: "#4C8778", fontWeight: 700 }}>({toman(savings)} صرفه‌جویی)</span>
+        </p>
+      </div>
+      <a href={CONSULT_BOOKING_LINK}
+        style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, background: tier === "critical" ? "#8A5A4E" : "#2B6777", color: "#fff", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>
+        رزروِ این بسته (تماس با دفتر)
+      </a>
+    </div>
+  );
+}
+
 function ChatWidget({ scores, overall, mode }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -1183,7 +1242,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۰۶-د / شماره‌تماس در همه‌جا قابلِ‌لمس برایِ تماسِ مستقیم
+              نسخه: ۲۰۲۶-۰۸-۰۷ / افزودنِ پیشنهادِ بسته‌هایِ درمانی بر اساسِ شدتِ نتیجه
             </p>
             </div>
           </Card>
@@ -1618,6 +1677,7 @@ export default function App() {
                 بازگشت به صفحه‌ی شروع
               </button>
             </Card>
+            <PricingTiers tier={hasHighSeverity || myOverall < 40 ? "critical" : myOverall < 75 ? "moderate" : "healthy"} />
             <ChatWidget scores={myScores} overall={myOverall} mode="solo" />
             </>
           );
@@ -2115,6 +2175,10 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           <p style={{ fontSize: 12, color: "#5A7080", margin: 0 }}>📍 {BRAND.city}</p>
         </div>
       </Card>
+      <PricingTiers tier={(() => {
+        const anyHigh = detectCriticalFlags(ans1 || {}, ans2 || {}).some((f) => f.severity === "بالا");
+        return anyHigh || overall < 40 ? "critical" : overall < 75 ? "moderate" : "healthy";
+      })()} />
       <ChatWidget
         scores={Object.fromEntries(DOMAINS.map((d) => [d.key, Math.round((s1[d.key] + s2[d.key]) / 2)]))}
         overall={overall}
