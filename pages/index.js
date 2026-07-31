@@ -35,6 +35,144 @@ const TREATMENT_PACKAGES = {
 function toman(n) {
   return n.toLocaleString("fa-IR") + " تومان";
 }
+function sessionPrice(pkgKey) {
+  return Math.round(TREATMENT_PACKAGES[pkgKey].price / TREATMENT_PACKAGES[pkgKey].sessions);
+}
+function sessionId(pkgKey, num) {
+  return `${pkgKey}-${num}`;
+}
+
+// محتوایِ کاملِ جلسات — فعلاً فقط متنی (بدونِ صوت/تصویر)؛ ساختار برایِ افزودنِ audioUrl/videoUrl در آینده آماده است
+// جلسه‌ی اولِ هر بسته، به‌جایِ متنِ ثابت، بر اساسِ ضعیف‌ترین حیطه‌ی همان فرد انتخاب می‌شود
+const DOMAIN_OPENING_SESSIONS = {
+  emotional: {
+    title: "بازسازیِ پلِ هیجانی",
+    approach: "EFT",
+    body: [
+      { type: "h", text: "چرا این جلسه مهم است" },
+      { type: "p", text: "نتیجه‌ی شما نشان می‌دهد فاصله‌ی هیجانی، مهم‌ترین نقطه‌ی توجهِ امروزتان است. این یعنی حتی اگر مشکلِ حادی هم نباشد، حسِ «واقعاً دیده‌شدن» توسطِ همسر کم‌رنگ شده — و این دقیقاً همان چیزی است که اغلب، ریشه‌ی خیلی از تعارض‌هایِ بعدی می‌شود." },
+      { type: "h", text: "مفهومِ کلیدی: چرخه‌ی جست‌وجو-اجتناب" },
+      { type: "p", text: "در EFT، فاصله‌ی هیجانی اغلب از یک چرخه می‌آید: یک‌نفر به‌دنبالِ اتصال است (گاهی با گلایه یا اصرار)، نفرِ دیگر همین را تهدید حس می‌کند و کناره می‌گیرد — که خودش باعثِ جست‌وجویِ بیشتر می‌شود. هیچ‌کدام «مقصر» نیستند؛ هر دو در دامِ یک الگو گیر کرده‌اند." },
+      { type: "h", text: "تمرینِ این جلسه" },
+      { type: "p", text: "۱. هرکدام، جداگانه، به این سوال جواب بدهید: «آخرین‌بار که واقعاً احساسِ نزدیکی کردم، چه‌زمانی و در چه موقعیتی بود؟»\n۲. جواب‌ها را برایِ هم بخوانید — فقط گوش کنید، توضیح یا دفاع نکنید.\n۳. یک‌بار در هفته، عمداً همان نوع لحظه را دوباره بسازید (حتی کوتاه)." },
+      { type: "h", text: "کارِ خانگی" },
+      { type: "p", text: "هر شب، یک جمله به همسرتان بگویید که با «امروز به تو فکر کردم چون...» شروع شود — بدونِ انتظارِ پاسخِ خاص." },
+    ],
+  },
+  exposure: {
+    title: "مدیریتِ محرک‌ها و مرزهایِ بیرونی",
+    approach: "ACT",
+    body: [
+      { type: "h", text: "چرا این جلسه مهم است" },
+      { type: "p", text: "نتیجه‌ی شما نشان می‌دهد محرک‌های بیرونیِ رابطه (مثلِ فضایِ مجازی، دوستی‌هایِ پرخطر، یا محیط‌هایِ وسوسه‌انگیز) نقطه‌ی توجهِ اصلیِ امروز است. جالب است بدانید این حیطه، در پژوهشِ ما، **بیشترین وابستگی به وضعیتِ همسر** را داشت — یعنی معمولاً یک‌طرفه نیست." },
+      { type: "h", text: "مفهومِ کلیدی: ارزش در برابرِ قانون" },
+      { type: "p", text: "در ACT، تفاوتِ مهمی بینِ «قانونِ بیرونی» («نباید با فلان‌کس حرف بزنم») و «ارزشِ درونی» («می‌خواهم کسی باشم که به تعهدش وفادار است») وجود دارد. قوانین شکسته می‌شوند؛ ارزش‌ها راهنمایِ پایدارتری‌اند." },
+      { type: "h", text: "تمرینِ این جلسه" },
+      { type: "p", text: "۱. فهرستی از موقعیت‌ها/افراد/فضاهایی بنویسید که احساس می‌کنید مرزِ رابطه را کمی مبهم کرده‌اند.\n۲. برایِ هرکدام، به‌جایِ «باید حذفش کنم»، بپرسید: «این با کدام ارزشِ من در تضاد است؟»\n۳. با همسرتان، یک تعریفِ مشترک از «شفافیتِ قابلِ‌قبول» (نه کنترل، بلکه شفافیتِ داوطلبانه) بسازید." },
+      { type: "h", text: "کارِ خانگی" },
+      { type: "p", text: "این هفته، یک موردی را که معمولاً پنهان نگه می‌داشتید (هرچند کوچک) داوطلبانه با همسرتان در میان بگذارید." },
+    ],
+  },
+  conflict: {
+    title: "ارزیابیِ عمیق‌تر و تثبیتِ ایمنیِ گفت‌وگو",
+    approach: "گاتمن",
+    body: [
+      { type: "h", text: "چرا این جلسه مهم است" },
+      { type: "p", text: "نتیجه‌ی شما نشان می‌دهد الگویِ تعارض، نقطه‌ی توجهِ اصلیِ امروز است. قبل از هر تلاشی برایِ تغییر، باید مطمئن شویم گفت‌وگو دربارهٔ مسائلِ حساس، بدونِ آسیبِ بیشتر ممکن است." },
+      { type: "h", text: "مفهومِ کلیدی: شروعِ نرم (Softened Start-up)" },
+      { type: "p", text: "پژوهش‌هایِ گاتمن نشان داده‌اند سرنوشتِ یک گفت‌وگویِ دشوار، در همان ۳ دقیقه‌ی اول مشخص می‌شود. شروع با سرزنش («تو همیشه...») تقریباً همیشه به تشدید می‌رود؛ شروع با بیانِ احساس و نیازِ خودی («من وقتی ... می‌شود، احساسِ ... می‌کنم») احتمالِ گفت‌وگویِ سازنده را بسیار بالا می‌برد." },
+      { type: "h", text: "تمرینِ این جلسه" },
+      { type: "p", text: "۱. هرکدام، جداگانه، یک جمله بنویسید که معمولاً باعثِ شروعِ دعوا می‌شود.\n۲. آن را با فرمولِ «من وقتی [موقعیت] پیش می‌آید، احساسِ [احساس] می‌کنم، و نیازم [نیاز] است» بازنویسی کنید.\n۳. جمله‌هایِ بازنویسی‌شده را فقط برایِ هم بخوانید — هنوز بحث نکنید." },
+      { type: "h", text: "قانونِ ایمنیِ این هفته" },
+      { type: "p", text: "توافق کنید: اگر گفت‌وگویی به سمتِ تشدید رفت، هرکدام حق دارید بگویید «فعلاً استراحت» و حداقل ۲۰ دقیقه فاصله بگیرید." },
+      { type: "h", text: "کارِ خانگی" },
+      { type: "p", text: "هر روز، یک لحظه‌ی «اتصال» و یک لحظه‌ی «فاصله» را در یک خط یادداشت کنید — بدونِ تحلیل، فقط ثبت." },
+    ],
+  },
+  boundaries: {
+    title: "بازسازیِ شفافیت و مرزهایِ سالم",
+    approach: "گاتمن + ACT",
+    body: [
+      { type: "h", text: "چرا این جلسه مهم است" },
+      { type: "p", text: "نتیجه‌ی شما نشان می‌دهد شفافیت و مرزها، نقطه‌ی توجهِ اصلیِ امروز است. مرزهایِ مبهم (چه بینِ زوجین، چه با افرادِ بیرون) معمولاً باعثِ ابهام و سوءتفاهمِ تدریجی می‌شوند، حتی وقتی نیتی برایِ آسیب در کار نبوده." },
+      { type: "h", text: "مفهومِ کلیدی: شفافیتِ داوطلبانه به‌جایِ بازجویی" },
+      { type: "p", text: "شفافیتی که از سرِ ترس یا کنترل باشد، پایدار نمی‌ماند. شفافیتی که از سرِ انتخابِ آگاهانه باشد («می‌خواهم شریکم بداند»)، رابطه را قوی‌تر می‌کند." },
+      { type: "h", text: "تمرینِ این جلسه" },
+      { type: "p", text: "۱. هرکدام بنویسید: «چه‌چیزی را دوست داشتم همسرم دربارهٔ من/زندگی‌ام بداند، اما تا حالا نگفته‌ام؟»\n۲. یکی از این موارد (کم‌خطرترین) را همین جلسه با هم در میان بگذارید.\n۳. با هم تعریف کنید: «مرزِ سالم» برایِ هرکدام از شما دقیقاً یعنی چه؟" },
+      { type: "h", text: "کارِ خانگی" },
+      { type: "p", text: "هفته‌ای یک‌بار، بدونِ این‌که کسی بپرسد، یک خبرِ کوچک از روزتان را داوطلبانه با همسرتان در میان بگذارید." },
+    ],
+  },
+  vulnerability: {
+    title: "روبه‌روشدن با زمینه‌سازها با مهربانی نه قضاوت",
+    approach: "ACT",
+    body: [
+      { type: "h", text: "چرا این جلسه مهم است" },
+      { type: "p", text: "نتیجه‌ی شما نشان می‌دهد آسیب‌پذیریِ زمینه‌ای (سابقه، الگوهایِ گذشته، یا شرایطِ فعلیِ فشارزا) نقطه‌ی توجهِ اصلیِ امروز است. این حیطه حساس‌ترین بخشِ ارزیابی است — مهم است با مهربانی، نه شرم، به آن نزدیک شویم." },
+      { type: "h", text: "مفهومِ کلیدی: تاریخچه، سرنوشت نیست" },
+      { type: "p", text: "در ACT، پذیرفتنِ یک تجربه یا الگویِ گذشته به‌معنایِ توجیه‌کردنش نیست — به‌معنایِ این است که دیگر انرژیِ‌مان صرفِ جنگیدن با واقعیتِ گذشته نشود، بلکه صرفِ ساختنِ آینده شود." },
+      { type: "h", text: "تمرینِ این جلسه" },
+      { type: "p", text: "۱. بدونِ فشار برایِ افشایِ جزئیات، فقط برایِ خودتان بنویسید: «کدام تجربه یا الگو، هنوز روی نگاهم به تعهد اثر دارد؟»\n۲. اگر مایل بودید، یک جمله (نه لزوماً همه‌چیز) از این را با همسرتان در میان بگذارید.\n۳. با هم تمرین کنید: وقتی یکی از شما آسیب‌پذیری نشان می‌دهد، پاسخ چه‌باید باشد؟" },
+      { type: "h", text: "کارِ خانگی" },
+      { type: "p", text: "این هفته، یک‌بار که احساسِ فشار یا وسوسه کردید، به‌جایِ عمل‌کردن، فقط برایِ خودتان بنویسید چه‌احساسی داشتید — بدونِ قضاوتِ خود." },
+    ],
+  },
+  sexual: {
+    title: "بازگرداندنِ صمیمیت و رضایتِ متقابل",
+    approach: "گاتمن + EFT",
+    body: [
+      { type: "h", text: "چرا این جلسه مهم است" },
+      { type: "p", text: "نتیجه‌ی شما نشان می‌دهد رضایتِ جنسی، نقطه‌ی توجهِ اصلیِ امروز است. این حیطه معمولاً هم علتِ فاصله است، هم نتیجه‌ی آن — یعنی مداخله در آن، می‌تواند تاثیرِ متقابلِ مثبتی رویِ بقیه‌ی رابطه هم بگذارد." },
+      { type: "h", text: "مفهومِ کلیدی: صمیمیتِ عاطفی، پیش‌نیازِ صمیمیتِ جسمی" },
+      { type: "p", text: "پژوهش‌ها نشان می‌دهند رضایتِ جنسی به‌ندرت مستقل از کیفیتِ ارتباطِ هیجانیِ روزمره است. صحبت‌کردنِ مستقیم و بدونِ‌شرم دربارهٔ نیازها، اولین قدمِ واقعی است، نه لزوماً تغییرِ فوریِ رفتار." },
+      { type: "h", text: "تمرینِ این جلسه" },
+      { type: "p", text: "۱. هرکدام، جداگانه، بنویسید: «چه‌چیزی در این حیطه برایم مهم است که تا حالا مستقیم نگفته‌ام؟»\n۲. با لحنی کنجکاو (نه گلایه‌آمیز)، این‌ها را برایِ هم بخوانید.\n۳. یک زمانِ مشخص (نه لزوماً برنامه‌ریزی‌شده‌ی سفت‌وسخت) برایِ نزدیکی و صمیمیت در هفته توافق کنید." },
+      { type: "h", text: "کارِ خانگی" },
+      { type: "p", text: "هر روز، یک لمسِ کوچکِ غیرِجنسی (دست‌گرفتن، در آغوش‌کشیدن) را عمداً وارد کنید — بدونِ انتظارِ ادامه." },
+    ],
+  },
+};
+function getSessionContent(pkgKey, num, weakestDomain) {
+  if (num === 1 && weakestDomain && DOMAIN_OPENING_SESSIONS[weakestDomain]) {
+    return DOMAIN_OPENING_SESSIONS[weakestDomain];
+  }
+  return SESSION_CONTENT[pkgKey][num];
+}
+
+const SESSION_CONTENT = {
+  moderate: {
+    1: {
+      title: "ارزیابیِ عمیق‌تر و تثبیتِ ایمنیِ گفت‌وگو",
+      approach: "گاتمن",
+      audioUrl: null, videoUrl: null,
+      body: [
+        { type: "h", text: "چرا این جلسه مهم است" },
+        { type: "p", text: "قبل از هر تلاشی برایِ تغییر، باید مطمئن شویم گفت‌وگو دربارهٔ مسائلِ حساس، بدونِ آسیبِ بیشتر ممکن است. خیلی از زوج‌ها وقتی می‌خواهند دربارهٔ مشکل صحبت کنند، ناخواسته وارد الگویی می‌شوند که خودش آسیب‌زننده است — قبل از حرف‌زدن دربارهٔ محتوا، باید دربارهٔ نحوه‌ی حرف‌زدن توافق کنیم." },
+        { type: "h", text: "مفهومِ کلیدی: شروعِ نرم (Softened Start-up)" },
+        { type: "p", text: "پژوهش‌هایِ گاتمن نشان داده‌اند که سرنوشتِ یک گفت‌وگوی دشوار، در همان ۳ دقیقه‌ی اول مشخص می‌شود. اگر گفت‌وگو با سرزنش یا انتقادِ شخصیت شروع شود («تو همیشه...»)، تقریباً همیشه به سمتِ تشدید می‌رود. اگر با بیانِ احساس و نیازِ خودی شروع شود («من وقتی ... اتفاق می‌افتد، احساسِ ... می‌کنم»)، احتمالِ گفت‌وگویِ سازنده بسیار بیشتر است." },
+        { type: "h", text: "تمرینِ این جلسه" },
+        { type: "p", text: "۱. هرکدام از شما، جداگانه و بدونِ نشان‌دادن به دیگری، یک جمله بنویسید که معمولاً باعثِ شروعِ دعوا می‌شود.\n۲. حالا همان جمله را با فرمولِ زیر بازنویسی کنید:\n«من وقتی [موقعیتِ مشخص] پیش می‌آید، احساسِ [احساسِ خودتان] می‌کنم، و نیازم [نیازِ واقعی] است.»\n۳. جمله‌هایِ بازنویسی‌شده را برایِ هم بخوانید — فقط بخوانید، هنوز بحث نکنید." },
+        { type: "h", text: "قانونِ ایمنیِ این هفته" },
+        { type: "p", text: "توافق کنید: اگر در طولِ هفته، گفت‌وگویی به سمتِ تشدید رفت، هرکدام حق دارید بگویید «فعلاً استراحت» — و واقعاً حداقل ۲۰ دقیقه فاصله بگیرید، بدونِ ترکِ‌کردنِ رابطه یا قهر، فقط یک وقفه‌ی فیزیولوژیک." },
+        { type: "h", text: "کارِ خانگی" },
+        { type: "p", text: "هر روز، یک لحظه‌ی کوچکِ «اتصال» (وقتی احساسِ نزدیکی کردید) و یک لحظه‌ی «فاصله» (وقتی احساسِ دوری کردید) را در یک خط یادداشت کنید — بدونِ تحلیل، فقط ثبت." },
+      ],
+    },
+    2: { title: "شناساییِ چرخه‌ی منفیِ تعامل", approach: "EFT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    3: { title: "پذیرشِ هیجاناتِ دشوار و تمایزِ ارزش از قانون", approach: "ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    4: { title: "بازسازیِ یک تعهدِ عملی و برنامه‌ی ادامه", approach: "گاتمن + ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+  },
+  advanced: {
+    1: { title: "مدیریتِ بحران و قوانینِ ایمنیِ گفت‌وگو", approach: "گاتمن", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    2: { title: "کنترلِ سرریزِ هیجانی و تنظیمِ فیزیولوژیک", approach: "گاتمن + ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    3: { title: "روایتِ کاملِ ماجرا بدونِ دفاع یا تلافی", approach: "EFT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    4: { title: "چرخه‌ی منفیِ زیربنایی و نیازهایِ دلبستگی", approach: "EFT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    5: { title: "بررسیِ عمیق‌ترِ زمینه‌سازها", approach: "ACT + گاتمن", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    6: { title: "آسیب‌پذیریِ متقابل و درخواستِ نیاز", approach: "EFT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    7: { title: "بازتعریفِ تعهد بر پایه‌ی ارزش و مهارتِ بخشش", approach: "ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    8: { title: "طرحِ پیشگیریِ عود و برنامه‌ی پایش", approach: "گاتمن", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+  },
+};
 
 // ---------- Content ----------
 const DOMAINS = [
@@ -523,6 +661,23 @@ function Card({ children, style }) {
   );
 }
 
+function Collapsible({ title, icon, defaultOpen, children }) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  return (
+    <div style={{ marginTop: 14, border: "1px solid #EEF3F6", borderRadius: 14, overflow: "hidden" }}>
+      <button onClick={() => setOpen(!open)}
+        style={{
+          width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "13px 15px", background: open ? "#F3F8F5" : "#F7FAFC", border: "none", cursor: "pointer", textAlign: "right",
+        }}>
+        <span style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D" }}>{icon ? `${icon} ` : ""}{title}</span>
+        <span style={{ fontSize: 13, color: "#2B6777", transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
+      </button>
+      {open && <div style={{ padding: "14px 15px" }}>{children}</div>}
+    </div>
+  );
+}
+
 // ---------- Clearer radar chart with safety bands ----------
 function RadarChart({ p1, p2, domains }) {
   const size = 360;
@@ -634,10 +789,14 @@ function DomainBarChart({ p1, p2, domains }) {
 }
 
 // ---------- Main App ----------
-function PricingTiers({ tier }) {
+function PricingTiers({ tier, pkgKey, scores, onOpenLibrary }) {
   if (tier === "healthy") return null;
-  const pkg = tier === "critical" ? TREATMENT_PACKAGES.advanced : TREATMENT_PACKAGES.moderate;
+  const resolvedKey = pkgKey || (tier === "critical" ? "advanced" : "moderate");
+  const pkg = TREATMENT_PACKAGES[resolvedKey];
   const savings = pkg.inPersonEquivalent - pkg.price;
+  const weakestDomain = scores
+    ? Object.entries(scores).sort((a, b) => a[1] - b[1])[0]?.[0]
+    : null;
   return (
     <div style={{
       marginTop: 18, padding: "16px 16px 14px", borderRadius: 18,
@@ -651,7 +810,7 @@ function PricingTiers({ tier }) {
         {tier === "critical"
           ? "با توجه به نتیجه‌ی امروز، یک روندِ درمانیِ کامل‌تر می‌تواند کمکِ واقعی به رابطه‌ی شما بکند. "
           : "با توجه به نتیجه‌ی امروز، یک روندِ کوتاه و متمرکز می‌تواند تفاوتِ محسوسی ایجاد کند. "}
-        این جلسات با رویکردهایِ علمیِ ACT، EFT و گاتمن، مستقیم با دکتر عقیلی برگزار می‌شود.
+        این جلسات با رویکردهایِ علمیِ ACT، EFT و گاتمن طراحی شده و به‌محضِ خرید، همین‌جا در اپ برایتان باز می‌شود.
       </p>
       <div style={{ background: "#fff", borderRadius: 14, padding: "12px 14px", marginBottom: 10 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
@@ -664,10 +823,15 @@ function PricingTiers({ tier }) {
           <span style={{ color: "#4C8778", fontWeight: 700 }}>({toman(savings)} صرفه‌جویی)</span>
         </p>
       </div>
+      <button onClick={() => onOpenLibrary && onOpenLibrary(resolvedKey, weakestDomain)}
+        style={{ display: "block", width: "100%", textAlign: "center", padding: "12px", borderRadius: 12, border: "none", background: tier === "critical" ? "#8A5A4E" : "#2B6777", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer", marginBottom: 8 }}>
+        مشاهده و خریدِ جلسات
+      </button>
       <a href={CONSULT_BOOKING_LINK}
-        style={{ display: "block", textAlign: "center", padding: "12px", borderRadius: 12, background: tier === "critical" ? "#8A5A4E" : "#2B6777", color: "#fff", fontWeight: 700, fontSize: 13, textDecoration: "none" }}>
-        رزروِ این بسته (تماس با دفتر)
+        style={{ display: "block", textAlign: "center", fontSize: 11.5, color: "#5A7080", textDecoration: "underline" }}>
+        یا تماسِ مستقیم با دفتر
       </a>
+
     </div>
   );
 }
@@ -787,6 +951,41 @@ export default function App() {
   const [linkCopyStatus, setLinkCopyStatus] = useState("idle");
   const [user, setUser] = useState(null);
   const [showBio, setShowBio] = useState(false);
+  const [libraryPkg, setLibraryPkg] = useState("moderate");
+  const [libraryWeakestDomain, setLibraryWeakestDomain] = useState(null);
+  const [unlockedSessions, setUnlockedSessions] = useState([]);
+  const [viewingSession, setViewingSession] = useState(null);
+  const [adminUnlockEmail, setAdminUnlockEmail] = useState("");
+  const [adminUnlockMsg, setAdminUnlockMsg] = useState("");
+
+  async function loadUnlockedSessions() {
+    if (!user) return;
+    try {
+      const r = await fetch(`/api/sessions/status?email=${encodeURIComponent(user.email)}`);
+      const data = await r.json();
+      setUnlockedSessions(data.unlocked || []);
+    } catch (e) {}
+  }
+
+  function openSessionLibrary(pkgKey, weakestDomain) {
+    setLibraryPkg(pkgKey);
+    setLibraryWeakestDomain(weakestDomain || null);
+    setScreen("sessionLibrary");
+    loadUnlockedSessions();
+  }
+
+  async function adminUnlockSession(pkgKey, num) {
+    if (!adminUnlockEmail) { setAdminUnlockMsg("ایمیلِ کاربر را وارد کنید"); return; }
+    try {
+      const r = await fetch("/api/sessions/status", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: adminUnlockEmail, sessionId: sessionId(pkgKey, num), adminPass: ADMIN_PASS }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setAdminUnlockMsg(`جلسه‌ی ${num} برایِ ${adminUnlockEmail} فعال شد ✅`);
+    } catch (e) { setAdminUnlockMsg(e.message); }
+  }
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authName, setAuthName] = useState("");
@@ -1242,7 +1441,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۰۷ / افزودنِ پیشنهادِ بسته‌هایِ درمانی بر اساسِ شدتِ نتیجه
+              نسخه: ۲۰۲۶-۰۸-۱۰ / تبدیلِ بخش‌هایِ بزرگِ صفحه‌ی نتیجه به آکاردئونِ کشویی
             </p>
             </div>
           </Card>
@@ -1295,6 +1494,96 @@ export default function App() {
             </button>
           </Card>
         )}
+
+        {screen === "sessionLibrary" && (
+          <Card>
+            <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 4 }}>
+              {TREATMENT_PACKAGES[libraryPkg].label}
+            </h2>
+            <p style={{ fontSize: 11.5, color: "#8CA3B0", textAlign: "center", marginBottom: 16 }}>
+              {TREATMENT_PACKAGES[libraryPkg].sessions} جلسه · هر جلسه {toman(sessionPrice(libraryPkg))}
+            </p>
+
+            {!user && (
+              <div style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "center" }}>
+                <p style={{ fontSize: 12, color: "#7A5B2E", margin: "0 0 8px" }}>برایِ خرید و دسترسی به جلسات، ابتدا وارد حساب شوید.</p>
+                <button onClick={() => setScreen("authLogin")}
+                  style={{ padding: "8px 16px", borderRadius: 10, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
+                  ورود / ثبت‌نام
+                </button>
+              </div>
+            )}
+
+            {Array.from({ length: TREATMENT_PACKAGES[libraryPkg].sessions }, (_, i) => i + 1).map((num) => {
+              const sess = getSessionContent(libraryPkg, num, libraryWeakestDomain);
+              const sid = sessionId(libraryPkg, num);
+              const unlocked = unlockedSessions.includes(sid);
+              return (
+                <div key={num} style={{
+                  display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 14,
+                  background: unlocked ? "#F3F8F5" : "#F7FAFC", border: `1px solid ${unlocked ? "#CFE6D8" : "#EEF3F6"}`, marginBottom: 8,
+                }}>
+                  <div style={{ width: 34, height: 34, borderRadius: "50%", background: unlocked ? "#4C8778" : "#DCE8F0", color: unlocked ? "#fff" : "#8CA3B0", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 13, flexShrink: 0 }}>
+                    {unlocked ? "✓" : num}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", margin: 0 }}>
+                      جلسه‌ی {num}: {sess.title}
+                      {num === 1 && libraryWeakestDomain && <span style={{ fontSize: 9.5, color: "#4C8778", fontWeight: 700, marginRight: 6 }}>· شخصی‌سازی‌شده</span>}
+                    </p>
+                    <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: "2px 0 0" }}>رویکرد: {sess.approach}</p>
+                  </div>
+                  {unlocked ? (
+                    <button onClick={() => { setViewingSession({ pkgKey: libraryPkg, num, weakestDomain: libraryWeakestDomain }); setScreen("sessionReader"); }}
+                      style={{ padding: "7px 12px", borderRadius: 10, border: "none", background: "#4C8778", color: "#fff", fontWeight: 700, fontSize: 11, cursor: "pointer", flexShrink: 0 }}>
+                      مشاهده
+                    </button>
+                  ) : (
+                    <span style={{ fontSize: 11, color: "#8CA3B0", flexShrink: 0 }}>🔒 {toman(sessionPrice(libraryPkg))}</span>
+                  )}
+                </div>
+              );
+            })}
+
+            <div style={{ background: "#EAF4FB", borderRadius: 12, padding: "12px 14px", marginTop: 12, textAlign: "center" }}>
+              <p style={{ fontSize: 11.5, color: "#3A4A52", lineHeight: 1.9, margin: 0 }}>
+                برایِ خرید، فعلاً با دفتر تماس بگیرید — بعد از پرداخت، دسترسیِ همان جلسات از طریقِ همین حساب برایتان فعال می‌شود.
+              </p>
+              <a href={CONSULT_BOOKING_LINK} style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 700, color: "#2B6777" }}>📞 {BRAND.phone}</a>
+            </div>
+
+            <button onClick={() => setScreen("topics")}
+              style={{ width: "100%", marginTop: 14, padding: "10px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>
+              بازگشت
+            </button>
+          </Card>
+        )}
+
+        {screen === "sessionReader" && viewingSession && (() => {
+          const sess = getSessionContent(viewingSession.pkgKey, viewingSession.num, viewingSession.weakestDomain);
+          return (
+            <Card>
+              <button onClick={() => setScreen("sessionLibrary")}
+                style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>
+                ‹ بازگشت به فهرستِ جلسات
+              </button>
+              <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>
+                جلسه‌ی {viewingSession.num}: {sess.title}
+              </h2>
+              <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 16 }}>رویکردِ محور: {sess.approach}</p>
+              {(sess.audioUrl || sess.videoUrl) && (
+                <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 12 }}>🎧 نسخه‌ی صوتی/تصویری به‌زودی اضافه می‌شود</p>
+              )}
+              {sess.body.map((block, i) =>
+                block.type === "h" ? (
+                  <p key={i} style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "16px 0 6px" }}>{block.text}</p>
+                ) : (
+                  <p key={i} style={{ fontSize: 12.5, color: "#3A4A52", lineHeight: 2, margin: "0 0 10px", whiteSpace: "pre-line" }}>{block.text}</p>
+                )
+              )}
+            </Card>
+          );
+        })()}
 
         {screen === "consent" && (
           <Card>
@@ -1547,7 +1836,7 @@ export default function App() {
                 );
               })()}
 
-              <h3 style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 10px" }}>تحلیلِ اختصاصیِ هر حیطه</h3>
+              <Collapsible title="تحلیلِ اختصاصیِ هر حیطه" icon="📂">
               {(() => {
                 const withAvg2 = DOMAINS.map((d) => ({ d, avg: myScores[d.key] }));
                 const sorted = [...withAvg2].sort((a, b) => a.avg - b.avg);
@@ -1580,6 +1869,7 @@ export default function App() {
                   );
                 });
               })()}
+              </Collapsible>
 
               {(() => {
                 const patterns = detectPatterns(myScores, myScores);
@@ -1677,7 +1967,7 @@ export default function App() {
                 بازگشت به صفحه‌ی شروع
               </button>
             </Card>
-            <PricingTiers tier={hasHighSeverity || myOverall < 40 ? "critical" : myOverall < 75 ? "moderate" : "healthy"} />
+            <PricingTiers tier={hasHighSeverity || myOverall < 40 ? "critical" : myOverall < 75 ? "moderate" : "healthy"} scores={myScores} onOpenLibrary={openSessionLibrary} />
             <ChatWidget scores={myScores} overall={myOverall} mode="solo" />
             </>
           );
@@ -1708,7 +1998,7 @@ export default function App() {
         )}
 
         {screen === "results" && (
-          <ResultsView code={code} scores={scores} context={context} sd1={sd1} sd2={sd2} ans1={ans1} ans2={ans2} saveWarning={saveWarning} onGoAdmin={() => setScreen("adminLogin")} prevResultText={prevResultText} />
+          <ResultsView code={code} scores={scores} context={context} sd1={sd1} sd2={sd2} ans1={ans1} ans2={ans2} saveWarning={saveWarning} onGoAdmin={() => setScreen("adminLogin")} prevResultText={prevResultText} openSessionLibrary={openSessionLibrary} />
         )}
 
         {screen === "adminLogin" && (
@@ -1726,7 +2016,28 @@ export default function App() {
         )}
 
         {screen === "admin" && (
+          <>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 10 }}>🔓 فعال‌سازیِ دستیِ جلسات (تا وصل‌شدنِ درگاهِ پرداخت)</p>
+            <input value={adminUnlockEmail} onChange={(e) => setAdminUnlockEmail(e.target.value)} placeholder="ایمیلِ کاربر (پس از خرید)"
+              style={{ width: "100%", padding: "9px 10px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 10, fontSize: 12.5 }} />
+            {Object.entries(TREATMENT_PACKAGES).map(([pkgKey, pkg]) => (
+              <div key={pkgKey} style={{ marginBottom: 8 }}>
+                <p style={{ fontSize: 11.5, color: "#5A7080", margin: "0 0 5px" }}>{pkg.label}:</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                  {Array.from({ length: pkg.sessions }, (_, i) => i + 1).map((num) => (
+                    <button key={num} onClick={() => adminUnlockSession(pkgKey, num)}
+                      style={{ padding: "5px 10px", borderRadius: 8, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontSize: 11, cursor: "pointer" }}>
+                      جلسه {num}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {adminUnlockMsg && <p style={{ fontSize: 11.5, color: "#4C8778", marginTop: 8 }}>{adminUnlockMsg}</p>}
+          </Card>
           <AdminDashboard rows={adminRows} busy={busy} onRefresh={loadAdmin} onBack={() => setScreen("start")} />
+          </>
         )}
       </div>
     </div>
@@ -1749,7 +2060,7 @@ function compositeRiskBand(s1, s2) {
   return { band: "بالا", color: "#A6432F", score: compositeSafety };
 }
 
-function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning, onGoAdmin, prevResultText }) {
+function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning, onGoAdmin, prevResultText, openSessionLibrary }) {
   const { s1, s2 } = scores;
   const overall = Math.round(DOMAINS.reduce((s, d) => s + s1[d.key] + s2[d.key], 0) / (DOMAINS.length * 2));
   const sdAvg1 = sdAverage(sd1), sdAvg2 = sdAverage(sd2);
@@ -1966,9 +2277,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           </div>
         )}
 
-        <div style={{ marginBottom: 18 }}>
-          <h3 style={{ fontSize: 15, fontWeight: 800, color: "#1F2D3D", margin: "0 0 10px" }}>🔎 تحلیلِ عمیق‌ترِ الگو و ریسک</h3>
-
+        <Collapsible title="تحلیلِ عمیق‌ترِ الگو و ریسک" icon="🔎">
           {(() => {
             const patterns = detectPatterns(s1, s2);
             if (patterns.length === 0) return null;
@@ -2041,7 +2350,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
               </div>
             );
           })()}
-        </div>
+        </Collapsible>
 
         {(() => {
           const anyHighFlag = detectCriticalFlags(ans1 || {}, ans2 || {}).some((f) => f.severity === "بالا");
@@ -2105,6 +2414,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           );
         })()}
 
+        <Collapsible title="جزئیاتِ کاملِ هر حیطه" icon="📂">
         {(() => {
           const withAvg2 = DOMAINS.map((d) => ({ d, avg: Math.round((s1[d.key] + s2[d.key]) / 2) }));
           const sorted = [...withAvg2].sort((a, b) => a.avg - b.avg);
@@ -2154,6 +2464,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
             );
           });
         })()}
+        </Collapsible>
 
         <button onClick={() => window.print()} className="no-print"
           style={{ width: "100%", marginTop: 20, padding: "13px", borderRadius: 14, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
@@ -2178,7 +2489,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
       <PricingTiers tier={(() => {
         const anyHigh = detectCriticalFlags(ans1 || {}, ans2 || {}).some((f) => f.severity === "بالا");
         return anyHigh || overall < 40 ? "critical" : overall < 75 ? "moderate" : "healthy";
-      })()} />
+      })()} scores={Object.fromEntries(DOMAINS.map((d) => [d.key, Math.round((s1[d.key] + s2[d.key]) / 2)]))} onOpenLibrary={openSessionLibrary} />
       <ChatWidget
         scores={Object.fromEntries(DOMAINS.map((d) => [d.key, Math.round((s1[d.key] + s2[d.key]) / 2)]))}
         overall={overall}
