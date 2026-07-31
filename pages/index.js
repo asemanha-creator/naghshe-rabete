@@ -1008,8 +1008,9 @@ export default function App() {
               {showBio && (
                 <div style={{ background: "#fff", border: "1px solid #DCE8F0", borderRadius: 14, padding: "12px 14px", margin: "6px auto 10px", maxWidth: 320, textAlign: "right" }}>
                   <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: 0 }}>{BRAND.credential}</p>
-                  <p style={{ fontSize: 11.5, color: "#2B6777", margin: "8px 0 0", fontWeight: 600 }}>📷 instagram.com/{BRAND.instagram}</p>
-                  <p style={{ fontSize: 11.5, color: "#2B6777", margin: "3px 0 0", fontWeight: 600 }}>📞 {BRAND.phone}</p>
+                  <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 11.5, color: "#2B6777", margin: "8px 0 0", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
+                  <a href="https://civilica.com/p/74353/" target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 11.5, color: "#2B6777", margin: "6px 0 0", fontWeight: 600, textDecoration: "none" }}>📄 لینکِ مقالاتِ علمی‌پژوهشیِ دکتر عقیلی</a>
+                  <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 11.5, color: "#2B6777", margin: "6px 0 0", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
                 </div>
               )}
 
@@ -1176,13 +1177,13 @@ export default function App() {
             <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
               <p style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{BRAND.name}</p>
               <p style={{ fontSize: 11, color: "#5A7080", margin: "0 0 10px", lineHeight: 1.8 }}>{BRAND.credential}</p>
-              <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📞 {BRAND.phone}</p>
-              <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📷 instagram.com/{BRAND.instagram}</p>
+              <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
+              <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
               <p style={{ fontSize: 12, color: "#5A7080", margin: 0 }}>📍 {BRAND.city}</p>
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۰۶ / دکمهٔ ثابتِ «بازگشت به موضوعات» رویِ همهٔ صفحات
+              نسخه: ۲۰۲۶-۰۸-۰۶-د / شماره‌تماس در همه‌جا قابلِ‌لمس برایِ تماسِ مستقیم
             </p>
             </div>
           </Card>
@@ -1608,8 +1609,8 @@ export default function App() {
 
               <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
                 <p style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{BRAND.name}</p>
-                <p style={{ fontSize: 12, color: "#2B6777", margin: "6px 0 4px", fontWeight: 600 }}>📞 {BRAND.phone}</p>
-                <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📷 instagram.com/{BRAND.instagram}</p>
+                <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "6px 0 4px", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
+                <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
               </div>
 
               <button onClick={() => { setScreen("start"); }}
@@ -2109,8 +2110,8 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
         <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
           <p style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{BRAND.name}</p>
           <p style={{ fontSize: 11, color: "#5A7080", margin: "0 0 10px", lineHeight: 1.8 }}>{BRAND.credential}</p>
-          <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📞 {BRAND.phone}</p>
-          <p style={{ fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600 }}>📷 instagram.com/{BRAND.instagram}</p>
+          <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
+          <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
           <p style={{ fontSize: 12, color: "#5A7080", margin: 0 }}>📍 {BRAND.city}</p>
         </div>
       </Card>
