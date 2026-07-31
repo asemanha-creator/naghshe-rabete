@@ -256,7 +256,22 @@ const SD_ITEMS = [
   "هیچ‌وقت حتی برای یک لحظه هم به فرد دیگری فکر نکرده‌ام.",
 ];
 
+const TOPICS = [
+  { key: "relationship", title: "رابطه‌یِ زناشویی", subtitle: "کجای راهم؟", icon: "💞", core: "#2B6777", bg: "#DCEAEA", blobA: "#8FB8B8", blobB: "#C7DEDA", enabled: true },
+  { key: "premarriage", title: "پیش از ازدواج", subtitle: "آماده‌ام؟", icon: "💍", core: "#B8853A", bg: "#FBF0DC", blobA: "#E8C888", blobB: "#F5E2B8", enabled: false },
+  { key: "aggression", title: "پرخاشگری", subtitle: "کنترلِ خشم", icon: "🔥", core: "#B5654E", bg: "#F5E3DC", blobA: "#DDA48F", blobB: "#EFCBBA", enabled: false },
+  { key: "distrust", title: "بی‌اعتمادی", subtitle: "بدبینی در رابطه", icon: "🔍", core: "#4E7290", bg: "#DCE6EC", blobA: "#8FADC2", blobB: "#C3D5E1", enabled: false },
+  { key: "anxiety", title: "اضطراب", subtitle: "دلواپسیِ روزمره", icon: "🌊", core: "#5E8256", bg: "#E3EDDD", blobA: "#9DBE92", blobB: "#CBDCC3", enabled: false },
+  { key: "mood", title: "افسردگی", subtitle: "خلقِ پایین", icon: "🌫️", core: "#73608F", bg: "#E8E1F0", blobA: "#AB99C4", blobB: "#D4C7E3", enabled: false },
+  { key: "attention", title: "تمرکز و توجه", subtitle: "پراکندگیِ ذهن", icon: "🎯", core: "#A9822F", bg: "#F5EAD0", blobA: "#D4B361", blobB: "#EBD79A", enabled: false },
+  { key: "attachment", title: "سبکِ دلبستگی", subtitle: "چطور وابسته می‌شوم", icon: "🧷", core: "#845A76", bg: "#F0DFE8", blobA: "#C08FAE", blobB: "#E1C0D3", enabled: false },
+  { key: "forgiveness", title: "بخشش", subtitle: "رهاشدن از کینه", icon: "🕊️", core: "#4C8778", bg: "#DCEEE8", blobA: "#84BBAB", blobB: "#BEDDD3", enabled: false },
+  { key: "rumination", title: "نشخوارِ فکری", subtitle: "افکارِ تکرارشونده", icon: "🌀", core: "#77685A", bg: "#EDE6DE", blobA: "#B0A18F", blobB: "#D6CDBF", enabled: false },
+  { key: "predivorce", title: "مشاورهٔ پیش از طلاق", subtitle: "تصمیمِ آگاهانه", icon: "⚖️", core: "#8A5A4E", bg: "#F2E1DC", blobA: "#C69086", blobB: "#E6C3BB", enabled: false },
+];
+
 const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
 function genCode() {
   let c = "";
   for (let i = 0; i < 6; i++) c += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
@@ -689,7 +704,7 @@ function ChatWidget({ scores, overall, mode }) {
 }
 
 export default function App() {
-  const [screen, setScreen] = useState("start");
+  const [screen, setScreen] = useState("topics");
   const [code, setCode] = useState("");
   const [codeInput, setCodeInput] = useState("");
   const [partner, setPartner] = useState(1);
@@ -711,6 +726,58 @@ export default function App() {
   const [showPrevInput, setShowPrevInput] = useState(false);
   const [viaJoinLink, setViaJoinLink] = useState(false);
   const [linkCopyStatus, setLinkCopyStatus] = useState("idle");
+  const [user, setUser] = useState(null);
+  const [showBio, setShowBio] = useState(false);
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authName, setAuthName] = useState("");
+  const [authErr, setAuthErr] = useState("");
+  const [authBusy, setAuthBusy] = useState(false);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("naghshe_user");
+      if (saved) setUser(JSON.parse(saved));
+    } catch (e) {}
+  }, []);
+
+  function logout() {
+    setUser(null);
+    try { localStorage.removeItem("naghshe_user"); } catch (e) {}
+  }
+
+  async function doSignup() {
+    setAuthErr(""); setAuthBusy(true);
+    try {
+      const r = await fetch("/api/auth/signup", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: authEmail, password: authPassword, name: authName }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا در ثبت‌نام");
+      setUser({ email: data.email, name: data.name });
+      localStorage.setItem("naghshe_user", JSON.stringify({ email: data.email, name: data.name }));
+      setScreen("start");
+    } catch (e) { setAuthErr(e.message); }
+    setAuthBusy(false);
+  }
+
+  async function doLogin() {
+    setAuthErr(""); setAuthBusy(true);
+    try {
+      const r = await fetch("/api/auth/login", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: authEmail, password: authPassword }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا در ورود");
+      setUser({ email: data.email, name: data.name });
+      localStorage.setItem("naghshe_user", JSON.stringify({ email: data.email, name: data.name }));
+      setScreen("start");
+    } catch (e) { setAuthErr(e.message); }
+    setAuthBusy(false);
+  }
+
 
   useEffect(() => {
     try {
@@ -903,14 +970,119 @@ export default function App() {
       `}</style>
 
       <div style={{ maxWidth: 480, margin: "0 auto" }}>
+        {screen === "topics" && (
+          <div style={{
+            margin: "-8px -6px 0", padding: "26px 14px 22px",
+            background: "radial-gradient(circle at 15% 0%, #EAF2EF 0%, transparent 55%), radial-gradient(circle at 85% 100%, #FBF3E2 0%, transparent 50%), #F7FAFC",
+            borderRadius: 24,
+          }}>
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <div style={{
+                width: 52, height: 52, margin: "0 auto 12px", borderRadius: 16,
+                background: "linear-gradient(145deg, #2B6777, #1F4D58)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 8px 20px rgba(43,103,119,0.35)", transform: "rotate(-4deg)",
+              }}>
+                <span style={{ fontSize: 24, display: "block", transform: "rotate(4deg)" }}>🌿</span>
+              </div>
+              <p style={{ fontSize: 11, color: "#2B6777", fontWeight: 700, margin: "0 0 8px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
+              <div>
+                <button onClick={() => setShowBio(!showBio)}
+                  style={{ border: "1px solid #2B6777", background: showBio ? "#2B6777" : "#fff", color: showBio ? "#fff" : "#2B6777", padding: "5px 14px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, cursor: "pointer", marginBottom: 6 }}>
+                  دربارهٔ دکتر عقیلی
+                </button>
+              </div>
+              {showBio && (
+                <div style={{ background: "#fff", border: "1px solid #DCE8F0", borderRadius: 14, padding: "12px 14px", margin: "6px auto 10px", maxWidth: 320, textAlign: "right" }}>
+                  <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: 0 }}>{BRAND.credential}</p>
+                  <p style={{ fontSize: 11.5, color: "#2B6777", margin: "8px 0 0", fontWeight: 600 }}>📷 instagram.com/{BRAND.instagram}</p>
+                  <p style={{ fontSize: 11.5, color: "#2B6777", margin: "3px 0 0", fontWeight: 600 }}>📞 {BRAND.phone}</p>
+                </div>
+              )}
+
+              <p style={{ fontSize: 12.5, color: "#5A7080", margin: 0 }}>می‌خواهید امروز رویِ کدام موضوع کار کنیم؟</p>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13 }}>
+              {TOPICS.map((t, idx) => (
+                <button
+                  key={t.key}
+                  onClick={() => { if (t.enabled) setScreen("start"); }}
+                  style={{
+                    position: "relative", overflow: "hidden", textAlign: "right",
+                    height: 132, borderRadius: 22, border: "none", cursor: t.enabled ? "pointer" : "default",
+                    background: t.bg, padding: "13px 13px 12px",
+                    opacity: t.enabled ? 1 : 0.85,
+                    boxShadow: t.enabled ? `0 10px 24px ${t.core}40, 0 1px 0 rgba(255,255,255,0.6) inset` : `0 3px 10px rgba(30,40,45,0.06)`,
+                    outline: t.enabled ? `2px solid ${t.core}` : "1px solid rgba(0,0,0,0.04)",
+                    transition: "transform 0.15s ease",
+                    transform: "translateY(0)",
+                  }}
+                  onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.97)"; }}
+                  onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+                >
+                  <div style={{
+                    position: "absolute", width: 105, height: 105, borderRadius: "42% 58% 55% 45% / 50% 45% 55% 50%",
+                    background: t.blobA, opacity: 0.6,
+                    bottom: -38, left: idx % 2 === 0 ? -28 : "auto", right: idx % 2 === 1 ? -28 : "auto",
+                  }} />
+                  <div style={{
+                    position: "absolute", width: 50, height: 50, borderRadius: "50%",
+                    background: t.blobB, opacity: 0.65,
+                    top: -14, right: idx % 2 === 0 ? -14 : "auto", left: idx % 2 === 1 ? -14 : "auto",
+                  }} />
+                  <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <div>
+                      <div style={{
+                        width: 34, height: 34, borderRadius: 11, background: "rgba(255,255,255,0.65)",
+                        display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8,
+                        boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
+                      }}>
+                        <span style={{ fontSize: 17 }}>{t.icon}</span>
+                      </div>
+                      <div style={{ fontSize: 14.5, fontWeight: 800, color: "#20303A", lineHeight: 1.35 }}>{t.title}</div>
+                      <div style={{ fontSize: 10.5, color: "#4A5A62", marginTop: 2 }}>{t.subtitle}</div>
+                    </div>
+                    {t.enabled ? (
+                      <span style={{ alignSelf: "flex-start", fontSize: 10.5, fontWeight: 700, color: "#fff", background: t.core, padding: "4px 11px", borderRadius: 999, boxShadow: `0 3px 8px ${t.core}55` }}>
+                        شروع ←
+                      </span>
+                    ) : (
+                      <span style={{ alignSelf: "flex-start", fontSize: 9.5, fontWeight: 700, color: t.core, background: "rgba(255,255,255,0.75)", padding: "4px 10px", borderRadius: 999 }}>
+                        به‌زودی
+                      </span>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <p style={{ textAlign: "center", fontSize: 11, color: "#8CA3B0", marginTop: 22, lineHeight: 1.9 }}>
+              ماژول‌هایِ «به‌زودی» در حالِ آماده‌سازیِ علمی‌اند و به‌مرور فعال می‌شوند.
+            </p>
+          </div>
+        )}
+
         {screen === "start" && (
           <Card style={{ padding: 0, overflow: "hidden" }}>
             <div style={{
               background: "radial-gradient(circle at 78% 82%, rgba(240,197,120,0.55) 0%, rgba(240,197,120,0) 6%), radial-gradient(circle at 15% 70%, rgba(240,197,120,0.4) 0%, rgba(240,197,120,0) 5%), radial-gradient(circle at 60% 30%, rgba(240,197,120,0.35) 0%, rgba(240,197,120,0) 4%), radial-gradient(circle at 22% 18%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.18) 9%, rgba(255,255,255,0) 20%), linear-gradient(115deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 22%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.4) 100%), linear-gradient(160deg, #16305E 0%, #2E5590 45%, #5F8FCC 80%, #96BADF 100%)",
-              padding: "9px 10px 8px", textAlign: "center"
+              padding: "9px 10px 8px", textAlign: "center", position: "relative"
             }}>
               <div style={{ width: 30, height: 30, margin: "0 auto 5px", borderRadius: "50%", background: "rgba(255,255,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <span style={{ fontSize: 15, lineHeight: 1 }}>🌿</span>
+              </div>
+              <div style={{ position: "absolute", top: 10, right: 12, fontSize: 11 }}>
+                <a onClick={() => setScreen("topics")} style={{ color: "#EAF2F9", cursor: "pointer" }}>‹ موضوعاتِ دیگر</a>
+              </div>
+              <div style={{ position: "absolute", top: 10, left: 12, fontSize: 11 }}>
+                {user ? (
+                  <span style={{ color: "#EAF2F9" }}>
+                    سلام {user.name || user.email} · <a onClick={logout} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
+                  </span>
+                ) : (
+                  <a onClick={() => setScreen("authLogin")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>ورود / ثبت‌نام</a>
+                )}
               </div>
               <p style={{ fontSize: 13, color: "#D6E4F0", margin: "0 0 4px", fontWeight: 700 }}>{BRAND.academy}</p>
               <h1 style={{ fontSize: 25, color: "#fff", margin: "0 0 10px", fontWeight: 800 }}>کجای راهم؟</h1>
@@ -997,9 +1169,57 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۰۳-ب / چت‌بات فعال‌تر: شروعِ خودکار با سوالِ کاوشیِ شخصی‌سازی‌شده
+              نسخه: ۲۰۲۶-۰۸-۰۵-و / افزودنِ «مشاورهٔ پیش از طلاق» به شبکهٔ موضوعات
             </p>
             </div>
+          </Card>
+        )}
+
+        {screen === "authLogin" && (
+          <Card>
+            <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 16 }}>ورود به حساب</h2>
+            <input value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="ایمیل"
+              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 10, fontSize: 13 }} />
+            <input value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="رمزِعبور" type="password"
+              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 13 }} />
+            {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
+            <button onClick={doLogin} disabled={authBusy}
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+              {authBusy ? "..." : "ورود"}
+            </button>
+            <button onClick={() => { setAuthErr(""); setScreen("authSignup"); }}
+              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
+              حساب ندارم — ثبت‌نام
+            </button>
+            <button onClick={() => setScreen("start")}
+              style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12.5 }}>
+              بازگشت
+            </button>
+          </Card>
+        )}
+
+        {screen === "authSignup" && (
+          <Card>
+            <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 16 }}>ساختِ حساب</h2>
+            <input value={authName} onChange={(e) => setAuthName(e.target.value)} placeholder="نام (اختیاری)"
+              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 10, fontSize: 13 }} />
+            <input value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="ایمیل"
+              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 10, fontSize: 13 }} />
+            <input value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="رمزِعبور (حداقل ۶ کاراکتر)" type="password"
+              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 13 }} />
+            {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
+            <button onClick={doSignup} disabled={authBusy}
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+              {authBusy ? "..." : "ثبت‌نام"}
+            </button>
+            <button onClick={() => { setAuthErr(""); setScreen("authLogin"); }}
+              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
+              حساب دارم — ورود
+            </button>
+            <button onClick={() => setScreen("start")}
+              style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12.5 }}>
+              بازگشت
+            </button>
           </Card>
         )}
 
