@@ -135,7 +135,9 @@ const DOMAIN_OPENING_SESSIONS = {
   },
 };
 function getSessionContent(pkgKey, num, weakestDomain) {
-  if (num === 1 && weakestDomain && DOMAIN_OPENING_SESSIONS[weakestDomain]) {
+  // شخصی‌سازیِ جلسه‌ی اول فقط برایِ مسیرِ «پیشگیری» منطقی است؛
+  // مسیرِ «پس‌ازخیانت» همیشه باید با تثبیت/ایمنیِ بحران شروع شود، فارغ از حیطه‌ی ضعیف‌تر
+  if (pkgKey === "moderate" && num === 1 && weakestDomain && DOMAIN_OPENING_SESSIONS[weakestDomain]) {
     return DOMAIN_OPENING_SESSIONS[weakestDomain];
   }
   return SESSION_CONTENT[pkgKey][num];
@@ -1609,7 +1611,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۱۳ / امکانِ خریدِ تکیِ هر جلسه (نه فقط کلِ بسته)
+              نسخه: ۲۰۲۶-۰۸-۱۵ / رفعِ اشکالِ شخصی‌سازیِ نادرست در مسیرِ پس‌ازخیانت
             </p>
             </div>
           </Card>
@@ -2091,38 +2093,15 @@ export default function App() {
               )}
 
               {(() => {
-                const patternCount = detectPatterns(myScores, myScores).length;
-                let tier, tierColor, tierText, actionLink, actionLabel;
-                if (hasHighSeverity || myOverall < 45) {
-                  tier = "نیازمندِ پیگیریِ حرفه‌ای";
-                  tierColor = "#A6432F";
-                  tierText = `بر اساسِ نتیجه‌ی شما، پیشنهاد می‌شود در اسرع‌وقت یک جلسه‌ی مشاوره با ${BRAND.name} داشته باشید.`;
-                  actionLink = CONSULT_BOOKING_LINK;
-                  actionLabel = "📞 تماس برای رزروِ مشاوره";
-                } else if (patternCount > 0 || myOverall < 65) {
-                  tier = "پیشنهادِ آموزشِ تکمیلی";
-                  tierColor = "#B9822F";
-                  tierText = `شرکت در وبینارها/کارگاه‌های آموزشیِ ${BRAND.academy} می‌تواند کمک‌کننده باشد.`;
-                  actionLink = WEBINAR_PACKAGE_LINK;
-                  actionLabel = "🎓 خریدِ بسته‌ی آموزشی/وبینار";
-                } else {
-                  tier = "روندِ خوب — ادامه دهید";
-                  tierColor = "#4C7A5E";
-                  tierText = "وضعیتِ کلیِ شما مطلوب است؛ توصیه می‌شود همین روند را حفظ کنید.";
-                  actionLink = null;
+                if (!(hasHighSeverity || myOverall < 45) && !(detectPatterns(myScores, myScores).length > 0 || myOverall < 65)) {
+                  return (
+                    <div style={{ background: "#FFFFFF", border: "2px solid #4C7A5E", borderRadius: 12, padding: "14px", marginTop: 18 }}>
+                      <p style={{ fontSize: 13, fontWeight: 800, color: "#4C7A5E", margin: "0 0 6px" }}>🧭 روندِ خوب — ادامه دهید</p>
+                      <p style={{ fontSize: 12, color: "#4B6070", lineHeight: 1.9, margin: 0 }}>وضعیتِ کلیِ شما مطلوب است؛ توصیه می‌شود همین روند را حفظ کنید.</p>
+                    </div>
+                  );
                 }
-                return (
-                  <div style={{ background: "#FFFFFF", border: `2px solid ${tierColor}`, borderRadius: 12, padding: "14px", marginTop: 18 }}>
-                    <p style={{ fontSize: 13, fontWeight: 800, color: tierColor, margin: "0 0 6px" }}>🧭 مسیرِ پیشنهادی: {tier}</p>
-                    <p style={{ fontSize: 12, color: "#4B6070", lineHeight: 1.9, margin: actionLink ? "0 0 12px" : 0 }}>{tierText}</p>
-                    {actionLink && (
-                      <a href={actionLink} target="_blank" rel="noopener noreferrer" className="no-print"
-                        style={{ display: "block", width: "100%", padding: "11px", borderRadius: 10, background: tierColor, color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13 }}>
-                        {actionLabel}
-                      </a>
-                    )}
-                  </div>
-                );
+                return null;
               })()}
 
               <div style={{ marginTop: 18, background: "#EAF4FB", borderRadius: 12, padding: "16px", textAlign: "center" }}>
@@ -2530,37 +2509,15 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
         {(() => {
           const anyHighFlag = detectCriticalFlags(ans1 || {}, ans2 || {}).some((f) => f.severity === "بالا");
           const patternCount = detectPatterns(s1, s2).length;
-          let tier, tierColor, tierText, actionLink, actionLabel;
-          if (anyHighFlag || overall < 45) {
-            tier = "نیازمندِ پیگیریِ حرفه‌ای";
-            tierColor = "#A6432F";
-            tierText = `بر اساسِ نتیجه‌ی شما، پیشنهاد می‌شود در اسرع‌وقت یک جلسه‌ی مشاوره با ${BRAND.name} یا یک متخصصِ زوج‌درمانی داشته باشید — تماس: ${BRAND.phone}`;
-            actionLink = CONSULT_BOOKING_LINK;
-            actionLabel = "📞 تماس برای رزروِ مشاوره";
-          } else if (patternCount > 0 || overall < 65) {
-            tier = "پیشنهادِ آموزشِ تکمیلی";
-            tierColor = "#B9822F";
-            tierText = `نتیجه‌ی شما نشان می‌دهد شرکت در وبینارها/کارگاه‌های آموزشیِ ${BRAND.academy} می‌تواند کمک‌کننده باشد — برای اطلاع از برنامه‌ها، اینستاگرام instagram.com/${BRAND.instagram} را دنبال کنید.`;
-            actionLink = WEBINAR_PACKAGE_LINK;
-            actionLabel = "🎓 خریدِ بسته‌ی آموزشی/وبینار";
-          } else {
-            tier = "روندِ خوب — ادامه دهید";
-            tierColor = "#4C7A5E";
-            tierText = "وضعیتِ کلیِ رابطه‌ی شما مطلوب است؛ توصیه می‌شود همین روند را حفظ کنید و سنجشِ مجدد را در ۳ ماهِ دیگر تکرار کنید.";
-            actionLink = null;
+          if (!(anyHighFlag || overall < 45) && !(patternCount > 0 || overall < 65)) {
+            return (
+              <div style={{ background: "#FFFFFF", border: "2px solid #4C7A5E", borderRadius: 12, padding: "14px", marginBottom: 18 }}>
+                <p style={{ fontSize: 13, fontWeight: 800, color: "#4C7A5E", margin: "0 0 6px" }}>🧭 روندِ خوب — ادامه دهید</p>
+                <p style={{ fontSize: 12, color: "#4B6070", lineHeight: 1.9, margin: 0 }}>وضعیتِ کلیِ رابطه‌ی شما مطلوب است؛ توصیه می‌شود همین روند را حفظ کنید و سنجشِ مجدد را در ۳ ماهِ دیگر تکرار کنید.</p>
+              </div>
+            );
           }
-          return (
-            <div style={{ background: "#FFFFFF", border: `2px solid ${tierColor}`, borderRadius: 12, padding: "14px", marginBottom: 18 }}>
-              <p style={{ fontSize: 13, fontWeight: 800, color: tierColor, margin: "0 0 6px" }}>🧭 مسیرِ پیشنهادی: {tier}</p>
-              <p style={{ fontSize: 12, color: "#4B6070", lineHeight: 1.9, margin: actionLink ? "0 0 12px" : 0 }}>{tierText}</p>
-              {actionLink && (
-                <a href={actionLink} target="_blank" rel="noopener noreferrer" className="no-print"
-                  style={{ display: "block", width: "100%", padding: "11px", borderRadius: 10, background: tierColor, color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13 }}>
-                  {actionLabel}
-                </a>
-              )}
-            </div>
-          );
+          return null;
         })()}
 
         {(() => {
