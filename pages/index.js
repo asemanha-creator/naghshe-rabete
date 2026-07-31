@@ -811,16 +811,16 @@ function Card({ children, style }) {
 function Collapsible({ title, icon, defaultOpen, children }) {
   const [open, setOpen] = useState(!!defaultOpen);
   return (
-    <div style={{ marginTop: 14, border: "1px solid #EEF3F6", borderRadius: 14, overflow: "hidden" }}>
+    <div style={{ marginTop: 16, border: `1.5px solid ${open ? "#8FB8B8" : "#DCE8F0"}`, borderRadius: 16, overflow: "hidden" }}>
       <button onClick={() => setOpen(!open)}
         style={{
           width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "13px 15px", background: open ? "#F3F8F5" : "#F7FAFC", border: "none", cursor: "pointer", textAlign: "right",
+          padding: "17px 18px", background: open ? "#E5F1EC" : "#F0F6F9", border: "none", cursor: "pointer", textAlign: "right",
         }}>
-        <span style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D" }}>{icon ? `${icon} ` : ""}{title}</span>
-        <span style={{ fontSize: 13, color: "#2B6777", transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
+        <span style={{ fontSize: 15, fontWeight: 800, color: "#1F2D3D" }}>{icon ? `${icon} ` : ""}{title}</span>
+        <span style={{ fontSize: 20, color: "#2B6777", fontWeight: 800, transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
       </button>
-      {open && <div style={{ padding: "14px 15px" }}>{children}</div>}
+      {open && <div style={{ padding: "16px 16px" }}>{children}</div>}
     </div>
   );
 }
@@ -1611,7 +1611,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۱۵ / رفعِ اشکالِ شخصی‌سازیِ نادرست در مسیرِ پس‌ازخیانت
+              نسخه: ۲۰۲۶-۰۸-۱۶ / بزرگ‌ترشدنِ دکمه‌هایِ کشویی + سوییچِ مسیر + پیش‌نمایشِ رایگانِ جلسه‌ی اول
             </p>
             </div>
           </Card>
@@ -1670,8 +1670,14 @@ export default function App() {
             <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 4 }}>
               {TREATMENT_PACKAGES[libraryPkg].label}
             </h2>
-            <p style={{ fontSize: 11.5, color: "#8CA3B0", textAlign: "center", marginBottom: 16 }}>
+            <p style={{ fontSize: 11.5, color: "#8CA3B0", textAlign: "center", marginBottom: 8 }}>
               {TREATMENT_PACKAGES[libraryPkg].sessions} جلسه · هر جلسه {toman(sessionPrice(libraryPkg))}
+            </p>
+            <p style={{ textAlign: "center", marginBottom: 16 }}>
+              <button onClick={() => setLibraryPkg(libraryPkg === "moderate" ? "advanced" : "moderate")}
+                style={{ border: "none", background: "none", color: "#2B6777", fontSize: 11.5, textDecoration: "underline", cursor: "pointer" }}>
+                مسیرِ من اشتباه است — نمایشِ «{TREATMENT_PACKAGES[libraryPkg === "moderate" ? "advanced" : "moderate"].label}»
+              </button>
             </p>
 
             {!user && (
@@ -1693,9 +1699,10 @@ export default function App() {
               const sid = sessionId(libraryPkg, num);
               const unlocked = unlockedSessions.includes(sid);
               return (
-                <div key={num} style={{
+                <div key={num} style={{ marginBottom: 8 }}>
+                <div style={{
                   display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 14,
-                  background: unlocked ? "#F3F8F5" : "#F7FAFC", border: `1px solid ${unlocked ? "#CFE6D8" : "#EEF3F6"}`, marginBottom: 8,
+                  background: unlocked ? "#F3F8F5" : "#F7FAFC", border: `1px solid ${unlocked ? "#CFE6D8" : "#EEF3F6"}`,
                 }}>
                   <div style={{ width: 34, height: 34, borderRadius: "50%", background: unlocked ? "#4C8778" : "#DCE8F0", color: unlocked ? "#fff" : "#8CA3B0", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 13, flexShrink: 0 }}>
                     {unlocked ? "✓" : num}
@@ -1718,6 +1725,18 @@ export default function App() {
                       🔒 خریدِ تکی<br />{toman(sessionPrice(libraryPkg))}
                     </a>
                   )}
+                </div>
+                {num === 1 && !unlocked && (
+                  <div style={{ background: "#FBF3E2", border: "1px dashed #E8D5A8", borderRadius: 12, padding: "12px 14px", marginTop: 6 }}>
+                    <p style={{ fontSize: 10.5, fontWeight: 800, color: "#7A5B2E", margin: "0 0 6px" }}>👀 پیش‌نمایشِ رایگان</p>
+                    {sess.body.slice(0, 2).map((block, i) => (
+                      <p key={i} style={{ fontSize: 11, color: "#5A4B33", lineHeight: 1.9, margin: "0 0 6px", fontWeight: block.type === "h" ? 700 : 400 }}>
+                        {block.text}
+                      </p>
+                    ))}
+                    <p style={{ fontSize: 10, color: "#9A8560", margin: 0 }}>… ادامه‌ی جلسه (شاملِ تمرین و کارِ خانگی) پس از خرید نمایش داده می‌شود.</p>
+                  </div>
+                )}
                 </div>
               );
             })}
