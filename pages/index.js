@@ -969,6 +969,19 @@ export default function App() {
         }
       `}</style>
 
+      {screen !== "topics" && (
+        <button onClick={() => setScreen("topics")} className="no-print"
+          style={{
+            position: "fixed", top: 14, right: 14, zIndex: 1000,
+            display: "flex", alignItems: "center", gap: 5,
+            background: "#fff", color: "#2B6777", border: "1px solid #C9DEE8",
+            borderRadius: 999, padding: "7px 13px", fontSize: 12, fontWeight: 700,
+            cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          }}>
+          ‹ بازگشت به موضوعات
+        </button>
+      )}
+
       <div style={{ maxWidth: 480, margin: "0 auto" }}>
         {screen === "topics" && (
           <div style={{
@@ -1169,7 +1182,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۰۵-و / افزودنِ «مشاورهٔ پیش از طلاق» به شبکهٔ موضوعات
+              نسخه: ۲۰۲۶-۰۸-۰۶ / دکمهٔ ثابتِ «بازگشت به موضوعات» رویِ همهٔ صفحات
             </p>
             </div>
           </Card>
