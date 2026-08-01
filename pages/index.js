@@ -1201,19 +1201,19 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
   if (!chosenTrack) {
     if (gateStep === 1) {
       return (
-        <div style={{ marginTop: 18, padding: "16px 16px 14px", borderRadius: 18, background: "#F3F8F5", border: "1px solid #CFE6D8" }}>
-          <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>🌱 آماده‌اید یک قدم بردارید؟</p>
+        <div style={{ marginTop: 18, padding: "16px 16px 14px", borderRadius: 18, background: "#F3F8F5", border: "2px solid #4C8778" }}>
+          <p style={{ fontSize: 14, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>🎯 خریدِ دوره: افزایشِ صمیمیت یا درمانِ خیانت</p>
           <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
-            برایِ پیشنهادِ درستِ بسته، یک سوال داریم: آیا در رابطه‌یِ شما تاکنون **خیانتی رخ داده** (یا افشا شده) است؟
+            بر اساسِ نتیجه‌تان، می‌توانید یک دوره‌ی درمانیِ آنلاین (شاملِ چند جلسه‌ی آموزشی و تمرینی) خریداری کنید. برایِ پیشنهادِ دوره‌ی درست: آیا در رابطه‌یِ شما تاکنون خیانتی رخ داده (یا افشا شده) است؟
           </p>
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={() => setChosenTrack("moderate")}
               style={{ flex: 1, padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
-              خیر — پیشگیرانه است
+              خیر — دوره‌ی افزایشِ صمیمیت
             </button>
             <button onClick={() => setGateStep(2)}
               style={{ flex: 1, padding: "11px", borderRadius: 12, border: "none", background: "#8A5A4E", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
-              بله، رخ داده
+              بله — دوره‌ی درمانِ خیانت
             </button>
           </div>
         </div>
@@ -1274,7 +1274,7 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
         ‹ تغییرِ پاسخ
       </button>
       <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>
-        {isPostInfidelity ? "🕊️ زمانِ یک قدمِ جدی‌تر است" : "🌱 مسیرِ پیشگیری و تقویتِ تعهد"}
+        {isPostInfidelity ? "🕊️ دوره‌ی درمانِ خیانت — خریدِ پکیج" : "🌱 دوره‌ی افزایشِ صمیمیت — خریدِ پکیج"}
       </p>
       <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
         این جلسات با رویکردهایِ علمیِ ACT، EFT و گاتمن طراحی شده و به‌محضِ خرید، همین‌جا در اپ برایتان باز می‌شود.
@@ -1939,7 +1939,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۲۰ / پیش‌نمایشِ صفحه‌ی نتیجه در پنلِ ادمین (بدونِ پرکردنِ فرم، بدونِ ذخیره)
+              نسخه: ۲۰۲۶-۰۸-۲۱ / انتقالِ بخشِ خریدِ دوره به بالایِ صفحه (بلافاصله بعد از نمایِ کلی)
             </p>
             </div>
           </Card>
@@ -2379,6 +2379,8 @@ export default function App() {
                 );
               })()}
 
+              <PricingTiers tier={hasHighSeverity || myOverall < 40 ? "critical" : myOverall < 75 ? "moderate" : "healthy"} scores={myScores} onOpenLibrary={openSessionLibrary} />
+
               <Collapsible title="تحلیلِ اختصاصیِ هر حیطه" icon="📂">
               {(() => {
                 const withAvg2 = DOMAINS.map((d) => ({ d, avg: myScores[d.key] }));
@@ -2487,7 +2489,6 @@ export default function App() {
                 بازگشت به صفحه‌ی شروع
               </button>
             </Card>
-            <PricingTiers tier={hasHighSeverity || myOverall < 40 ? "critical" : myOverall < 75 ? "moderate" : "healthy"} scores={myScores} onOpenLibrary={openSessionLibrary} />
             <ChatWidget scores={myScores} overall={myOverall} mode="solo" />
             </>
           );
@@ -2716,6 +2717,11 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
             </div>
           );
         })()}
+
+        <PricingTiers tier={(() => {
+          const anyHigh = detectCriticalFlags(ans1 || {}, ans2 || {}).some((f) => f.severity === "بالا");
+          return anyHigh || overall < 40 ? "critical" : overall < 75 ? "moderate" : "healthy";
+        })()} scores={Object.fromEntries(DOMAINS.map((d) => [d.key, Math.round((s1[d.key] + s2[d.key]) / 2)]))} onOpenLibrary={openSessionLibrary} />
 
         {prevResultText && (() => {
           let prev;
@@ -3000,10 +3006,6 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           <p style={{ fontSize: 12, color: "#5A7080", margin: 0 }}>📍 {BRAND.city}</p>
         </div>
       </Card>
-      <PricingTiers tier={(() => {
-        const anyHigh = detectCriticalFlags(ans1 || {}, ans2 || {}).some((f) => f.severity === "بالا");
-        return anyHigh || overall < 40 ? "critical" : overall < 75 ? "moderate" : "healthy";
-      })()} scores={Object.fromEntries(DOMAINS.map((d) => [d.key, Math.round((s1[d.key] + s2[d.key]) / 2)]))} onOpenLibrary={openSessionLibrary} />
       <ChatWidget
         scores={Object.fromEntries(DOMAINS.map((d) => [d.key, Math.round((s1[d.key] + s2[d.key]) / 2)]))}
         overall={overall}
