@@ -1488,7 +1488,13 @@ function ChatWidget({ scores, overall, mode }) {
 
 export default function App() {
   const [screen, setScreen] = useState("topics");
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(() => {
+    try { return typeof window !== "undefined" && localStorage.getItem("naghshe_admin") === "1"; } catch (e) { return false; }
+  });
+  function markAdmin() {
+    setIsAdmin(true);
+    try { localStorage.setItem("naghshe_admin", "1"); } catch (e) {}
+  }
   const [code, setCode] = useState("");
   const [codeInput, setCodeInput] = useState("");
   const [partner, setPartner] = useState(1);
@@ -2033,7 +2039,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۲۴ / دسترسیِ آزادِ ادمین به تمامِ جلسات (بدونِ نیازِ فعال‌سازیِ دستی)
+              نسخه: ۲۰۲۶-۰۸-۲۵ / رفعِ اشکالِ دسترسیِ ادمین با localStorage + نشانگرِ عیب‌یابی
             </p>
             </div>
           </Card>
@@ -2089,6 +2095,11 @@ export default function App() {
 
         {screen === "sessionLibrary" && (
           <Card>
+            {isAdmin && (
+              <p style={{ textAlign: "center", background: "#F3F8F5", color: "#4C8778", fontSize: 11, fontWeight: 700, padding: "6px", borderRadius: 8, marginBottom: 10 }}>
+                🔓 حالتِ ادمین فعال — همه‌ی جلسات باز است
+              </p>
+            )}
             <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 4 }}>
               {TREATMENT_PACKAGES[libraryPkg].label}
             </h2>
@@ -2621,7 +2632,7 @@ export default function App() {
             <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", margin: "0 0 14px" }}>ورود به پنل آموزشی</h2>
             <input type="password" value={adminPassInput} onChange={(e) => setAdminPassInput(e.target.value)} placeholder="رمز عبور"
               style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid #C9DEE8", fontSize: 14, marginBottom: 12, ...FONT }} />
-            <button onClick={async () => { if (adminPassInput === ADMIN_PASS) { setIsAdmin(true); await loadAdmin(); setScreen("admin"); } else setErr("رمز نادرست است."); }}
+            <button onClick={async () => { if (adminPassInput === ADMIN_PASS) { markAdmin(); await loadAdmin(); setScreen("admin"); } else setErr("رمز نادرست است."); }}
               style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
               ورود
             </button>
