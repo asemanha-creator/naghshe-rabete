@@ -1488,6 +1488,7 @@ function ChatWidget({ scores, overall, mode }) {
 
 export default function App() {
   const [screen, setScreen] = useState("topics");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [code, setCode] = useState("");
   const [codeInput, setCodeInput] = useState("");
   const [partner, setPartner] = useState(1);
@@ -2032,7 +2033,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۲۳ / تکمیلِ جلساتِ ۲ و ۳ِ خیانت‌دیده با عمقِ کامل
+              نسخه: ۲۰۲۶-۰۸-۲۴ / دسترسیِ آزادِ ادمین به تمامِ جلسات (بدونِ نیازِ فعال‌سازیِ دستی)
             </p>
             </div>
           </Card>
@@ -2124,7 +2125,7 @@ export default function App() {
             {Array.from({ length: TREATMENT_PACKAGES[libraryPkg].sessions }, (_, i) => i + 1).map((num) => {
               const sess = getSessionContent(libraryPkg, num, libraryWeakestDomain);
               const sid = sessionId(libraryPkg, num);
-              const unlocked = unlockedSessions.includes(sid);
+              const unlocked = isAdmin || unlockedSessions.includes(sid);
               return (
                 <div key={num} style={{ marginBottom: 8 }}>
                 <div style={{
@@ -2620,7 +2621,7 @@ export default function App() {
             <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", margin: "0 0 14px" }}>ورود به پنل آموزشی</h2>
             <input type="password" value={adminPassInput} onChange={(e) => setAdminPassInput(e.target.value)} placeholder="رمز عبور"
               style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid #C9DEE8", fontSize: 14, marginBottom: 12, ...FONT }} />
-            <button onClick={async () => { if (adminPassInput === ADMIN_PASS) { await loadAdmin(); setScreen("admin"); } else setErr("رمز نادرست است."); }}
+            <button onClick={async () => { if (adminPassInput === ADMIN_PASS) { setIsAdmin(true); await loadAdmin(); setScreen("admin"); } else setErr("رمز نادرست است."); }}
               style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
               ورود
             </button>
