@@ -26,12 +26,28 @@ const TREATMENT_PACKAGES = {
     note: "برایِ زوج‌هایی که خیانتی رخ نداده، اما می‌خواهند ریسک را کاهش و تعهد را تقویت کنند",
   },
   advanced: {
-    label: "بستهٔ درمانِ پس‌ازخیانت",
+    label: "بستهٔ درمانِ پس‌ازخیانت (مشترک)",
     track: "postInfidelity",
     sessions: 8,
     price: 8000000,
     inPersonEquivalent: 15000000,
-    note: "برایِ زوج‌هایی که خیانتی رخ داده و نیاز به روندِ کاملِ درمانی دارند",
+    note: "جلساتِ مشترکِ زوجین — برایِ زوج‌هایی که خیانتی رخ داده و نیاز به روندِ کاملِ درمانی دارند",
+  },
+  betrayed: {
+    label: "مسیرِ فردیِ خیانت‌دیده — هستهٔ اصلی",
+    track: "betrayedIndividual",
+    sessions: 12,
+    price: 12000000,
+    inPersonEquivalent: 22500000,
+    note: "درمانِ فردیِ کسی که آسیبِ خیانت را متحمل شده — مستقل از این‌که همسرش هم درمان را دنبال کند یا نه",
+  },
+  unfaithful: {
+    label: "مسیرِ فردیِ خیانت‌کرده — هستهٔ اصلی",
+    track: "unfaithfulIndividual",
+    sessions: 12,
+    price: 12000000,
+    inPersonEquivalent: 22500000,
+    note: "درمانِ فردیِ کسی که خیانت کرده — مسئولیت‌پذیری، فهمِ ریشه‌ها، و ساختنِ نسخه‌ی قابلِ‌اعتمادتر",
   },
 };
 function toman(n) {
@@ -486,6 +502,62 @@ const SESSION_CONTENT = {
         { type: "callout", text: "📞 چه‌زمانی با دفتر تماس بگیرید: اگر در بازآزماییِ سه‌ماهه، نمره‌ی کلی افت کرد یا پرچمِ بحرانیِ جدیدی ظاهر شد، حتماً همان زمان (نه منتظرِ بحرانِ بزرگ‌تر) با دفتر هماهنگ کنید تا مسیرِ حمایتی از سر گرفته شود." },
       ],
     },
+  },
+  betrayed: {
+    1: {
+      title: "شوکِ اولیه و بقایِ روزانه",
+      approach: "تثبیت/تروما-محور", audioUrl: null, videoUrl: null,
+      body: [
+        { type: "h", text: "چرا این جلسه مهم است" },
+        { type: "p", text: "در روزها و هفته‌هایِ اولِ کشف یا افشایِ خیانت، بدن و ذهنِ شما وارد حالتی می‌شوند که از نظرِ علمی بسیار شبیهِ واکنش به یک حادثه‌ی تروماتیک است — نه یک ناراحتیِ معمولی. ممکن است نتوانید بخوابید، نتوانید تمرکز کنید، مدام صحنه‌ها را در ذهنتان مرور کنید، یا حتی حس کنید بدنتان درد می‌کند. **هیچ‌کدام از این‌ها نشانه‌ی ضعف نیست** — این‌ها واکنشِ طبیعیِ یک انسان به یک آسیبِ واقعی است." },
+        { type: "h", text: "استعاره: زمینِ لرزه" },
+        { type: "p", text: "تصور کنید تازه یک زمین‌لرزه‌ی شدید را پشتِ سر گذاشته‌اید. حتی وقتی لرزش تمام شده، بدنتان هنوز آماده‌باشِ لرزشِ بعدی است — قلبتان تندتر می‌زند، به هر صدایی می‌پرید، نمی‌توانید آرام بگیرید. این حالت، دقیقاً همانی است که الان تجربه می‌کنید. کارِ این جلسه، **نه بازسازیِ کاملِ خانه**، بلکه یافتنِ یک «سرپناهِ موقت» برایِ همین چند روزِ اول است." },
+        { type: "h", text: "مفهومِ کلیدی: بقا قبل از بهبود" },
+        { type: "p", text: "در این مرحله، هدف حل‌کردنِ رابطه، تصمیم‌گیری دربارهٔ آینده، یا حتی فهمیدنِ «چرا» نیست. هدف فقط این است که از این چند روز/هفته‌ی اول، به‌سلامت عبور کنید — خوابیدن، خوردن، و نفس‌کشیدن، در حالِ حاضر بزرگ‌ترین دستاوردها هستند." },
+        { type: "h", text: "تکنیکِ کاربردیِ ۱: قانونِ «فقط امروز»" },
+        { type: "p", text: "به‌جایِ فکرکردن به «آیا این رابطه ادامه پیدا می‌کند؟» یا «باقیِ عمرم چه می‌شود؟»، فقط از خودتان بپرسید: «برایِ گذراندنِ امروز، به چه‌چیزی نیاز دارم؟» مثال: شاید امروز فقط نیاز دارید یک ساعت زودتر بخوابید، یا با یک دوست تماس بگیرید، یا فقط دوش بگیرید. تصمیماتِ بزرگ را عمداً به بعد موکول کنید." },
+        { type: "h", text: "تکنیکِ کاربردیِ ۲: لنگرِ حسی" },
+        { type: "p", text: "وقتی موجی از اضطراب یا تصویرِ ذهنیِ ناخواسته می‌آید، یک شیءِ فیزیکی (مثلاً یک سنگِ کوچک، یک دستبند) را در دست بگیرید و کاملاً حواستان را به بافت، وزن، و دمایِ آن بدهید، برایِ ۳۰ ثانیه. این کار، مغز را از «گذشته/چه‌می‌شد‌اگر» به «همین الان» برمی‌گرداند." },
+        { type: "h", text: "مثال" },
+        { type: "p", text: "یکی از مراجعینی که این تجربه را داشت، می‌گفت: «هر بار که تصویرِ آن پیام‌ها می‌آمد، فنجانِ چایم را محکم می‌گرفتم و فقط به گرمایِ آن فکر می‌کردم تا موج بگذرد.» این کار حدودِ ۲۰-۳۰ ثانیه طول می‌کشد — نه این‌که فکر برایِ همیشه برود، فقط شدتش کم می‌شود." },
+        { type: "checklist", items: [
+          "توانستم امروز حداقل چیزی (هرچند کم) بخورم.",
+          "یک لنگرِ حسی (شیء فیزیکی) برایِ خودم انتخاب کردم.",
+          "حداقل یک تصمیمِ بزرگ (ماندن/رفتن، افشا به دیگران) را عمداً به تعویق انداختم.",
+          "با حداقل یک نفرِ قابلِ‌اعتماد (دوست، خانواده، یا همین‌جا) صحبت کردم.",
+        ] },
+        { type: "h", text: "اگر پیشرفت نکردید" },
+        { type: "p", text: "اگر حتی این تکنیک‌هایِ ساده هم در این مرحله سخت به‌نظر می‌رسند، کاملاً طبیعی است. شوکِ اولیه گاهی چنان شدید است که هیچ تکنیکی فوراً جواب نمی‌دهد. اگر این‌طور است، فقط روی «امروز را گذراندن» تمرکز کنید — حتی اگر یعنی فقط در تخت ماندن. جلسه‌ی بعد را زودتر (نه منتظرِ هفته‌ی بعد) رزرو کنید." },
+        { type: "h", text: "🏠 رفتار با همسر در این مرحله" },
+        { type: "p", text: "در این مرحله‌ی اولیه، **لازم نیست** با همسرتان دربارهٔ جزئیاتِ ماجرا صحبت کنید یا فوراً تصمیم بگیرید. اگر نیاز به فاصله‌ی فیزیکی (اتاقِ جدا، حتی چند روز دوری) دارید، این را می‌توانید ساده و بدونِ توضیحِ طولانی اعلام کنید: «الان نیاز دارم کمی فضا داشته باشم؛ این به‌معنایِ تصمیمِ نهایی نیست.» شما مجازید مرزهایِ فوریِ خودتان را بدونِ احساسِ گناه تعیین کنید." },
+        { type: "callout", text: "📞 چه‌زمانی با دفتر تماس بگیرید: اگر افکارِ آسیب‌به‌خود دارید، چند روز است اصلاً نمی‌خوابید یا نمی‌خورید، یا احساس می‌کنید کاملاً از پا افتاده‌اید و نمی‌توانید کارهایِ ابتداییِ روزمره را انجام دهید — همین امروز تماس بگیرید یا به اورژانسِ روان‌پزشکی مراجعه کنید. این وضعیت‌ها نباید تا جلسه‌ی بعد صبر کنند." },
+      ],
+    },
+    2: { title: "فهمِ واکنشِ بدن و ذهن به آسیب (روان‌آموزیِ تروما)", approach: "روان‌آموزی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    3: { title: "مدیریتِ افکارِ مزاحم و فلاش‌بک", approach: "CBT/EMDR-informed", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    4: { title: "خشم: از انفجار تا بیانِ سالم", approach: "تنظیمِ هیجان", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    5: { title: "شرم، عزتِ‌نفس، و پرسشِ «چرا من؟»", approach: "شناختی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    6: { title: "بازسازیِ اعتماد به خودِ خویش", approach: "ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    7: { title: "بی‌اعتمادیِ تعمیم‌یافته و بازبینیِ فرضیه‌هایِ زندگی", approach: "شناختی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    8: { title: "ارتباط با اطرافیان و مدیریتِ رازداری/افشا", approach: "مهارتِ اجتماعی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    9: { title: "تاثیر بر فرزندان و مدیریتِ محیطِ خانه", approach: "خانواده‌محور", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    10: { title: "تصمیم‌گیریِ آگاهانه: ماندن یا رفتن", approach: "ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    11: { title: "بازسازیِ صمیمیت (اگر ماندن انتخاب شد)", approach: "EFT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    12: { title: "معنایابی، تاب‌آوری، و چشم‌اندازِ آینده", approach: "معنادرمانی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+  },
+  unfaithful: {
+    1: { title: "مواجهه با واقعیت: پذیرشِ کامل بدونِ کوچک‌نمایی", approach: "ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    2: { title: "تفکیکِ گناهِ سازنده از شرمِ فلج‌کننده", approach: "شناختی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    3: { title: "فهمِ صادقانه‌ی چرایی — بدونِ توجیه", approach: "بینش‌محور", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    4: { title: "شناساییِ الگوهایِ آسیب‌پذیرکننده در خود", approach: "طرحواره‌درمانی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    5: { title: "مدیریتِ دفاع و توجیه‌گری در گفت‌وگو", approach: "ارتباطی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    6: { title: "صبر و ظرفیت‌سازی برایِ خشمِ همسر", approach: "EFT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    7: { title: "شفافیتِ مستمر: بازسازیِ اعتماد قدم‌به‌قدم", approach: "گاتمن", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    8: { title: "مدیریتِ محرک‌ها و موقعیت‌هایِ پرخطرِ آینده", approach: "پیشگیریِ عود", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    9: { title: "خودبخشی بدونِ فرار از مسئولیت", approach: "خودشفقتی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    10: { title: "ساختنِ نسخه‌ی قابلِ‌اعتمادترِ خود", approach: "ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    11: { title: "حمایت از همسر در فرایندِ بهبودیِ او", approach: "همدلی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    12: { title: "تعهدِ بلندمدت و برنامه‌ی پیشگیریِ عود", approach: "گاتمن", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
   },
 };
 
@@ -1106,42 +1178,85 @@ function DomainBarChart({ p1, p2, domains }) {
 // ---------- Main App ----------
 function PricingTiers({ tier, scores, onOpenLibrary }) {
   const [chosenTrack, setChosenTrack] = useState(null);
+  const [gateStep, setGateStep] = useState(1);
   if (tier === "healthy") return null;
   const weakestDomain = scores
     ? Object.entries(scores).sort((a, b) => a[1] - b[1])[0]?.[0]
     : null;
 
   if (!chosenTrack) {
-    return (
-      <div style={{ marginTop: 18, padding: "16px 16px 14px", borderRadius: 18, background: "#F3F8F5", border: "1px solid #CFE6D8" }}>
-        <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>🌱 آماده‌اید یک قدم بردارید؟</p>
-        <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
-          برایِ پیشنهادِ درستِ بسته، یک سوال داریم: آیا در رابطه‌یِ شما تاکنون **خیانتی رخ داده** (یا افشا شده) است؟
-        </p>
-        <div style={{ display: "flex", gap: 8 }}>
-          <button onClick={() => setChosenTrack("moderate")}
-            style={{ flex: 1, padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
-            خیر — پیشگیرانه است
-          </button>
-          <button onClick={() => setChosenTrack("advanced")}
-            style={{ flex: 1, padding: "11px", borderRadius: 12, border: "none", background: "#8A5A4E", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
-            بله، رخ داده
-          </button>
+    if (gateStep === 1) {
+      return (
+        <div style={{ marginTop: 18, padding: "16px 16px 14px", borderRadius: 18, background: "#F3F8F5", border: "1px solid #CFE6D8" }}>
+          <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>🌱 آماده‌اید یک قدم بردارید؟</p>
+          <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
+            برایِ پیشنهادِ درستِ بسته، یک سوال داریم: آیا در رابطه‌یِ شما تاکنون **خیانتی رخ داده** (یا افشا شده) است؟
+          </p>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={() => setChosenTrack("moderate")}
+              style={{ flex: 1, padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              خیر — پیشگیرانه است
+            </button>
+            <button onClick={() => setGateStep(2)}
+              style={{ flex: 1, padding: "11px", borderRadius: 12, border: "none", background: "#8A5A4E", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              بله، رخ داده
+            </button>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
+    if (gateStep === 2) {
+      return (
+        <div style={{ marginTop: 18, padding: "16px 16px 14px", borderRadius: 18, background: "#FBF0EC", border: "1px solid #E8C9BC" }}>
+          <button onClick={() => setGateStep(1)} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 10.5, cursor: "pointer", marginBottom: 8, padding: 0 }}>‹ بازگشت</button>
+          <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
+            می‌خواهید مسیرِ درمانی به‌صورتِ **جلساتِ مشترک با همسرتان** باشد، یا یک **مسیرِ فردیِ مستقل** برایِ خودتان؟
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <button onClick={() => setChosenTrack("advanced")}
+              style={{ padding: "11px", borderRadius: 12, border: "none", background: "#8A5A4E", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              جلساتِ مشترکِ زوجین
+            </button>
+            <button onClick={() => setGateStep(3)}
+              style={{ padding: "11px", borderRadius: 12, border: "1px solid #8A5A4E", background: "#fff", color: "#8A5A4E", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              مسیرِ فردیِ مستقل
+            </button>
+          </div>
+        </div>
+      );
+    }
+    if (gateStep === 3) {
+      return (
+        <div style={{ marginTop: 18, padding: "16px 16px 14px", borderRadius: 18, background: "#FBF0EC", border: "1px solid #E8C9BC" }}>
+          <button onClick={() => setGateStep(2)} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 10.5, cursor: "pointer", marginBottom: 8, padding: 0 }}>‹ بازگشت</button>
+          <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
+            شما در این ماجرا کدام نقش را دارید؟
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <button onClick={() => setChosenTrack("betrayed")}
+              style={{ padding: "11px", borderRadius: 12, border: "none", background: "#8A5A4E", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              خیانت‌دیده هستم
+            </button>
+            <button onClick={() => setChosenTrack("unfaithful")}
+              style={{ padding: "11px", borderRadius: 12, border: "1px solid #8A5A4E", background: "#fff", color: "#8A5A4E", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              خودم مرتکب خیانت شده‌ام
+            </button>
+          </div>
+        </div>
+      );
+    }
   }
 
   const pkg = TREATMENT_PACKAGES[chosenTrack];
   const savings = pkg.inPersonEquivalent - pkg.price;
-  const isPostInfidelity = chosenTrack === "advanced";
+  const isPostInfidelity = chosenTrack !== "moderate";
   return (
     <div style={{
       marginTop: 18, padding: "16px 16px 14px", borderRadius: 18,
       background: isPostInfidelity ? "#FBF0EC" : "#F3F8F5",
       border: `1px solid ${isPostInfidelity ? "#E8C9BC" : "#CFE6D8"}`,
     }}>
-      <button onClick={() => setChosenTrack(null)} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 10.5, cursor: "pointer", marginBottom: 6, padding: 0 }}>
+      <button onClick={() => { setChosenTrack(null); setGateStep(1); }} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 10.5, cursor: "pointer", marginBottom: 6, padding: 0 }}>
         ‹ تغییرِ پاسخ
       </button>
       <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>
@@ -1779,7 +1894,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۱۷ / افزودنِ تکنیکِ تکمیلی، چک‌لیست، راهنمایِ شکست، و زمانِ تماس به هر جلسه
+              نسخه: ۲۰۲۶-۰۸-۱۸ / افزودنِ دو مسیرِ فردیِ جدید: خیانت‌دیده و خیانت‌کرده (۱۲+۱۲ جلسه)
             </p>
             </div>
           </Card>
@@ -1841,11 +1956,17 @@ export default function App() {
             <p style={{ fontSize: 11.5, color: "#8CA3B0", textAlign: "center", marginBottom: 8 }}>
               {TREATMENT_PACKAGES[libraryPkg].sessions} جلسه · هر جلسه {toman(sessionPrice(libraryPkg))}
             </p>
-            <p style={{ textAlign: "center", marginBottom: 16 }}>
-              <button onClick={() => setLibraryPkg(libraryPkg === "moderate" ? "advanced" : "moderate")}
-                style={{ border: "none", background: "none", color: "#2B6777", fontSize: 11.5, textDecoration: "underline", cursor: "pointer" }}>
-                مسیرِ من اشتباه است — نمایشِ «{TREATMENT_PACKAGES[libraryPkg === "moderate" ? "advanced" : "moderate"].label}»
-              </button>
+            <p style={{ textAlign: "center", marginBottom: 16, fontSize: 11 }}>
+              <span style={{ color: "#8CA3B0" }}>مسیرِ من اشتباه است — نمایشِ: </span>
+              {Object.entries(TREATMENT_PACKAGES).filter(([k]) => k !== libraryPkg).map(([k, v], i, arr) => (
+                <span key={k}>
+                  <button onClick={() => setLibraryPkg(k)}
+                    style={{ border: "none", background: "none", color: "#2B6777", fontSize: 11, textDecoration: "underline", cursor: "pointer", padding: 0 }}>
+                    {v.label}
+                  </button>
+                  {i < arr.length - 1 && " · "}
+                </span>
+              ))}
             </p>
 
             {!user && (
