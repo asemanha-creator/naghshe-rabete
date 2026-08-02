@@ -21,7 +21,7 @@ const TREATMENT_PACKAGES = {
     label: "بستهٔ پیشگیری و افزایشِ وفاداری",
     track: "prevention",
     sessions: 4,
-    price: 4500000,
+    price: 2250000,
     inPersonEquivalent: 7500000,
     note: "برایِ زوج‌هایی که خیانتی رخ نداده، اما می‌خواهند ریسک را کاهش و تعهد را تقویت کنند",
   },
@@ -29,7 +29,7 @@ const TREATMENT_PACKAGES = {
     label: "بستهٔ درمانِ پس‌ازخیانت (مشترک)",
     track: "postInfidelity",
     sessions: 8,
-    price: 8000000,
+    price: 4000000,
     inPersonEquivalent: 15000000,
     note: "جلساتِ مشترکِ زوجین — برایِ زوج‌هایی که خیانتی رخ داده و نیاز به روندِ کاملِ درمانی دارند",
   },
@@ -37,7 +37,7 @@ const TREATMENT_PACKAGES = {
     label: "مسیرِ فردیِ خیانت‌دیده — هستهٔ اصلی",
     track: "betrayedIndividual",
     sessions: 12,
-    price: 12000000,
+    price: 6000000,
     inPersonEquivalent: 22500000,
     note: "درمانِ فردیِ کسی که آسیبِ خیانت را متحمل شده — مستقل از این‌که همسرش هم درمان را دنبال کند یا نه",
   },
@@ -45,7 +45,7 @@ const TREATMENT_PACKAGES = {
     label: "مسیرِ فردیِ خیانت‌کرده — هستهٔ اصلی",
     track: "unfaithfulIndividual",
     sessions: 12,
-    price: 12000000,
+    price: 6000000,
     inPersonEquivalent: 22500000,
     note: "درمانِ فردیِ کسی که خیانت کرده — مسئولیت‌پذیری، فهمِ ریشه‌ها، و ساختنِ نسخه‌ی قابلِ‌اعتمادتر",
   },
@@ -710,8 +710,64 @@ const SESSION_CONTENT = {
         { type: "callout", text: "📞 چه‌زمانی تماس بگیرید: اگر بی‌اعتمادی به پارانویایِ شدید یا انزوایِ کاملِ اجتماعی رسیده، زودتر تماس بگیرید." },
       ],
     },
-    8: { title: "ارتباط با اطرافیان و مدیریتِ رازداری/افشا", approach: "مهارتِ اجتماعی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
-    9: { title: "تاثیر بر فرزندان و مدیریتِ محیطِ خانه", approach: "خانواده‌محور", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    8: {
+      title: "ارتباط با اطرافیان و مدیریتِ رازداری/افشا",
+      summary: "۵ تکنیک برایِ تصمیم‌گیری دربارهٔ چه‌کسی، چه‌زمانی، و چقدر بگویید.",
+      approach: "مهارتِ اجتماعی", audioUrl: null, videoUrl: null,
+      body: [
+        { type: "h", text: "🎯 اهدافِ این جلسه" },
+        { type: "p", text: "۱. یافتنِ تعادلِ شخصیِ خودتان بینِ رازداری و افشا\n۲. یادگیریِ ۵ تکنیک برایِ مدیریتِ سوالاتِ اطرافیان\n۳. محافظت از خودتان در برابرِ قضاوتِ ناخواسته" },
+        { type: "h", text: "این تصمیمِ شماست، نه دیگران" },
+        { type: "p", text: "هیچ فرمولِ «درستِ» واحدی برایِ این‌که چه‌کسی باید بداند وجود ندارد. برخی با گفتن به نزدیکان سبک می‌شوند؛ برخی با رازداری. هردو کاملاً معتبرند." },
+        { type: "h", text: "تکنیک‌ها" },
+        { type: "technique", name: "۱. حلقه‌بندیِ اعتماد", time: "۵ دقیقه", howTo: "افراد را در ۳ حلقه بگذارید: «همه‌چیز می‌داند»، «فقط می‌داند مشکلی هست»، «هیچ‌چیز نمی‌داند».", effect: "تصمیم‌گیری را ساختارمند می‌کند به‌جایِ واکنشِ لحظه‌ای به هر سوال." },
+        { type: "technique", name: "۲. جمله‌ی آماده‌ی مرزی", time: "۲ دقیقه", howTo: "حفظ کنید: «داریم رویِ یک موضوعِ خصوصی کار می‌کنیم؛ وقتی آماده بودیم می‌گوییم.»", effect: "بدونِ دروغ‌گفتن، حریمِ خصوصی را حفظ می‌کند." },
+        { type: "technique", name: "۳. انتخابِ یک «همراز»", time: "—", howTo: "فقط یک نفر (نه همه) را به‌عنوانِ کسی که کاملاً می‌داند انتخاب کنید.", effect: "نیازِ حمایتِ اجتماعی را برآورده می‌کند بدونِ افشایِ گسترده." },
+        { type: "technique", name: "۴. آماده‌سازیِ پاسخ برایِ فضولی", time: "۳ دقیقه", howTo: "برایِ سوالاتِ فضولانه («چرا این‌قدر لاغر شدی؟»)، از‌قبل یک جوابِ کوتاه آماده کنید: «یک دوره‌ی سخت را می‌گذرانم، ممنون که نگرانی.»", effect: "از غافلگیرشدن و پاسخِ ناخواسته جلوگیری می‌کند." },
+        { type: "technique", name: "۵. بازبینیِ دوره‌ایِ تصمیم", time: "ماهانه", howTo: "هر ماه از خودتان بپرسید: «آیا تصمیمِ فعلی‌ام دربارهٔ افشا هنوز حسِ درستی دارد؟»", effect: "تصمیمِ اولیه لزوماً همیشگی نیست؛ این بازبینی اجازه‌ی تغییر می‌دهد." },
+        { type: "checklist", items: [
+          "حلقه‌بندیِ اعتمادم را مشخص کردم.",
+          "جمله‌ی مرزی را آماده و تمرین کردم.",
+          "یک «همراز» (اگر خواستم) انتخاب کردم.",
+          "برایِ سوالاتِ فضولانه پاسخ آماده کردم.",
+        ] },
+        { type: "h", text: "اگر پیشرفت نکردید" },
+        { type: "p", text: "اگر همچنان با هر سوال گیج/آسیب‌پذیر می‌شوید، طبیعی است. تمرینِ جمله‌ی مرزی را جلویِ آینه چند بار تکرار کنید تا خودکار شود." },
+        { type: "h", text: "🏠 رفتار با همسر" },
+        { type: "p", text: "با همسرتان دربارهٔ حلقه‌بندیِ اعتماد توافق کنید — این‌که هردو یک داستان بگویید، از تناقض‌گفتن جلوگیری می‌کند." },
+        { type: "callout", text: "🟡 هشدارِ میانی: اگر فشارِ خانواده برایِ افشا/کتمان به تعارضِ شدید با همسرتان تبدیل شده، در جلسه‌ی بعد مطرح کنید." },
+        { type: "callout", text: "📞 چه‌زمانی تماس بگیرید: اگر افشایِ ناخواسته (توسطِ دیگران) رخ داده و بحرانِ جدیدی ساخته، زودتر تماس بگیرید." },
+      ],
+    },
+    9: {
+      title: "تاثیر بر فرزندان و مدیریتِ محیطِ خانه",
+      summary: "۵ تکنیک برایِ محافظت از فرزندان در برابرِ تنشِ خانه، بدونِ پنهان‌کاریِ کامل.",
+      approach: "خانواده‌محور", audioUrl: null, videoUrl: null,
+      body: [
+        { type: "h", text: "🎯 اهدافِ این جلسه" },
+        { type: "p", text: "۱. فهمِ این‌که فرزندان چه‌چیزی را (حتی بدونِ گفتن) حس می‌کنند\n۲. یادگیریِ ۵ تکنیک برایِ محافظت از فرزندان\n۳. تشخیصِ نشانه‌هایِ تاثیرپذیریِ فرزندان" },
+        { type: "h", text: "فرزندان، سنسورهایِ هیجانی‌اند" },
+        { type: "p", text: "حتی اگر جزئیات را نگویید، فرزندان (به‌خصوص بزرگ‌تر) تنشِ خانه را حس می‌کنند. هدف، نه دروغ‌گفتن، بلکه محافظت از آن‌ها در برابرِ جزئیاتی است که سنشان توانِ پردازشش را ندارد." },
+        { type: "h", text: "تکنیک‌ها" },
+        { type: "technique", name: "۱. اتحادِ حداقلی با همسر", time: "۱۰ دقیقه", howTo: "با همسرتان (حتی در بحران) توافق کنید در حضورِ فرزندان بحث نکنید، حتی اگر با هم درگیرِ اختلاف هستید.", effect: "فرزندان از دیدنِ درگیریِ مستقیم آسیبِ کمتری می‌بینند تا از دانستنِ جزئیاتِ خیانت." },
+        { type: "technique", name: "۲. توضیحِ متناسب با سن", time: "۵ دقیقه", howTo: "اگر پرسیدند، جمله‌ی ساده: «من و بابا/مامان داریم رویِ یک مشکلِ بزرگسالانه کار می‌کنیم؛ به شما ربطی ندارد و تقصیرِ شما نیست.»", effect: "اضطرابِ رایجِ کودکان («تقصیرِ من است؟») را مستقیماً برطرف می‌کند." },
+        { type: "technique", name: "۳. حفظِ روتین", time: "روزانه", howTo: "برنامه‌ی غذا/خواب/مدرسه‌ی فرزندان را تا حدِ امکان طبقِ عادت نگه دارید.", effect: "روتین، حسِ امنیت می‌دهد حتی وقتی فضایِ عاطفیِ خانه متزلزل است." },
+        { type: "technique", name: "۴. زمانِ اختصاصیِ بدونِ‌تنش", time: "۱۵ دقیقه", howTo: "هر روز، ۱۵ دقیقه‌ی کامل (بدونِ گوشی، بدونِ فکرِ دیگر) با هر فرزند بگذرانید.", effect: "به فرزند نشان می‌دهد با وجودِ همه‌چیز، در دسترس و حاضرید." },
+        { type: "technique", name: "۵. رصدِ نشانه‌هایِ رفتاری", time: "هفتگی", howTo: "تغییراتِ خواب، تحصیل، یا رفتارِ اجتماعیِ فرزندتان را زیرِنظر بگیرید.", effect: "تشخیصِ زودهنگامِ نیاز به کمکِ حرفه‌ای را ممکن می‌کند." },
+        { type: "checklist", items: [
+          "با همسرم دربارهٔ عدمِ بحث جلویِ فرزندان توافق کردم.",
+          "اگر پرسیدند، جمله‌ی متناسب با سن را آماده کردم.",
+          "روتینِ فرزندانم را حفظ کردم.",
+          "زمانِ اختصاصی با هرکدام گذراندم.",
+        ] },
+        { type: "h", text: "اگر پیشرفت نکردید" },
+        { type: "p", text: "حفظِ آرامش جلویِ فرزندان وقتی خودتان در بحران هستید، بسیار سخت است. اگر گاهی احساساتتان بیرون زد، فقط بعداً برایِ فرزند توضیح دهید: «امروز حالم خوب نبود، به تو ربطی نداشت.»" },
+        { type: "h", text: "🏠 رفتار با همسر" },
+        { type: "p", text: "این جلسه بهترین فرصت برایِ یک تفاهمِ مشترک با همسرتان است — فارغ از وضعیتِ رابطه‌تان، فرزندان اولویتِ مشترک می‌مانند." },
+        { type: "callout", text: "🟡 هشدارِ میانی: اگر فرزندتان نشانه‌هایِ افتِ تحصیلی، کناره‌گیریِ اجتماعی، یا اختلالِ خواب نشان می‌دهد، در جلسه‌ی بعد مطرح کنید." },
+        { type: "callout", text: "📞 چه‌زمانی تماس بگیرید: اگر فرزندتان نشانه‌هایِ افسردگی، اضطرابِ شدید، یا رفتارِ خودآسیب‌رسان نشان می‌دهد، همین امروز با یک متخصصِ کودک/نوجوان هماهنگ کنید." },
+      ],
+    },
     10: { title: "تصمیم‌گیریِ آگاهانه: ماندن یا رفتن", approach: "ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
     11: { title: "بازسازیِ صمیمیت (اگر ماندن انتخاب شد)", approach: "EFT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
     12: { title: "معنایابی، تاب‌آوری، و چشم‌اندازِ آینده", approach: "معنادرمانی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
@@ -1688,6 +1744,9 @@ export default function App() {
   const [viewingSession, setViewingSession] = useState(null);
   const [adminUnlockEmail, setAdminUnlockEmail] = useState("");
   const [adminUnlockMsg, setAdminUnlockMsg] = useState("");
+  const [generatedCode, setGeneratedCode] = useState("");
+  const [redeemCode, setRedeemCode] = useState("");
+  const [redeemMsg, setRedeemMsg] = useState("");
 
   async function loadUnlockedSessions() {
     if (!user) return;
@@ -1715,6 +1774,18 @@ export default function App() {
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setAdminUnlockMsg(`جلسه‌ی ${num} برایِ ${adminUnlockEmail} فعال شد ✅`);
+    } catch (e) { setAdminUnlockMsg(e.message); }
+  }
+
+  async function generateActivationCode(pkgKey, num) {
+    try {
+      const r = await fetch("/api/sessions/redeem", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "generate", sessionId: sessionId(pkgKey, num), adminPass: ADMIN_PASS }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setGeneratedCode(data.code);
     } catch (e) { setAdminUnlockMsg(e.message); }
   }
 
@@ -2203,7 +2274,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۸-۳۱ / تکمیلِ جلساتِ ۵، ۶، ۷ خیانت‌دیده با فرمتِ کامل
+              نسخه: ۲۰۲۶-۰۹-۰۲ / کاهشِ قیمت‌ها به نصف + تکمیلِ جلساتِ ۸ و ۹ خیانت‌دیده
             </p>
             </div>
           </Card>
@@ -2350,6 +2421,33 @@ export default function App() {
               </p>
               <a href={CONSULT_BOOKING_LINK} style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 700, color: "#2B6777" }}>📞 {BRAND.phone}</a>
             </div>
+
+            {user && (
+              <div style={{ background: "#F3F8F5", border: "1px solid #CFE6D8", borderRadius: 12, padding: "12px 14px", marginTop: 10 }}>
+                <p style={{ fontSize: 11.5, fontWeight: 700, color: "#1F2D3D", margin: "0 0 8px" }}>🎫 کدِ فعال‌سازی دارید؟</p>
+                <div style={{ display: "flex", gap: 6 }}>
+                  <input value={redeemCode} onChange={(e) => setRedeemCode(e.target.value.toUpperCase())} placeholder="مثلاً AB3D9F2K"
+                    style={{ flex: 1, padding: "8px 10px", borderRadius: 9, border: "1px solid #CFE6D8", fontSize: 12.5, textAlign: "center" }} />
+                  <button onClick={async () => {
+                    setRedeemMsg("");
+                    try {
+                      const r = await fetch("/api/sessions/redeem", {
+                        method: "POST", headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ action: "redeem", code: redeemCode, email: user.email }),
+                      });
+                      const data = await r.json();
+                      if (!r.ok) throw new Error(data.error || "خطا");
+                      setRedeemMsg("جلسه با موفقیت باز شد ✅");
+                      setRedeemCode("");
+                      loadUnlockedSessions();
+                    } catch (e) { setRedeemMsg(e.message); }
+                  }} style={{ padding: "8px 16px", borderRadius: 9, border: "none", background: "#4C8778", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                    فعال‌سازی
+                  </button>
+                </div>
+                {redeemMsg && <p style={{ fontSize: 11, color: redeemMsg.includes("✅") ? "#4C8778" : "#A6432F", marginTop: 6 }}>{redeemMsg}</p>}
+              </div>
+            )}
 
             <button onClick={() => setScreen("topics")}
               style={{ width: "100%", marginTop: 14, padding: "10px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>
@@ -2881,6 +2979,29 @@ export default function App() {
               </div>
             ))}
             {adminUnlockMsg && <p style={{ fontSize: 11.5, color: "#4C8778", marginTop: 8 }}>{adminUnlockMsg}</p>}
+          </Card>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🎫 ساختِ کدِ فعال‌سازی (برایِ واریزِ کارت‌به‌کارت)</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>بعد از دریافتِ پول، رویِ شماره‌ی جلسه بزنید و کدِ ساخته‌شده را برایِ مشتری پیامک کنید. مشتری خودش در اپ واردش می‌کند.</p>
+            {Object.entries(TREATMENT_PACKAGES).map(([pkgKey, pkg]) => (
+              <div key={pkgKey} style={{ marginBottom: 8 }}>
+                <p style={{ fontSize: 11.5, color: "#5A7080", margin: "0 0 5px" }}>{pkg.label}:</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                  {Array.from({ length: pkg.sessions }, (_, i) => i + 1).map((num) => (
+                    <button key={num} onClick={() => generateActivationCode(pkgKey, num)}
+                      style={{ padding: "5px 10px", borderRadius: 8, border: "1px solid #B9822F", background: "#fff", color: "#B9822F", fontSize: 11, cursor: "pointer" }}>
+                      جلسه {num}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {generatedCode && (
+              <div style={{ background: "#FBF3E2", borderRadius: 10, padding: "10px 12px", marginTop: 10, textAlign: "center" }}>
+                <p style={{ fontSize: 11, color: "#7A5B2E", margin: "0 0 4px" }}>کدِ فعال‌سازی برایِ ارسال به مشتری:</p>
+                <p style={{ fontSize: 18, fontWeight: 800, color: "#7A5B2E", letterSpacing: 2, margin: 0 }}>{generatedCode}</p>
+              </div>
+            )}
           </Card>
           <AdminDashboard rows={adminRows} busy={busy} onRefresh={loadAdmin} onBack={() => setScreen("start")} />
           </>
