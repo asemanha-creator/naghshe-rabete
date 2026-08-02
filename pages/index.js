@@ -186,13 +186,21 @@ const DOMAIN_OPENING_SESSIONS = {
     ],
   },
 };
-function getSessionContent(pkgKey, num, weakestDomain) {
+function getSessionContent(pkgKey, num, weakestDomain, level) {
   // شخصی‌سازیِ جلسه‌ی اول فقط برایِ مسیرِ «پیشگیری» منطقی است؛
   // مسیرِ «پس‌ازخیانت» همیشه باید با تثبیت/ایمنیِ بحران شروع شود، فارغ از حیطه‌ی ضعیف‌تر
+  let sess;
   if (pkgKey === "moderate" && num === 1 && weakestDomain && DOMAIN_OPENING_SESSIONS[weakestDomain]) {
-    return DOMAIN_OPENING_SESSIONS[weakestDomain];
+    sess = DOMAIN_OPENING_SESSIONS[weakestDomain];
+  } else {
+    sess = SESSION_CONTENT[pkgKey][num];
   }
-  return SESSION_CONTENT[pkgKey][num];
+  // اگر این جلسه سه‌سطحی طراحی شده (levels)، بدنه را بر اساسِ سطحِ درخواستی برگردان
+  if (sess.levels) {
+    const chosen = sess.levels[level] || sess.levels.excellent || sess.levels.simple;
+    return { ...sess, body: [...chosen, ...(sess.callouts || [])], hasLevels: true };
+  }
+  return { ...sess, hasLevels: false };
 }
 
 const SESSION_CONTENT = {
@@ -768,7 +776,75 @@ const SESSION_CONTENT = {
         { type: "callout", text: "📞 چه‌زمانی تماس بگیرید: اگر فرزندتان نشانه‌هایِ افسردگی، اضطرابِ شدید، یا رفتارِ خودآسیب‌رسان نشان می‌دهد، همین امروز با یک متخصصِ کودک/نوجوان هماهنگ کنید." },
       ],
     },
-    10: { title: "تصمیم‌گیریِ آگاهانه: ماندن یا رفتن", approach: "ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    10: {
+      title: "تصمیم‌گیریِ آگاهانه: ماندن یا رفتن",
+      summary: "پروتکلِ کاملِ تصمیم‌گیری: کاربرگِ توازنِ تصمیم، شفاف‌سازیِ ارزش‌ها، و بررسیِ هر چهار بُعد (سبکِ زندگی، شناخت، هیجان، صمیمیتِ جنسی) در این تصمیم.",
+      approach: "ACT + گاتمن (فازِ Attune)", audioUrl: null, videoUrl: null,
+      levels: {
+        simple: [
+          { type: "h", text: "🎯 اهدافِ این جلسه (نسخه‌ی ساده)" },
+          { type: "p", text: "امروز فقط می‌خواهیم یک نگاهِ کلی و آرام به تصمیمِ «ماندن یا رفتن» بیندازیم — بدونِ فشار برایِ نتیجه‌ی نهایی." },
+          { type: "technique", name: "لیستِ ساده‌ی خوب‌وبد", time: "۱۰ دقیقه", howTo: "یک برگه را نصف کنید. یک طرف بنویسید «اگر بمانم»، طرفِ دیگر «اگر بروم». زیرِ هرکدام، ۳ چیزی که به ذهنتان می‌رسد بنویسید — هرچه که هست.", effect: "فقط افکارِ پراکنده را روی کاغذ می‌آورد تا کمی سبک‌تر شوید." },
+          { type: "technique", name: "یک سوالِ ساده از خودتان", time: "۵ دقیقه", howTo: "بپرسید: «امروز، همین امروز، به چه‌چیزی نیاز دارم؟» (نه برایِ همیشه، فقط امروز)", effect: "فشارِ تصمیمِ بزرگ را کم می‌کند." },
+          { type: "checklist", items: [
+            "لیستِ ساده‌ی خوب‌وبد را نوشتم.",
+            "به سوالِ «امروز چه نیاز دارم» جواب دادم.",
+          ] },
+          { type: "h", text: "اگر پیشرفت نکردید" },
+          { type: "p", text: "اشکالی ندارد — همین که این برگه را نوشتید، یک قدم است." },
+          { type: "h", text: "🏠 رفتار با همسر" },
+          { type: "p", text: "لازم نیست چیزی بگویید. این تمرین فقط برایِ خودتان است." },
+        ],
+        excellent: [
+          { type: "h", text: "🎯 اهدافِ این جلسه" },
+          { type: "p", text: "۱. اجرایِ یک پروتکلِ ساختاریافته (نه احساسیِ لحظه‌ای) برایِ تصمیم‌گیری\n۲. بررسیِ تاثیرِ این تصمیم بر هر چهار بُعدِ زندگی‌تان\n۳. شفاف‌سازیِ ارزش‌هایِ بنیادین، مستقل از ترس یا فشارِ اطرافیان\n۴. رسیدن به یک تصمیمِ «موقت و قابلِ‌بازبینی» (نه لزوماً نهایی و ابدی)" },
+          { type: "h", text: "چرا این تصمیم این‌قدر سخت است" },
+          { type: "p", text: "مغزِ شما هنوز در حالتِ تنظیمِ ناقص است (جلساتِ ۱-۹ را یادآوری کنید) — یعنی همین حالا که بیشترین فشار برایِ تصمیمِ بزرگ رویتان است، مغزتان کمترین آمادگی برایِ تصمیمِ منطقی را دارد. به همین دلیل، این جلسه به‌جایِ «الان تصمیمِ نهایی بگیر»، یک **پروتکلِ ساختاریافته** ارائه می‌دهد که احساسِ آنی را از تحلیلِ واقعی جدا می‌کند." },
+          { type: "h", text: "تمرینِ ۱ — کاربرگِ توازنِ تصمیم (Decisional Balance Worksheet)" },
+          { type: "technique", name: "کاربرگِ چهارخانه‌ای", time: "۲۰-۳۰ دقیقه", howTo: "یک برگه را به ۴ خانه تقسیم کنید: «ماندن – فوایدِ کوتاه‌مدت»، «ماندن – هزینه‌هایِ کوتاه‌مدت»، «رفتن – فوایدِ کوتاه‌مدت»، «رفتن – هزینه‌هایِ کوتاه‌مدت». سپس همین ۴ خانه را برایِ افقِ ۵ساله هم تکرار کنید (۸ خانه‌ی کل). برایِ هر خانه، حداقل ۳ مورد بنویسید — و مهم: برایِ هر مورد، مشخص کنید مربوط به کدام بُعد است (سبکِ زندگی/شناخت/هیجان/جنسی).", effect: "تصمیم‌گیریِ احساسیِ لحظه‌ای («الان خیلی عصبانی‌ام، می‌خواهم بروم») را با تحلیلِ ساختاریافته جایگزین می‌کند و کوته‌بینیِ افقِ زمانی (فقط به امروز فکرکردن) را اصلاح می‌کند.", more: "این ابزار نسخه‌ی بالینیِ Decisional Balance Sheet است (ریشه در مدلِ تغییرِ رفتاریِ Prochaska/DiClemente) که برایِ تصمیماتِ پرمخاطره طراحی شده. تفاوتِ کلیدی با «لیستِ خوب‌وبد»هایِ معمولی، تفکیکِ افقِ زمانی (کوتاه/بلندمدت) است — چون بسیاری از تصمیم‌هایِ پس‌ازخیانت، درست بر مبنایِ احساسِ *امروز* گرفته می‌شوند و بعداً پشیمانی می‌آورند." },
+          { type: "h", text: "تمرینِ ۲ — شفاف‌سازیِ ارزش (ACT Values Clarification)" },
+          { type: "technique", name: "پرسشِ کارتِ‌یادبود", time: "۱۵ دقیقه", howTo: "تصور کنید ۲۰ سال آینده، کسی می‌خواهد این دوره از زندگی‌تان را توصیف کند. دوست دارید بگوید: «او/او در این دوره، با _____ عمل کرد» — این جای‌خالی را با یک **ارزش** (نه نتیجه) پر کنید؛ مثلاً «با صداقت با خودش» نه «او را بخشید» یا «او را ترک کرد».", effect: "تمرکز را از «نتیجه‌ی درست» (که هیچ‌کس نمی‌داند چیست) به «نحوه‌ی عمل‌کردنِ همسو با ارزش» منتقل می‌کند — که همیشه در کنترلِ شماست.", more: "این تمرین از هگزافلکسِ ACT (بخصوص محورِ Values) گرفته شده. نکته‌ی مهم: در ACT، ارزش‌ها جهت‌اند نه مقصد — یعنی سوال «باید بمانم یا بروم؟» را به «می‌خواهم با کدام ارزش این مسیر را طی کنم؟» تبدیل می‌کند. این تغیرِ چارچوب، فشارِ روانیِ «تصمیمِ کامل و بی‌نقص» را کاهش می‌دهد." },
+          { type: "h", text: "تمرینِ ۳ — بررسیِ بُعدِ جنسی در تصمیم" },
+          { type: "technique", name: "نقشه‌ی صداقتِ جنسی", time: "۱۰ دقیقه", howTo: "به‌تنهایی (نه لزوماً با همسر) به این سه سوال صادقانه پاسخ دهید: «۱) الان چه احساسی نسبت به نزدیکیِ جسمی با او دارم — بیزاری، بی‌تفاوتی، هنوز کشش؟ ۲) این احساس، از خودِ رابطه می‌آید یا از تصاویرِ ذهنیِ مزاحم؟ ۳) اگر تصمیم به ماندن بگیرم، صمیمیتِ جنسی چه‌زمانی و چطور باید از سر گرفته شود؟» جوابی برایِ سوالِ سوم لازم نیست همین الان داشته باشید.", effect: "بسیاری از تصمیم‌هایِ «ماندن/رفتن» ناخودآگاه تحتِ‌تاثیرِ این بُعدِ ناگفته هستند؛ آشکارکردنش، تصمیم را صادقانه‌تر می‌کند.", more: "پژوهش‌هایِ درمانِ خیانت نشان می‌دهند صمیمیتِ جسمی اغلب **آخرین** بخشی است که بازسازی می‌شود، نه اول — و اجبار به «نرمال‌جلوه‌دادنِ» آن زودتر از موعد، معمولاً نتیجه‌ی معکوس دارد. هدفِ این تمرین، شفاف‌سازی است، نه فشار برایِ اقدام." },
+          { type: "h", text: "تمرینِ ۴ — گفت‌وگویِ ساختاریافته‌یِ EFT (فقط اگر آماده‌اید)" },
+          { type: "technique", name: "دستورالعملِ «رسیدن»", time: "۲۰ دقیقه، با همسر", howTo: "اگر آماده‌اید، در حضورِ هم بنشینید. هرکدام به‌نوبت، این جمله را کامل کنید (بدونِ قطع‌کردنِ حرفِ طرفِ مقابل): «وقتی به تصمیمِ ماندن/رفتن فکر می‌کنم، عمیق‌ترین ترسم این است که _____» سپس طرفِ مقابل فقط می‌گوید: «شنیدم که ترسِ تو این است.» بدونِ توجیه، بدونِ راه‌حل.", effect: "این ساختار، آسیب‌پذیریِ عمیق را بدونِ سرریزِ هیجانی یا دفاعِ متقابل امکان‌پذیر می‌کند — دقیقاً کاری که تصمیم‌گیریِ آگاهانه به آن نیاز دارد.", more: "این تمرین نسخه‌ی ساده‌شده‌ی مرحله‌ی «Reaching» در EFT است. اجرایِ درستش نیازِ فضایِ کاملاً امن دارد؛ اگر در جلسه‌ی ۱-۹ هنوز به آن ثبات نرسیده‌اید، این تمرین را به‌تنهایی (بدونِ همسر، فقط با نوشتن) انجام دهید." },
+          { type: "checklist", items: [
+            "کاربرگِ توازنِ تصمیم (۸ خانه) را کامل کردم.",
+            "تمرینِ کارتِ‌یادبود را نوشتم و یک ارزشِ مشخص پیدا کردم.",
+            "نقشه‌ی صداقتِ جنسی را (حداقل برایِ خودم) کامل کردم.",
+            "اگر آماده بودم، گفت‌وگویِ ساختاریافته را با همسرم امتحان کردم.",
+          ] },
+          { type: "h", text: "اگر پیشرفت نکردید" },
+          { type: "p", text: "اگر بعد از این تمرین‌ها هنوز سردرگم‌اید، این خودش اطلاعات است — یعنی هنوز به زمان یا پردازشِ بیشتری نیاز دارید (شاید جلساتِ ۱-۹ کامل تثبیت نشده‌اند). تصمیمِ «هنوز تصمیم نمی‌گیرم و به روندِ درمان ادامه می‌دهم» یک تصمیمِ کاملاً معتبر است." },
+          { type: "h", text: "🏠 رفتار با همسر" },
+          { type: "p", text: "لازم نیست نتیجه‌ی این تمرین‌ها را فوراً با همسرتان در میان بگذارید. اگر مایل بودید، فقط بگویید: «دارم روی این تصمیم به‌شکلِ ساختاریافته کار می‌کنم؛ زمان لازم دارم.»" },
+        ],
+        advanced: [
+          { type: "h", text: "🎯 اهدافِ این جلسه (نسخه‌ی پیشرفته)" },
+          { type: "p", text: "علاوه بر هر چهار تمرینِ سطحِ عالی، این نسخه شاملِ دو تمرینِ تکمیلیِ عمیق‌تر است — برایِ کسانی که ظرفیتِ روانیِ لازم برایِ کارِ فشرده‌تر را دارند." },
+          { type: "technique", name: "کاربرگِ چهارخانه‌ای (کامل)", time: "۲۰-۳۰ دقیقه", howTo: "همانِ کاربرگِ ۸خانه‌ایِ سطحِ عالی را انجام دهید.", effect: "پایه‌ی تحلیلِ ساختاریافته." },
+          { type: "technique", name: "پرسشِ کارتِ‌یادبود", time: "۱۵ دقیقه", howTo: "همانِ تمرینِ سطحِ عالی.", effect: "شفاف‌سازیِ ارزش." },
+          { type: "technique", name: "نقشه‌ی صداقتِ جنسی", time: "۱۰ دقیقه", howTo: "همانِ تمرینِ سطحِ عالی.", effect: "شفاف‌سازیِ بُعدِ جنسی." },
+          { type: "technique", name: "دستورالعملِ «رسیدن»", time: "۲۰ دقیقه، با همسر", howTo: "همانِ تمرینِ سطحِ عالی.", effect: "آسیب‌پذیریِ ساختاریافته." },
+          { type: "technique", name: "۵. نامه‌ی دوسوگرا (تمرینِ تکمیلی)", time: "۳۰-۴۵ دقیقه", howTo: "دو نامه‌ی کاملاً جداگانه بنویسید: یکی خطاب به خودتان از آینده‌ای که «ماندن» را انتخاب کرده (چرا این انتخاب درست بود، چه چیزهایی گذشت)، و یکی از آینده‌ای که «رفتن» را انتخاب کرده. هر دو را با جزئیاتِ احساسی کامل بنویسید.", effect: "چون هردو سناریو را از منظرِ آینده‌ی «موفق» می‌نویسید (نه ترس‌آلود)، تصویرِ واضح‌تری از هرکدام به‌دست می‌آورید که فراتر از تحلیلِ عقلانیِ صرف است.", more: "این تکنیک از رواندرمانیِ روایتی (Narrative Therapy) و تمرینِ «نامه‌ی آینده» در ACT الهام گرفته. نوشتنِ هر دو سناریو به‌شکلِ مثبت (نه فاجعه‌بار)، تعصبِ منفی‌نگریِ رایج در تصمیم‌گیریِ پسِ‌ترومایی را خنثی می‌کند." },
+          { type: "technique", name: "۶. جلسه‌ی مشورتِ سه‌نفره (تمرینِ تکمیلی)", time: "۴۵ دقیقه", howTo: "با دو نفرِ مختلف (یکی که به‌نظرتان می‌گوید «بمان»، یکی که می‌گوید «برو») مشورت کنید — نه برایِ گرفتنِ تصمیم از آن‌ها، بلکه برایِ شنیدنِ استدلال‌هایِ هردو طرف و دیدنِ واکنشِ درونی‌تان به هرکدام.", effect: "واکنشِ هیجانی‌تان به شنیدنِ هر دیدگاه، اطلاعاتی می‌دهد که تنها با فکرکردنِ تنها به‌دست نمی‌آید.", more: "این تمرین بر پایه‌ی اصلِ «تصمیم‌گیریِ مشارکتی» است — نه برایِ واگذاریِ تصمیم، بلکه برایِ آزمایشِ واکنشِ درونی در برابرِ دیدگاه‌هایِ متضاد، که خودش دیتایِ ارزشمندی برایِ تصمیمِ نهایی است." },
+          { type: "checklist", items: [
+            "هر چهار تمرینِ اصلی را کامل کردم.",
+            "هر دو نامه‌ی دوسوگرا را نوشتم.",
+            "با حداقل دو نفرِ با دیدگاهِ متفاوت مشورت کردم.",
+            "واکنشِ درونی‌ام به هر دیدگاه را یادداشت کردم.",
+          ] },
+          { type: "h", text: "اگر پیشرفت نکردید" },
+          { type: "p", text: "این سطح برایِ زمانی است که ظرفیتِ کافی دارید. اگر در میانه‌ی راه احساسِ فرسودگی کردید، بازگشت به سطحِ «عالی» یا «ساده» کاملاً قابلِ‌قبول است." },
+          { type: "h", text: "🏠 رفتار با همسر" },
+          { type: "p", text: "اگر جلسه‌ی مشورتِ سه‌نفره را انجام دادید، لازم نیست نامِ افرادِ مشورت‌شده را با همسرتان در میان بگذارید — این فرایند برایِ شفافیتِ ذهنِ خودتان است." },
+        ],
+      },
+      callouts: [
+        { type: "callout", text: "🟡 هشدارِ میانی: اگر احساس می‌کنید تحتِ فشارِ بیرونی (خانواده، اطرافیان) به تصمیمی می‌رسید که با ارزش‌هایِ واقعی‌تان هم‌خوانی ندارد، در جلسه‌ی بعد مطرح کنید." },
+        { type: "callout", text: "📞 چه‌زمانی تماس بگیرید: اگر این فرایندِ تصمیم‌گیری به بحرانِ حادِ روانی (افکارِ آسیب‌به‌خود) دامن زد، همین امروز تماس بگیرید — تصمیمِ بزرگ هرگز نباید در بحرانِ حاد گرفته شود." },
+      ],
+    },
     11: { title: "بازسازیِ صمیمیت (اگر ماندن انتخاب شد)", approach: "EFT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
     12: { title: "معنایابی، تاب‌آوری، و چشم‌اندازِ آینده", approach: "معنادرمانی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
   },
@@ -1365,7 +1441,7 @@ function InteractiveChecklist({ sessionKey, items }) {
   );
 }
 
-function MoodRating({ sessionKey, phase }) {
+function MoodRating({ sessionKey, phase, onChange }) {
   const storageKey = `mood_${phase}_${sessionKey}`;
   const [val, setVal] = useState(() => {
     try { return localStorage.getItem(storageKey) || null; } catch (e) { return null; }
@@ -1373,6 +1449,7 @@ function MoodRating({ sessionKey, phase }) {
   function pick(n) {
     setVal(n);
     try { localStorage.setItem(storageKey, n); } catch (e) {}
+    if (onChange) onChange(n);
   }
   return (
     <div style={{ background: "#FBF3E2", border: "1px solid #E8D5A8", borderRadius: 12, padding: "12px 14px", margin: "0 0 14px" }}>
@@ -1750,6 +1827,8 @@ export default function App() {
   const [backupList, setBackupList] = useState([]);
   const [redeemCode, setRedeemCode] = useState("");
   const [redeemMsg, setRedeemMsg] = useState("");
+  const [sessionLevel, setSessionLevel] = useState("excellent");
+  const [suggestedLevel, setSuggestedLevel] = useState(null);
 
   async function loadUnlockedSessions() {
     if (!user) return;
@@ -2298,7 +2377,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۹-۰۳ / سیستمِ بک‌آپِ خودکارِ ساعتی (Vercel Blob Storage)
+              نسخه: ۲۰۲۶-۰۹-۰۵ / سیستمِ سه‌سطحی (ساده/عالی/پیشرفته) با پیشنهادِ هوشمند بر اساسِ خلق
             </p>
             </div>
           </Card>
@@ -2393,7 +2472,7 @@ export default function App() {
             </p>
 
             {Array.from({ length: TREATMENT_PACKAGES[libraryPkg].sessions }, (_, i) => i + 1).map((num) => {
-              const sess = getSessionContent(libraryPkg, num, libraryWeakestDomain);
+              const sess = getSessionContent(libraryPkg, num, libraryWeakestDomain, "excellent");
               const sid = sessionId(libraryPkg, num);
               const unlocked = isAdmin || unlockedSessions.includes(sid);
               return (
@@ -2481,8 +2560,14 @@ export default function App() {
         )}
 
         {screen === "sessionReader" && viewingSession && (() => {
-          const sess = getSessionContent(viewingSession.pkgKey, viewingSession.num, viewingSession.weakestDomain);
+          const sess = getSessionContent(viewingSession.pkgKey, viewingSession.num, viewingSession.weakestDomain, sessionLevel);
           const sessKey = sessionId(viewingSession.pkgKey, viewingSession.num);
+          function suggestFromMood(n) {
+            const num = Number(n);
+            if (num >= 7) setSuggestedLevel("simple");
+            else if (num <= 3) setSuggestedLevel("advanced");
+            else setSuggestedLevel("excellent");
+          }
           // چک‌لیست و پیام‌هایِ هشدار/تماس همیشه نمایان می‌مانند (نه پشتِ کشویی)؛ بقیه بر اساسِ تیتر گروه‌بندی می‌شوند
           const alwaysVisible = sess.body.filter((b) => b.type === "checklist" || b.type === "callout");
           const groupable = sess.body.filter((b) => b.type !== "checklist" && b.type !== "callout");
@@ -2507,6 +2592,28 @@ export default function App() {
                   <p style={{ fontSize: 11.5, color: "#2B6777", fontWeight: 700, margin: 0 }}>👁️ این جلسه در یک نگاه: {sess.summary}</p>
                 </div>
               )}
+              {sess.hasLevels && (
+                <div style={{ marginBottom: 14 }}>
+                  <p style={{ fontSize: 11, color: "#8CA3B0", margin: "0 0 6px" }}>سطحِ این جلسه:</p>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    {[["simple", "ساده"], ["excellent", "عالی"], ["advanced", "پیشرفته"]].map(([key, label]) => (
+                      <button key={key} onClick={() => setSessionLevel(key)}
+                        style={{ flex: 1, padding: "8px", borderRadius: 9, border: `1.5px solid ${sessionLevel === key ? "#2B6777" : "#DCE8F0"}`, background: sessionLevel === key ? "#2B6777" : "#fff", color: sessionLevel === key ? "#fff" : "#5A7080", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                  {suggestedLevel && suggestedLevel !== sessionLevel && (
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#FBF3E2", borderRadius: 9, padding: "7px 10px", marginTop: 8 }}>
+                      <span style={{ fontSize: 11, color: "#7A5B2E" }}>پیشنهاد برایِ امروز: سطحِ «{{ simple: "ساده", excellent: "عالی", advanced: "پیشرفته" }[suggestedLevel]}»</span>
+                      <button onClick={() => setSessionLevel(suggestedLevel)}
+                        style={{ fontSize: 10.5, padding: "4px 10px", borderRadius: 7, border: "none", background: "#B9822F", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+                        همینو می‌خوام
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
               <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
                 <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 10, background: sess.audioUrl ? "#F3F8F5" : "#F7FAFC", border: `1px solid ${sess.audioUrl ? "#CFE6D8" : "#EEF3F6"}` }}>
                   <span style={{ fontSize: 15 }}>🎧</span>
@@ -2524,7 +2631,7 @@ export default function App() {
                 <audio src={sess.audioUrl} controls style={{ width: "100%", marginBottom: 14 }} />
               )}
 
-              <MoodRating sessionKey={sessKey} phase="before" />
+              <MoodRating sessionKey={sessKey} phase="before" onChange={suggestFromMood} />
 
               {sections.map((sec, si) =>
                 sec.title ? (
