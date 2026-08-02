@@ -1745,6 +1745,9 @@ export default function App() {
   const [adminUnlockEmail, setAdminUnlockEmail] = useState("");
   const [adminUnlockMsg, setAdminUnlockMsg] = useState("");
   const [generatedCode, setGeneratedCode] = useState("");
+  const [backupBusy, setBackupBusy] = useState(false);
+  const [backupMsg, setBackupMsg] = useState("");
+  const [backupList, setBackupList] = useState([]);
   const [redeemCode, setRedeemCode] = useState("");
   const [redeemMsg, setRedeemMsg] = useState("");
 
@@ -1787,6 +1790,27 @@ export default function App() {
       if (!r.ok) throw new Error(data.error || "خطا");
       setGeneratedCode(data.code);
     } catch (e) { setAdminUnlockMsg(e.message); }
+  }
+
+  async function runManualBackup() {
+    setBackupBusy(true); setBackupMsg("");
+    try {
+      const r = await fetch(`/api/backup?adminPass=${encodeURIComponent(ADMIN_PASS)}`, { method: "POST" });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setBackupMsg(`بک‌آپ با موفقیت ساخته شد ✅ (${data.meta?.totalKeys ?? "?"} رکورد)`);
+      loadBackupList();
+    } catch (e) { setBackupMsg(e.message); }
+    setBackupBusy(false);
+  }
+
+  async function loadBackupList() {
+    try {
+      const r = await fetch(`/api/backup?adminPass=${encodeURIComponent(ADMIN_PASS)}`);
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setBackupList(data.backups || []);
+    } catch (e) { setBackupMsg(e.message); }
   }
 
   function generatePreviewAnswers(profile) {
@@ -2274,7 +2298,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۹-۰۲ / کاهشِ قیمت‌ها به نصف + تکمیلِ جلساتِ ۸ و ۹ خیانت‌دیده
+              نسخه: ۲۰۲۶-۰۹-۰۳ / سیستمِ بک‌آپِ خودکارِ ساعتی (Vercel Blob Storage)
             </p>
             </div>
           </Card>
@@ -3000,6 +3024,31 @@ export default function App() {
               <div style={{ background: "#FBF3E2", borderRadius: 10, padding: "10px 12px", marginTop: 10, textAlign: "center" }}>
                 <p style={{ fontSize: 11, color: "#7A5B2E", margin: "0 0 4px" }}>کدِ فعال‌سازی برایِ ارسال به مشتری:</p>
                 <p style={{ fontSize: 18, fontWeight: 800, color: "#7A5B2E", letterSpacing: 2, margin: 0 }}>{generatedCode}</p>
+              </div>
+            )}
+          </Card>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🗄️ بک‌آپِ خودکارِ داده‌ها</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+              هر ساعت، یک نسخه‌ی کاملِ داده‌ها (پاسخ‌ها، حساب‌ها، جلساتِ بازشده) خودکار در **Vercel Blob Storage** (سرویسِ ذخیره‌سازیِ جداگانه از Redis) ذخیره می‌شود — اگر مشکلی برایِ Redis پیش بیاید، این نسخه‌ها سالم می‌مانند.
+            </p>
+            <button onClick={runManualBackup} disabled={backupBusy}
+              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
+              {backupBusy ? "در حالِ ساختِ بک‌آپ..." : "📥 ساختِ بک‌آپِ دستی همین الان"}
+            </button>
+            {backupMsg && <p style={{ fontSize: 11, color: backupMsg.includes("✅") ? "#4C8778" : "#A6432F", marginBottom: 8 }}>{backupMsg}</p>}
+            <button onClick={loadBackupList}
+              style={{ width: "100%", padding: "8px", borderRadius: 10, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 11.5, cursor: "pointer", marginBottom: 8 }}>
+              نمایشِ لیستِ بک‌آپ‌هایِ موجود
+            </button>
+            {backupList.length > 0 && (
+              <div style={{ maxHeight: 180, overflowY: "auto" }}>
+                {backupList.map((b, i) => (
+                  <a key={i} href={b.url} target="_blank" rel="noreferrer"
+                    style={{ display: "block", fontSize: 11, color: "#2B6777", padding: "6px 0", borderBottom: i < backupList.length - 1 ? "1px solid #F0F4F7" : "none" }}>
+                    📄 {new Date(b.uploadedAt).toLocaleString("fa-IR")}
+                  </a>
+                ))}
               </div>
             )}
           </Card>
