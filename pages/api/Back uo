@@ -1,0 +1,55 @@
+import { Redis } from "@upstash/redis";
+import { put, list } from "@vercel/blob";
+
+const redis = Redis.fromEnv();
+
+export default async function handler(req, res) {
+  try {
+    // ---------- فهرستِ بک‌آپ‌هایِ موجود ----------
+    if (req.method === "GET") {
+      if (req.query.adminPass !== "AGHILI-PANEL") return res.status(403).json({ error: "دسترسی غیرمجاز" });
+      const { blobs } = await list({ prefix: "backups/" });
+      const sorted = blobs.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+      return res.status(200).json({ ok: true, backups: sorted.slice(0, 30) });
+    }
+
+    // اگر از Vercel Cron صدا زده شده، هدرِ مخصوصِ آن را قبول می‌کنیم؛
+    // اگر دستی از اپ صدا زده شده، رمزِ ادمین لازم است.
+    const isCron = req.headers["x-vercel-cron"] || req.headers.authorization === `Bearer ${process.env.CRON_SECRET}`;
+    if (!isCron && req.query.adminPass !== "AGHILI-PANEL") {
+      return res.status(403).json({ error: "دسترسی غیرمجاز" });
+    }
+
+    const prefixes = ["couple:", "user:", "unlocked:", "code:"];
+    const backup = {};
+    for (const prefix of prefixes) {
+      const keys = await redis.keys(`${prefix}*`);
+      backup[prefix] = {};
+      for (const k of keys) {
+        backup[prefix][k] = await redis.get(k);
+      }
+    }
+    backup._meta = { createdAt: new Date().toISOString(), totalKeys: Object.values(backup).reduce((s, o) => s + (o && typeof o === "object" ? Object.keys(o).length : 0), 0) };
+
+    const filename = `backups/naghshe-backup-${Date.now()}.json`;
+    const blob = await put(filename, JSON.stringify(backup, null, 2), {
+      access: "public",
+      contentType: "application/json",
+    });
+
+    // نگه‌داشتنِ فقط ۷۲ بک‌آپِ آخر (۳ روزِ اخیر، اگر ساعتی اجرا شود) — پاک‌کردنِ قدیمی‌ترها
+    const { blobs } = await list({ prefix: "backups/" });
+    const sorted = blobs.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
+    const toDelete = sorted.slice(72);
+    // حذفِ بک‌آپ‌هایِ اضافی برایِ صرفه‌جویی در فضا (اختیاری، اگر del در دسترس نبود نادیده گرفته می‌شود)
+    const { del } = await import("@vercel/blob");
+    for (const b of toDelete) {
+      try { await del(b.url); } catch (e) {}
+    }
+
+    res.status(200).json({ ok: true, url: blob.url, meta: backup._meta });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message || "unknown error" });
+  }
+}
