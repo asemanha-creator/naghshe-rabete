@@ -2048,15 +2048,17 @@ export default function App() {
       solo: patch.solo ?? false,
     };
     try {
-      if (!window.storage || typeof window.storage.set !== "function") {
-        return { ok: false, detail: "window.storage در دسترس نیست (typeof: " + typeof window.storage + ")" };
-      }
-      const result = await window.storage.set(`couple:${code}`, JSON.stringify(payload), true);
-      if (!result) return { ok: false, detail: "storage.set مقدارِ خالی/نامعتبر برگرداند (result=" + JSON.stringify(result) + ")" };
+      const r = await fetch("/api/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await r.json();
+      if (!r.ok || !data.ok) return { ok: false, detail: data.error || `HTTP ${r.status}` };
       return { ok: true };
     } catch (e) {
       console.error(e);
-      return { ok: false, detail: (e && (e.message || e.toString())) || "خطای ناشناخته" };
+      return { ok: false, detail: (e && (e.message || e.toString())) || "خطای شبکه" };
     }
   }
 
@@ -2088,8 +2090,9 @@ export default function App() {
     if (!c) return;
     setBusy(true);
     try {
-      const res = await window.storage.get(`couple:${c}`, true);
-      const data = JSON.parse(res.value);
+      const r = await fetch(`/api/get?code=${encodeURIComponent(c)}`);
+      if (!r.ok) throw new Error("not found");
+      const { data } = await r.json();
       setCode(c);
       setAns1(data.ans1 || {}); setAns2(data.ans2 || {});
       setSd1(data.sd1 || {}); setSd2(data.sd2 || {});
@@ -2152,16 +2155,9 @@ export default function App() {
   async function loadAdmin() {
     setBusy(true);
     try {
-      const list = await window.storage.list("couple:", true);
-      const rows = [];
-      for (const k of list.keys) {
-        try {
-          const r = await window.storage.get(k, true);
-          const d = JSON.parse(r.value);
-          rows.push(d);
-        } catch (e) {}
-      }
-      setAdminRows(rows);
+      const r = await fetch("/api/list");
+      const data = await r.json();
+      setAdminRows(data.rows || []);
     } catch (e) {
       setAdminRows([]);
     }
