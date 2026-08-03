@@ -1377,6 +1377,10 @@ function Technique({ id, name, time, howTo, effect, more }) {
   function giveFeedback(val) {
     setFeedback(val);
     try { localStorage.setItem(`tech_fb_${id}`, val); } catch (e) {}
+    fetch("/api/technique-feedback", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ techniqueId: id, feedback: val }),
+    }).catch(() => {});
   }
   return (
     <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid #F0F4F7" }}>
@@ -1825,6 +1829,8 @@ export default function App() {
   const [backupBusy, setBackupBusy] = useState(false);
   const [backupMsg, setBackupMsg] = useState("");
   const [backupList, setBackupList] = useState([]);
+  const [techniqueReport, setTechniqueReport] = useState([]);
+  const [techniqueReportLoaded, setTechniqueReportLoaded] = useState(false);
   const [redeemCode, setRedeemCode] = useState("");
   const [redeemMsg, setRedeemMsg] = useState("");
   const [sessionLevel, setSessionLevel] = useState("excellent");
@@ -1890,6 +1896,16 @@ export default function App() {
       if (!r.ok) throw new Error(data.error || "خطا");
       setBackupList(data.backups || []);
     } catch (e) { setBackupMsg(e.message); }
+  }
+
+  async function loadTechniqueReport() {
+    try {
+      const r = await fetch(`/api/technique-feedback?adminPass=${encodeURIComponent(ADMIN_PASS)}`);
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setTechniqueReport(data.report || []);
+      setTechniqueReportLoaded(true);
+    } catch (e) { console.error(e); }
   }
 
   function generatePreviewAnswers(profile) {
@@ -2032,17 +2048,15 @@ export default function App() {
       solo: patch.solo ?? false,
     };
     try {
-      const r = await fetch("/api/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await r.json();
-      if (!r.ok || !data.ok) return { ok: false, detail: data.error || `HTTP ${r.status}` };
+      if (!window.storage || typeof window.storage.set !== "function") {
+        return { ok: false, detail: "window.storage در دسترس نیست (typeof: " + typeof window.storage + ")" };
+      }
+      const result = await window.storage.set(`couple:${code}`, JSON.stringify(payload), true);
+      if (!result) return { ok: false, detail: "storage.set مقدارِ خالی/نامعتبر برگرداند (result=" + JSON.stringify(result) + ")" };
       return { ok: true };
     } catch (e) {
       console.error(e);
-      return { ok: false, detail: (e && (e.message || e.toString())) || "خطای شبکه" };
+      return { ok: false, detail: (e && (e.message || e.toString())) || "خطای ناشناخته" };
     }
   }
 
@@ -2074,9 +2088,8 @@ export default function App() {
     if (!c) return;
     setBusy(true);
     try {
-      const r = await fetch(`/api/get?code=${encodeURIComponent(c)}`);
-      if (!r.ok) throw new Error("not found");
-      const { data } = await r.json();
+      const res = await window.storage.get(`couple:${c}`, true);
+      const data = JSON.parse(res.value);
       setCode(c);
       setAns1(data.ans1 || {}); setAns2(data.ans2 || {});
       setSd1(data.sd1 || {}); setSd2(data.sd2 || {});
@@ -2139,9 +2152,16 @@ export default function App() {
   async function loadAdmin() {
     setBusy(true);
     try {
-      const r = await fetch("/api/list");
-      const data = await r.json();
-      setAdminRows(data.rows || []);
+      const list = await window.storage.list("couple:", true);
+      const rows = [];
+      for (const k of list.keys) {
+        try {
+          const r = await window.storage.get(k, true);
+          const d = JSON.parse(r.value);
+          rows.push(d);
+        } catch (e) {}
+      }
+      setAdminRows(rows);
     } catch (e) {
       setAdminRows([]);
     }
@@ -2377,7 +2397,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۹-۰۵ / سیستمِ سه‌سطحی (ساده/عالی/پیشرفته) با پیشنهادِ هوشمند بر اساسِ خلق
+              نسخه: ۲۰۲۶-۰۹-۰۶ / ارسالِ بازخوردِ تکنیک به سرور + گزارشِ تحلیلی در پنلِ ادمین
             </p>
             </div>
           </Card>
@@ -3132,6 +3152,31 @@ export default function App() {
                 <p style={{ fontSize: 11, color: "#7A5B2E", margin: "0 0 4px" }}>کدِ فعال‌سازی برایِ ارسال به مشتری:</p>
                 <p style={{ fontSize: 18, fontWeight: 800, color: "#7A5B2E", letterSpacing: 2, margin: 0 }}>{generatedCode}</p>
               </div>
+            )}
+          </Card>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📊 تحلیلِ بازخوردِ تکنیک‌ها</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+              نشان می‌دهد چند نفر گفته‌اند هر تکنیک برایشان کار کرده یا نه — برایِ فهمیدنِ نقاطِ قوت/ضعفِ محتوا.
+            </p>
+            <button onClick={loadTechniqueReport}
+              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
+              نمایشِ گزارشِ بازخوردها
+            </button>
+            {techniqueReport.length > 0 && (
+              <div style={{ maxHeight: 260, overflowY: "auto" }}>
+                {techniqueReport.map((r, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 0", borderBottom: i < techniqueReport.length - 1 ? "1px solid #F0F4F7" : "none" }}>
+                    <span style={{ fontSize: 10.5, color: "#3A4A52", flex: 1 }}>{r.id}</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: r.successRate >= 60 ? "#4C8778" : r.successRate >= 40 ? "#B9822F" : "#A6432F", flexShrink: 0 }}>
+                      ✓{r.yes} ✗{r.no} ({r.successRate}٪)
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+            {techniqueReport.length === 0 && techniqueReportLoaded && (
+              <p style={{ fontSize: 11, color: "#8CA3B0" }}>هنوز بازخوردی ثبت نشده.</p>
             )}
           </Card>
           <Card>
