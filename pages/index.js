@@ -2573,6 +2573,10 @@ function Collapsible({ title, icon, defaultOpen, children }) {
 // روش/تکنیک: پاسخِ کوتاه و کاربردی + تاثیر، همیشه دیده می‌شود؛ توضیحاتِ کامل پشتِ دکمه‌ی «بیشتر» است
 function Technique({ id, name, time, howTo, effect, more }) {
   const [showMore, setShowMore] = useState(false);
+  const [note, setNote] = useState(() => {
+    try { return localStorage.getItem(`tech_note_${id}`) || ""; } catch (e) { return ""; }
+  });
+  const [noteSaved, setNoteSaved] = useState(true);
   const [feedback, setFeedback] = useState(() => {
     try { return localStorage.getItem(`tech_fb_${id}`) || null; } catch (e) { return null; }
   });
@@ -2584,6 +2588,23 @@ function Technique({ id, name, time, howTo, effect, more }) {
       body: JSON.stringify({ techniqueId: id, feedback: val }),
     }).catch(() => {});
   }
+  function handleNoteChange(v) {
+    setNote(v);
+    setNoteSaved(false);
+    try { localStorage.setItem(`tech_note_${id}`, v); } catch (e) {}
+  }
+  useEffect(() => {
+    if (noteSaved || !id) return;
+    const t = setTimeout(() => {
+      let userEmail = null;
+      try { userEmail = JSON.parse(localStorage.getItem("naghshe_user") || "{}").email; } catch (e) {}
+      fetch("/api/session-notes", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ techniqueId: id, note, userEmail }),
+      }).then(() => setNoteSaved(true)).catch(() => {});
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [note, noteSaved, id]);
   return (
     <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid #F0F4F7" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 5 }}>
@@ -2602,6 +2623,14 @@ function Technique({ id, name, time, howTo, effect, more }) {
             <p style={{ fontSize: 12, color: "#5A7080", lineHeight: 1.9, margin: "8px 0 0", whiteSpace: "pre-line" }}>{more}</p>
           )}
         </>
+      )}
+      {id && (
+        <div style={{ marginTop: 10 }}>
+          <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: "0 0 5px" }}>📝 یادداشتِ من (اینجا بنویسید، خودکار ذخیره می‌شود)</p>
+          <textarea value={note} onChange={(e) => handleNoteChange(e.target.value)} placeholder="پاسخ/تمرینِ خودتان را اینجا بنویسید..."
+            style={{ width: "100%", minHeight: 60, padding: "8px 10px", borderRadius: 9, border: "1px solid #DCE8F0", fontSize: 12, fontFamily: "inherit", resize: "vertical", boxSizing: "border-box" }} />
+          {note && <p style={{ fontSize: 9.5, color: noteSaved ? "#8CA3B0" : "#B9822F", margin: "3px 0 0" }}>{noteSaved ? "ذخیره شد ✓" : "در حالِ ذخیره..."}</p>}
+        </div>
       )}
       {id && (
         <div style={{ marginTop: 8 }}>
@@ -2660,11 +2689,16 @@ function InteractiveChecklist({ sessionKey, items }) {
 function MoodRating({ sessionKey, phase, onChange }) {
   const storageKey = `mood_${phase}_${sessionKey}`;
   const [val, setVal] = useState(() => {
-    try { return localStorage.getItem(storageKey) || null; } catch (e) { return null; }
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed?.value ?? raw; // سازگاری با نسخه‌ی قدیمی که فقط عدد ذخیره می‌کرد
+    } catch (e) { return null; }
   });
   function pick(n) {
     setVal(n);
-    try { localStorage.setItem(storageKey, n); } catch (e) {}
+    try { localStorage.setItem(storageKey, JSON.stringify({ value: n, ts: Date.now(), sessionKey, phase })); } catch (e) {}
     if (onChange) onChange(n);
   }
   return (
@@ -2682,6 +2716,88 @@ function MoodRating({ sessionKey, phase, onChange }) {
       </div>
       {val && <p style={{ fontSize: 10.5, color: "#9A8560", margin: "6px 0 0" }}>ثبت شد: {val}/۱۰</p>}
     </div>
+  );
+}
+
+// ---------- نمودارِ پیشرفتِ کاربر (بر اساسِ خلقِ قبل/بعدِ هر جلسه) ----------
+function collectMoodHistory() {
+  const entries = [];
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith("mood_")) continue;
+      try {
+        const raw = JSON.parse(localStorage.getItem(key));
+        if (raw && typeof raw === "object" && raw.value != null) {
+          entries.push({ ...raw, value: Number(raw.value) });
+        }
+      } catch (e) {}
+    }
+  } catch (e) {}
+  entries.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+  return entries;
+}
+
+function MiniLineChart({ points, width = 300, height = 140, color = "#2B6777" }) {
+  if (!points.length) return null;
+  const pad = 24;
+  const maxY = 10, minY = 1;
+  const xStep = points.length > 1 ? (width - pad * 2) / (points.length - 1) : 0;
+  const scaleY = (v) => height - pad - ((v - minY) / (maxY - minY)) * (height - pad * 2);
+  const pathD = points.map((p, i) => `${i === 0 ? "M" : "L"} ${pad + i * xStep} ${scaleY(p.value)}`).join(" ");
+  return (
+    <svg width="100%" viewBox={`0 0 ${width} ${height}`} style={{ display: "block" }}>
+      {[2, 5, 8].map((gy) => (
+        <line key={gy} x1={pad} x2={width - pad} y1={scaleY(gy)} y2={scaleY(gy)} stroke="#EEF3F6" strokeWidth="1" />
+      ))}
+      <path d={pathD} fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      {points.map((p, i) => (
+        <circle key={i} cx={pad + i * xStep} cy={scaleY(p.value)} r="3.5" fill={color} />
+      ))}
+    </svg>
+  );
+}
+
+function MyProgressScreen({ onBack }) {
+  const history = useMemo(() => collectMoodHistory(), []);
+  const beforePoints = history.filter((e) => e.phase === "before");
+  const afterPoints = history.filter((e) => e.phase === "after");
+  const avgBefore = beforePoints.length ? Math.round(beforePoints.reduce((s, e) => s + e.value, 0) / beforePoints.length * 10) / 10 : null;
+  const avgAfter = afterPoints.length ? Math.round(afterPoints.reduce((s, e) => s + e.value, 0) / afterPoints.length * 10) / 10 : null;
+  return (
+    <Card>
+      <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+      <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📈 پیشرفتِ من</h2>
+      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>روندِ خلق‌تان (۱=خیلی خوب، ۱۰=خیلی سخت) در جلساتی که تا‌کنون انجام داده‌اید.</p>
+      {history.length === 0 ? (
+        <div style={{ background: "#F7FAFC", borderRadius: 12, padding: "20px", textAlign: "center" }}>
+          <p style={{ fontSize: 12.5, color: "#8CA3B0", margin: 0 }}>هنوز داده‌ای ثبت نشده — بعد از انجامِ چند جلسه، نمودارتان اینجا نمایان می‌شود.</p>
+        </div>
+      ) : (
+        <>
+          <div style={{ display: "flex", gap: 10, marginBottom: 14 }}>
+            <div style={{ flex: 1, background: "#FBF3E2", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+              <p style={{ fontSize: 10, color: "#7A5B2E", margin: "0 0 3px" }}>میانگینِ «قبل از جلسه»</p>
+              <p style={{ fontSize: 18, fontWeight: 800, color: "#7A5B2E", margin: 0 }}>{avgBefore ?? "—"}</p>
+            </div>
+            <div style={{ flex: 1, background: "#F3F8F5", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+              <p style={{ fontSize: 10, color: "#4C8778", margin: "0 0 3px" }}>میانگینِ «بعد از جلسه»</p>
+              <p style={{ fontSize: 18, fontWeight: 800, color: "#4C8778", margin: 0 }}>{avgAfter ?? "—"}</p>
+            </div>
+          </div>
+          {avgBefore != null && avgAfter != null && avgAfter < avgBefore && (
+            <p style={{ fontSize: 11.5, color: "#4C8778", fontWeight: 700, marginBottom: 14, textAlign: "center" }}>
+              🎉 به‌طورِ میانگین، بعد از جلسات {Math.round((avgBefore - avgAfter) * 10) / 10} واحد بهتر احساس کرده‌اید!
+            </p>
+          )}
+          <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>روندِ «قبل از جلسه»:</p>
+          <MiniLineChart points={beforePoints} color="#B9822F" />
+          <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "16px 0 6px" }}>روندِ «بعد از جلسه»:</p>
+          <MiniLineChart points={afterPoints} color="#4C8778" />
+          <p style={{ fontSize: 10, color: "#8CA3B0", marginTop: 14, textAlign: "center" }}>تعدادِ کلِ ثبت‌ها: {history.length}</p>
+        </>
+      )}
+    </Card>
   );
 }
 
@@ -3423,8 +3539,12 @@ export default function App() {
               <p style={{ fontSize: 11, color: "#2B6777", fontWeight: 700, margin: "0 0 8px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
               <div>
                 <button onClick={() => setShowBio(!showBio)}
-                  style={{ border: "1px solid #2B6777", background: showBio ? "#2B6777" : "#fff", color: showBio ? "#fff" : "#2B6777", padding: "5px 14px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, cursor: "pointer", marginBottom: 6 }}>
+                  style={{ border: "1px solid #2B6777", background: showBio ? "#2B6777" : "#fff", color: showBio ? "#fff" : "#2B6777", padding: "5px 14px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, cursor: "pointer", marginBottom: 6, marginLeft: 6 }}>
                   دربارهٔ دکتر عقیلی
+                </button>
+                <button onClick={() => setScreen("myProgress")}
+                  style={{ border: "1px solid #4C8778", background: "#fff", color: "#4C8778", padding: "5px 14px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, cursor: "pointer", marginBottom: 6 }}>
+                  📈 پیشرفتِ من
                 </button>
               </div>
               {showBio && (
@@ -3497,6 +3617,10 @@ export default function App() {
               ماژول‌هایِ «به‌زودی» در حالِ آماده‌سازیِ علمی‌اند و به‌مرور فعال می‌شوند.
             </p>
           </div>
+        )}
+
+        {screen === "myProgress" && (
+          <MyProgressScreen onBack={() => setScreen("topics")} />
         )}
 
         {screen === "start" && (
@@ -3605,7 +3729,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۹-۲۳ / تکمیلِ جلساتِ ۵-۶ِ خیانت‌کرده با فرمتِ سه‌سطحی (مدیریتِ دفاع، ظرفیتِ خشمِ همسر)
+              نسخه: ۲۰۲۶-۰۹-۲۵ / نمودارِ «پیشرفتِ من» برایِ کاربر — روندِ خلقِ قبل/بعد در تمامِ جلسات، با نمودارِ خطی
             </p>
             </div>
           </Card>
