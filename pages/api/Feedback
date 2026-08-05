@@ -13,8 +13,9 @@ export default async function handler(req, res) {
       for (const id of ids) {
         const raw = await redis.get(`technique_feedback:${id}`);
         const data = typeof raw === "string" ? JSON.parse(raw) : raw;
-        const total = (data?.yes || 0) + (data?.no || 0);
-        report.push({ id, yes: data?.yes || 0, no: data?.no || 0, total, successRate: total ? Math.round((data.yes / total) * 100) : 0 });
+        const total = (data?.very || 0) + (data?.somewhat || 0) + (data?.no || 0) + (data?.confusing || 0);
+        const weightedScore = (data?.very || 0) * 1 + (data?.somewhat || 0) * 0.5;
+        report.push({ id, very: data?.very || 0, somewhat: data?.somewhat || 0, no: data?.no || 0, confusing: data?.confusing || 0, total, successRate: total ? Math.round((weightedScore / total) * 100) : 0 });
       }
       report.sort((a, b) => b.total - a.total);
       return res.status(200).json({ ok: true, report });
