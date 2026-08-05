@@ -1,0 +1,24 @@
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
+
+// ذخیره‌ی یادداشت‌هایِ کاربر برایِ هر تکنیک — پایه‌یِ داشبوردِ بالینیِ آینده
+export default async function handler(req, res) {
+  try {
+    if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
+    const { techniqueId, note, userEmail } = req.body;
+    if (!techniqueId) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
+
+    const emailKey = (userEmail || "anonymous").toLowerCase().trim();
+    const key = `session_note:${emailKey}:${techniqueId}`;
+    await redis.set(key, JSON.stringify({ techniqueId, note, userEmail: emailKey, savedAt: Date.now() }));
+
+    // نگه‌داریِ فهرستِ کاربرانی که یادداشت دارند، برایِ داشبوردِ بالینی
+    if (userEmail) await redis.sadd("session_notes:users_index", emailKey);
+
+    res.status(200).json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message || "unknown error" });
+  }
+}
