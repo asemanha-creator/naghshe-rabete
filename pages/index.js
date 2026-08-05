@@ -2085,8 +2085,51 @@ const SESSION_CONTENT = {
         ],
       },
     },
-    7: { title: "شفافیتِ مستمر: بازسازیِ اعتماد قدم‌به‌قدم", approach: "گاتمن", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
-    8: { title: "مدیریتِ محرک‌ها و موقعیت‌هایِ پرخطرِ آینده", approach: "پیشگیریِ عود", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
+    7: {
+      title: "شفافیتِ مستمر: بازسازیِ اعتماد قدم‌به‌قدم",
+      summary: "شفافیت، یک عمل نیست بلکه یک عادتِ روزمره — یادگیریِ اجرایِ آن بدونِ احساسِ نظارت‌شدنِ تحقیرآمیز.",
+      approach: "گاتمن", audioUrl: null, videoUrl: null,
+      body: [
+        { type: "h", text: "🎯 اهدافِ این جلسه" },
+        { type: "p", text: "۱. فهمِ این‌که شفافیت، برخلافِ حریمِ خصوصیِ معمول، موقتاً باید بیشتر باشد — نه برایِ همیشه، اما برایِ این مرحله\n۲. یادگیریِ نحوه‌ی ارائه‌ی شفافیت بدونِ دفاع یا رنجش\n۳. تمرینِ عملی با یک سناریویِ واقعی" },
+        { type: "h", text: "چرا شفافیتِ بیشتر لازم است" },
+        { type: "p", text: "بعد از خیانت، حریمِ خصوصیِ معمولی موقتاً معلق می‌شود — نه چون همسرتان حق ندارد، بلکه چون اعتماد شکسته و باید دوباره ساخته شود. این وضعیت دائمی نیست؛ با گذشتِ زمان و بازسازیِ اعتماد، به‌تدریج حریمِ خصوصیِ عادی بازمی‌گردد." },
+        { type: "h", text: "استعاره: حسابِ بانکیِ اعتماد" },
+        { type: "p", text: "اعتماد مثلِ یک حسابِ بانکی است که خالی شده. شفافیت، واریزهایِ کوچک و مکرر است — هر بار که بدونِ اجبار اطلاعات می‌دهید، مبلغی واریز می‌شود. دفاع یا مخفی‌کاری، برداشت است. با گذشتِ زمان و واریزهایِ کافی، دیگر نیازی به بررسیِ روزانه‌ی حساب نیست." },
+        { type: "h", text: "تمرین‌ها" },
+        { type: "technique", name: "شفافیتِ فعال (نه فقط پاسخ)", time: "روزانه", howTo: "به‌جایِ صبرکردن تا همسرتان سوال کند، فعالانه اطلاعات بدهید: «امروز با فلان همکار در جلسه بودم، فقط می‌خواستم بدانی.»", effect: "شفافیتِ فعال (نه واکنشی)، اعتماد را بسیار سریع‌تر از پاسخ‌دادنِ صرف به سوالات می‌سازد.", more: "این «شفافیتِ فعال» دقیقاً برعکسِ الگویِ خیانت است — جایی که پنهان‌کاری فعال بود؛ حالا شفافیتِ فعال باید جایگزینش شود." },
+        { type: "technique", name: "پاسخ به بررسی‌هایِ همسر", time: "همان لحظه", howTo: "اگر همسرتان گوشی/موقعیت‌مکانی‌تان را بررسی کرد، بدونِ دفاع بگویید: «متوجه‌ام، هرچه لازم داری ببین.»", effect: "دفاع در برابرِ این بررسی‌ها، حتی اگر حقِ حریمِ خصوصی داشته باشید، اعتمادسازی را کند می‌کند." },
+        { type: "checklist", items: [
+          "حداقل یک‌بار شفافیتِ فعال (بدونِ پرسیده‌شدن) را تمرین کردیم.",
+          "اگر بررسی‌ای اتفاق افتاد، بدونِ دفاع پاسخ دادیم.",
+        ] },
+        { type: "h", text: "اگر پیشرفت نکردید" },
+        { type: "p", text: "اگر همچنان احساسِ خفگی از این سطح از شفافیت دارید، به یاد بیاورید: این موقتی است، نه دائمی. با گذشتِ زمان و اعتمادسازی، فضا بیشتر می‌شود." },
+        { type: "callout", text: "📞 چه‌زمانی با دفتر تماس بگیرید: اگر این سطح از شفافیت باعثِ فروپاشیِ کاملِ حسِ خودمختاری‌تان شده، این تعادل را در جلسه مطرح کنید." },
+      ],
+    },
+    8: {
+      title: "مدیریتِ محرک‌ها و موقعیت‌هایِ پرخطرِ آینده",
+      summary: "شناساییِ دقیقِ موقعیت‌هایی که دوباره به لغزش منجر می‌شوند و ساختِ یک پروتکلِ محافظتی برایِ هرکدام.",
+      approach: "پیشگیریِ عود", audioUrl: null, videoUrl: null,
+      body: [
+        { type: "h", text: "🎯 اهدافِ این جلسه" },
+        { type: "p", text: "۱. شناساییِ دقیقِ شرایط، محیط‌ها، و حالاتِ هیجانی که ریسکِ لغزشِ مجدد را بالا می‌برند\n۲. ساختِ یک پروتکلِ مشخص برایِ هر موقعیتِ پرخطر\n۳. تعهد به اجرایِ این پروتکل‌ها" },
+        { type: "h", text: "چرا این کار حیاتی است" },
+        { type: "p", text: "خیانت به‌ندرت از یک تصمیمِ ناگهانی می‌آید — معمولاً زنجیره‌ای از موقعیت‌ها، احساسات، و انتخاب‌هایِ کوچک به آن منجر می‌شود. شناساییِ این زنجیره، به‌جایِ اتکا به «قدرتِ اراده» در لحظه، یک سیستمِ محافظتیِ از‌پیش‌طراحی‌شده می‌سازد." },
+        { type: "h", text: "تمرین‌ها" },
+        { type: "technique", name: "نقشه‌ی موقعیت‌هایِ پرخطر", time: "۳۰ دقیقه", howTo: "فهرست کنید: چه‌محیط‌هایی (سفر، مهمانی)، چه‌حالاتِ هیجانی (تنهایی، استرسِ کاری)، و چه‌افرادی برایِ شما پرخطرند. برایِ هرکدام، یک اقدامِ پیشگیرانه‌ی مشخص بنویسید.", effect: "این نقشه، جایِ اتکا به تصمیم‌گیریِ لحظه‌ای (که در بحران ضعیف‌تر عمل می‌کند)، یک برنامه‌ی از‌پیش‌آماده می‌گذارد.", more: "این رویکرد از «برنامه‌ریزیِ پیشگیریِ عود» (Relapse Prevention Planning) در درمانِ اعتیاد و رفتارهایِ مشکل‌ساز گرفته شده — اصل یکسان است: شناساییِ محرک‌ها، قبل از رسیدن به لحظه‌ی تصمیم." },
+        { type: "technique", name: "قانونِ «تماسِ فوری»", time: "توافق یک‌باره، اجرا هروقت لازم شد", howTo: "توافق کنید اگر در یک موقعیتِ پرخطر قرار گرفتید، همان لحظه با همسرتان یا یک دوستِ قابلِ‌اعتماد تماس بگیرید — نه بعد از گذشتنِ خطر.", effect: "تماسِ فوری در لحظه، حسابرسیِ بیرونی ایجاد می‌کند که در تنهایی وجود ندارد." },
+        { type: "checklist", items: [
+          "نقشه‌ی موقعیت‌هایِ پرخطر را کامل کردیم.",
+          "برایِ هر موقعیت، یک اقدامِ پیشگیرانه نوشتیم.",
+          "قانونِ تماسِ فوری را توافق کردیم.",
+        ] },
+        { type: "h", text: "اگر پیشرفت نکردید" },
+        { type: "p", text: "شناساییِ کاملِ همه‌ی موقعیت‌هایِ پرخطر ممکن است چند هفته طول بکشد — این را در طولِ زمان تکمیل کنید." },
+        { type: "callout", text: "📞 چه‌زمانی با دفتر تماس بگیرید: اگر متوجه شدید در یک موقعیتِ پرخطرِ واقعی قرار گرفته‌اید یا نزدیک به لغزش بوده‌اید، همین را در جلسه مطرح کنید." },
+      ],
+    },
     9: { title: "خودبخشی بدونِ فرار از مسئولیت", approach: "خودشفقتی", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
     10: { title: "ساختنِ نسخه‌ی قابلِ‌اعتمادترِ خود", approach: "ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
     11: { title: "پذیرشِ گناه بدونِ غرق‌شدن در آن (ACT)", approach: "ACT", audioUrl: null, videoUrl: null, body: [{ type: "p", text: "متنِ کاملِ این جلسه به‌زودی تکمیل می‌شود." }] },
@@ -2904,6 +2947,125 @@ function MyProgressScreen({ onBack, userEmail }) {
   );
 }
 
+// ---------- برنامه‌ی ایمنی — ابزارِ مستقلِ پیشگیریِ بحران ----------
+function SafetyPlanScreen({ onBack, userEmail }) {
+  const storageKey = `safety_plan_${userEmail || "anon"}`;
+  const [plan, setPlan] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || { warningSigns: "", copingStrategies: "", contacts: "", safePlaces: "" }; }
+    catch (e) { return { warningSigns: "", copingStrategies: "", contacts: "", safePlaces: "" }; }
+  });
+  const [saved, setSaved] = useState(true);
+
+  function updateField(field, value) {
+    const next = { ...plan, [field]: value };
+    setPlan(next);
+    setSaved(false);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+  }
+
+  useEffect(() => {
+    if (saved || !userEmail) return;
+    const t = setTimeout(() => {
+      fetch("/api/safety-plan", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userEmail, plan }),
+      }).then(() => setSaved(true)).catch(() => {});
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [plan, saved, userEmail]);
+
+  const fields = [
+    { key: "warningSigns", label: "🚩 نشانه‌هایِ هشدارِ من", placeholder: "چه‌احساس/فکر/رفتاری به من می‌گوید دارم وارد بحران می‌شوم؟ (مثلاً: بی‌خوابیِ شدید، افکارِ تکرارشونده‌ی منفی...)" },
+    { key: "copingStrategies", label: "🧘 کارهایی که به من کمک می‌کند آرام شوم", placeholder: "مثلاً: تنفسِ ۴-۷-۸، تماس با فلان دوست، پیاده‌روی..." },
+    { key: "safePlaces", label: "🏠 مکان‌ها/افرادی که در آن‌ها احساسِ امنیت می‌کنم", placeholder: "مثلاً: خانه‌ی مادرم، پارکِ نزدیکِ خانه..." },
+    { key: "contacts", label: "📞 افرادی که در بحران با آن‌ها تماس می‌گیرم", placeholder: "نام و شماره‌ی حداقل ۲-۳ نفرِ قابلِ‌اعتماد..." },
+  ];
+
+  return (
+    <Card>
+      <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+      <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🛡️ برنامه‌ی ایمنیِ من</h2>
+      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>
+        این صفحه، مستقل از جلسات، همیشه در دسترسِ شماست — برایِ لحظاتی که احساسِ بحران می‌کنید. همین حالا، در آرامش، پرش کنید.
+      </p>
+      {fields.map((f) => (
+        <div key={f.key} style={{ marginBottom: 14 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", margin: "0 0 6px" }}>{f.label}</p>
+          <textarea value={plan[f.key]} onChange={(e) => updateField(f.key, e.target.value)} placeholder={f.placeholder}
+            style={{ width: "100%", minHeight: 70, padding: "9px 11px", borderRadius: 10, border: "1px solid #DCE8F0", fontSize: 12.5, fontFamily: "inherit", resize: "vertical", boxSizing: "border-box" }} />
+        </div>
+      ))}
+      {userEmail && <p style={{ fontSize: 9.5, color: saved ? "#8CA3B0" : "#B9822F", textAlign: "center" }}>{saved ? "ذخیره شد ✓" : "در حالِ ذخیره..."}</p>}
+      <div style={{ background: "#FBF0EC", border: "1px solid #E8C9BC", borderRadius: 10, padding: "12px 14px", marginTop: 8 }}>
+        <p style={{ fontSize: 12, color: "#8A5A4E", fontWeight: 700, margin: "0 0 4px" }}>📞 اورژانسِ فوری</p>
+        <p style={{ fontSize: 12, color: "#8A5A4E", margin: 0 }}>در بحرانِ حاد، همین حالا با اورژانس (۱۱۵) یا نزدیک‌ترین مرکزِ درمانی تماس بگیرید — منتظرِ نوبتِ جلسه نمانید.</p>
+        <a href={CONSULT_BOOKING_LINK} style={{ display: "inline-block", marginTop: 6, fontSize: 12, fontWeight: 700, color: "#2B6777" }}>📞 تماس با دفتر: {BRAND.phone}</a>
+      </div>
+    </Card>
+  );
+}
+
+// ---------- ویجتِ هماهنگیِ زوجین — نمایشِ پیشرفتِ همسر در بسته‌هایِ مشترک ----------
+function PartnerSyncWidget({ userEmail, pkgKey, totalSessions }) {
+  const storageKey = `partner_email_${userEmail}`;
+  const [partnerEmail, setPartnerEmailState] = useState(() => {
+    try { return localStorage.getItem(storageKey) || ""; } catch (e) { return ""; }
+  });
+  const [inputVal, setInputVal] = useState("");
+  const [partnerCount, setPartnerCount] = useState(null);
+  const [msg, setMsg] = useState("");
+
+  useEffect(() => {
+    if (partnerEmail) fetchPartnerProgress(partnerEmail);
+  }, [partnerEmail, pkgKey]);
+
+  function fetchPartnerProgress(email) {
+    fetch(`/api/partner-link?partnerEmail=${encodeURIComponent(email)}&pkgKey=${encodeURIComponent(pkgKey)}`)
+      .then((r) => r.json())
+      .then((d) => { if (d.ok) setPartnerCount(d.unlockedCount); })
+      .catch(() => {});
+  }
+
+  function linkPartner() {
+    if (!inputVal) return;
+    fetch("/api/partner-link", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userEmail, partnerEmail: inputVal }),
+    }).then(() => {
+      setPartnerEmailState(inputVal);
+      try { localStorage.setItem(storageKey, inputVal); } catch (e) {}
+      setMsg("اتصال برقرار شد ✓");
+      fetchPartnerProgress(inputVal);
+    }).catch(() => setMsg("خطا در اتصال"));
+  }
+
+  if (!userEmail) return null;
+
+  return (
+    <div style={{ background: "#EAF4FB", borderRadius: 12, padding: "12px 14px", marginBottom: 14 }}>
+      <p style={{ fontSize: 12, fontWeight: 700, color: "#2B6777", margin: "0 0 8px" }}>👫 هماهنگیِ زوجین</p>
+      {!partnerEmail ? (
+        <>
+          <p style={{ fontSize: 11, color: "#3A4A52", margin: "0 0 8px" }}>ایمیلِ حسابِ همسرتان را وارد کنید تا پیشرفتِ او را هم اینجا ببینید.</p>
+          <div style={{ display: "flex", gap: 6 }}>
+            <input value={inputVal} onChange={(e) => setInputVal(e.target.value)} placeholder="ایمیلِ همسر"
+              style={{ flex: 1, padding: "7px 9px", borderRadius: 8, border: "1px solid #C9DEE8", fontSize: 12 }} />
+            <button onClick={linkPartner}
+              style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, fontSize: 11.5, cursor: "pointer" }}>
+              اتصال
+            </button>
+          </div>
+          {msg && <p style={{ fontSize: 10.5, color: "#4C8778", marginTop: 6 }}>{msg}</p>}
+        </>
+      ) : (
+        <p style={{ fontSize: 12, color: "#1F2D3D", margin: 0 }}>
+          همسرتان ({partnerEmail}) تا‌کنون <b>{partnerCount ?? "..."}</b> از {totalSessions} جلسه را باز کرده است.
+        </p>
+      )}
+    </div>
+  );
+}
+
 // ---------- Clearer radar chart with safety bands ----------
 function RadarChart({ p1, p2, domains }) {
   const size = 360;
@@ -3265,6 +3427,7 @@ export default function App() {
   const [patientEmailInput, setPatientEmailInput] = useState("");
   const [patientData, setPatientData] = useState(null);
   const [patientMsg, setPatientMsg] = useState("");
+  const [inactiveUsers, setInactiveUsers] = useState(null);
   const [redeemCode, setRedeemCode] = useState("");
   const [redeemMsg, setRedeemMsg] = useState("");
   const [sessionLevel, setSessionLevel] = useState("excellent");
@@ -3352,6 +3515,15 @@ export default function App() {
       setPatientData(data);
       setPatientMsg("");
     } catch (e) { setPatientMsg(e.message); }
+  }
+
+  async function loadInactiveUsers() {
+    try {
+      const r = await fetch(`/api/inactive-users?adminPass=${encodeURIComponent(ADMIN_PASS)}`);
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setInactiveUsers(data.users || []);
+    } catch (e) { console.error(e); }
   }
 
   function generatePreviewAnswers(profile) {
@@ -3740,6 +3912,10 @@ export default function App() {
           <MyProgressScreen onBack={() => setScreen("topics")} userEmail={user?.email} />
         )}
 
+        {screen === "safetyPlan" && (
+          <SafetyPlanScreen onBack={() => setScreen("topics")} userEmail={user?.email} />
+        )}
+
         {screen === "start" && (
           <Card style={{ padding: 0, overflow: "hidden" }}>
             <div style={{
@@ -3755,7 +3931,7 @@ export default function App() {
               <div style={{ position: "absolute", top: 10, left: 12, fontSize: 11 }}>
                 {user ? (
                   <span style={{ color: "#EAF2F9" }}>
-                    سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a> · <a onClick={logout} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
+                    سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a> · <a onClick={() => setScreen("safetyPlan")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>برنامه‌ی ایمنی</a> · <a onClick={logout} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
                   </span>
                 ) : (
                   <a onClick={() => setScreen("authLogin")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>ورود / ثبت‌نام</a>
@@ -3846,7 +4022,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۹-۲۹ / رضایتِ حریمِ خصوصیِ اجباری در ثبت‌نام — توضیحِ شفاف از ذخیره/دسترسیِ داده‌ها
+              نسخه: ۲۰۲۶-۰۹-۳۰ / برنامه‌ی ایمنی + هماهنگیِ زوجین + فهرستِ پیگیریِ کاربرانِ غیرفعال + جلساتِ ۷-۸ِ خیانت‌کرده
             </p>
             </div>
           </Card>
@@ -3930,6 +4106,9 @@ export default function App() {
             <p style={{ fontSize: 11.5, color: "#8CA3B0", textAlign: "center", marginBottom: 8 }}>
               {TREATMENT_PACKAGES[libraryPkg].sessions} جلسه · هر جلسه {toman(sessionPrice(libraryPkg))}
             </p>
+            {libraryPkg === "advanced" && user && (
+              <PartnerSyncWidget userEmail={user.email} pkgKey={libraryPkg} totalSessions={TREATMENT_PACKAGES[libraryPkg].sessions} />
+            )}
             <p style={{ textAlign: "center", marginBottom: 16, fontSize: 11 }}>
               <span style={{ color: "#8CA3B0" }}>مسیرِ من اشتباه است — نمایشِ: </span>
               {Object.entries(TREATMENT_PACKAGES).filter(([k]) => k !== libraryPkg).map(([k, v], i, arr) => (
@@ -4618,6 +4797,34 @@ export default function App() {
               <div style={{ background: "#FBF3E2", borderRadius: 10, padding: "10px 12px", marginTop: 10, textAlign: "center" }}>
                 <p style={{ fontSize: 11, color: "#7A5B2E", margin: "0 0 4px" }}>کدِ فعال‌سازی برایِ ارسال به مشتری:</p>
                 <p style={{ fontSize: 18, fontWeight: 800, color: "#7A5B2E", letterSpacing: 2, margin: 0 }}>{generatedCode}</p>
+              </div>
+            )}
+          </Card>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>⏰ کاربرانِ نیازمندِ پیگیری</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+              چون سرویسِ ارسالِ خودکارِ ایمیل/پیامک هنوز وصل نیست، این فهرست کمک می‌کند کاربرانی که مدتی است فعالیتی نداشته‌اند را خودتان پیگیری کنید.
+            </p>
+            <button onClick={loadInactiveUsers}
+              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
+              نمایشِ فهرست
+            </button>
+            {inactiveUsers && (
+              <div style={{ maxHeight: 240, overflowY: "auto" }}>
+                {inactiveUsers.length === 0 ? (
+                  <p style={{ fontSize: 11, color: "#8CA3B0" }}>هنوز کاربری با فعالیتِ ثبت‌شده وجود ندارد.</p>
+                ) : inactiveUsers.map((u, i) => {
+                  const daysAgo = u.lastActive ? Math.floor((Date.now() - u.lastActive) / 86400000) : null;
+                  const isStale = daysAgo === null || daysAgo >= 7;
+                  return (
+                    <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 0", borderBottom: i < inactiveUsers.length - 1 ? "1px solid #F0F4F7" : "none" }}>
+                      <span style={{ fontSize: 11, color: "#3A4A52" }}>{u.email}</span>
+                      <span style={{ fontSize: 10.5, fontWeight: 700, color: isStale ? "#A6432F" : "#4C8778" }}>
+                        {daysAgo === null ? "بدونِ فعالیت" : `${daysAgo} روز پیش`} · {u.unlockedCount} جلسه
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </Card>
