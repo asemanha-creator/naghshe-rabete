@@ -60,6 +60,52 @@ function sessionId(pkgKey, num) {
   return `${pkgKey}-${num}`;
 }
 
+// مسیریابیِ هوشمند: برخی جلسات فقط برایِ شرایطِ خاصی کاربردی‌اند (مثلاً داشتنِ فرزند).
+// اگر شرطش برقرار نبود، جلسه حذف نمی‌شود (دسترسی حفظ می‌شود) اما یک نشانه‌ی «شاید کمتر کاربردی» نشان داده می‌شود.
+const CONDITIONAL_RELEVANCE = {
+  "betrayed-9": (ctx) => ctx?.children && ctx.children !== "ندارند",
+};
+function isSessionLikelyRelevant(pkgKey, num, ctx) {
+  const check = CONDITIONAL_RELEVANCE[sessionId(pkgKey, num)];
+  return check ? check(ctx) : true;
+}
+
+// تنوعِ لحن: به‌جایِ تکرارِ همیشگیِ همان عنوان، بر اساسِ جلسه (به‌شکلِ ثابت، نه تصادفی) یکی از چند نسخه انتخاب می‌شود
+const PROGRESS_HEADING_VARIANTS = [
+  "اگر پیشرفت نکردید",
+  "اگر این‌طور نشد",
+  "اگر هنوز سخت است",
+  "اگر جواب نداد",
+  "اگر احساسِ گیرکردن دارید",
+  "اگر امروز روزِ خوبی نبود",
+];
+const CALL_LEADIN_VARIANTS = [
+  "📞 چه‌زمانی با دفتر تماس بگیرید:",
+  "📞 چه‌زمانی زودتر تماس بگیرید:",
+  "📞 این نشانه‌ها یعنی وقتِ تماس رسیده:",
+  "📞 اگر این‌ها را دیدید، تماس بگیرید:",
+];
+function hashSessionKey(str) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) >>> 0;
+  return h;
+}
+function varyHeading(text, sessKey) {
+  if (text === "اگر پیشرفت نکردید") {
+    return PROGRESS_HEADING_VARIANTS[hashSessionKey(sessKey) % PROGRESS_HEADING_VARIANTS.length];
+  }
+  return text;
+}
+function varyCallout(text, sessKey) {
+  const prefixMatch = "📞 چه‌زمانی با دفتر تماس بگیرید:";
+  if (text.startsWith(prefixMatch)) {
+    const rest = text.slice(prefixMatch.length);
+    const variant = CALL_LEADIN_VARIANTS[hashSessionKey(sessKey + "call") % CALL_LEADIN_VARIANTS.length];
+    return variant + rest;
+  }
+  return text;
+}
+
 // محتوایِ کاملِ جلسات — فعلاً فقط متنی (بدونِ صوت/تصویر)؛ ساختار برایِ افزودنِ audioUrl/videoUrl در آینده آماده است
 // جلسه‌ی اولِ هر بسته، به‌جایِ متنِ ثابت، بر اساسِ ضعیف‌ترین حیطه‌ی همان فرد انتخاب می‌شود
 const DOMAIN_OPENING_SESSIONS = {
@@ -3797,7 +3843,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۹-۲۷ / «پیشرفتِ من» منتقل شد به بعد از ورودِ کاربر + نمایِ یکپارچه‌یِ همه‌یِ برنامه‌ها (آماده برایِ ماژول‌هایِ آینده)
+              نسخه: ۲۰۲۶-۰۹-۲۸ / مسیریابیِ هوشمند (نشانِ «شاید کمتر کاربردی») + تنوعِ لحن در بخش‌هایِ پایانیِ همه‌یِ جلسات
             </p>
             </div>
           </Card>
@@ -3908,6 +3954,7 @@ export default function App() {
                     <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", margin: 0 }}>
                       جلسه‌ی {num}: {sess.title}
                       {num === 1 && libraryWeakestDomain && <span style={{ fontSize: 9.5, color: "#4C8778", fontWeight: 700, marginRight: 6 }}>· شخصی‌سازی‌شده</span>}
+                      {!isSessionLikelyRelevant(libraryPkg, num, context) && <span style={{ fontSize: 9.5, color: "#B9822F", fontWeight: 700, marginRight: 6 }}>· شاید کمتر کاربردی</span>}
                     </p>
                     <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: "2px 0 0" }}>رویکرد: {sess.approach}</p>
                   </div>
@@ -3993,7 +4040,7 @@ export default function App() {
           const groupable = sess.body.filter((b) => b.type !== "checklist" && b.type !== "callout");
           const sections = [];
           groupable.forEach((block) => {
-            if (block.type === "h") sections.push({ title: block.text, blocks: [] });
+            if (block.type === "h") sections.push({ title: varyHeading(block.text, sessKey), blocks: [] });
             else if (sections.length) sections[sections.length - 1].blocks.push(block);
             else sections.push({ title: null, blocks: [block] });
           });
@@ -4076,7 +4123,7 @@ export default function App() {
                   <InteractiveChecklist key={i} sessionKey={sessKey} items={block.items} />
                 ) : (
                   <div key={i} style={{ background: "#FBF0EC", border: "1px solid #E8C9BC", borderRadius: 12, padding: "12px 14px", margin: "0 0 10px" }}>
-                    <p style={{ fontSize: 12, color: "#8A5A4E", lineHeight: 1.9, margin: 0, fontWeight: 600 }}>{block.text}</p>
+                    <p style={{ fontSize: 12, color: "#8A5A4E", lineHeight: 1.9, margin: 0, fontWeight: 600 }}>{varyCallout(block.text, sessKey)}</p>
                   </div>
                 )
               )}
