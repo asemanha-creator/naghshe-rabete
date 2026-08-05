@@ -3388,6 +3388,8 @@ export default function App() {
   const [authName, setAuthName] = useState("");
   const [authErr, setAuthErr] = useState("");
   const [authBusy, setAuthBusy] = useState(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [showPrivacyText, setShowPrivacyText] = useState(false);
 
   useEffect(() => {
     try {
@@ -3402,6 +3404,7 @@ export default function App() {
   }
 
   async function doSignup() {
+    if (!privacyConsent) { setAuthErr("لطفاً ابتدا با شرایطِ حریمِ خصوصی موافقت کنید."); return; }
     setAuthErr(""); setAuthBusy(true);
     try {
       const r = await fetch("/api/auth/signup", {
@@ -3843,7 +3846,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۹-۲۸ / مسیریابیِ هوشمند (نشانِ «شاید کمتر کاربردی») + تنوعِ لحن در بخش‌هایِ پایانیِ همه‌یِ جلسات
+              نسخه: ۲۰۲۶-۰۹-۲۹ / رضایتِ حریمِ خصوصیِ اجباری در ثبت‌نام — توضیحِ شفاف از ذخیره/دسترسیِ داده‌ها
             </p>
             </div>
           </Card>
@@ -3881,6 +3884,23 @@ export default function App() {
               style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 10, fontSize: 13 }} />
             <input value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="رمزِعبور (حداقل ۶ کاراکتر)" type="password"
               style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 13 }} />
+
+            <div style={{ background: "#F7FAFC", borderRadius: 10, padding: "10px 12px", marginBottom: 14 }}>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer" }}>
+                <input type="checkbox" checked={privacyConsent} onChange={(e) => setPrivacyConsent(e.target.checked)} style={{ marginTop: 3 }} />
+                <span style={{ fontSize: 11.5, color: "#3A4A52", lineHeight: 1.8 }}>
+                  با <a onClick={(e) => { e.preventDefault(); setShowPrivacyText(!showPrivacyText); }} style={{ color: "#2B6777", fontWeight: 700, textDecoration: "underline", cursor: "pointer" }}>شرایطِ حریمِ خصوصی</a> موافقم.
+                </span>
+              </label>
+              {showPrivacyText && (
+                <div style={{ marginTop: 10, fontSize: 11, color: "#5A7080", lineHeight: 2, background: "#fff", borderRadius: 8, padding: "10px 12px" }}>
+                  <p style={{ margin: "0 0 8px" }}><b>چه‌چیزی ذخیره می‌شود؟</b> پاسخ‌هایِ پرسشنامه، یادداشت‌هایِ نوشته‌شده زیرِ تمرین‌ها، و روندِ خلق‌تان — همه به ایمیلِ حساب‌تان متصل می‌شوند.</p>
+                  <p style={{ margin: "0 0 8px" }}><b>چه‌کسی می‌بیند؟</b> فقط دکتر عقیلی (به‌عنوانِ درمانگرِ مسئول) و از طریقِ پنلِ محافظت‌شده با رمزِ عبور. این اطلاعات با هیچ شخصِ ثالثی به اشتراک گذاشته نمی‌شود.</p>
+                  <p style={{ margin: "0 0 8px" }}><b>کجا ذخیره می‌شود؟</b> رویِ سرورهایِ Vercel/Upstash با پروتکل‌هایِ امنِ استاندارد.</p>
+                  <p style={{ margin: 0 }}><b>حقِ شما:</b> در هر زمان می‌توانید درخواستِ حذفِ کاملِ اطلاعاتتان را از طریقِ تماس با دفتر مطرح کنید.</p>
+                </div>
+              )}
+            </div>
             {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
             <button onClick={doSignup} disabled={authBusy}
               style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
