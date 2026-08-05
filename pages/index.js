@@ -2510,16 +2510,26 @@ function Technique({ id, name, time, howTo, effect, more }) {
         </>
       )}
       {id && (
-        <div style={{ display: "flex", gap: 6, marginTop: 8, alignItems: "center" }}>
-          <span style={{ fontSize: 10.5, color: "#8CA3B0" }}>این تکنیک برایتان کار کرد؟</span>
-          <button onClick={() => giveFeedback("yes")}
-            style={{ fontSize: 10.5, padding: "3px 9px", borderRadius: 999, border: `1px solid ${feedback === "yes" ? "#4C8778" : "#DCE8F0"}`, background: feedback === "yes" ? "#4C8778" : "#fff", color: feedback === "yes" ? "#fff" : "#5A7080", cursor: "pointer" }}>
-            ✓ بله
-          </button>
-          <button onClick={() => giveFeedback("no")}
-            style={{ fontSize: 10.5, padding: "3px 9px", borderRadius: 999, border: `1px solid ${feedback === "no" ? "#A6432F" : "#DCE8F0"}`, background: feedback === "no" ? "#A6432F" : "#fff", color: feedback === "no" ? "#fff" : "#5A7080", cursor: "pointer" }}>
-            ✗ نه
-          </button>
+        <div style={{ marginTop: 8 }}>
+          <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: "0 0 5px" }}>این تکنیک برای شما مفید بود؟</p>
+          <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+            <button onClick={() => giveFeedback("very")}
+              style={{ fontSize: 10, padding: "3px 8px", borderRadius: 999, border: `1px solid ${feedback === "very" ? "#4C8778" : "#DCE8F0"}`, background: feedback === "very" ? "#4C8778" : "#fff", color: feedback === "very" ? "#fff" : "#5A7080", cursor: "pointer" }}>
+              ✓ خیلی مفید بود
+            </button>
+            <button onClick={() => giveFeedback("somewhat")}
+              style={{ fontSize: 10, padding: "3px 8px", borderRadius: 999, border: `1px solid ${feedback === "somewhat" ? "#B9822F" : "#DCE8F0"}`, background: feedback === "somewhat" ? "#B9822F" : "#fff", color: feedback === "somewhat" ? "#fff" : "#5A7080", cursor: "pointer" }}>
+              🤔 تا حدی
+            </button>
+            <button onClick={() => giveFeedback("no")}
+              style={{ fontSize: 10, padding: "3px 8px", borderRadius: 999, border: `1px solid ${feedback === "no" ? "#A6432F" : "#DCE8F0"}`, background: feedback === "no" ? "#A6432F" : "#fff", color: feedback === "no" ? "#fff" : "#5A7080", cursor: "pointer" }}>
+              ✗ مفید نبود
+            </button>
+            <button onClick={() => giveFeedback("confusing")}
+              style={{ fontSize: 10, padding: "3px 8px", borderRadius: 999, border: `1px solid ${feedback === "confusing" ? "#8A5A4E" : "#DCE8F0"}`, background: feedback === "confusing" ? "#8A5A4E" : "#fff", color: feedback === "confusing" ? "#fff" : "#5A7080", cursor: "pointer" }}>
+              😕 گیج‌کننده بود
+            </button>
+          </div>
         </div>
       )}
     </div>
@@ -2704,14 +2714,14 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
     if (gateStep === 1) {
       return (
         <div style={{ marginTop: 18, padding: "16px 16px 14px", borderRadius: 18, background: "#F3F8F5", border: "2px solid #4C8778" }}>
-          <p style={{ fontSize: 14, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>🎯 خریدِ دوره: افزایشِ صمیمیت یا درمانِ خیانت</p>
+          <p style={{ fontSize: 14, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>🎯 خریدِ دوره: بهبودِ تعهد در رابطه و پیشگیری از خیانت / درمانِ خیانت</p>
           <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
             بر اساسِ نتیجه‌تان، می‌توانید یک دوره‌ی درمانیِ آنلاین (شاملِ چند جلسه‌ی آموزشی و تمرینی) خریداری کنید. برایِ پیشنهادِ دوره‌ی درست: آیا در رابطه‌یِ شما تاکنون خیانتی رخ داده (یا افشا شده) است؟
           </p>
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={() => setChosenTrack("moderate")}
               style={{ flex: 1, padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
-              خیر — دوره‌ی افزایشِ صمیمیت
+              خیر — بهبودِ تعهد و پیشگیریِ خیانت
             </button>
             <button onClick={() => setGateStep(2)}
               style={{ flex: 1, padding: "11px", borderRadius: 12, border: "none", background: "#8A5A4E", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
@@ -2776,7 +2786,7 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
         ‹ تغییرِ پاسخ
       </button>
       <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>
-        {isPostInfidelity ? "🕊️ دوره‌ی درمانِ خیانت — خریدِ پکیج" : "🌱 دوره‌ی افزایشِ صمیمیت — خریدِ پکیج"}
+        {isPostInfidelity ? "🕊️ دوره‌ی درمانِ خیانت — خریدِ پکیج" : "🌱 دوره‌ی بهبودِ تعهد و پیشگیریِ خیانت — خریدِ پکیج"}
       </p>
       <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
         این جلسات با رویکردهایِ علمیِ ACT، EFT و گاتمن طراحی شده و به‌محضِ خرید، همین‌جا در اپ برایتان باز می‌شود.
@@ -3501,7 +3511,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۹-۲۱ / شروعِ مسیرِ خیانت‌کرده: ارتقا به ۳۰ جلسه + نوشتنِ جلساتِ ۱-۴ (مواجهه با واقعیت، گناه‌در‌برابرِ‌شرم، فهمِ چرایی، طرحواره‌ها)
+              نسخه: ۲۰۲۶-۰۹-۲۲ / فیدبکِ ۴گزینه‌ایِ تکنیک + تغییرِ عنوانِ دوره به «بهبودِ تعهد و پیشگیریِ خیانت»
             </p>
             </div>
           </Card>
@@ -4270,11 +4280,13 @@ export default function App() {
             {techniqueReport.length > 0 && (
               <div style={{ maxHeight: 260, overflowY: "auto" }}>
                 {techniqueReport.map((r, i) => (
-                  <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "7px 0", borderBottom: i < techniqueReport.length - 1 ? "1px solid #F0F4F7" : "none" }}>
-                    <span style={{ fontSize: 10.5, color: "#3A4A52", flex: 1 }}>{r.id}</span>
-                    <span style={{ fontSize: 11, fontWeight: 700, color: r.successRate >= 60 ? "#4C8778" : r.successRate >= 40 ? "#B9822F" : "#A6432F", flexShrink: 0 }}>
-                      ✓{r.yes} ✗{r.no} ({r.successRate}٪)
-                    </span>
+                  <div key={i} style={{ padding: "7px 0", borderBottom: i < techniqueReport.length - 1 ? "1px solid #F0F4F7" : "none" }}>
+                    <span style={{ fontSize: 10.5, color: "#3A4A52" }}>{r.id}</span>
+                    <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+                      <span style={{ fontSize: 10.5, fontWeight: 700, color: r.successRate >= 60 ? "#4C8778" : r.successRate >= 40 ? "#B9822F" : "#A6432F" }}>
+                        ✓{r.very || 0} 🤔{r.somewhat || 0} ✗{r.no || 0} 😕{r.confusing || 0} ({r.successRate}٪)
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
