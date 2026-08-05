@@ -1,0 +1,37 @@
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
+const ADMIN_PASS = "AGHILI-PANEL";
+
+// داشبوردِ بالینی: تجمیعِ جلساتِ بازشده، روندِ خلق، و یادداشت‌هایِ یک مراجعِ خاص
+export default async function handler(req, res) {
+  try {
+    if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
+    if (req.query.adminPass !== ADMIN_PASS) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+    const email = (req.query.email || "").toLowerCase().trim();
+    if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
+
+    // جلساتِ بازشده
+    const rawUnlocked = (await redis.get(`unlocked:${email}`)) || [];
+    const unlockedSessions = typeof rawUnlocked === "string" ? JSON.parse(rawUnlocked) : rawUnlocked;
+
+    // روندِ خلق
+    const rawMood = (await redis.get(`mood_log:${email}`)) || [];
+    const moodLog = typeof rawMood === "string" ? JSON.parse(rawMood) : rawMood;
+
+    // یادداشت‌ها — جست‌وجو در همه‌ی کلیدهایِ session_note برایِ این ایمیل
+    const noteKeys = await redis.keys(`session_note:${email}:*`);
+    const notes = [];
+    for (const k of noteKeys) {
+      const raw = await redis.get(k);
+      const data = typeof raw === "string" ? JSON.parse(raw) : raw;
+      if (data?.note) notes.push(data);
+    }
+    notes.sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
+
+    res.status(200).json({ ok: true, email, unlockedSessions, moodLog, notes });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message || "unknown error" });
+  }
+}
