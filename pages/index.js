@@ -2766,43 +2766,92 @@ function MiniLineChart({ points, width = 300, height = 140, color = "#2B6777" })
   );
 }
 
-function MyProgressScreen({ onBack }) {
-  const history = useMemo(() => collectMoodHistory(), []);
+function MyProgressScreen({ onBack, userEmail }) {
+  const [serverData, setServerData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!userEmail) { setLoading(false); return; }
+    fetch(`/api/my-progress?email=${encodeURIComponent(userEmail)}`)
+      .then((r) => r.json())
+      .then((d) => { if (d.ok) setServerData(d); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [userEmail]);
+
+  // اگر داده‌ی سرور در دسترس بود از آن استفاده کن، وگرنه به localStorage برگرد (سازگاریِ عقب‌رو)
+  const history = useMemo(() => {
+    if (serverData?.moodLog?.length) return [...serverData.moodLog].sort((a, b) => (a.ts || 0) - (b.ts || 0));
+    return collectMoodHistory();
+  }, [serverData]);
+
+  const unlockedSessions = serverData?.unlockedSessions || [];
+  // گروه‌بندیِ جلساتِ بازشده بر اساسِ ماژول (pkgKey) — آماده برایِ ماژول‌هایِ آینده (وسواس، افسردگی، اضطراب...)
+  const byModule = useMemo(() => {
+    const groups = {};
+    unlockedSessions.forEach((sid) => {
+      const pkgKey = sid.split("-").slice(0, -1).join("-");
+      if (!groups[pkgKey]) groups[pkgKey] = [];
+      groups[pkgKey].push(sid);
+    });
+    return groups;
+  }, [unlockedSessions]);
+
   const beforePoints = history.filter((e) => e.phase === "before");
   const afterPoints = history.filter((e) => e.phase === "after");
   const avgBefore = beforePoints.length ? Math.round(beforePoints.reduce((s, e) => s + e.value, 0) / beforePoints.length * 10) / 10 : null;
   const avgAfter = afterPoints.length ? Math.round(afterPoints.reduce((s, e) => s + e.value, 0) / afterPoints.length * 10) / 10 : null;
+
   return (
     <Card>
       <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📈 پیشرفتِ من</h2>
-      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>روندِ خلق‌تان (۱=خیلی خوب، ۱۰=خیلی سخت) در جلساتی که تا‌کنون انجام داده‌اید.</p>
-      {history.length === 0 ? (
-        <div style={{ background: "#F7FAFC", borderRadius: 12, padding: "20px", textAlign: "center" }}>
-          <p style={{ fontSize: 12.5, color: "#8CA3B0", margin: 0 }}>هنوز داده‌ای ثبت نشده — بعد از انجامِ چند جلسه، نمودارتان اینجا نمایان می‌شود.</p>
-        </div>
+      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>نمایِ یکپارچه‌یِ پیشرفتِ شما در همه‌ی برنامه‌هایی که تا‌کنون دنبال کرده‌اید.</p>
+
+      {loading ? (
+        <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>در حالِ بارگذاری...</p>
       ) : (
         <>
-          <div style={{ display: "flex", gap: 10, marginBottom: 14 }}>
-            <div style={{ flex: 1, background: "#FBF3E2", borderRadius: 10, padding: "10px", textAlign: "center" }}>
-              <p style={{ fontSize: 10, color: "#7A5B2E", margin: "0 0 3px" }}>میانگینِ «قبل از جلسه»</p>
-              <p style={{ fontSize: 18, fontWeight: 800, color: "#7A5B2E", margin: 0 }}>{avgBefore ?? "—"}</p>
+          {Object.keys(byModule).length > 0 && (
+            <div style={{ marginBottom: 16 }}>
+              <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 8px" }}>📚 برنامه‌هایِ دنبال‌شده:</p>
+              {Object.entries(byModule).map(([pkgKey, sids]) => (
+                <div key={pkgKey} style={{ background: "#F3F8F5", borderRadius: 10, padding: "9px 12px", marginBottom: 6, display: "flex", justifyContent: "space-between" }}>
+                  <span style={{ fontSize: 12, color: "#1F2D3D", fontWeight: 600 }}>{TREATMENT_PACKAGES[pkgKey]?.label || pkgKey}</span>
+                  <span style={{ fontSize: 11.5, color: "#4C8778", fontWeight: 700 }}>{sids.length} جلسه</span>
+                </div>
+              ))}
             </div>
-            <div style={{ flex: 1, background: "#F3F8F5", borderRadius: 10, padding: "10px", textAlign: "center" }}>
-              <p style={{ fontSize: 10, color: "#4C8778", margin: "0 0 3px" }}>میانگینِ «بعد از جلسه»</p>
-              <p style={{ fontSize: 18, fontWeight: 800, color: "#4C8778", margin: 0 }}>{avgAfter ?? "—"}</p>
-            </div>
-          </div>
-          {avgBefore != null && avgAfter != null && avgAfter < avgBefore && (
-            <p style={{ fontSize: 11.5, color: "#4C8778", fontWeight: 700, marginBottom: 14, textAlign: "center" }}>
-              🎉 به‌طورِ میانگین، بعد از جلسات {Math.round((avgBefore - avgAfter) * 10) / 10} واحد بهتر احساس کرده‌اید!
-            </p>
           )}
-          <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>روندِ «قبل از جلسه»:</p>
-          <MiniLineChart points={beforePoints} color="#B9822F" />
-          <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "16px 0 6px" }}>روندِ «بعد از جلسه»:</p>
-          <MiniLineChart points={afterPoints} color="#4C8778" />
-          <p style={{ fontSize: 10, color: "#8CA3B0", marginTop: 14, textAlign: "center" }}>تعدادِ کلِ ثبت‌ها: {history.length}</p>
+
+          {history.length === 0 ? (
+            <div style={{ background: "#F7FAFC", borderRadius: 12, padding: "20px", textAlign: "center" }}>
+              <p style={{ fontSize: 12.5, color: "#8CA3B0", margin: 0 }}>هنوز داده‌ای ثبت نشده — بعد از انجامِ چند جلسه، نمودارتان اینجا نمایان می‌شود.</p>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: "flex", gap: 10, marginBottom: 14 }}>
+                <div style={{ flex: 1, background: "#FBF3E2", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+                  <p style={{ fontSize: 10, color: "#7A5B2E", margin: "0 0 3px" }}>میانگینِ «قبل از جلسه»</p>
+                  <p style={{ fontSize: 18, fontWeight: 800, color: "#7A5B2E", margin: 0 }}>{avgBefore ?? "—"}</p>
+                </div>
+                <div style={{ flex: 1, background: "#F3F8F5", borderRadius: 10, padding: "10px", textAlign: "center" }}>
+                  <p style={{ fontSize: 10, color: "#4C8778", margin: "0 0 3px" }}>میانگینِ «بعد از جلسه»</p>
+                  <p style={{ fontSize: 18, fontWeight: 800, color: "#4C8778", margin: 0 }}>{avgAfter ?? "—"}</p>
+                </div>
+              </div>
+              {avgBefore != null && avgAfter != null && avgAfter < avgBefore && (
+                <p style={{ fontSize: 11.5, color: "#4C8778", fontWeight: 700, marginBottom: 14, textAlign: "center" }}>
+                  🎉 به‌طورِ میانگین، بعد از جلسات {Math.round((avgBefore - avgAfter) * 10) / 10} واحد بهتر احساس کرده‌اید!
+                </p>
+              )}
+              <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>روندِ «قبل از جلسه»:</p>
+              <MiniLineChart points={beforePoints} color="#B9822F" />
+              <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "16px 0 6px" }}>روندِ «بعد از جلسه»:</p>
+              <MiniLineChart points={afterPoints} color="#4C8778" />
+              <p style={{ fontSize: 10, color: "#8CA3B0", marginTop: 14, textAlign: "center" }}>تعدادِ کلِ ثبت‌ها: {history.length}</p>
+            </>
+          )}
         </>
       )}
     </Card>
@@ -3562,12 +3611,8 @@ export default function App() {
               <p style={{ fontSize: 11, color: "#2B6777", fontWeight: 700, margin: "0 0 8px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
               <div>
                 <button onClick={() => setShowBio(!showBio)}
-                  style={{ border: "1px solid #2B6777", background: showBio ? "#2B6777" : "#fff", color: showBio ? "#fff" : "#2B6777", padding: "5px 14px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, cursor: "pointer", marginBottom: 6, marginLeft: 6 }}>
+                  style={{ border: "1px solid #2B6777", background: showBio ? "#2B6777" : "#fff", color: showBio ? "#fff" : "#2B6777", padding: "5px 14px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, cursor: "pointer", marginBottom: 6 }}>
                   دربارهٔ دکتر عقیلی
-                </button>
-                <button onClick={() => setScreen("myProgress")}
-                  style={{ border: "1px solid #4C8778", background: "#fff", color: "#4C8778", padding: "5px 14px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, cursor: "pointer", marginBottom: 6 }}>
-                  📈 پیشرفتِ من
                 </button>
               </div>
               {showBio && (
@@ -3643,7 +3688,7 @@ export default function App() {
         )}
 
         {screen === "myProgress" && (
-          <MyProgressScreen onBack={() => setScreen("topics")} />
+          <MyProgressScreen onBack={() => setScreen("topics")} userEmail={user?.email} />
         )}
 
         {screen === "start" && (
@@ -3661,7 +3706,7 @@ export default function App() {
               <div style={{ position: "absolute", top: 10, left: 12, fontSize: 11 }}>
                 {user ? (
                   <span style={{ color: "#EAF2F9" }}>
-                    سلام {user.name || user.email} · <a onClick={logout} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
+                    سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a> · <a onClick={logout} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
                   </span>
                 ) : (
                   <a onClick={() => setScreen("authLogin")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>ورود / ثبت‌نام</a>
@@ -3752,7 +3797,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۹-۲۶ / داشبوردِ بالینیِ مراجع در پنلِ ادمین — جلساتِ بازشده، روندِ خلق، و یادداشت‌هایِ هر فرد
+              نسخه: ۲۰۲۶-۰۹-۲۷ / «پیشرفتِ من» منتقل شد به بعد از ورودِ کاربر + نمایِ یکپارچه‌یِ همه‌یِ برنامه‌ها (آماده برایِ ماژول‌هایِ آینده)
             </p>
             </div>
           </Card>
