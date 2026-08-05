@@ -2699,6 +2699,14 @@ function MoodRating({ sessionKey, phase, onChange }) {
   function pick(n) {
     setVal(n);
     try { localStorage.setItem(storageKey, JSON.stringify({ value: n, ts: Date.now(), sessionKey, phase })); } catch (e) {}
+    let userEmail = null;
+    try { userEmail = JSON.parse(localStorage.getItem("naghshe_user") || "{}").email; } catch (e) {}
+    if (userEmail) {
+      fetch("/api/mood-log", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userEmail, sessionKey, phase, value: n }),
+      }).catch(() => {});
+    }
     if (onChange) onChange(n);
   }
   return (
@@ -3159,6 +3167,9 @@ export default function App() {
   const [backupList, setBackupList] = useState([]);
   const [techniqueReport, setTechniqueReport] = useState([]);
   const [techniqueReportLoaded, setTechniqueReportLoaded] = useState(false);
+  const [patientEmailInput, setPatientEmailInput] = useState("");
+  const [patientData, setPatientData] = useState(null);
+  const [patientMsg, setPatientMsg] = useState("");
   const [redeemCode, setRedeemCode] = useState("");
   const [redeemMsg, setRedeemMsg] = useState("");
   const [sessionLevel, setSessionLevel] = useState("excellent");
@@ -3234,6 +3245,18 @@ export default function App() {
       setTechniqueReport(data.report || []);
       setTechniqueReportLoaded(true);
     } catch (e) { console.error(e); }
+  }
+
+  async function loadPatientDashboard() {
+    if (!patientEmailInput) { setPatientMsg("ایمیلِ مراجع را وارد کنید"); return; }
+    setPatientMsg("در حالِ بارگذاری..."); setPatientData(null);
+    try {
+      const r = await fetch(`/api/patient-dashboard?adminPass=${encodeURIComponent(ADMIN_PASS)}&email=${encodeURIComponent(patientEmailInput)}`);
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setPatientData(data);
+      setPatientMsg("");
+    } catch (e) { setPatientMsg(e.message); }
   }
 
   function generatePreviewAnswers(profile) {
@@ -3729,7 +3752,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۰۹-۲۵ / نمودارِ «پیشرفتِ من» برایِ کاربر — روندِ خلقِ قبل/بعد در تمامِ جلسات، با نمودارِ خطی
+              نسخه: ۲۰۲۶-۰۹-۲۶ / داشبوردِ بالینیِ مراجع در پنلِ ادمین — جلساتِ بازشده، روندِ خلق، و یادداشت‌هایِ هر فرد
             </p>
             </div>
           </Card>
@@ -4483,6 +4506,60 @@ export default function App() {
               <div style={{ background: "#FBF3E2", borderRadius: 10, padding: "10px 12px", marginTop: 10, textAlign: "center" }}>
                 <p style={{ fontSize: 11, color: "#7A5B2E", margin: "0 0 4px" }}>کدِ فعال‌سازی برایِ ارسال به مشتری:</p>
                 <p style={{ fontSize: 18, fontWeight: 800, color: "#7A5B2E", letterSpacing: 2, margin: 0 }}>{generatedCode}</p>
+              </div>
+            )}
+          </Card>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>👤 داشبوردِ بالینیِ یک مراجع</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+              با واردکردنِ ایمیلِ یک مراجع، جلساتِ بازشده، روندِ خلق، و یادداشت‌هایِ او را ببینید.
+            </p>
+            <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+              <input value={patientEmailInput} onChange={(e) => setPatientEmailInput(e.target.value)} placeholder="ایمیلِ مراجع"
+                style={{ flex: 1, padding: "9px 10px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 12.5 }} />
+              <button onClick={loadPatientDashboard}
+                style={{ padding: "9px 16px", borderRadius: 10, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                نمایش
+              </button>
+            </div>
+            {patientMsg && <p style={{ fontSize: 11, color: "#A6432F", marginBottom: 8 }}>{patientMsg}</p>}
+            {patientData && (
+              <div style={{ marginTop: 6 }}>
+                <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>
+                  🔓 جلساتِ بازشده ({patientData.unlockedSessions?.length || 0}):
+                </p>
+                <div style={{ maxHeight: 100, overflowY: "auto", background: "#F7FAFC", borderRadius: 9, padding: "8px 10px", marginBottom: 12 }}>
+                  {(patientData.unlockedSessions || []).length === 0 ? (
+                    <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: 0 }}>هنوز جلسه‌ای باز نشده.</p>
+                  ) : patientData.unlockedSessions.map((s, i) => (
+                    <p key={i} style={{ fontSize: 10.5, color: "#3A4A52", margin: "2px 0" }}>• {s}</p>
+                  ))}
+                </div>
+
+                <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>
+                  📈 روندِ خلق ({patientData.moodLog?.length || 0} ثبت):
+                </p>
+                {(patientData.moodLog || []).length === 0 ? (
+                  <p style={{ fontSize: 10.5, color: "#8CA3B0", marginBottom: 12 }}>هنوز خلقی ثبت نشده.</p>
+                ) : (
+                  <div style={{ marginBottom: 12 }}>
+                    <MiniLineChart points={patientData.moodLog.filter((m) => m.phase === "before").sort((a, b) => a.ts - b.ts)} color="#B9822F" />
+                  </div>
+                )}
+
+                <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>
+                  📝 یادداشت‌ها ({patientData.notes?.length || 0}):
+                </p>
+                <div style={{ maxHeight: 200, overflowY: "auto" }}>
+                  {(patientData.notes || []).length === 0 ? (
+                    <p style={{ fontSize: 10.5, color: "#8CA3B0" }}>هنوز یادداشتی ثبت نشده.</p>
+                  ) : patientData.notes.map((n, i) => (
+                    <div key={i} style={{ background: "#F7FAFC", borderRadius: 9, padding: "8px 10px", marginBottom: 6 }}>
+                      <p style={{ fontSize: 9.5, color: "#8CA3B0", margin: "0 0 3px" }}>{n.techniqueId}</p>
+                      <p style={{ fontSize: 11, color: "#3A4A52", margin: 0, whiteSpace: "pre-line" }}>{n.note}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </Card>
