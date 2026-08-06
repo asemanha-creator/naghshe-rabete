@@ -1,0 +1,27 @@
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
+const ADMIN_PASS = "AGHILI-PANEL";
+
+// فهرستِ کاربرانِ ثبت‌نامی به‌همراهِ آخرین زمانِ فعالیت — برایِ پیگیریِ دستیِ کاربرانِ غیرفعال
+export default async function handler(req, res) {
+  try {
+    if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
+    if (req.query.adminPass !== ADMIN_PASS) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+
+    const emails = await redis.smembers("mood_log:users_index");
+    const users = [];
+    for (const email of emails) {
+      const lastActive = await redis.get(`last_active:${email}`);
+      const rawUnlocked = (await redis.get(`unlocked:${email}`)) || [];
+      const unlocked = typeof rawUnlocked === "string" ? JSON.parse(rawUnlocked) : rawUnlocked;
+      users.push({ email, lastActive: lastActive || 0, unlockedCount: unlocked.length });
+    }
+    users.sort((a, b) => (a.lastActive || 0) - (b.lastActive || 0)); // قدیمی‌ترین (غیرفعال‌ترین) اول
+
+    res.status(200).json({ ok: true, users });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message || "unknown error" });
+  }
+}
