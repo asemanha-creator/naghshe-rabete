@@ -2,6 +2,20 @@ import { Redis } from "@upstash/redis";
 
 const redis = Redis.fromEnv();
 
+// کلماتِ کلیدیِ هشدارِ بحرانی — برایِ تشخیصِ زودهنگام و اطلاعِ فوری به درمانگر
+// (فقط تشخیص، نه مسدودکردنِ ذخیره‌سازی — کاربر هرگز متوجهِ این اسکن نمی‌شود)
+const RISK_KEYWORDS = [
+  "خودکشی", "خودم را بکشم", "خودمو بکشم", "دیگه نمی‌خوام زندگی کنم", "دیگر نمی‌خواهم زندگی کنم",
+  "می‌خوام بمیرم", "میخوام بمیرم", "می‌خواهم بمیرم", "آسیب به خودم", "به خودم آسیب",
+  "خودآزاری", "دیگه نمی‌تونم ادامه بدم", "دیگر نمی‌توانم ادامه دهم", "زندگی ارزش ندارد",
+  "زندگی ارزشی نداره", "خودزنی", "خودم رو نابود",
+];
+function scanForRisk(text) {
+  if (!text) return false;
+  const normalized = text.toLowerCase();
+  return RISK_KEYWORDS.some((kw) => normalized.includes(kw));
+}
+
 // ذخیره‌ی یادداشت‌هایِ کاربر برایِ هر تکنیک — پایه‌یِ داشبوردِ بالینیِ آینده
 export default async function handler(req, res) {
   try {
@@ -11,10 +25,20 @@ export default async function handler(req, res) {
 
     const emailKey = (userEmail || "anonymous").toLowerCase().trim();
     const key = `session_note:${emailKey}:${techniqueId}`;
-    await redis.set(key, JSON.stringify({ techniqueId, note, userEmail: emailKey, savedAt: Date.now() }));
+    const riskFlag = scanForRisk(note);
+    await redis.set(key, JSON.stringify({ techniqueId, note, userEmail: emailKey, savedAt: Date.now(), riskFlag }));
 
     // نگه‌داریِ فهرستِ کاربرانی که یادداشت دارند، برایِ داشبوردِ بالینی
     if (userEmail) await redis.sadd("session_notes:users_index", emailKey);
+
+    // اگر کلمه‌ی هشدار یافت شد، در فهرستِ جداگانه‌یِ هشدارهایِ فوری هم ثبت کن
+    if (riskFlag && userEmail) {
+      const alert = { userEmail: emailKey, techniqueId, notePreview: note.slice(0, 120), ts: Date.now() };
+      const rawAlerts = (await redis.get("risk_alerts:list")) || [];
+      const alerts = typeof rawAlerts === "string" ? JSON.parse(rawAlerts) : rawAlerts;
+      alerts.unshift(alert);
+      await redis.set("risk_alerts:list", JSON.stringify(alerts.slice(0, 200)));
+    }
 
     res.status(200).json({ ok: true });
   } catch (e) {
