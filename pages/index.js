@@ -3021,6 +3021,73 @@ const CHECKIN_ITEMS = [
 // آستانه‌یِ زمان‌بندیِ پیشنهادی برایِ چک‌این، بر اساسِ شدتِ مسیرِ درمانی
 const SUGGESTED_CHECKIN_DAYS = { betrayed: 4, unfaithful: 4, advanced: 7, moderate: 14 };
 
+// نقشه‌ی فازهایِ هر مسیر — برایِ نمایشِ بصریِ نقشه‌ی راه
+const PACKAGE_PHASES = {
+  moderate: [
+    { num: 1, label: "ساختِ ایمنیِ پایه", range: [1, 6] },
+    { num: 2, label: "عمیق‌سازیِ صمیمیت", range: [7, 12] },
+    { num: 3, label: "آمادگی برایِ دوره‌هایِ پرخطر", range: [13, 17] },
+    { num: 4, label: "نگهداریِ درازمدت", range: [18, 20] },
+  ],
+  advanced: [
+    { num: 1, label: "مدیریتِ بحران و ایمنیِ گفت‌وگو", range: [1, 4] },
+    { num: 2, label: "بازسازیِ اتصال", range: [5, 8] },
+  ],
+  betrayed: [
+    { num: 1, label: "تثبیت", range: [1, 6] },
+    { num: 2, label: "پردازشِ شناختی-هیجانی", range: [7, 14] },
+    { num: 3, label: "کارِ عمیقِ چندرویکردی", range: [15, 21] },
+    { num: 4, label: "بازسازیِ صمیمیت", range: [22, 27] },
+    { num: 5, label: "یکپارچگی", range: [28, 30] },
+  ],
+  unfaithful: [
+    { num: 1, label: "مواجهه و مسئولیت‌پذیری", range: [1, 10] },
+    { num: 2, label: "پردازشِ عمیقِ گناه (ACT)", range: [11, 14] },
+    { num: 3, label: "کارِ عمیقِ چندرویکردی", range: [15, 21] },
+    { num: 4, label: "بازسازیِ رابطه", range: [22, 27] },
+    { num: 5, label: "یکپارچگی", range: [28, 30] },
+  ],
+};
+
+// محاسبه‌ی امتیازِ رشدِ ترکیبی (۰ تا ۱۰۰) از سه منبع: بهبودِ خلق، پیشرفتِ جلسات، روندِ چک‌این
+function calculateGrowthScore({ moodLog = [], unlockedCount = 0, totalSessions = 0, checkinLog = [] }) {
+  const components = {};
+
+  // ۱. بهبودِ خلق (قبل در برابرِ بعد) — مقیاسِ ۱=خوب تا ۱۰=بد
+  const beforeVals = moodLog.filter((m) => m.phase === "before").map((m) => m.value);
+  const afterVals = moodLog.filter((m) => m.phase === "after").map((m) => m.value);
+  if (beforeVals.length && afterVals.length) {
+    const avgBefore = beforeVals.reduce((s, v) => s + v, 0) / beforeVals.length;
+    const avgAfter = afterVals.reduce((s, v) => s + v, 0) / afterVals.length;
+    const improvement = avgBefore - avgAfter; // مثبت یعنی بهبود
+    components.mood = Math.max(0, Math.min(100, 50 + improvement * 12));
+  }
+
+  // ۲. پیشرفتِ جلسات
+  if (totalSessions > 0) {
+    components.completion = Math.min(100, (unlockedCount / totalSessions) * 100);
+  }
+
+  // ۳. روندِ چک‌این (میانگینِ ۳تایِ اخیر از مقیاسِ ۱=بد تا ۵=خوب)
+  if (checkinLog.length > 0) {
+    const recent = checkinLog.slice(-3);
+    const avgs = recent.map((c) => Object.values(c.answers).reduce((s, v) => s + v, 0) / Object.values(c.answers).length);
+    const avgCheckin = avgs.reduce((s, v) => s + v, 0) / avgs.length;
+    components.checkin = (avgCheckin / 5) * 100;
+    if (avgs.length >= 2) {
+      const trend = avgs[avgs.length - 1] - avgs[0];
+      components.checkin = Math.max(0, Math.min(100, components.checkin + trend * 8));
+    }
+  }
+
+  const weights = { mood: 0.35, completion: 0.35, checkin: 0.3 };
+  const activeKeys = Object.keys(components);
+  if (activeKeys.length === 0) return { score: null, components };
+  const totalWeight = activeKeys.reduce((s, k) => s + weights[k], 0);
+  const score = Math.round(activeKeys.reduce((s, k) => s + components[k] * weights[k], 0) / totalWeight);
+  return { score, components };
+}
+
 function genCode() {
   let c = "";
   for (let i = 0; i < 6; i++) c += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
@@ -3507,6 +3574,81 @@ function FAQScreen({ onBack }) {
   );
 }
 
+// ---------- نقشه‌ی راه — نمایشِ بصریِ فازهایِ یک مسیرِ درمانی و موقعیتِ فعلیِ فرد ----------
+function RoadmapVisual({ pkgKey, unlockedSidsForPkg }) {
+  const phases = PACKAGE_PHASES[pkgKey];
+  if (!phases) return null;
+  const doneNums = unlockedSidsForPkg.map((sid) => Number(sid.split("-").slice(-1)[0]));
+  const highestDone = doneNums.length ? Math.max(...doneNums) : 0;
+
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", margin: "0 0 10px" }}>
+        🗺️ نقشه‌ی راه — {TREATMENT_PACKAGES[pkgKey]?.label || pkgKey}
+      </p>
+      <div style={{ display: "flex", position: "relative" }}>
+        {phases.map((phase, i) => {
+          const [start, end] = phase.range;
+          const sessionsInPhase = end - start + 1;
+          const doneInPhase = doneNums.filter((n) => n >= start && n <= end).length;
+          const isCurrent = highestDone >= start && highestDone <= end;
+          const isComplete = doneInPhase >= sessionsInPhase && sessionsInPhase > 0;
+          const isFuture = highestDone < start;
+          const color = isComplete ? "#4C8778" : isCurrent ? "#B9822F" : "#C9DEE8";
+          return (
+            <div key={phase.num} style={{ flex: 1, textAlign: "center", position: "relative" }}>
+              {i > 0 && (
+                <div style={{ position: "absolute", top: 13, right: "50%", width: "100%", height: 3, background: isFuture ? "#E5EDF0" : color, zIndex: 0 }} />
+              )}
+              <div style={{
+                width: 26, height: 26, borderRadius: "50%", margin: "0 auto 6px", position: "relative", zIndex: 1,
+                background: isFuture ? "#fff" : color, border: `2.5px solid ${color}`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: isCurrent ? `0 0 0 4px ${color}30` : "none",
+              }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: isFuture ? color : "#fff" }}>
+                  {isComplete ? "✓" : phase.num}
+                </span>
+              </div>
+              <p style={{ fontSize: 9, color: isFuture ? "#A3B2BA" : "#3A4A52", fontWeight: isCurrent ? 700 : 500, lineHeight: 1.4, margin: 0, padding: "0 2px" }}>
+                {phase.label}
+              </p>
+              <p style={{ fontSize: 8.5, color: "#8CA3B0", margin: "2px 0 0" }}>{doneInPhase}/{sessionsInPhase}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ---------- امتیازِ رشد — نمایشِ گِیجِ ترکیبی ----------
+function GrowthScoreGauge({ score, components }) {
+  if (score == null) {
+    return (
+      <div style={{ background: "#F7FAFC", borderRadius: 14, padding: "16px", textAlign: "center", marginBottom: 18 }}>
+        <p style={{ fontSize: 12, color: "#8CA3B0", margin: 0 }}>هنوز داده‌ی کافی برایِ محاسبه‌ی امتیازِ رشد نیست.</p>
+      </div>
+    );
+  }
+  const color = score >= 70 ? "#4C8778" : score >= 45 ? "#B9822F" : "#A6432F";
+  const labels = { mood: "بهبودِ خلق", completion: "پیشرفتِ جلسات", checkin: "روندِ چک‌این" };
+  return (
+    <div style={{ background: `linear-gradient(135deg, ${color}18, ${color}08)`, border: `1.5px solid ${color}40`, borderRadius: 16, padding: "18px 16px", marginBottom: 18, textAlign: "center" }}>
+      <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>🌟 امتیازِ رشدِ کلی</p>
+      <p style={{ fontSize: 38, fontWeight: 800, color, margin: "0 0 10px", lineHeight: 1 }}>{score}<span style={{ fontSize: 16, color: "#8CA3B0" }}>/۱۰۰</span></p>
+      <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+        {Object.entries(components).map(([key, val]) => (
+          <div key={key} style={{ background: "#fff", borderRadius: 999, padding: "4px 11px", fontSize: 10 }}>
+            <span style={{ color: "#8CA3B0" }}>{labels[key]}: </span>
+            <span style={{ fontWeight: 700, color: "#3A4A52" }}>{Math.round(val)}٪</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function MyProgressScreen({ onBack, userEmail }) {
   const [serverData, setServerData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -3543,6 +3685,11 @@ function MyProgressScreen({ onBack, userEmail }) {
   const avgBefore = beforePoints.length ? Math.round(beforePoints.reduce((s, e) => s + e.value, 0) / beforePoints.length * 10) / 10 : null;
   const avgAfter = afterPoints.length ? Math.round(afterPoints.reduce((s, e) => s + e.value, 0) / afterPoints.length * 10) / 10 : null;
 
+  const totalSessions = Object.keys(byModule).reduce((s, pkgKey) => s + (TREATMENT_PACKAGES[pkgKey]?.sessions || 0), 0);
+  const { score, components } = useMemo(() => calculateGrowthScore({
+    moodLog: history, unlockedCount: unlockedSessions.length, totalSessions, checkinLog: serverData?.checkinLog || [],
+  }), [history, unlockedSessions, totalSessions, serverData]);
+
   return (
     <Card>
       <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
@@ -3553,17 +3700,11 @@ function MyProgressScreen({ onBack, userEmail }) {
         <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>در حالِ بارگذاری...</p>
       ) : (
         <>
-          {Object.keys(byModule).length > 0 && (
-            <div style={{ marginBottom: 16 }}>
-              <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 8px" }}>📚 برنامه‌هایِ دنبال‌شده:</p>
-              {Object.entries(byModule).map(([pkgKey, sids]) => (
-                <div key={pkgKey} style={{ background: "#F3F8F5", borderRadius: 10, padding: "9px 12px", marginBottom: 6, display: "flex", justifyContent: "space-between" }}>
-                  <span style={{ fontSize: 12, color: "#1F2D3D", fontWeight: 600 }}>{TREATMENT_PACKAGES[pkgKey]?.label || pkgKey}</span>
-                  <span style={{ fontSize: 11.5, color: "#4C8778", fontWeight: 700 }}>{sids.length} جلسه</span>
-                </div>
-              ))}
-            </div>
-          )}
+          <GrowthScoreGauge score={score} components={components} />
+
+          {Object.entries(byModule).map(([pkgKey, sids]) => (
+            <RoadmapVisual key={pkgKey} pkgKey={pkgKey} unlockedSidsForPkg={sids} />
+          ))}
 
           {history.length === 0 ? (
             <div style={{ background: "#F7FAFC", borderRadius: 12, padding: "20px", textAlign: "center" }}>
@@ -3601,6 +3742,21 @@ function MyProgressScreen({ onBack, userEmail }) {
 
 // ---------- برنامه‌ی ایمنی — ابزارِ مستقلِ پیشگیریِ بحران ----------
 // ---------- معرفیِ جامعِ اپ — نمایش در اولین بازدید، قابلِ‌بازکردنِ مجدد از کنارِ موضوعات ----------
+// نکته‌ی روزانه — محتوایِ رایگان و همیشه‌در‌دسترس، برایِ ایجادِ عادتِ بازگشت به اپ
+const DAILY_TIPS = [
+  "امروز یک قدردانیِ دقیق و مشخص به همسرتان بگویید — نه کلی، بلکه یک رفتارِ خاص.",
+  "۶ ثانیه در آغوش گرفتن، سطحِ اکسی‌توسین (هورمونِ پیوند) را افزایش می‌دهد — امروز امتحان کنید.",
+  "امشب، ۱۰ دقیقه بدونِ گوشی با هم صحبت کنید — فقط گوش‌دادن، بدونِ راه‌حل‌دادن.",
+  "یک خاطره‌ی خوبِ مشترک را امروز با همسرتان مرور کنید — این «حسابِ عاطفی» رابطه را پر می‌کند.",
+  "قبل از قضاوت، بپرسید: «این رفتار از چه نیازی می‌آید؟» — کنجکاوی، دشمنیِ کمتری می‌سازد.",
+  "امروز یک سوالِ عمیق از همسرتان بپرسید که تا حالا نپرسیده‌اید.",
+  "نفسِ ۴-۷-۸ را همین حالا امتحان کنید: ۴ ثانیه دَم، ۷ ثانیه نگه‌داشتن، ۸ ثانیه بازدَم.",
+];
+function getTodayTip() {
+  const dayIndex = Math.floor(Date.now() / 86400000) % DAILY_TIPS.length;
+  return DAILY_TIPS[dayIndex];
+}
+
 const ONBOARDING_SLIDES = [
   {
     icon: "🌿",
@@ -4224,6 +4380,30 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [showBio, setShowBio] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [fontScale, setFontScale] = useState(() => {
+    try { return Number(localStorage.getItem("naghshe_font_scale")) || 1; } catch (e) { return 1; }
+  });
+  function changeFontScale(scale) {
+    setFontScale(scale);
+    try { localStorage.setItem("naghshe_font_scale", String(scale)); } catch (e) {}
+  }
+  const [streak, setStreak] = useState(0);
+  const [showStreakCelebration, setShowStreakCelebration] = useState(false);
+  useEffect(() => {
+    try {
+      const today = new Date().toDateString();
+      const lastVisit = localStorage.getItem("naghshe_last_visit");
+      let currentStreak = Number(localStorage.getItem("naghshe_streak")) || 0;
+      if (lastVisit !== today) {
+        const yesterday = new Date(Date.now() - 86400000).toDateString();
+        currentStreak = lastVisit === yesterday ? currentStreak + 1 : 1;
+        localStorage.setItem("naghshe_last_visit", today);
+        localStorage.setItem("naghshe_streak", String(currentStreak));
+        if ([3, 7, 14, 30, 60, 100].includes(currentStreak)) setShowStreakCelebration(true);
+      }
+      setStreak(currentStreak);
+    } catch (e) {}
+  }, []);
   useEffect(() => {
     try {
       if (!localStorage.getItem("naghshe_onboarding_seen")) setShowOnboarding(true);
@@ -4645,8 +4825,23 @@ export default function App() {
   }
 
   return (
-    <div dir="rtl" style={{ ...FONT, minHeight: "100vh", background: "#EAF4FB", padding: "24px 16px" }}>
+    <div dir="rtl" style={{ ...FONT, minHeight: "100vh", background: "#EAF4FB", padding: "24px 16px", zoom: fontScale }}>
       {showOnboarding && <OnboardingModal onClose={closeOnboarding} />}
+      {showStreakCelebration && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(20,30,35,0.6)", zIndex: 998, display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
+          <div style={{ background: "#fff", borderRadius: 20, padding: "28px 22px", maxWidth: 320, textAlign: "center", boxShadow: "0 20px 50px rgba(0,0,0,0.25)" }}>
+            <div style={{ fontSize: 46, marginBottom: 10 }}>🔥🎉</div>
+            <h3 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>{streak} روزِ پیاپی!</h3>
+            <p style={{ fontSize: 12.5, color: "#5A7080", lineHeight: 1.9, margin: "0 0 18px" }}>
+              پیوستگیِ روزانه، یکی از قوی‌ترین عواملِ موفقیت در بهبودیِ رابطه است. همین مسیر را ادامه دهید!
+            </p>
+            <button onClick={() => setShowStreakCelebration(false)}
+              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              ادامه می‌دهم ←
+            </button>
+          </div>
+        </div>
+      )}
       <style>{`
         ${FONT_IMPORT}
         * { box-sizing: border-box; }
@@ -4708,6 +4903,27 @@ export default function App() {
                   <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 11.5, color: "#2B6777", margin: "6px 0 0", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
                 </div>
               )}
+
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 10 }}>
+                {streak > 1 && (
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#B9822F", background: "#FBF3E2", padding: "3px 10px", borderRadius: 999 }}>
+                    🔥 {streak} روزِ پیاپی
+                  </span>
+                )}
+                <div style={{ display: "flex", gap: 3, background: "#fff", borderRadius: 999, padding: 3, border: "1px solid #DCE8F0" }}>
+                  {[{ label: "A", scale: 1 }, { label: "A", scale: 1.15, big: true }, { label: "A", scale: 1.3, big: true }].map((f, i) => (
+                    <button key={i} onClick={() => changeFontScale(f.scale)}
+                      style={{ border: "none", borderRadius: 999, padding: "3px 9px", background: fontScale === f.scale ? "#2B6777" : "transparent", color: fontScale === f.scale ? "#fff" : "#8CA3B0", fontSize: f.big ? 13 : 10, fontWeight: 700, cursor: "pointer" }}>
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ background: "linear-gradient(135deg, #FBF3E2, #F5E8CC)", borderRadius: 14, padding: "12px 14px", marginBottom: 16, textAlign: "right" }}>
+                <p style={{ fontSize: 10, fontWeight: 700, color: "#B9822F", margin: "0 0 4px" }}>💡 نکته‌ی امروز (رایگان)</p>
+                <p style={{ fontSize: 11.5, color: "#7A5B2E", lineHeight: 1.8, margin: 0 }}>{getTodayTip()}</p>
+              </div>
 
               <p style={{ fontSize: 11.5, color: "#5A7080", margin: 0 }}>می‌خواهید امروز رویِ کدام موضوع کار کنیم؟</p>
             </div>
@@ -4886,7 +5102,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۱۰-۱۱ / معرفیِ جامعِ اپ (Onboarding) + اسکنِ خودکارِ یادداشت‌هایِ پرخطر + حذفِ واقعیِ داده‌هایِ کاربر
+              نسخه: ۲۰۲۶-۱۰-۱۳ / اندازه‌ی فونتِ تنظیم‌پذیر + استریکِ روزانه با جشنِ خودکار + نکته‌ی رایگانِ روزانه در صفحه‌ی اول
             </p>
             </div>
           </Card>
@@ -5767,6 +5983,28 @@ export default function App() {
             {patientMsg && <p style={{ fontSize: 11, color: "#A6432F", marginBottom: 8 }}>{patientMsg}</p>}
             {patientData && (
               <div style={{ marginTop: 6 }}>
+                {(() => {
+                  const byModule = {};
+                  (patientData.unlockedSessions || []).forEach((sid) => {
+                    const pkgKey = sid.split("-").slice(0, -1).join("-");
+                    if (!byModule[pkgKey]) byModule[pkgKey] = [];
+                    byModule[pkgKey].push(sid);
+                  });
+                  const totalSessions = Object.keys(byModule).reduce((s, pkgKey) => s + (TREATMENT_PACKAGES[pkgKey]?.sessions || 0), 0);
+                  const { score, components } = calculateGrowthScore({
+                    moodLog: patientData.moodLog || [], unlockedCount: (patientData.unlockedSessions || []).length,
+                    totalSessions, checkinLog: patientData.checkinLog || [],
+                  });
+                  return (
+                    <>
+                      <GrowthScoreGauge score={score} components={components} />
+                      {Object.entries(byModule).map(([pkgKey, sids]) => (
+                        <RoadmapVisual key={pkgKey} pkgKey={pkgKey} unlockedSidsForPkg={sids} />
+                      ))}
+                    </>
+                  );
+                })()}
+
                 <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>
                   🔓 جلساتِ بازشده ({patientData.unlockedSessions?.length || 0}):
                 </p>
