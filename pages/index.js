@@ -4349,23 +4349,23 @@ export default function App() {
       <div style={{ maxWidth: 480, margin: "0 auto" }}>
         {screen === "topics" && (
           <div style={{
-            margin: "-8px -6px 0", padding: "26px 14px 22px",
+            margin: "-8px -6px 0", padding: "18px 14px 16px",
             background: "radial-gradient(circle at 15% 0%, #EAF2EF 0%, transparent 55%), radial-gradient(circle at 85% 100%, #FBF3E2 0%, transparent 50%), #F7FAFC",
             borderRadius: 24,
           }}>
-            <div style={{ textAlign: "center", marginBottom: 24 }}>
+            <div style={{ textAlign: "center", marginBottom: 14 }}>
               <div style={{
-                width: 52, height: 52, margin: "0 auto 12px", borderRadius: 16,
+                width: 40, height: 40, margin: "0 auto 8px", borderRadius: 13,
                 background: "linear-gradient(145deg, #2B6777, #1F4D58)",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                boxShadow: "0 8px 20px rgba(43,103,119,0.35)", transform: "rotate(-4deg)",
+                boxShadow: "0 6px 14px rgba(43,103,119,0.3)", transform: "rotate(-4deg)",
               }}>
-                <span style={{ fontSize: 24, display: "block", transform: "rotate(4deg)" }}>🌿</span>
+                <span style={{ fontSize: 18, display: "block", transform: "rotate(4deg)" }}>🌿</span>
               </div>
-              <p style={{ fontSize: 11, color: "#2B6777", fontWeight: 700, margin: "0 0 8px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
+              <p style={{ fontSize: 10, color: "#2B6777", fontWeight: 700, margin: "0 0 6px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
               <div>
                 <button onClick={() => setShowBio(!showBio)}
-                  style={{ border: "1px solid #2B6777", background: showBio ? "#2B6777" : "#fff", color: showBio ? "#fff" : "#2B6777", padding: "5px 14px", borderRadius: 999, fontSize: 11.5, fontWeight: 700, cursor: "pointer", marginBottom: 6 }}>
+                  style={{ border: "1px solid #2B6777", background: showBio ? "#2B6777" : "#fff", color: showBio ? "#fff" : "#2B6777", padding: "4px 12px", borderRadius: 999, fontSize: 10.5, fontWeight: 700, cursor: "pointer", marginBottom: 4 }}>
                   دربارهٔ دکتر عقیلی
                 </button>
               </div>
@@ -4378,65 +4378,41 @@ export default function App() {
                 </div>
               )}
 
-              <p style={{ fontSize: 12.5, color: "#5A7080", margin: 0 }}>می‌خواهید امروز رویِ کدام موضوع کار کنیم؟</p>
+              <p style={{ fontSize: 11.5, color: "#5A7080", margin: 0 }}>می‌خواهید امروز رویِ کدام موضوع کار کنیم؟</p>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13 }}>
-              {TOPICS.map((t, idx) => (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 9 }}>
+              {TOPICS.map((t) => (
                 <button
                   key={t.key}
                   onClick={() => { if (t.enabled) setScreen("start"); }}
                   style={{
-                    position: "relative", overflow: "hidden", textAlign: "right",
-                    height: 132, borderRadius: 22, border: "none", cursor: t.enabled ? "pointer" : "default",
-                    background: t.bg, padding: "13px 13px 12px",
-                    opacity: t.enabled ? 1 : 0.85,
-                    boxShadow: t.enabled ? `0 10px 24px ${t.core}40, 0 1px 0 rgba(255,255,255,0.6) inset` : `0 3px 10px rgba(30,40,45,0.06)`,
-                    outline: t.enabled ? `2px solid ${t.core}` : "1px solid rgba(0,0,0,0.04)",
+                    position: "relative", overflow: "hidden", textAlign: "center",
+                    height: 92, borderRadius: 16, cursor: t.enabled ? "pointer" : "default",
+                    background: t.enabled ? "#fff" : "#FAFCFD",
+                    border: t.enabled ? `1.5px solid ${t.core}` : "1px solid #EDF2F5",
+                    padding: "10px 6px 8px",
+                    boxShadow: t.enabled ? `0 6px 16px ${t.core}30` : "none",
+                    opacity: t.enabled ? 1 : 0.75,
+                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3,
                     transition: "transform 0.15s ease",
-                    transform: "translateY(0)",
                   }}
-                  onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.97)"; }}
+                  onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.96)"; }}
                   onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
                 >
-                  <div style={{
-                    position: "absolute", width: 105, height: 105, borderRadius: "42% 58% 55% 45% / 50% 45% 55% 50%",
-                    background: t.blobA, opacity: 0.6,
-                    bottom: -38, left: idx % 2 === 0 ? -28 : "auto", right: idx % 2 === 1 ? -28 : "auto",
-                  }} />
-                  <div style={{
-                    position: "absolute", width: 50, height: 50, borderRadius: "50%",
-                    background: t.blobB, opacity: 0.65,
-                    top: -14, right: idx % 2 === 0 ? -14 : "auto", left: idx % 2 === 1 ? -14 : "auto",
-                  }} />
-                  <div style={{ position: "relative", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-                    <div>
-                      <div style={{
-                        width: 34, height: 34, borderRadius: 11, background: "rgba(255,255,255,0.65)",
-                        display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8,
-                        boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
-                      }}>
-                        <span style={{ fontSize: 17 }}>{t.icon}</span>
-                      </div>
-                      <div style={{ fontSize: 14.5, fontWeight: 800, color: "#20303A", lineHeight: 1.35 }}>{t.title}</div>
-                      <div style={{ fontSize: 10.5, color: "#4A5A62", marginTop: 2 }}>{t.subtitle}</div>
-                    </div>
-                    {t.enabled ? (
-                      <span style={{ alignSelf: "flex-start", fontSize: 10.5, fontWeight: 700, color: "#fff", background: t.core, padding: "4px 11px", borderRadius: 999, boxShadow: `0 3px 8px ${t.core}55` }}>
-                        شروع ←
-                      </span>
-                    ) : (
-                      <span style={{ alignSelf: "flex-start", fontSize: 9.5, fontWeight: 700, color: t.core, background: "rgba(255,255,255,0.75)", padding: "4px 10px", borderRadius: 999 }}>
-                        به‌زودی
-                      </span>
-                    )}
-                  </div>
+                  <span style={{ fontSize: 20 }}>{t.icon}</span>
+                  <span style={{ fontSize: 11.5, fontWeight: 700, color: "#20303A", lineHeight: 1.25 }}>{t.title}</span>
+                  {t.enabled ? (
+                    <span style={{ fontSize: 9, fontWeight: 700, color: t.core }}>شروع ←</span>
+                  ) : (
+                    <span style={{ fontSize: 8.5, fontWeight: 600, color: "#A3B2BA" }}>به‌زودی</span>
+                  )}
                 </button>
               ))}
             </div>
 
-            <p style={{ textAlign: "center", fontSize: 11, color: "#8CA3B0", marginTop: 22, lineHeight: 1.9 }}>
-              ماژول‌هایِ «به‌زودی» در حالِ آماده‌سازیِ علمی‌اند و به‌مرور فعال می‌شوند.
+            <p style={{ textAlign: "center", fontSize: 10.5, color: "#8CA3B0", marginTop: 14, lineHeight: 1.8 }}>
+              ماژول‌هایِ «به‌زودی» در حالِ آماده‌سازیِ علمی‌اند.
             </p>
           </div>
         )}
@@ -4555,7 +4531,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۱۰-۰۲ / 🎉🎉 تکمیلِ کاملِ هر ۸۸ جلسه (پایانِ خیانت‌کرده) + قابلیتِ جست‌وجو در هر بسته
+              نسخه: ۲۰۲۶-۱۰-۰۳ / بازطراحیِ صفحه‌ی موضوعات: کارت‌هایِ ظریف‌تر، ۳ستونی، فشرده‌تر — بدونِ اسکرول
             </p>
             </div>
           </Card>
