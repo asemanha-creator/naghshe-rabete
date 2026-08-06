@@ -1,0 +1,40 @@
+import { Redis } from "@upstash/redis";
+import { getSessionContent } from "../../lib/sessionContent";
+
+const redis = Redis.fromEnv();
+const ADMIN_PASS = "AGHILI-PANEL";
+
+// متنِ کاملِ یک جلسه — فقط بعد از تاییدِ سرورِ اینکه کاربر آن را خریده (یا ادمین است)
+export default async function handler(req, res) {
+  try {
+    if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
+    const { pkgKey, num, weakestDomain, level, email, adminPass } = req.query;
+    if (!pkgKey || !num) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
+
+    const isAdmin = adminPass === ADMIN_PASS;
+    let unlocked = isAdmin;
+    if (!unlocked && email) {
+      const raw = (await redis.get(`unlocked:${email.toLowerCase().trim()}`)) || [];
+      const list = typeof raw === "string" ? JSON.parse(raw) : raw;
+      unlocked = list.includes(`${pkgKey}-${num}`);
+    }
+
+    const sess = getSessionContent(pkgKey, Number(num), weakestDomain || null, level || "excellent");
+
+    if (!unlocked) {
+      // بدونِ دسترسی، فقط پیش‌نمایشِ کوچک برمی‌گردد، نه متنِ کامل
+      return res.status(200).json({
+        ok: true, unlocked: false,
+        session: {
+          title: sess.title, approach: sess.approach,
+          body: (sess.body || []).filter((b) => b.type === "h" || b.type === "p").slice(0, 2),
+        },
+      });
+    }
+
+    res.status(200).json({ ok: true, unlocked: true, session: sess });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message || "unknown error" });
+  }
+}
