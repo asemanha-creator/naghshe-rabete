@@ -1,0 +1,47 @@
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
+const ADMIN_PASS = "AGHILI-PANEL";
+
+// حذفِ کاملِ داده‌هایِ یک کاربر — برایِ وفای به قولِ «حقِ حذف» در متنِ رضایتِ حریمِ خصوصی
+// این عملیات غیرقابلِ‌بازگشت است.
+export default async function handler(req, res) {
+  try {
+    if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
+    if (req.query.adminPass !== ADMIN_PASS) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+    const { email, confirm } = req.body;
+    if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
+    if (confirm !== email) return res.status(400).json({ error: "تاییدیه مطابقت ندارد" });
+
+    const emailKey = email.toLowerCase().trim();
+    const deletedKeys = [];
+
+    // کلیدهایِ مستقیم
+    const directKeys = [
+      `user:${emailKey}`, `unlocked:${emailKey}`, `mood_log:${emailKey}`,
+      `safety_plan:${emailKey}`, `checkin_log:${emailKey}`, `checkin_interval:${emailKey}`,
+      `last_active:${emailKey}`, `partner_link:${emailKey}`,
+    ];
+    for (const k of directKeys) {
+      const existed = await redis.del(k);
+      if (existed) deletedKeys.push(k);
+    }
+
+    // کلیدهایِ الگودار (یادداشت‌هایِ هر تکنیک)
+    const noteKeys = await redis.keys(`session_note:${emailKey}:*`);
+    for (const k of noteKeys) {
+      await redis.del(k);
+      deletedKeys.push(k);
+    }
+
+    // حذف از فهرست‌هایِ ایندکس
+    await redis.srem("mood_log:users_index", emailKey);
+    await redis.srem("session_notes:users_index", emailKey);
+    await redis.srem("checkin_log:users_index", emailKey);
+
+    res.status(200).json({ ok: true, deletedCount: deletedKeys.length, deletedKeys });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message || "unknown error" });
+  }
+}
