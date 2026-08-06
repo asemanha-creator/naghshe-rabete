@@ -1890,6 +1890,7 @@ export default function App() {
   const [librarySearchQuery, setLibrarySearchQuery] = useState("");
   const [libraryServerSessions, setLibraryServerSessions] = useState(null);
   const [libraryLoading, setLibraryLoading] = useState(false);
+  const [libraryFetchError, setLibraryFetchError] = useState("");
   const [unlockedSessions, setUnlockedSessions] = useState([]);
   const [viewingSession, setViewingSession] = useState(null);
   const [adminUnlockEmail, setAdminUnlockEmail] = useState("");
@@ -1935,6 +1936,7 @@ export default function App() {
   useEffect(() => {
     if (screen !== "sessionLibrary") return;
     setLibraryLoading(true);
+    setLibraryFetchError("");
     const t = setTimeout(() => {
       const params = new URLSearchParams({ pkgKey: libraryPkg });
       if (libraryWeakestDomain) params.set("weakestDomain", libraryWeakestDomain);
@@ -1942,9 +1944,14 @@ export default function App() {
       if (user?.email) params.set("email", user.email);
       if (isAdmin) params.set("adminPass", ADMIN_PASS);
       fetch(`/api/session-library?${params.toString()}`)
-        .then((r) => r.json())
-        .then((d) => { if (d.ok) setLibraryServerSessions(d.sessions); })
-        .catch(() => {})
+        .then(async (r) => {
+          const d = await r.json().catch(() => null);
+          if (!r.ok || !d?.ok) {
+            throw new Error(d?.error || `HTTP ${r.status} — پاسخِ نامعتبر از سرور`);
+          }
+          setLibraryServerSessions(d.sessions);
+        })
+        .catch((e) => setLibraryFetchError(e.message || "خطایِ ناشناخته در اتصال به سرور"))
         .finally(() => setLibraryLoading(false));
     }, librarySearchQuery ? 350 : 0);
     return () => clearTimeout(t);
@@ -2627,7 +2634,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۱۰-۱۷ / رفعِ خطایِ بحرانیِ دوم: بازگردانیِ CODE_CHARS که در جراحیِ محافظتِ محتوا حذف شده بود (دکمه‌هایِ آزمون را غیرفعال کرده بود)
+              نسخه: ۲۰۲۶-۱۰-۱۸ / نمایشِ پیغامِ خطایِ واقعی وقتی کتابخانه‌ی جلسات بارگذاری نشود (به‌جایِ خالی‌ماندنِ بی‌صدا)
             </p>
             </div>
           </Card>
@@ -2787,6 +2794,14 @@ export default function App() {
             {(() => {
               if (libraryLoading && !libraryServerSessions) {
                 return <p style={{ textAlign: "center", fontSize: 12, color: "#8CA3B0", padding: "20px 0" }}>در حالِ بارگذاری...</p>;
+              }
+              if (libraryFetchError) {
+                return (
+                  <div style={{ background: "#FBEAEA", border: "1px solid #E8C9BC", borderRadius: 12, padding: "14px", textAlign: "center" }}>
+                    <p style={{ fontSize: 12.5, fontWeight: 700, color: "#A6432F", margin: "0 0 6px" }}>⚠ خطا در بارگذاریِ جلسات</p>
+                    <p style={{ fontSize: 11, color: "#8A5A4E", margin: 0 }}>{libraryFetchError}</p>
+                  </div>
+                );
               }
               const items = libraryServerSessions || [];
               if (librarySearchQuery && items.length === 0) {
