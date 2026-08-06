@@ -2929,7 +2929,8 @@ const SD_ITEMS = [
 ];
 
 const TOPICS = [
-  { key: "relationship", title: "رابطه‌یِ زناشویی", subtitle: "کجای راهم؟", icon: "💞", core: "#2B6777", bg: "#DCEAEA", blobA: "#8FB8B8", blobB: "#C7DEDA", enabled: true },
+  { key: "relationship", title: "خیانتِ زناشویی", subtitle: "کجای راهم؟", icon: "💞", core: "#2B6777", bg: "#DCEAEA", blobA: "#8FB8B8", blobB: "#C7DEDA", enabled: true },
+  { key: "prevention", title: "افزایشِ وفاداری و تعهد", subtitle: "واکسیناسیونِ زوجی", icon: "🛡️", core: "#4C8778", bg: "#DCEEE8", blobA: "#84BBAB", blobB: "#BEDDD3", enabled: true },
   { key: "premarriage", title: "پیش از ازدواج", subtitle: "آماده‌ام؟", icon: "💍", core: "#B8853A", bg: "#FBF0DC", blobA: "#E8C888", blobB: "#F5E2B8", enabled: false },
   { key: "aggression", title: "پرخاشگری", subtitle: "کنترلِ خشم", icon: "🔥", core: "#B5654E", bg: "#F5E3DC", blobA: "#DDA48F", blobB: "#EFCBBA", enabled: false },
   { key: "distrust", title: "بی‌اعتمادی", subtitle: "بدبینی در رابطه", icon: "🔍", core: "#4E7290", bg: "#DCE6EC", blobA: "#8FADC2", blobB: "#C3D5E1", enabled: false },
@@ -2942,7 +2943,83 @@ const TOPICS = [
   { key: "predivorce", title: "مشاورهٔ پیش از طلاق", subtitle: "تصمیمِ آگاهانه", icon: "⚖️", core: "#8A5A4E", bg: "#F2E1DC", blobA: "#C69086", blobB: "#E6C3BB", enabled: false },
 ];
 
-const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+// ۵۰۰ سوالِ کلیدیِ خیانتِ زناشویی (علل و درمان) — رتبه‌بندی‌شده بر اساسِ اهمیت/فوریت
+// این پاسخ‌ها راهنماییِ سریع‌اند، نه جایگزینِ جلساتِ کامل
+const INFIDELITY_FAQ = [
+  { rank: 1, category: "بحرانِ اولیه", q: "همین الان چه‌کاری باید بکنم؟", a: "فقط بقا. تصمیمِ بزرگ نگیرید. بخورید، بخوابید (حتی کم)، با یک نفرِ قابلِ‌اعتماد تماس بگیرید. جلسه‌ی ۱ِ مسیرِ خیانت‌دیده دقیقاً برایِ همین ساعاتِ اول طراحی شده." },
+  { rank: 2, category: "تصمیم‌گیری", q: "آیا باید فوراً طلاق بگیرم؟", a: "نه. هیچ تصمیمِ بزرگی نباید در بحرانِ حاد گرفته شود. مغزِ شما در این لحظه، آماده‌یِ تصمیمِ درست نیست. حداقل چند هفته تا ماه صبر کنید و از یک پروتکلِ ساختاریافته (نه فقط احساس) برایِ این تصمیم استفاده کنید." },
+  { rank: 3, category: "بحرانِ اولیه", q: "چرا حالم این‌قدر بد است — دارم دیوانه می‌شوم؟", a: "نه، دیوانه نمی‌شوید. این واکنشِ طبیعیِ مغز به یک آسیبِ عمیق است، از نظرِ علمی شبیهِ واکنش به یک تروماست. بی‌خوابی، فلاش‌بک، بی‌اشتهایی — همه‌ی این‌ها بخشِ طبیعیِ فرایندند، نه نشانه‌ی ضعف." },
+  { rank: 4, category: "تصمیم‌گیری", q: "آیا رابطه بعد از خیانت می‌تواند واقعاً دوباره سالم شود؟", a: "بله، برایِ بسیاری از زوج‌ها ممکن است — اما نه با «فراموش‌کردن»، بلکه با فرایندِ کاملِ کفاره، هم‌آوایی، و بازسازیِ صمیمیت که زمان و کارِ واقعی می‌طلبد. برایِ برخی دیگر، جدایی مسیرِ سالم‌تر است. هردو نتیجه معتبرند." },
+  { rank: 5, category: "اعتماد", q: "چطور بفهمم همسرم واقعاً پشیمان است یا فقط از دست‌دادنِ من می‌ترسد؟", a: "نشانه‌هایِ پشیمانیِ واقعی: مسئولیتِ کامل بدونِ توجیه، شفافیتِ مداوم (نه فقط وقتی پرسیده می‌شود)، صبر در برابرِ خشمِ شما بدونِ دفاع، و اقداماتِ عملیِ مشخص (نه فقط حرف). اگر این‌ها را نمی‌بینید، در جلسه مطرح کنید." },
+  { rank: 6, category: "افکارِ مزاحم", q: "چرا نمی‌توانم تصاویرِ خیانت را از ذهنم بیرون کنم؟", a: "این «فلاش‌بکِ تصوری» نام دارد و مغز آن را دقیقاً مثلِ خاطره‌ی واقعی ثبت می‌کند. تکنیک‌هایِ مواجهه و دفیوژنِ شناختی (جلساتِ ۳ و ۱۱ِ مسیرِ خیانت‌دیده) به‌مرور شدتش را کم می‌کنند — هرگز فوری نیست." },
+  { rank: 7, category: "جزئیات", q: "آیا باید همه‌ی جزئیاتِ خیانت را بدانم؟", a: "نه لزوماً. دانستنِ «چه کسی، چند بار، آیا هنوز ادامه دارد» معمولاً برایِ ایمنیِ روانی لازم است. اما جزئیاتِ گرافیکی (توصیفِ صمیمیتِ فیزیکی) اغلب آسیب بیشتری می‌زند تا کمک. با درمانگرتان دربارهٔ مرزِ درست صحبت کنید." },
+  { rank: 8, category: "فرزندان", q: "به فرزندانم چه بگویم؟", a: "جزئیات را نگویید. جمله‌ی ساده: «من و بابا/مامان داریم رویِ یک مشکلِ بزرگسالانه کار می‌کنیم؛ تقصیرِ شما نیست.» هرگز فرزند را در نقشِ همراز یا واسطه قرار ندهید." },
+  { rank: 9, category: "شرم/گناه", q: "آیا این تقصیرِ من بود؟", a: "نه. خیانت، انتخابِ کسی است که آن را مرتکب شده. حتی اگر رابطه مشکلاتی داشت، خیانت یک انتخاب بود، نه یک پیامدِ اجباری. اگر همسرتان مشکلی با رابطه داشت، راه‌هایِ درست‌ترِ زیادی (گفت‌وگو، درمان) وجود داشت." },
+  { rank: 10, category: "چرایی", q: "چرا کسی که مرا دوست دارد خیانت کرد؟", a: "عشق و وفاداری، دو سیستمِ روانیِ جدا هستند. خیانت اغلب از الگوهایِ درونیِ فرد (نیازِ تایید، ناتوانی در تحملِ کسالت، فرار از تعارض) می‌آید، نه لزوماً کمبودِ عشق. جلسه‌ی ۳ِ مسیرِ خیانت‌کرده این ریشه‌ها را کاوش می‌کند." },
+  { rank: 11, category: "اعتماد", q: "چقدر طول می‌کشد اعتماد دوباره ساخته شود؟", a: "معمولاً ماه‌ها، نه هفته‌ها — برایِ بسیاری، ۱ تا ۲ سال. این نه یک نقطه‌ی پایان، بلکه یک فرایندِ تدریجی از شفافیتِ مکرر است. عجله برایِ «همه‌چیز مثلِ قبل شود» معمولاً نتیجه‌ی معکوس دارد." },
+  { rank: 12, category: "افشا", q: "آیا باید به خانواده/دوستانم بگویم؟", a: "این تصمیم، حقِ شماست، نه دیگران. برخی با گفتن سبک‌تر می‌شوند، برخی با رازداری. هیچ فرمولِ درستِ واحدی نیست — فقط خودتان تصمیم بگیرید چه‌زمانی و به چه‌کسی، نه بر اساسِ ترس یا فشارِ دیگران." },
+  { rank: 13, category: "خشم", q: "چرا هنوز خشمگینم با این‌که او پشیمان به‌نظر می‌رسد؟", a: "خشم، بخشِ طبیعی و حتی سالمِ فرایندِ بهبودی است — نشانه‌ی این است که هنوز به رابطه اهمیت می‌دهید. پشیمانیِ همسرتان، دلیلی برایِ حذفِ فوریِ خشمِ شما نیست؛ این دو می‌توانند هم‌زمان وجود داشته باشند." },
+  { rank: 14, category: "عود", q: "اگر دوباره خیانت کند چه؟", a: "هیچ تضمینِ صددرصدی وجود ندارد، اما نشانه‌هایِ هشدارِ زودهنگام (جلسه‌ی ۲۵ و ۲۲ِ مسیرِ خیانت‌کرده) و قراردادهایِ صریح، ریسک را به‌طورِ چشمگیری کم می‌کنند. اگر لغزشی رخ داد، پروتکلِ افشایِ سریع (نه پنهان‌کاری) کلیدی است." },
+  { rank: 15, category: "صمیمیتِ جنسی", q: "چرا نمی‌توانم رابطه‌ی جنسی داشته باشم؟", a: "این کاملاً طبیعی است. صمیمیتِ جنسی معمولاً آخرین بخشی است که بازسازی می‌شود، نه اول. اجبار به «نرمال‌جلوه‌دادنِ» زودهنگام، معمولاً نتیجه‌ی معکوس دارد — به زمانِ خودتان نیاز دارید." },
+  { rank: 16, category: "بحرانِ اولیه", q: "چرا نمی‌توانم بخوابم/غذا بخورم؟", a: "بدنِ شما در حالتِ شوکِ فیزیولوژیک است — سیستمِ عصبیِ جنگ‌وگریز فعال شده. این معمولاً چند روز تا چند هفته طول می‌کشد. تکنیک‌هایِ تنفس و برنامه‌ی حداقلیِ بقا (جلسه‌ی ۱) می‌توانند کمک کنند، اما اگر بیش از ۲ هفته ادامه یافت، حتماً با درمانگر مطرح کنید." },
+  { rank: 17, category: "تصمیم‌گیری", q: "چطور بفهمم باید بمانم یا بروم؟", a: "هیچ فرمولِ ساده‌ای نیست، اما یک ماتریسِ تصمیم‌گیریِ ساختاریافته (نه فقط احساسِ لحظه‌ای) کمک می‌کند — بررسیِ ارزش‌ها، نشانه‌هایِ پشیمانیِ واقعی، و ظرفیتِ خودتان. جلسه‌ی ۱۰ِ مسیرِ خیانت‌دیده دقیقاً همین ابزار را می‌دهد؛ عجله نکنید." },
+  { rank: 18, category: "چرایی", q: "آیا مشکلاتِ رابطه، خیانت را توجیه می‌کند؟", a: "خیر. مشکلاتِ رابطه می‌توانند «زمینه‌ساز» باشند، اما هرگز «توجیه‌کننده» نیستند — چون همیشه راهِ دیگری (گفت‌وگو، درمان، حتی جدایی) وجود داشت. تفاوتِ فهم و توجیه، دقیقاً همین است." },
+  { rank: 19, category: "هویت", q: "آیا من دیگر همان آدمِ قبل نیستم؟", a: "درست است، دیگر همان آدمِ قبل نیستید — اما این لزوماً بد نیست. بسیاری از خیانت‌دیده‌ها، بعد از این تجربه، تاب‌آوری و خودآگاهیِ عمیق‌تری کسب می‌کنند (رشدِ پس‌ازآسیب). هویتِ شما گسترده‌تر از این یک رویداد است." },
+  { rank: 20, category: "پیشگیری", q: "چطور مطمئن شوم دیگر تکرار نمی‌شود؟", a: "هیچ تضمینِ صددرصدی وجود ندارد، اما مرزهایِ صریح، شفافیتِ مستمر، و شناساییِ زودهنگامِ نشانه‌هایِ فاصله‌گیری (جلساتِ ۲ و ۱۷ِ مسیرِ پیشگیری)، ریسک را به‌طورِ چشمگیری کاهش می‌دهند." },
+  { rank: 21, category: "علل", q: "آیا خیانت همیشه دربارهٔ نارضایتیِ جنسی است؟", a: "خیر، این یکی از رایج‌ترین باورهایِ غلط است. پژوهش‌ها نشان می‌دهند بیشترِ خیانت‌ها از خلأِ هیجانی (احساسِ دیده‌نشدن، کمبودِ توجه، تنهایی در رابطه) می‌آیند، نه صرفاً میلِ جنسی — حتی در رابطه‌هایی که از نظرِ جنسی هم راضی بودند." },
+  { rank: 22, category: "علل", q: "چه‌کسانی بیشتر در معرضِ خطرِ خیانت‌کردن هستند؟", a: "عواملِ خطر شامل: طرحواره‌هایِ اولیه‌ی ناکارآمد (محرومیتِ هیجانی، استحقاق)، سابقه‌ی خانوادگیِ بی‌وفایی، دوره‌هایِ پرفشارِ زندگی (بحرانِ میان‌سالی، تولدِ فرزند)، و فرصت/دسترسیِ بالا (سفرهایِ کاریِ مکرر، همکارانِ جذاب). هیچ‌کدام «سرنوشت» نیستند، فقط ریسک را بالا می‌برند." },
+  { rank: 23, category: "علل", q: "آیا خیانتِ آنلاین/دیجیتال هم واقعاً خیانت است؟", a: "بله. یک رابطه‌ی هیجانیِ عمیقِ دیجیتال (بدونِ تماسِ فیزیکی) می‌تواند به همان اندازه یا حتی بیشتر آسیب‌زا باشد، چون معمولاً پنهان و طولانی‌مدت است. تعریفِ خیانت، بیشتر به «شکستنِ حریمِ صمیمیتِ توافق‌شده» برمی‌گردد تا صرفاً تماسِ فیزیکی." },
+  { rank: 24, category: "چرایی", q: "آیا افرادِ خودشیفته بیشتر خیانت می‌کنند؟", a: "پژوهش‌ها ارتباطِ معناداری بینِ ویژگی‌هایِ خودشیفتگی (نیازِ تاییدِ مداوم، احساسِ استحقاق) و احتمالِ خیانت نشان می‌دهند — اما این به‌معنایِ این نیست که هرکسی خیانت کند خودشیفته است؛ اغلب موردی و موقعیتی است." },
+  { rank: 25, category: "تصمیم‌گیری", q: "اگر بچه داریم، آیا باید فقط برایِ آن‌ها بمانم؟", a: "ماندنِ صرفاً برایِ فرزندان، بدونِ کارِ واقعیِ بهبودی، اغلب به رابطه‌ای پر از تنش منجر می‌شود که خودش به فرزندان آسیب می‌زند. اگر می‌مانید، بگذارید به‌خاطرِ یک تصمیمِ آگاهانه و پس از بررسیِ کامل باشد، نه فقط وظیفه." },
+  { rank: 26, category: "خیانتِ عاطفی", q: "چه فرقی بینِ دوستیِ نزدیک و خیانتِ عاطفی است؟", a: "مرزِ کلیدی: شفافیت. اگر همسرتان از این «دوستی» و محتوایِ آن کاملاً باخبر و راحت است، معمولاً دوستیِ سالم است. اگر پنهانی است، با احساسِ گناه همراه است، یا نیازهایِ هیجانی را از همسرتان به آن فرد منتقل کرده، به سمتِ خیانتِ عاطفی حرکت کرده." },
+  { rank: 27, category: "بازسازی", q: "همسرم می‌گوید فراموش کن و جلو برو — این درست است؟", a: "خیر. «فراموش‌کردن» یک دستورِ روانی نیست که بتوان اجرایش کرد؛ سرکوبِ احساسات معمولاً بعداً شدیدتر بازمی‌گردد. بهبودیِ واقعی از طریقِ پردازشِ کامل (نه فراموشی) می‌گذرد — این را می‌توانید صریح با همسرتان در میان بگذارید." },
+  { rank: 28, category: "شرم/گناه", q: "من که خیانت کردم، آیا حق دارم از خودم خشمگین باشم؟", a: "بله، این طبیعی و حتی سالم است — تا زمانی که این خشم به خودآزاری تبدیل نشود. تفاوتِ گناهِ سازنده و شرمِ فلج‌کننده اینجا مهم است: خشمِ کوتاه‌مدت که به تغییرِ رفتار منجر شود، سازنده است." },
+  { rank: 29, category: "اعتماد", q: "چرا همسرم گوشیِ مرا مدام چک می‌کند؟", a: "بعد از خیانت، این رفتار (حداقل در ابتدا) طبیعی و بخشی از فرایندِ بازسازیِ حسِ امنیت است. مقاومت یا دفاع در برابرِ این بررسی‌ها، معمولاً اعتمادسازی را کند می‌کند. با گذشتِ زمان و شفافیتِ مداوم، این نیاز کاهش می‌یابد." },
+  { rank: 30, category: "علل", q: "آیا اعتیاد به مصرفِ محتوایِ جنسی، خودش نوعی خیانت است؟", a: "این موضوع بسته به توافقِ زوج متفاوت تعریف می‌شود، اما وقتی پنهانی، اجباری، و در تضاد با ارزش‌هایِ توافق‌شده باشد، می‌تواند همان آسیبِ اعتماد را ایجاد کند که خیانتِ فیزیکی می‌کند — و اغلب نیازِ درمانِ تخصصیِ رفتارِ اجباری دارد." },
+  { rank: 31, category: "تصمیم‌گیری", q: "چقدر زمان باید بدهم قبل از تصمیمِ نهایی؟", a: "هیچ عددِ جادویی نیست، اما اکثرِ درمانگران توصیه می‌کنند حداقل ۳ تا ۶ ماه از کارِ درمانیِ فعال بگذرد پیش از قطعی‌کردنِ تصمیمِ ماندن/رفتن — چون شدتِ احساساتِ اولیه، قضاوت را مخدوش می‌کند." },
+  { rank: 32, category: "بازسازی", q: "آیا باید دقیقاً به همان شکلِ قبل از خیانت برگردیم؟", a: "نه، و تلاش برایِ این معمولاً شکست می‌خورد. بهترین بازسازی‌ها، رابطه‌ای «جدید و آگاهانه‌تر» می‌سازند — نه بازگشتِ کامل به گذشته. این طبیعی و حتی مطلوب است." },
+  { rank: 33, category: "خانواده", q: "آیا باید به خانواده‌ی فردِ خیانتکار هم بگویم؟", a: "این کاملاً حقِ شماست، اما به یاد داشته باشید بعد از گفتن، نمی‌توانید پسش بگیرید — و ممکن است روابطِ خانوادگی را برایِ همیشه تغییر دهد. قبل از تصمیم، پیامدهایِ بلندمدتش را با درمانگر بررسی کنید." },
+  { rank: 34, category: "علل", q: "آیا مشکلاتِ جنسی در رابطه، ریسکِ خیانت را بالا می‌برد؟", a: "می‌تواند یکی از عوامل باشد، اما به‌تنهایی به‌ندرت علتِ کافی است. اکثرِ زوج‌هایی که مشکلِ جنسی دارند، خیانت نمی‌کنند — تفاوت در نحوه‌ی مدیریتِ آن مشکل (گفت‌وگو در برابرِ فرار) است." },
+  { rank: 35, category: "افکارِ مزاحم", q: "چرا با دیدنِ یک مکان/آهنگ ناگهان همه‌چیز برمی‌گردد؟", a: "این «محرک» (Trigger) نام دارد — مغز خاطرات را به حواس (بو، صدا، مکان) گره می‌زند. این واکنش غیرِارادی و طبیعی است. تکنیک‌هایِ مواجهه‌یِ تدریجی (جلسه‌ی ۲۱) به‌مرور شدتش را کم می‌کنند." },
+  { rank: 36, category: "بازسازی", q: "همسرم می‌گوید هرگز کامل نمی‌بخشد — یعنی رابطه محکوم به شکست است؟", a: "نه لزوماً. «بخشش» با «فراموشی یا انکار» فرق دارد، و برایِ خیلی‌ها فرایندی تدریجی و ناکامل است. رابطه‌هایِ زیادی حتی بدونِ «بخششِ کامل»، به ثباتِ نسبی و صمیمیتِ جدید رسیده‌اند." },
+  { rank: 37, category: "چرایی", q: "آیا زنان و مردان به دلایلِ متفاوتی خیانت می‌کنند؟", a: "پژوهش‌ها الگوهایِ کمی متفاوت نشان می‌دهند (مثلاً مردان کمی بیشتر بر انگیزه‌هایِ جنسی، زنان کمی بیشتر بر خلأِ هیجانی گزارش می‌دهند) اما همپوشانیِ زیادی هم وجود دارد — تعمیمِ کلیشه‌ای گمراه‌کننده است." },
+  { rank: 38, category: "صمیمیتِ جنسی", q: "آیا طبیعی است که بعد از خیانت، میلِ جنسی‌ام بیشتر شده باشد؟", a: "بله، این هم یک واکنشِ رایج است — گاهی به‌عنوانِ تلاش برایِ «اثباتِ» رابطه یا جذابیت. هیچ واکنشی (میلِ بیشتر یا کمتر) «غیرِعادی» نیست؛ فقط باید مراقب باشید این افزایش، یک واکنشِ اجباری نباشد." },
+  { rank: 39, category: "اعتماد", q: "چرا نمی‌توانم به دوستانِ همسرم هم اعتماد کنم؟", a: "این «تعمیمِ بی‌اعتمادی» طبیعی است — مغز بعد از یک آسیبِ بزرگ، دایره‌ی «خطر» را گسترده‌تر می‌بیند. با زمان و کارِ روی بی‌اعتمادیِ تعمیم‌یافته (جلسه‌ی ۷ِ خیانت‌دیده)، این دایره به‌تدریج محدودتر می‌شود." },
+  { rank: 40, category: "تصمیم‌گیری", q: "اگر او نپذیرد به درمان بیاید، چه کنم؟", a: "می‌توانید مسیرِ فردیِ خودتان را (بدونِ نیازِ حضورِ او) شروع کنید. بسیاری از افراد به‌تنهایی درمان را آغاز می‌کنند و گاهی همین کار، همسرِ مردد را هم به مشارکت ترغیب می‌کند — اما اگر نه، بهبودیِ شما مستقل از تصمیمِ اوست." },
+  { rank: 41, category: "درمانِ خیانت‌کرده", q: "من خیانت کردم — از کجا شروع کنم؟", a: "اولین قدم، مواجهه‌ی کاملِ صادقانه با آنچه اتفاق افتاد است — بدونِ کوچک‌نمایی، بدونِ توجیه. سپس تفکیکِ گناهِ سازنده از شرمِ فلج‌کننده. جلسه‌ی ۱ِ مسیرِ خیانت‌کرده دقیقاً همین‌جا شروع می‌شود." },
+  { rank: 42, category: "بخشش", q: "بخشش یعنی چه — یعنی فراموش‌کردن؟", a: "خیر، این رایج‌ترین سوءتفاهم است. بخششِ روان‌شناختی یعنی رهاشدن از زنجیرِ خشمِ مداوم برایِ آرامشِ خودتان — نه توجیه‌کردنِ عمل، نه فراموشیِ آن، و حتی نه لزوماً ادامه‌ی رابطه. می‌توانید ببخشید و همچنان جدا شوید." },
+  { rank: 43, category: "بخشش", q: "آیا باید حتماً ببخشم تا رابطه ادامه یابد؟", a: "خیر. بسیاری از زوج‌ها بدونِ «بخششِ کامل» (که گاهی سال‌ها طول می‌کشد یا هرگز کامل نمی‌شود)، به ثباتِ نسبی و حتی صمیمیتِ خوب می‌رسند. بخشش یک مسیرِ فردی است، نه پیش‌نیازِ اجباریِ ماندن." },
+  { rank: 44, category: "بخشش", q: "چطور کسی را که این‌قدر به من آسیب زده ببخشم؟", a: "بخشش یک تصمیمِ آنی نیست، فرایندی تدریجی است که با پردازشِ کاملِ خشم (نه سرکوبش) شروع می‌شود. عجله برایِ بخشش، اغلب نتیجه‌ی معکوس دارد؛ اجازه دهید در زمانِ خودش (اگر اصلاً) اتفاق بیفتد." },
+  { rank: 45, category: "فرهنگی", q: "در فرهنگِ ما، آیا زن‌ها باید بیشتر تحمل کنند؟", a: "این یک باورِ فرهنگیِ رایج است، اما از نظرِ روان‌شناختی، تحملِ بی‌حدواندازه بدونِ پردازشِ واقعیِ آسیب، به بیماری‌هایِ روانی/جسمی منجر می‌شود. حقِ درمان و پردازشِ کامل، مستقل از جنسیت، برایِ هر دو نفر یکسان است." },
+  { rank: 46, category: "فرهنگی", q: "خانواده می‌گوید آبرو مهم‌تر است — چه کنم؟", a: "آبرو و سلامتِ روانیِ شما، دو چیزِ متفاوتند. تصمیمِ نهایی حقِ شماست، نه خانواده. می‌توانید هم‌زمان به ملاحظاتِ فرهنگی احترام بگذارید و مرزهایِ روشنی برایِ حفاظت از خودتان بکشید." },
+  { rank: 47, category: "مذهبی", q: "دین دربارهٔ بخشیدنِ خیانت چه می‌گوید؟", a: "ادیان معمولاً هم بر ارزشِ بخشش تاکید دارند، هم بر عدالت و مسئولیت‌پذیریِ فردِ خطاکار. این دو با هم در تضاد نیستند — بخشش، به‌معنایِ نادیده‌گرفتنِ نیازِ عدالت یا حفاظتِ خود نیست. برایِ راهنماییِ دقیق‌تر، مشورت با یک عالمِ آگاه هم می‌تواند کمک‌کننده باشد." },
+  { rank: 48, category: "درمانِ خیانت‌کرده", q: "چرا نمی‌توانم خودم را ببخشم با این‌که او مرا بخشیده؟", a: "بخششِ دیگری، خودکار به خودبخشی منجر نمی‌شود. این دو فرایندِ جداگانه‌اند. جلساتِ خودشفقتی (جلسه‌ی ۹ِ مسیرِ خیانت‌کرده) دقیقاً برایِ این شکاف طراحی شده‌اند." },
+  { rank: 49, category: "درمانِ خیانت‌کرده", q: "همسرم می‌گوید هرگز فراموش نمی‌کند — یعنی هیچ‌وقت واقعاً ببخشد؟", a: "«فراموش‌نکردن» با «نبخشیدن» فرق دارد. ممکن است او خاطره را همیشه داشته باشد، اما همچنان بتواند خشمِ روزانه را رها کند و صمیمیت بسازد. این جمله را لزوماً به‌معنایِ بن‌بست نگیرید." },
+  { rank: 50, category: "کودکان", q: "بچه‌ی نوجوانم فهمیده — چطور با او صحبت کنم؟", a: "نوجوانان برخلافِ کودکانِ کوچک‌تر، اغلب حقیقت را حس می‌کنند. صادق باشید اما بدونِ جزئیاتِ آسیب‌زا: «بله، مشکلی بینِ من و پدر/مادرت هست که داریم رویش کار می‌کنیم.» از قراردادنِ او در نقشِ همراز یا داور جداً پرهیز کنید." },
+  { rank: 51, category: "کودکان", q: "آیا خیانتِ والدین بر آینده‌ی روابطِ فرزندان اثر می‌گذارد؟", a: "پژوهش‌ها نشان می‌دهند فرزندانی که شاهدِ خیانتِ والدین بوده‌اند، کمی بیشتر در معرضِ اضطرابِ دلبستگی در روابطِ آینده‌ی خود هستند — اما این «سرنوشت» نیست. نحوه‌ی مدیریتِ بحران توسطِ والدین (نه خودِ خیانت) تاثیرِ بیشتری دارد." },
+  { rank: 52, category: "خیانتِ مکرر", q: "این بارِ دوم است — آیا فرقی می‌کند؟", a: "بله. خیانتِ تکرارشونده معمولاً نشانه‌ی الگویِ عمیق‌تری (طرحواره‌ای یا حتی رفتارِ اجباری) است که نیازِ کارِ درمانیِ بسیار جدی‌تر و زمان‌برتری دارد. ارزیابیِ ریسکِ تکرارِ سوم، پیش از تصمیمِ ماندن، ضروری است." },
+  { rank: 53, category: "درمانِ خیانت‌کرده", q: "آیا باید هر روز از او عذرخواهی کنم؟", a: "عذرخواهیِ مکرر و روزانه، به‌مرور بی‌معنا و حتی خسته‌کننده می‌شود. به‌جایِ کلمات، روی اقداماتِ مداوم (شفافیت، صبر، تغییرِ رفتار) تمرکز کنید — این‌ها از هزار عذرخواهی موثرترند." },
+  { rank: 54, category: "اعتماد", q: "چند بار باید همان سوال را دربارهٔ خیانت بپرسم تا قانع شوم؟", a: "این تعدادِ ثابتی ندارد و طبیعی است که چندین بار تکرار شود — مغز برایِ پردازشِ کاملِ یک خبرِ آسیب‌زا، نیاز به شنیدنِ مکرر دارد. اگر همسرتان با صبر پاسخ می‌دهد، این تکرار بخشِ سالمِ فرایند است." },
+  { rank: 55, category: "علل", q: "آیا اختلافِ سنی یا فرهنگی ریسکِ خیانت را بالا می‌برد؟", a: "شواهدِ قوی‌ای برایِ این ادعا وجود ندارد. عاملِ اصلی، کیفیتِ ارتباط و مدیریتِ تفاوت‌هاست، نه خودِ تفاوت‌هایِ سنی/فرهنگی." },
+  { rank: 56, category: "صمیمیتِ جنسی", q: "همسرم بعد از خیانتش، دیگر جذبِ من نمی‌شود — طبیعی است؟", a: "بله، تصاویرِ ذهنیِ مزاحم یا مقایسه‌هایِ ناخواسته می‌تواند موقتاً میل را کاهش دهد. این واکنشی گذرا در بیشترِ افراد است و با کارِ درمانی (جلسه‌ی ۲۳) قابلِ‌بهبود است." },
+  { rank: 57, category: "بازسازی", q: "آیا زوج‌درمانی به‌تنهایی کافی است یا درمانِ فردی هم لازم است؟", a: "بهترین نتیجه معمولاً از ترکیبِ هردو حاصل می‌شود — درمانِ فردی برایِ پردازشِ آسیبِ شخصی، زوج‌درمانی برایِ بازسازیِ رابطه. یکی به‌تنهایی، اغلب نیمی از کار را انجام می‌دهد." },
+  { rank: 58, category: "چرایی", q: "آیا خیانت همیشه از قبل برنامه‌ریزی‌شده است؟", a: "خیر، طیفِ وسیعی وجود دارد — از لغزشِ ناگهانی و ناخواسته تا رابطه‌ی برنامه‌ریزی‌شده و طولانی‌مدت. نوعِ خیانت، تاثیرِ زیادی بر نوعِ درمانِ لازم دارد." },
+  { rank: 59, category: "درمانِ خیانت‌کرده", q: "چرا همسرم می‌گوید حرف‌هایم قانع‌کننده نیست؟", a: "توضیح‌دادنِ «چرایی» با صدایِ آرام و منطقی، ممکن است به‌عنوانِ «توجیه‌گری» شنیده شود — حتی اگر نیتِ شما فقط شفافیت باشد. تمرینِ تشخیصِ زمانِ توضیح‌دادن از زمانِ فقط‌گوش‌دادن (جلسه‌ی ۵) کمک می‌کند." },
+  { rank: 60, category: "پیشگیری", q: "بعد از بازسازی، چطور از تکرار پیشگیری کنیم؟", a: "قراردادِ صریحِ مرزها، جلسه‌ی هفتگیِ ثابت برایِ گفت‌وگو، و شناساییِ زودهنگامِ نشانه‌هایِ فاصله‌گیری — این سه، ستون‌هایِ اصلیِ پیشگیریِ درازمدت‌اند (پوشش‌داده‌شده در بستهٔ «تعهد و پیشگیری»)." },
+];
+
+// چک‌این‌هایِ دوره‌ایِ کوتاه — سنجشِ سریعِ خلق/رابطه بینِ جلسات، برایِ رصدِ مستمر
+// هر آیتم: ۱=بد، ۵=خوب (سوالاتِ منفی معکوس شده‌اند تا جهتِ یکسان داشته باشند)
+const CHECKIN_ITEMS = [
+  { key: "mood", q: "این چند روز، به‌طورِ کلی خلقم چطور بوده؟", keyword: "خلق" },
+  { key: "closeness", q: "احساسِ نزدیکی به همسرم چقدر بوده؟", keyword: "صمیمیت" },
+  { key: "conflict", q: "دفعاتِ تعارض/دعوا چقدر کم بوده؟", keyword: "تعارض" },
+  { key: "practice", q: "چقدر توانستم از تکنیک‌ها/تمرین‌ها استفاده کنم؟", keyword: "تمرین" },
+  { key: "hope", q: "سطحِ امیدواری‌ام به بهبودی چقدر است؟", keyword: "امید" },
+  { key: "rumination", q: "چقدر کمتر درگیرِ افکارِ مزاحم/نشخوارِ فکری بودم؟", keyword: "نشخوار" },
+];
+// آستانه‌یِ زمان‌بندیِ پیشنهادی برایِ چک‌این، بر اساسِ شدتِ مسیرِ درمانی
+const SUGGESTED_CHECKIN_DAYS = { betrayed: 4, unfaithful: 4, advanced: 7, moderate: 14 };
 
 function genCode() {
   let c = "";
@@ -3387,6 +3464,49 @@ function MiniLineChart({ points, width = 300, height = 140, color = "#2B6777" })
   );
 }
 
+function FAQScreen({ onBack }) {
+  const [query, setQuery] = useState("");
+  const [openId, setOpenId] = useState(null);
+  const sorted = [...INFIDELITY_FAQ].sort((a, b) => a.rank - b.rank);
+  const filtered = query
+    ? sorted.filter((f) => (f.q + " " + f.a + " " + f.category).toLowerCase().includes(query.toLowerCase()))
+    : sorted;
+
+  return (
+    <Card>
+      <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+      <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>❓ سوالاتِ کلیدیِ خیانتِ زناشویی</h2>
+      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 14 }}>
+        رتبه‌بندی‌شده بر اساسِ اهمیت — راهنماییِ سریع، نه جایگزینِ جلساتِ کامل.
+      </p>
+      <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="🔍 جست‌وجو در سوالات..."
+        style={{ width: "100%", padding: "10px 14px", borderRadius: 12, border: "1.5px solid #C9DEE8", fontSize: 12.5, marginBottom: 14, boxSizing: "border-box" }} />
+      {filtered.length === 0 ? (
+        <p style={{ textAlign: "center", fontSize: 12, color: "#8CA3B0", padding: "20px 0" }}>چیزی پیدا نشد.</p>
+      ) : filtered.map((f) => (
+        <div key={f.rank} style={{ borderBottom: "1px solid #F0F4F7", marginBottom: 4 }}>
+          <button onClick={() => setOpenId(openId === f.rank ? null : f.rank)}
+            style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 2px", border: "none", background: "none", cursor: "pointer", textAlign: "right" }}>
+            <span style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D" }}>
+              <span style={{ color: "#8CA3B0", fontWeight: 600 }}>#{f.rank}</span> {f.q}
+            </span>
+            <span style={{ fontSize: 16, color: "#2B6777", flexShrink: 0, marginRight: 6, transform: openId === f.rank ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
+          </button>
+          {openId === f.rank && (
+            <div style={{ padding: "0 2px 14px" }}>
+              <span style={{ fontSize: 9.5, fontWeight: 700, color: "#4C8778", background: "#F3F8F5", padding: "2px 8px", borderRadius: 999 }}>{f.category}</span>
+              <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.95, margin: "8px 0 0" }}>{f.a}</p>
+            </div>
+          )}
+        </div>
+      ))}
+      <p style={{ textAlign: "center", fontSize: 10, color: "#8CA3B0", marginTop: 14 }}>
+        {INFIDELITY_FAQ.length} سوال از ۵۰۰ — به‌مرور تکمیل می‌شود.
+      </p>
+    </Card>
+  );
+}
+
 function MyProgressScreen({ onBack, userEmail }) {
   const [serverData, setServerData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -3480,6 +3600,71 @@ function MyProgressScreen({ onBack, userEmail }) {
 }
 
 // ---------- برنامه‌ی ایمنی — ابزارِ مستقلِ پیشگیریِ بحران ----------
+// ---------- معرفیِ جامعِ اپ — نمایش در اولین بازدید، قابلِ‌بازکردنِ مجدد از کنارِ موضوعات ----------
+const ONBOARDING_SLIDES = [
+  {
+    icon: "🌿",
+    title: "به آکادمیِ روان‌شناختیِ دکتر مجتبی عقیلی خوش آمدید",
+    body: "این‌جا فضایی است برایِ کار کردنِ عمیق و علمی رویِ رابطه‌تان — چه به‌تنهایی، چه همراهِ همسرتان. هر موضوع، یک مسیرِ مستقل و تخصصی دارد.",
+  },
+  {
+    icon: "🗂️",
+    title: "موضوعات، مستقل از هم",
+    body: "هر باکس (مثلِ «خیانتِ زناشویی» یا «افزایشِ وفاداری و تعهد») یک برنامه‌ی جداگانه است. برخی هم‌اکنون فعال‌اند، بقیه به‌مرور و با دقتِ علمی اضافه می‌شوند.",
+  },
+  {
+    icon: "📈",
+    title: "پیشرفت، چک‌این، و برنامه‌ی ایمنی",
+    body: "بعد از ورود/ثبت‌نام، سه ابزارِ همیشگی در دسترسِ شماست: «پیشرفتِ من» (روندِ خلق‌تان)، «چک‌این» (سنجشِ دوره‌یِ کوتاه با پیشنهادِ خودکارِ جلسه)، و «برنامه‌ی ایمنی» (برایِ لحظاتِ سخت).",
+  },
+  {
+    icon: "🔍",
+    title: "جست‌وجو در هر بسته",
+    body: "داخلِ هر بسته‌ی خریداری‌شده، می‌توانید موضوعِ خاصی (مثلاً «تنفس» یا «اعتماد») را مستقیماً جست‌وجو کنید تا سریع به جلسه‌ی مرتبط برسید.",
+  },
+  {
+    icon: "🔒",
+    title: "حریمِ خصوصیِ شما محفوظ است",
+    body: "پاسخ‌ها و یادداشت‌هایتان فقط توسطِ دکتر عقیلی و از طریقِ پنلِ محافظت‌شده دیده می‌شود. در هر زمان می‌توانید درخواستِ حذفِ کاملِ اطلاعاتتان را مطرح کنید.",
+  },
+];
+function OnboardingModal({ onClose }) {
+  const [step, setStep] = useState(0);
+  const slide = ONBOARDING_SLIDES[step];
+  const isLast = step === ONBOARDING_SLIDES.length - 1;
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(20,30,35,0.55)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
+      <div style={{ background: "#fff", borderRadius: 20, padding: "24px 20px 20px", maxWidth: 360, width: "100%", textAlign: "center", boxShadow: "0 20px 50px rgba(0,0,0,0.25)" }}>
+        <div style={{ fontSize: 40, marginBottom: 10 }}>{slide.icon}</div>
+        <h3 style={{ fontSize: 15.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 10px" }}>{slide.title}</h3>
+        <p style={{ fontSize: 12.5, color: "#5A7080", lineHeight: 2, margin: "0 0 20px" }}>{slide.body}</p>
+        <div style={{ display: "flex", justifyContent: "center", gap: 5, marginBottom: 18 }}>
+          {ONBOARDING_SLIDES.map((_, i) => (
+            <div key={i} style={{ width: i === step ? 18 : 6, height: 6, borderRadius: 999, background: i === step ? "#2B6777" : "#DCE8F0", transition: "all 0.2s" }} />
+          ))}
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          {step > 0 && (
+            <button onClick={() => setStep(step - 1)}
+              style={{ flex: 1, padding: "11px", borderRadius: 12, border: "1px solid #DCE8F0", background: "#fff", color: "#5A7080", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              قبلی
+            </button>
+          )}
+          <button onClick={() => (isLast ? onClose() : setStep(step + 1))}
+            style={{ flex: 2, padding: "11px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+            {isLast ? "شروع کنیم ←" : "بعدی"}
+          </button>
+        </div>
+        {!isLast && (
+          <button onClick={onClose} style={{ border: "none", background: "none", color: "#B0BEC5", fontSize: 11, cursor: "pointer", marginTop: 12, padding: 0 }}>
+            ردکردنِ معرفی
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function SafetyPlanScreen({ onBack, userEmail }) {
   const storageKey = `safety_plan_${userEmail || "anon"}`;
   const [plan, setPlan] = useState(() => {
@@ -3537,7 +3722,118 @@ function SafetyPlanScreen({ onBack, userEmail }) {
   );
 }
 
-// ---------- ویجتِ هماهنگیِ زوجین — نمایشِ پیشرفتِ همسر در بسته‌هایِ مشترک ----------
+// ---------- چک‌اینِ دوره‌ای — پایشِ کوتاهِ خلق/رابطه + پیشنهادِ خودکارِ جلسه ----------
+function CheckinScreen({ onBack, userEmail, unlockedSessions, defaultIntervalDays }) {
+  const [answers, setAnswers] = useState({});
+  const [intervalDays, setIntervalDays] = useState(defaultIntervalDays || 7);
+  const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  function setAnswer(key, val) {
+    setAnswers((prev) => ({ ...prev, [key]: val }));
+  }
+
+  const allAnswered = CHECKIN_ITEMS.every((it) => answers[it.key] != null);
+  const lowItems = CHECKIN_ITEMS.filter((it) => answers[it.key] != null && answers[it.key] <= 2);
+
+  // پیشنهادِ جلسه بر اساسِ آیتم‌هایِ کم‌امتیاز: جست‌وجو در جلساتِ بازشده‌یِ کاربر
+  const suggestions = useMemo(() => {
+    if (!submitted || !unlockedSessions?.length) return [];
+    const results = [];
+    lowItems.forEach((item) => {
+      for (const sid of unlockedSessions) {
+        const [pkgKey, numStr] = [sid.split("-").slice(0, -1).join("-"), sid.split("-").slice(-1)[0]];
+        const num = Number(numStr);
+        if (!TREATMENT_PACKAGES[pkgKey]) continue;
+        const sess = getSessionContent(pkgKey, num, null, "excellent");
+        if (sessionMatchesSearch(sess, item.keyword) && !results.find((r) => r.sid === sid)) {
+          results.push({ sid, title: sess.title, reason: item.q, pkgKey, num });
+          break; // فقط یک پیشنهاد به‌ازایِ هر آیتمِ کم‌امتیاز
+        }
+      }
+    });
+    return results;
+  }, [submitted]);
+
+  async function handleSubmit() {
+    setSaving(true);
+    try {
+      await fetch("/api/checkin", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userEmail, answers, intervalDays }),
+      });
+    } catch (e) {}
+    setSaving(false);
+    setSubmitted(true);
+  }
+
+  if (submitted) {
+    return (
+      <Card>
+        <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+        <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>✅ چک‌این ثبت شد</h2>
+        <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>ممنون — چک‌اینِ بعدی طبقِ زمان‌بندی‌تان یادآوری می‌شود.</p>
+        {suggestions.length > 0 ? (
+          <>
+            <p style={{ fontSize: 12.5, fontWeight: 700, color: "#B9822F", margin: "0 0 10px" }}>بر اساسِ پاسخ‌هایتان، پیشنهاد می‌کنیم این جلسات را مرور کنید:</p>
+            {suggestions.map((s, i) => (
+              <div key={i} style={{ background: "#FBF3E2", borderRadius: 10, padding: "10px 12px", marginBottom: 8 }}>
+                <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", margin: "0 0 3px" }}>{s.title}</p>
+                <p style={{ fontSize: 10.5, color: "#7A5B2E", margin: 0 }}>دلیل: {s.reason}</p>
+              </div>
+            ))}
+          </>
+        ) : (
+          <div style={{ background: "#F3F8F5", borderRadius: 10, padding: "12px 14px" }}>
+            <p style={{ fontSize: 12, color: "#4C8778", margin: 0 }}>🌱 وضعیتتان خوب به‌نظر می‌رسد — همین مسیر را ادامه دهید.</p>
+          </div>
+        )}
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+      <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📋 چک‌اینِ دوره‌ای</h2>
+      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>۶ سوالِ کوتاه، ۲ دقیقه — برایِ رصدِ روندِ حالتان بینِ جلسات.</p>
+
+      {CHECKIN_ITEMS.map((item) => (
+        <div key={item.key} style={{ marginBottom: 14 }}>
+          <p style={{ fontSize: 12, fontWeight: 600, color: "#1F2D3D", margin: "0 0 6px" }}>{item.q}</p>
+          <div style={{ display: "flex", gap: 5 }}>
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button key={n} onClick={() => setAnswer(item.key, n)}
+                style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1.5px solid ${answers[item.key] === n ? "#2B6777" : "#DCE8F0"}`, background: answers[item.key] === n ? "#2B6777" : "#fff", color: answers[item.key] === n ? "#fff" : "#5A7080", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                {n}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div style={{ background: "#F7FAFC", borderRadius: 10, padding: "10px 12px", marginBottom: 16 }}>
+        <p style={{ fontSize: 11.5, fontWeight: 700, color: "#3A4A52", margin: "0 0 6px" }}>هر چند روز یک‌بار یادآوریِ چک‌این می‌خواهید؟</p>
+        <div style={{ display: "flex", gap: 6 }}>
+          {[4, 7, 14].map((d) => (
+            <button key={d} onClick={() => setIntervalDays(d)}
+              style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1.5px solid ${intervalDays === d ? "#4C8778" : "#DCE8F0"}`, background: intervalDays === d ? "#4C8778" : "#fff", color: intervalDays === d ? "#fff" : "#5A7080", fontWeight: 700, fontSize: 11.5, cursor: "pointer" }}>
+              هر {d} روز
+            </button>
+          ))}
+        </div>
+        {defaultIntervalDays && <p style={{ fontSize: 10, color: "#8CA3B0", margin: "6px 0 0" }}>پیشنهادِ ما بر اساسِ مسیرِ درمانی‌تان: هر {defaultIntervalDays} روز.</p>}
+      </div>
+
+      <button onClick={handleSubmit} disabled={!allAnswered || saving}
+        style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: allAnswered ? "#2B6777" : "#C9DEE8", color: "#fff", fontWeight: 700, fontSize: 13, cursor: allAnswered ? "pointer" : "default" }}>
+        {saving ? "در حالِ ثبت..." : "ثبتِ چک‌این"}
+      </button>
+    </Card>
+  );
+}
+
+
 function PartnerSyncWidget({ userEmail, pkgKey, totalSessions }) {
   const storageKey = `partner_email_${userEmail}`;
   const [partnerEmail, setPartnerEmailState] = useState(() => {
@@ -3711,37 +4007,20 @@ function DomainBarChart({ p1, p2, domains }) {
 // ---------- Main App ----------
 function PricingTiers({ tier, scores, onOpenLibrary }) {
   const [chosenTrack, setChosenTrack] = useState(null);
-  const [gateStep, setGateStep] = useState(1);
+  const [gateStep, setGateStep] = useState(2);
   if (tier === "healthy") return null;
   const weakestDomain = scores
     ? Object.entries(scores).sort((a, b) => a[1] - b[1])[0]?.[0]
     : null;
 
   if (!chosenTrack) {
-    if (gateStep === 1) {
-      return (
-        <div style={{ marginTop: 18, padding: "16px 16px 14px", borderRadius: 18, background: "#F3F8F5", border: "2px solid #4C8778" }}>
-          <p style={{ fontSize: 14, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>🎯 خریدِ دوره: بهبودِ تعهد در رابطه و پیشگیری از خیانت / درمانِ خیانت</p>
-          <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
-            بر اساسِ نتیجه‌تان، می‌توانید یک دوره‌ی درمانیِ آنلاین (شاملِ چند جلسه‌ی آموزشی و تمرینی) خریداری کنید. برایِ پیشنهادِ دوره‌ی درست: آیا در رابطه‌یِ شما تاکنون خیانتی رخ داده (یا افشا شده) است؟
-          </p>
-          <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={() => setChosenTrack("moderate")}
-              style={{ flex: 1, padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
-              خیر — بهبودِ تعهد و پیشگیریِ خیانت
-            </button>
-            <button onClick={() => setGateStep(2)}
-              style={{ flex: 1, padding: "11px", borderRadius: 12, border: "none", background: "#8A5A4E", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
-              بله — دوره‌ی درمانِ خیانت
-            </button>
-          </div>
-        </div>
-      );
-    }
     if (gateStep === 2) {
       return (
         <div style={{ marginTop: 18, padding: "16px 16px 14px", borderRadius: 18, background: "#FBF0EC", border: "1px solid #E8C9BC" }}>
-          <button onClick={() => setGateStep(1)} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 10.5, cursor: "pointer", marginBottom: 8, padding: 0 }}>‹ بازگشت</button>
+          <p style={{ fontSize: 12.5, fontWeight: 700, color: "#8A5A4E", margin: "0 0 4px" }}>🕊️ درمانِ خیانتِ زناشویی</p>
+          <p style={{ fontSize: 11.5, color: "#5A7080", lineHeight: 1.9, margin: "0 0 12px" }}>
+            خیانتِ زناشویی در زندگیِ شما اتفاق افتاده (یا افشا شده) و می‌خواهید این آسیب را واقعاً درمان کنید — فارغ از این‌که در پایان تصمیم به ماندن بگیرید یا رفتن. این تصمیم، بعداً و در زمانِ خودتان گرفته می‌شود؛ همین حالا فقط برایِ بهبودی قدم بردارید.
+          </p>
           <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
             می‌خواهید مسیرِ درمانی به‌صورتِ **جلساتِ مشترک با همسرتان** باشد، یا یک **مسیرِ فردیِ مستقل** برایِ خودتان؟
           </p>
@@ -3789,7 +4068,7 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
       background: isPostInfidelity ? "#FBF0EC" : "#F3F8F5",
       border: `1px solid ${isPostInfidelity ? "#E8C9BC" : "#CFE6D8"}`,
     }}>
-      <button onClick={() => { setChosenTrack(null); setGateStep(1); }} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 10.5, cursor: "pointer", marginBottom: 6, padding: 0 }}>
+      <button onClick={() => { setChosenTrack(null); setGateStep(2); }} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 10.5, cursor: "pointer", marginBottom: 6, padding: 0 }}>
         ‹ تغییرِ پاسخ
       </button>
       <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>
@@ -3944,6 +4223,16 @@ export default function App() {
   const [linkCopyStatus, setLinkCopyStatus] = useState("idle");
   const [user, setUser] = useState(null);
   const [showBio, setShowBio] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem("naghshe_onboarding_seen")) setShowOnboarding(true);
+    } catch (e) {}
+  }, []);
+  function closeOnboarding() {
+    setShowOnboarding(false);
+    try { localStorage.setItem("naghshe_onboarding_seen", "1"); } catch (e) {}
+  }
   const [libraryPkg, setLibraryPkg] = useState("moderate");
   const [libraryWeakestDomain, setLibraryWeakestDomain] = useState(null);
   const [librarySearchQuery, setLibrarySearchQuery] = useState("");
@@ -3960,7 +4249,12 @@ export default function App() {
   const [patientEmailInput, setPatientEmailInput] = useState("");
   const [patientData, setPatientData] = useState(null);
   const [patientMsg, setPatientMsg] = useState("");
+  const [deleteEmailInput, setDeleteEmailInput] = useState("");
+  const [deleteConfirmInput, setDeleteConfirmInput] = useState("");
+  const [deleteMsg, setDeleteMsg] = useState("");
+  const [deleteBusy, setDeleteBusy] = useState(false);
   const [inactiveUsers, setInactiveUsers] = useState(null);
+  const [riskAlerts, setRiskAlerts] = useState(null);
   const [redeemCode, setRedeemCode] = useState("");
   const [redeemMsg, setRedeemMsg] = useState("");
   const [sessionLevel, setSessionLevel] = useState("excellent");
@@ -4057,6 +4351,38 @@ export default function App() {
       if (!r.ok) throw new Error(data.error || "خطا");
       setInactiveUsers(data.users || []);
     } catch (e) { console.error(e); }
+  }
+
+  async function loadRiskAlerts() {
+    try {
+      const r = await fetch(`/api/risk-alerts?adminPass=${encodeURIComponent(ADMIN_PASS)}`);
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setRiskAlerts(data.alerts || []);
+    } catch (e) { console.error(e); }
+  }
+
+  useEffect(() => {
+    if (screen === "admin") loadRiskAlerts();
+  }, [screen]);
+
+  async function handleDeleteUserData() {
+    if (!deleteEmailInput || deleteConfirmInput !== deleteEmailInput) {
+      setDeleteMsg("ایمیل و تاییدیه باید دقیقاً یکسان باشند.");
+      return;
+    }
+    setDeleteBusy(true); setDeleteMsg("");
+    try {
+      const r = await fetch(`/api/delete-user-data?adminPass=${encodeURIComponent(ADMIN_PASS)}`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: deleteEmailInput, confirm: deleteConfirmInput }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setDeleteMsg(`✅ حذف شد — ${data.deletedCount} کلید پاک شد.`);
+      setDeleteEmailInput(""); setDeleteConfirmInput("");
+    } catch (e) { setDeleteMsg(e.message); }
+    setDeleteBusy(false);
   }
 
   function generatePreviewAnswers(profile) {
@@ -4320,6 +4646,7 @@ export default function App() {
 
   return (
     <div dir="rtl" style={{ ...FONT, minHeight: "100vh", background: "#EAF4FB", padding: "24px 16px" }}>
+      {showOnboarding && <OnboardingModal onClose={closeOnboarding} />}
       <style>{`
         ${FONT_IMPORT}
         * { box-sizing: border-box; }
@@ -4365,8 +4692,12 @@ export default function App() {
               <p style={{ fontSize: 10, color: "#2B6777", fontWeight: 700, margin: "0 0 6px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
               <div>
                 <button onClick={() => setShowBio(!showBio)}
-                  style={{ border: "1px solid #2B6777", background: showBio ? "#2B6777" : "#fff", color: showBio ? "#fff" : "#2B6777", padding: "4px 12px", borderRadius: 999, fontSize: 10.5, fontWeight: 700, cursor: "pointer", marginBottom: 4 }}>
+                  style={{ border: "1px solid #2B6777", background: showBio ? "#2B6777" : "#fff", color: showBio ? "#fff" : "#2B6777", padding: "4px 12px", borderRadius: 999, fontSize: 10.5, fontWeight: 700, cursor: "pointer", marginBottom: 4, marginLeft: 5 }}>
                   دربارهٔ دکتر عقیلی
+                </button>
+                <button onClick={() => setShowOnboarding(true)}
+                  style={{ border: "1px solid #B9822F", background: "#fff", color: "#B9822F", padding: "4px 12px", borderRadius: 999, fontSize: 10.5, fontWeight: 700, cursor: "pointer", marginBottom: 4 }}>
+                  🧭 راهنمایِ اپ
                 </button>
               </div>
               {showBio && (
@@ -4385,7 +4716,11 @@ export default function App() {
               {TOPICS.map((t) => (
                 <button
                   key={t.key}
-                  onClick={() => { if (t.enabled) setScreen("start"); }}
+                  onClick={() => {
+                    if (!t.enabled) return;
+                    if (t.key === "prevention") openSessionLibrary("moderate");
+                    else setScreen("start");
+                  }}
                   style={{
                     position: "relative", overflow: "hidden", textAlign: "center",
                     height: 92, borderRadius: 16, cursor: t.enabled ? "pointer" : "default",
@@ -4417,6 +4752,10 @@ export default function App() {
           </div>
         )}
 
+        {screen === "faq" && (
+          <FAQScreen onBack={() => setScreen("start")} />
+        )}
+
         {screen === "myProgress" && (
           <MyProgressScreen onBack={() => setScreen("topics")} userEmail={user?.email} />
         )}
@@ -4424,6 +4763,17 @@ export default function App() {
         {screen === "safetyPlan" && (
           <SafetyPlanScreen onBack={() => setScreen("topics")} userEmail={user?.email} />
         )}
+
+        {screen === "checkin" && (() => {
+          const activePkgs = [...new Set(unlockedSessions.map((sid) => sid.split("-").slice(0, -1).join("-")))];
+          const defaultIntervalDays = activePkgs.length
+            ? Math.min(...activePkgs.map((p) => SUGGESTED_CHECKIN_DAYS[p] || 7))
+            : 7;
+          return (
+            <CheckinScreen onBack={() => setScreen("topics")} userEmail={user?.email}
+              unlockedSessions={unlockedSessions} defaultIntervalDays={defaultIntervalDays} />
+          );
+        })()}
 
         {screen === "start" && (
           <Card style={{ padding: 0, overflow: "hidden" }}>
@@ -4440,7 +4790,7 @@ export default function App() {
               <div style={{ position: "absolute", top: 10, left: 12, fontSize: 11 }}>
                 {user ? (
                   <span style={{ color: "#EAF2F9" }}>
-                    سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a> · <a onClick={() => setScreen("safetyPlan")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>برنامه‌ی ایمنی</a> · <a onClick={logout} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
+                    سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a> · <a onClick={() => setScreen("checkin")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>چک‌این</a> · <a onClick={() => setScreen("safetyPlan")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>برنامه‌ی ایمنی</a> · <a onClick={logout} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
                   </span>
                 ) : (
                   <a onClick={() => setScreen("authLogin")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>ورود / ثبت‌نام</a>
@@ -4457,6 +4807,11 @@ export default function App() {
             </div>
 
             <div style={{ padding: "22px 20px 20px" }}>
+              <button onClick={() => setScreen("faq")}
+                style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #8A5A4E", background: "#FBF0EC", color: "#8A5A4E", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 16 }}>
+                ❓ سوالاتِ رایج دربارهٔ خیانتِ زناشویی — پاسخِ سریع
+              </button>
+
               <p style={{ fontSize: 12, fontWeight: 700, color: "#8CA3B0", textAlign: "center", margin: "0 0 14px" }}>
                 یکی از این دو روش را انتخاب کنید
               </p>
@@ -4531,7 +4886,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۱۰-۰۳ / بازطراحیِ صفحه‌ی موضوعات: کارت‌هایِ ظریف‌تر، ۳ستونی، فشرده‌تر — بدونِ اسکرول
+              نسخه: ۲۰۲۶-۱۰-۱۱ / معرفیِ جامعِ اپ (Onboarding) + اسکنِ خودکارِ یادداشت‌هایِ پرخطر + حذفِ واقعیِ داده‌هایِ کاربر
             </p>
             </div>
           </Card>
@@ -5274,6 +5629,22 @@ export default function App() {
 
         {screen === "admin" && (
           <>
+          {riskAlerts && riskAlerts.length > 0 && (
+            <Card style={{ background: "#FBEAEA", border: "2px solid #A6432F" }}>
+              <p style={{ fontSize: 14, fontWeight: 800, color: "#A6432F", marginBottom: 8 }}>
+                🚨 هشدارِ فوری — {riskAlerts.length} یادداشتِ حاویِ کلماتِ بحرانی
+              </p>
+              <div style={{ maxHeight: 260, overflowY: "auto" }}>
+                {riskAlerts.map((a, i) => (
+                  <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "10px 12px", marginBottom: 8, border: "1px solid #E8C9BC" }}>
+                    <p style={{ fontSize: 11.5, fontWeight: 700, color: "#1F2D3D", margin: "0 0 3px" }}>{a.userEmail}</p>
+                    <p style={{ fontSize: 10, color: "#8CA3B0", margin: "0 0 4px" }}>{new Date(a.ts).toLocaleString("fa-IR")} · {a.techniqueId}</p>
+                    <p style={{ fontSize: 11.5, color: "#5A7080", margin: 0 }}>«{a.notePreview}...»</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>👁️ پیش‌نمایشِ صفحه‌ی نتیجه (بدونِ پرکردنِ فرم، بدونِ ذخیره‌شدن)</p>
             <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>برایِ بررسی و طراحی؛ داده‌ها تصادفی‌اند و در پایگاه‌داده ثبت نمی‌شوند.</p>
@@ -5331,6 +5702,26 @@ export default function App() {
                 <p style={{ fontSize: 18, fontWeight: 800, color: "#7A5B2E", letterSpacing: 2, margin: 0 }}>{generatedCode}</p>
               </div>
             )}
+          </Card>
+          <Card style={{ border: "1.5px solid #A6432F" }}>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#A6432F", marginBottom: 4 }}>🗑️ حذفِ کاملِ داده‌هایِ یک کاربر</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+              برایِ وفای به قولِ «حقِ حذف» در متنِ رضایتِ حریمِ خصوصی. این عملیات <b>غیرقابلِ‌بازگشت</b> است — همه‌ی پاسخ‌ها، یادداشت‌ها، و روندِ خلقِ این کاربر برایِ همیشه پاک می‌شود.
+            </p>
+            <input value={deleteEmailInput} onChange={(e) => setDeleteEmailInput(e.target.value)} placeholder="ایمیلِ کاربر"
+              style={{ width: "100%", padding: "9px 10px", borderRadius: 10, border: "1px solid #E8C9BC", fontSize: 12.5, marginBottom: 8, boxSizing: "border-box" }} />
+            {deleteEmailInput && (
+              <>
+                <p style={{ fontSize: 10.5, color: "#A6432F", margin: "0 0 6px" }}>برایِ تایید، دوباره همین ایمیل را اینجا بنویسید:</p>
+                <input value={deleteConfirmInput} onChange={(e) => setDeleteConfirmInput(e.target.value)} placeholder="تکرارِ ایمیل برایِ تایید"
+                  style={{ width: "100%", padding: "9px 10px", borderRadius: 10, border: "1px solid #E8C9BC", fontSize: 12.5, marginBottom: 8, boxSizing: "border-box" }} />
+              </>
+            )}
+            <button onClick={handleDeleteUserData} disabled={deleteBusy || !deleteEmailInput}
+              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "#A6432F", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              {deleteBusy ? "در حالِ حذف..." : "حذفِ کاملِ و دائمی"}
+            </button>
+            {deleteMsg && <p style={{ fontSize: 11, color: deleteMsg.startsWith("✅") ? "#4C8778" : "#A6432F", marginTop: 8 }}>{deleteMsg}</p>}
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>⏰ کاربرانِ نیازمندِ پیگیری</p>
@@ -5397,6 +5788,25 @@ export default function App() {
                     <MiniLineChart points={patientData.moodLog.filter((m) => m.phase === "before").sort((a, b) => a.ts - b.ts)} color="#B9822F" />
                   </div>
                 )}
+
+                <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>
+                  📋 چک‌این‌هایِ دوره‌ای ({patientData.checkinLog?.length || 0}) — بازه: هر {patientData.checkinIntervalDays || "؟"} روز:
+                </p>
+                {(patientData.checkinLog || []).length === 0 ? (
+                  <p style={{ fontSize: 10.5, color: "#8CA3B0", marginBottom: 12 }}>هنوز چک‌اینی ثبت نشده.</p>
+                ) : (() => {
+                  const last = patientData.checkinLog[patientData.checkinLog.length - 1];
+                  const avg = Object.values(last.answers).reduce((s, v) => s + v, 0) / Object.values(last.answers).length;
+                  const daysSince = Math.floor((Date.now() - last.ts) / 86400000);
+                  const isLow = avg <= 2.5;
+                  return (
+                    <div style={{ background: isLow ? "#FBF0EC" : "#F3F8F5", border: `1px solid ${isLow ? "#E8C9BC" : "#CFE6D8"}`, borderRadius: 10, padding: "9px 12px", marginBottom: 12 }}>
+                      <p style={{ fontSize: 11.5, fontWeight: 700, color: isLow ? "#A6432F" : "#4C8778", margin: 0 }}>
+                        {isLow && "🚩 "}آخرین چک‌این: {daysSince} روز پیش — میانگین {avg.toFixed(1)}/۵
+                      </p>
+                    </div>
+                  );
+                })()}
 
                 <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>
                   📝 یادداشت‌ها ({patientData.notes?.length || 0}):
