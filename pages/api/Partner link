@@ -1,0 +1,28 @@
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
+
+// اتصالِ ایمیلِ همسر، و بازیابیِ جلساتِ بازشده‌یِ او در یک بستهٔ مشخص — برایِ هماهنگیِ زوجین
+export default async function handler(req, res) {
+  try {
+    if (req.method === "POST") {
+      const { userEmail, partnerEmail } = req.body;
+      if (!userEmail || !partnerEmail) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
+      await redis.set(`partner_link:${userEmail.toLowerCase().trim()}`, partnerEmail.toLowerCase().trim());
+      return res.status(200).json({ ok: true });
+    }
+    if (req.method === "GET") {
+      const partnerEmail = (req.query.partnerEmail || "").toLowerCase().trim();
+      const pkgKey = req.query.pkgKey || "";
+      if (!partnerEmail) return res.status(400).json({ error: "ایمیلِ همسر لازم است" });
+      const raw = (await redis.get(`unlocked:${partnerEmail}`)) || [];
+      const unlocked = typeof raw === "string" ? JSON.parse(raw) : raw;
+      const filtered = pkgKey ? unlocked.filter((sid) => sid.startsWith(`${pkgKey}-`)) : unlocked;
+      return res.status(200).json({ ok: true, unlockedCount: filtered.length, unlocked: filtered });
+    }
+    return res.status(405).json({ error: "method not allowed" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message || "unknown error" });
+  }
+}
