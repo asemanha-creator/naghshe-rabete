@@ -1,0 +1,25 @@
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
+
+// ذخیره‌ی برنامه‌ی ایمنیِ هر کاربر
+export default async function handler(req, res) {
+  try {
+    if (req.method === "GET") {
+      const email = (req.query.email || "").toLowerCase().trim();
+      if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
+      const raw = await redis.get(`safety_plan:${email}`);
+      const plan = typeof raw === "string" ? JSON.parse(raw) : raw;
+      return res.status(200).json({ ok: true, plan: plan || null });
+    }
+    if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
+    const { userEmail, plan } = req.body;
+    if (!userEmail || !plan) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
+    const emailKey = userEmail.toLowerCase().trim();
+    await redis.set(`safety_plan:${emailKey}`, JSON.stringify(plan));
+    res.status(200).json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message || "unknown error" });
+  }
+}
