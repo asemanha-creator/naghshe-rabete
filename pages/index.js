@@ -523,6 +523,7 @@ function calculateGrowthScore({ moodLog = [], unlockedCount = 0, totalSessions =
   return { score, components };
 }
 
+const CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 function genCode() {
   let c = "";
   for (let i = 0; i < 6; i++) c += CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)];
@@ -2626,7 +2627,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۱۰-۱۶ / رفعِ خطایِ بحرانی: ترتیبِ تعریفِ soloMode که باعثِ کرش‌کردنِ کاملِ اپ می‌شد
+              نسخه: ۲۰۲۶-۱۰-۱۷ / رفعِ خطایِ بحرانیِ دوم: بازگردانیِ CODE_CHARS که در جراحیِ محافظتِ محتوا حذف شده بود (دکمه‌هایِ آزمون را غیرفعال کرده بود)
             </p>
             </div>
           </Card>
