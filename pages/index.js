@@ -2929,7 +2929,8 @@ const SD_ITEMS = [
 ];
 
 const TOPICS = [
-  { key: "relationship", title: "خیانتِ زناشویی", subtitle: "کجای راهم؟", icon: "💞", core: "#2B6777", bg: "#DCEAEA", blobA: "#8FB8B8", blobB: "#C7DEDA", enabled: true },
+  { key: "relationship", title: "خیانتِ زناشویی", subtitle: "درمان و بازسازی", icon: "💞", core: "#2B6777", bg: "#DCEAEA", blobA: "#8FB8B8", blobB: "#C7DEDA", enabled: true },
+  { key: "assessments", title: "آزمون‌ها", subtitle: "کجای راهم؟", icon: "📝", core: "#6E5A9C", bg: "#EAE4F5", blobA: "#B5A2D6", blobB: "#D6C9E8", enabled: true },
   { key: "prevention", title: "افزایشِ وفاداری و تعهد", subtitle: "واکسیناسیونِ زوجی", icon: "🛡️", core: "#4C8778", bg: "#DCEEE8", blobA: "#84BBAB", blobB: "#BEDDD3", enabled: true },
   { key: "premarriage", title: "پیش از ازدواج", subtitle: "آماده‌ام؟", icon: "💍", core: "#B8853A", bg: "#FBF0DC", blobA: "#E8C888", blobB: "#F5E2B8", enabled: false },
   { key: "aggression", title: "پرخاشگری", subtitle: "کنترلِ خشم", icon: "🔥", core: "#B5654E", bg: "#F5E3DC", blobA: "#DDA48F", blobB: "#EFCBBA", enabled: false },
@@ -4369,6 +4370,44 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [saveWarning, setSaveWarning] = useState("");
+  const [resumeAvailable, setResumeAvailable] = useState(false);
+
+  // ذخیره‌ی خودکارِ پیشرفتِ آزمون — تا با بستنِ اپ، پاسخ‌ها از دست نروند
+  useEffect(() => {
+    if (screen !== "quiz") return;
+    try {
+      localStorage.setItem("naghshe_quiz_resume", JSON.stringify({
+        code, soloMode, partner, domainIdx, ans1, ans2, sd1, sd2, context, savedAt: Date.now(),
+      }));
+    } catch (e) {}
+  }, [screen, code, soloMode, partner, domainIdx, ans1, ans2, sd1, sd2, context]);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("naghshe_quiz_resume");
+      if (raw) {
+        const saved = JSON.parse(raw);
+        if (saved?.savedAt && Date.now() - saved.savedAt < 7 * 86400000) setResumeAvailable(true);
+      }
+    } catch (e) {}
+  }, []);
+
+  function resumeQuiz() {
+    try {
+      const saved = JSON.parse(localStorage.getItem("naghshe_quiz_resume"));
+      if (!saved) return;
+      setCode(saved.code); setSoloMode(saved.soloMode); setPartner(saved.partner);
+      setDomainIdx(saved.domainIdx); setAns1(saved.ans1); setAns2(saved.ans2);
+      setSd1(saved.sd1); setSd2(saved.sd2); setContext(saved.context);
+      setResumeAvailable(false);
+      setScreen("quiz");
+    } catch (e) {}
+  }
+  function discardResume() {
+    try { localStorage.removeItem("naghshe_quiz_resume"); } catch (e) {}
+    setResumeAvailable(false);
+  }
+
   const [adminPassInput, setAdminPassInput] = useState("");
   const [adminRows, setAdminRows] = useState(null);
   const [prevResultInput, setPrevResultInput] = useState("");
@@ -4789,6 +4828,7 @@ export default function App() {
       if (soloMode) {
         res = await saveState({ createdAt: Date.now(), ans1, ans1Done: true, ans2: {}, ans2Done: false, sd1, solo: true });
         if (!res.ok) setSaveWarning(`⚠ ذخیره‌سازیِ پس‌زمینه (برایِ پژوهشگر) ناموفق بود؛ اما پاسخ‌های شما همچنان محفوظ است. جزئیاتِ فنی: ${res.detail}`);
+        try { localStorage.removeItem("naghshe_quiz_resume"); } catch (e) {}
         setScreen("soloResult");
       } else if (partner === 1) {
         res = await saveState({ createdAt: Date.now(), ans1, ans1Done: true, ans2, ans2Done: false, sd1 });
@@ -4797,6 +4837,7 @@ export default function App() {
       } else {
         res = await saveState({ ans1, ans1Done: true, ans2, ans2Done: true, sd1, sd2 });
         if (!res.ok) setSaveWarning(`⚠ ذخیره‌سازیِ پس‌زمینه (برایِ پژوهشگر) ناموفق بود؛ نتیجه‌ی زیر همچنان کاملاً معتبر است. جزئیاتِ فنی: ${res.detail}`);
+        try { localStorage.removeItem("naghshe_quiz_resume"); } catch (e) {}
         setScreen("privateResult");
       }
       setBusy(false);
@@ -4935,7 +4976,8 @@ export default function App() {
                   onClick={() => {
                     if (!t.enabled) return;
                     if (t.key === "prevention") openSessionLibrary("moderate");
-                    else setScreen("start");
+                    else if (t.key === "relationship") setScreen("treatmentDirect");
+                    else if (t.key === "assessments") setScreen("start");
                   }}
                   style={{
                     position: "relative", overflow: "hidden", textAlign: "center",
@@ -5023,11 +5065,23 @@ export default function App() {
             </div>
 
             <div style={{ padding: "22px 20px 20px" }}>
-              <button onClick={() => setScreen("faq")}
-                style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #8A5A4E", background: "#FBF0EC", color: "#8A5A4E", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 16 }}>
-                ❓ سوالاتِ رایج دربارهٔ خیانتِ زناشویی — پاسخِ سریع
-              </button>
-
+              {resumeAvailable && (
+                <div style={{ background: "#FBF3E2", border: "1px solid #E8C888", borderRadius: 14, padding: "12px 14px", marginBottom: 16 }}>
+                  <p style={{ fontSize: 12.5, fontWeight: 700, color: "#7A5B2E", margin: "0 0 8px" }}>
+                    📝 یک آزمونِ نیمه‌تمام دارید — می‌خواهید ادامه دهید؟
+                  </p>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <button onClick={resumeQuiz}
+                      style={{ flex: 1, padding: "9px", borderRadius: 10, border: "none", background: "#B9822F", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                      ادامه‌ی آزمون ←
+                    </button>
+                    <button onClick={discardResume}
+                      style={{ padding: "9px 14px", borderRadius: 10, border: "1px solid #E8C888", background: "#fff", color: "#7A5B2E", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                      شروعِ دوباره
+                    </button>
+                  </div>
+                </div>
+              )}
               <p style={{ fontSize: 12, fontWeight: 700, color: "#8CA3B0", textAlign: "center", margin: "0 0 14px" }}>
                 یکی از این دو روش را انتخاب کنید
               </p>
@@ -5102,9 +5156,40 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 9.5, color: "#D3DEE4", marginTop: 14, textAlign: "center" }}>
-              نسخه: ۲۰۲۶-۱۰-۱۳ / اندازه‌ی فونتِ تنظیم‌پذیر + استریکِ روزانه با جشنِ خودکار + نکته‌ی رایگانِ روزانه در صفحه‌ی اول
+              نسخه: ۲۰۲۶-۱۰-۱۴ / باکسِ مستقلِ «آزمون‌ها» جدا شد از «خیانتِ زناشویی» + ذخیره‌ی خودکار/ادامه‌ی آزمون (تا ۷ روز)
             </p>
             </div>
+          </Card>
+        )}
+
+        {screen === "treatmentDirect" && (
+          <Card>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14 }}>
+              <a onClick={() => setScreen("topics")} style={{ color: "#2B6777", fontSize: 12, cursor: "pointer" }}>‹ موضوعاتِ دیگر</a>
+              {user ? (
+                <span style={{ fontSize: 11, color: "#8CA3B0" }}>
+                  سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#2B6777", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a>
+                </span>
+              ) : (
+                <a onClick={() => setScreen("authLogin")} style={{ color: "#2B6777", fontSize: 11, cursor: "pointer", textDecoration: "underline" }}>ورود / ثبت‌نام</a>
+              )}
+            </div>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: "#1F2D3D", marginBottom: 6 }}>💞 خیانتِ زناشویی — درمان و بازسازی</h2>
+            <p style={{ fontSize: 12.5, color: "#5A7080", lineHeight: 1.9, marginBottom: 16 }}>
+              اگر خیانت در رابطه‌یِ شما رخ داده (یا افشا شده)، این‌جا مسیرِ درمانی را انتخاب می‌کنید.
+            </p>
+
+            <button onClick={() => setScreen("faq")}
+              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #8A5A4E", background: "#FBF0EC", color: "#8A5A4E", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 12 }}>
+              ❓ سوالاتِ رایج دربارهٔ خیانتِ زناشویی — پاسخِ سریع
+            </button>
+
+            <button onClick={() => setScreen("start")}
+              style={{ width: "100%", padding: "10px", borderRadius: 12, border: "1px solid #C9DEE8", background: "#F7FAFC", color: "#2B6777", fontWeight: 700, fontSize: 12, cursor: "pointer", marginBottom: 18 }}>
+              📝 ترجیح می‌دهم اول آزمونِ «کجای راهم؟» را انجام دهم
+            </button>
+
+            <PricingTiers tier="critical" scores={null} onOpenLibrary={openSessionLibrary} />
           </Card>
         )}
 
