@@ -375,6 +375,7 @@ const TOPICS = [
   { key: "attachment", title: "سبکِ دلبستگی", subtitle: "چطور وابسته می‌شوم", icon: "🧷", core: "#845A76", bg: "#F0DFE8", blobA: "#C08FAE", blobB: "#E1C0D3", enabled: false },
   { key: "forgiveness", title: "بخشش", subtitle: "رهاشدن از کینه", icon: "🕊️", core: "#4C8778", bg: "#DCEEE8", blobA: "#84BBAB", blobB: "#BEDDD3", enabled: false },
   { key: "rumination", title: "نشخوارِ فکری", subtitle: "افکارِ تکرارشونده", icon: "🌀", core: "#77685A", bg: "#EDE6DE", blobA: "#B0A18F", blobB: "#D6CDBF", enabled: false },
+  { key: "aboutUs", title: "دربارهٔ ما", subtitle: "اهداف و چشم‌انداز", icon: "🎯", core: "#8A5A4E", bg: "#F2E1DC", blobA: "#C69086", blobB: "#E6C3BB", enabled: true },
   { key: "predivorce", title: "مشاورهٔ پیش از طلاق", subtitle: "تصمیمِ آگاهانه", icon: "⚖️", core: "#8A5A4E", bg: "#F2E1DC", blobA: "#C69086", blobB: "#E6C3BB", enabled: false },
 ];
 
@@ -2473,6 +2474,7 @@ export default function App() {
                     if (t.key === "prevention") openSessionLibrary("moderate");
                     else if (t.key === "relationship") setScreen("treatmentDirect");
                     else if (t.key === "assessments") setScreen("start");
+                    else if (t.key === "aboutUs") setScreen("aboutUs");
                   }}
                   style={{
                     position: "relative", overflow: "hidden", textAlign: "center",
@@ -2505,8 +2507,6 @@ export default function App() {
             <p style={{ textAlign: "center", marginTop: 10 }}>
               <a onClick={() => setScreen("therapistLogin")} style={{ fontSize: 11, color: "#999", cursor: "pointer" }}>ورودِ همکاران</a>
               {" · "}
-              <a onClick={() => setScreen("aboutUs")} style={{ fontSize: 11, color: "#999", cursor: "pointer" }}>دربارهٔ ما</a>
-              {" · "}
               <a onClick={() => setScreen("feedback")} style={{ fontSize: 11, color: "#999", cursor: "pointer" }}>تماس / پیشنهاد / گزارشِ خرابی</a>
             </p>
           </div>
@@ -2516,12 +2516,34 @@ export default function App() {
           <Card>
             <a onClick={() => setScreen("topics")} style={{ fontSize: 12, color: "#2B6777", cursor: "pointer" }}>‹ بازگشت</a>
             <h2 style={{ fontWeight: 800, margin: "10px 0" }}>دربارهٔ ما</h2>
-            <p style={{ fontWeight: 700, marginTop: 10 }}>چشم‌انداز</p>
-            <p style={{ fontSize: 13, lineHeight: 1.9 }}>تبدیل‌شدن به مرجعِ دیجیتالِ درمانِ خیانتِ زناشویی و تقویتِ رابطه در ایران، با تکیه بر علم و اخلاقِ حرفه‌ای.</p>
-            <p style={{ fontWeight: 700, marginTop: 10 }}>ماموریت</p>
-            <p style={{ fontSize: 13, lineHeight: 1.9 }}>ارائه‌ی محتوایِ درمانیِ معتبر، در دسترس، و مقرون‌به‌صرفه به زوج‌ها و افراد، و توانمندسازیِ درمانگرانِ ایرانی با ابزارهایِ علمیِ به‌روز.</p>
-            <p style={{ fontWeight: 700, marginTop: 10 }}>اهداف</p>
-            <p style={{ fontSize: 13, lineHeight: 1.9 }}>گسترشِ دسترسیِ عادلانه به درمان، همکاری با روان‌شناسانِ سراسرِ کشور، و پیشبردِ پژوهشِ علمی در حوزه‌یِ خیانتِ زناشویی.</p>
+
+            <p style={{ fontSize: 13, lineHeight: 2 }}>
+              آکادمیِ روان‌شناختیِ دکتر مجتبی عقیلی، با تکیه بر بیش از یک دهه فعالیتِ بالینی، آموزشی، و پژوهشیِ دکتر عقیلی (دانشیارِ روان‌شناسیِ سلامتِ دانشگاهِ پیامِ نورِ گرگان، سه‌بار پژوهشگرِ برترِ دانشگاه)، شکل گرفته تا خلأِ بزرگِ محتوایِ درمانیِ ساختاریافته، علمی، و بومی‌سازی‌شده در حوزهٔ خیانتِ زناشویی در ایران را پر کند.
+            </p>
+
+            <p style={{ fontWeight: 700, marginTop: 16 }}>چشم‌انداز (Vision)</p>
+            <p style={{ fontSize: 13, lineHeight: 2 }}>
+              در افقِ پنج‌ساله، «کجای راهم؟» به مرجعِ اصلیِ درمانِ دیجیتالِ خیانتِ زناشویی در ایران و منطقه تبدیل شود — پلتفرمی که هم مراجعِ عادی، هم درمانگرِ حرفه‌ای، آن را استانداردِ کیفیت در این حوزه بدانند. ما معتقدیم درمانِ باکیفیت نباید محدود به جغرافیایِ یک شهر یا اتاقِ مطب باشد؛ چشم‌اندازِ ما، عدالت در دسترسی به درمانِ علمی است.
+            </p>
+
+            <p style={{ fontWeight: 700, marginTop: 16 }}>ماموریت (Mission)</p>
+            <p style={{ fontSize: 13, lineHeight: 2 }}>
+              ماموریتِ ما سه‌گانه است: (۱) ارائهٔ محتوایِ درمانیِ مبتنی‌بر شواهد (ACT، EFT/گاتمن، IFS، طرحواره‌درمانی، DBT) به زبانی که با فرهنگ و زیستِ ایرانی همخوان باشد؛ (۲) توانمندسازیِ درمانگرانِ ایرانی با ابزارهایِ فنی و بالینیِ به‌روز تا بتوانند خدمتِ بهتری ارائه دهند و از این مسیر امرارِ معاشِ پایدارتری داشته باشند؛ (۳) پیشبردِ پژوهشِ علمیِ بومی — از‌جمله اعتباریابیِ روان‌سنجیِ ابزارهایِ سنجشِ خیانت که هم‌اکنون در دستِ انجام است.
+            </p>
+
+            <p style={{ fontWeight: 700, marginTop: 16 }}>اهدافِ راهبردی</p>
+            <p style={{ fontSize: 13, lineHeight: 2 }}>
+              ۱. انتشارِ مقالهٔ علمی-پژوهشیِ معتبر (Q1) دربارهٔ روایی و پایاییِ ابزارِ سنجشِ رابطه، مبتنی‌بر نمونهٔ ۱۵۰ تا ۲۰۰ زوج.<br/>
+              ۲. گسترشِ شبکهٔ درمانگرانِ همکار به حداقل ۲۰ روان‌شناس در سالِ اول، با حفظِ استانداردِ کیفیتِ بالینی.<br/>
+              ۳. تکمیلِ کتابخانهٔ محتوایی به ۵۰۰ پرسش پاسخ‌داده‌شده و افزودنِ ماژول‌هایِ جدید (اضطراب، افسردگی، پیش از ازدواج).<br/>
+              ۴. افزودنِ محتوایِ صوتی/تصویری برایِ افزایشِ دسترسی‌پذیری و اثربخشیِ تمرین‌هایِ درمانی.<br/>
+              ۵. حفظِ محرمانگیِ کامل و امنیتِ دادهٔ مراجعین به‌عنوانِ اصلِ غیرِقابلِ‌مذاکره.
+            </p>
+
+            <p style={{ fontWeight: 700, marginTop: 16 }}>ارزش‌هایِ بنیادین</p>
+            <p style={{ fontSize: 13, lineHeight: 2 }}>
+              دقتِ علمی · احترام به کرامتِ انسانی · محرمانگی · دسترسی‌پذیری · مسئولیت‌پذیریِ بالینی
+            </p>
           </Card>
         )}
 
