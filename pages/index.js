@@ -1844,6 +1844,21 @@ export default function App() {
 
   const [adminPassInput, setAdminPassInput] = useState("");
   const [adminRows, setAdminRows] = useState(null);
+  const [newTherapistId, setNewTherapistId] = useState("");
+  const [newTherapistName, setNewTherapistName] = useState("");
+  const [newTherapistPass, setNewTherapistPass] = useState("");
+  const [newTherapistShare, setNewTherapistShare] = useState("70");
+  const [therapistMsg, setTherapistMsg] = useState("");
+  const [therapistList, setTherapistList] = useState([]);
+  const [therapistLoginId, setTherapistLoginId] = useState("");
+  const [therapistLoginPass, setTherapistLoginPass] = useState("");
+  const [therapistSession, setTherapistSession] = useState(null);
+  const [therapistDash, setTherapistDash] = useState(null);
+  async function loadTherapists() {
+    const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "listAll", adminPass: ADMIN_PASS }) });
+    const d = await r.json();
+    if (d.ok) setTherapistList(d.therapists);
+  }
   const [prevResultInput, setPrevResultInput] = useState("");
   const [prevResultText, setPrevResultText] = useState("");
   const [showPrevInput, setShowPrevInput] = useState(false);
@@ -2225,17 +2240,15 @@ export default function App() {
       solo: patch.solo ?? false,
     };
     try {
-      const r = await fetch("/api/save", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await r.json();
-      if (!r.ok || !data.ok) return { ok: false, detail: data.error || `HTTP ${r.status}` };
+      if (!window.storage || typeof window.storage.set !== "function") {
+        return { ok: false, detail: "window.storage در دسترس نیست (typeof: " + typeof window.storage + ")" };
+      }
+      const result = await window.storage.set(`couple:${code}`, JSON.stringify(payload), true);
+      if (!result) return { ok: false, detail: "storage.set مقدارِ خالی/نامعتبر برگرداند (result=" + JSON.stringify(result) + ")" };
       return { ok: true };
     } catch (e) {
       console.error(e);
-      return { ok: false, detail: (e && (e.message || e.toString())) || "خطای شبکه" };
+      return { ok: false, detail: (e && (e.message || e.toString())) || "خطای ناشناخته" };
     }
   }
 
@@ -2267,9 +2280,8 @@ export default function App() {
     if (!c) return;
     setBusy(true);
     try {
-      const r = await fetch(`/api/get?code=${encodeURIComponent(c)}`);
-      if (!r.ok) throw new Error("not found");
-      const { data } = await r.json();
+      const res = await window.storage.get(`couple:${c}`, true);
+      const data = JSON.parse(res.value);
       setCode(c);
       setAns1(data.ans1 || {}); setAns2(data.ans2 || {});
       setSd1(data.sd1 || {}); setSd2(data.sd2 || {});
@@ -2334,9 +2346,16 @@ export default function App() {
   async function loadAdmin() {
     setBusy(true);
     try {
-      const r = await fetch("/api/list");
-      const data = await r.json();
-      setAdminRows(data.rows || []);
+      const list = await window.storage.list("couple:", true);
+      const rows = [];
+      for (const k of list.keys) {
+        try {
+          const r = await window.storage.get(k, true);
+          const d = JSON.parse(r.value);
+          rows.push(d);
+        } catch (e) {}
+      }
+      setAdminRows(rows);
     } catch (e) {
       setAdminRows([]);
     }
@@ -2484,6 +2503,9 @@ export default function App() {
 
             <p style={{ textAlign: "center", fontSize: 10.5, color: "#8CA3B0", marginTop: 14, lineHeight: 1.8 }}>
               ماژول‌هایِ «به‌زودی» در حالِ آماده‌سازیِ علمی‌اند.
+            </p>
+            <p style={{ textAlign: "center", marginTop: 10 }}>
+              <a onClick={() => setScreen("therapistLogin")} style={{ fontSize: 11, color: "#999", cursor: "pointer" }}>ورودِ همکاران</a>
             </p>
           </div>
         )}
@@ -2668,6 +2690,40 @@ export default function App() {
             </button>
 
             <PricingTiers tier="critical" scores={null} onOpenLibrary={openSessionLibrary} />
+          </Card>
+        )}
+
+        {screen === "therapistLogin" && (
+          <Card>
+            <p style={{ fontWeight: 800, marginBottom: 10 }}>ورودِ درمانگر</p>
+            <input placeholder="کدِ درمانگر" value={therapistLoginId} onChange={(e) => setTherapistLoginId(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
+            <input placeholder="رمز" type="password" value={therapistLoginPass} onChange={(e) => setTherapistLoginPass(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
+            <button onClick={async () => {
+              const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "login", therapistId: therapistLoginId, password: therapistLoginPass }) });
+              const d = await r.json();
+              if (d.ok) { setTherapistSession(d); setScreen("therapistDashboard"); } else setTherapistMsg(d.error);
+            }} style={{ width: "100%", padding: 10, borderRadius: 8, border: "none", background: "#2B6777", color: "#fff" }}>ورود</button>
+            {therapistMsg && <p style={{ color: "red", fontSize: 12 }}>{therapistMsg}</p>}
+          </Card>
+        )}
+
+        {screen === "therapistDashboard" && therapistSession && (
+          <Card>
+            <p style={{ fontWeight: 800, marginBottom: 6 }}>سلام {therapistSession.name}</p>
+            <p style={{ fontSize: 13, marginBottom: 10 }}>سهمِ شما: {therapistSession.sharePercent}٪</p>
+            <button onClick={async () => {
+              const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "dashboard", therapistId: therapistSession.id }) });
+              const d = await r.json();
+              if (d.ok) setTherapistDash(d);
+            }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #2B6777", color: "#2B6777", background: "#fff", marginBottom: 10 }}>بروزرسانیِ فروش</button>
+            {therapistDash && (
+              <>
+                <p style={{ fontSize: 13, marginBottom: 8 }}>تعدادِ فروش: {therapistDash.count}</p>
+                {therapistDash.sales.map((s, i) => (
+                  <div key={i} style={{ fontSize: 12, padding: "4px 0", borderBottom: "1px solid #eee" }}>{s.email} — {s.sessionId} — {new Date(s.ts).toLocaleDateString("fa-IR")}</div>
+                ))}
+              </>
+            )}
           </Card>
         )}
 
@@ -3512,6 +3568,28 @@ export default function App() {
             )}
           </Card>
           <Card style={{ border: "1.5px solid #A6432F" }}>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>👥 مدیریتِ همکاران/درمانگران</p>
+            <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
+              <input placeholder="کدِ درمانگر (لاتین)" value={newTherapistId} onChange={(e) => setNewTherapistId(e.target.value)} style={{ flex: 1, minWidth: 100, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
+              <input placeholder="نام" value={newTherapistName} onChange={(e) => setNewTherapistName(e.target.value)} style={{ flex: 1, minWidth: 100, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
+              <input placeholder="رمز" value={newTherapistPass} onChange={(e) => setNewTherapistPass(e.target.value)} style={{ width: 90, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
+              <input placeholder="سهم٪" type="number" value={newTherapistShare} onChange={(e) => setNewTherapistShare(e.target.value)} style={{ width: 60, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
+            </div>
+            <button onClick={async () => {
+              const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", adminPass: ADMIN_PASS, therapistId: newTherapistId, name: newTherapistName, password: newTherapistPass, sharePercent: Number(newTherapistShare) || 70 }) });
+              const d = await r.json();
+              setTherapistMsg(d.ok ? "✅ ساخته شد" : "❌ " + d.error);
+              if (d.ok) loadTherapists();
+            }} style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "#2B6777", color: "#fff", fontSize: 12, marginBottom: 8 }}>ساختنِ درمانگر</button>
+            {therapistMsg && <p style={{ fontSize: 11, color: "#666" }}>{therapistMsg}</p>}
+            <button onClick={loadTherapists} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #2B6777", color: "#2B6777", background: "#fff", fontSize: 11, marginBottom: 8 }}>بروزرسانیِ فهرست</button>
+            {therapistList.map((t) => (
+              <div key={t.id} style={{ fontSize: 12, padding: "6px 0", borderBottom: "1px solid #eee" }}>
+                {t.name} ({t.id}) — سهم: {t.sharePercent}٪ — فروش: {t.salesCount}
+              </div>
+            ))}
+          </Card>
+          <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#A6432F", marginBottom: 4 }}>🗑️ حذفِ کاملِ داده‌هایِ یک کاربر</p>
             <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
               برایِ وفای به قولِ «حقِ حذف» در متنِ رضایتِ حریمِ خصوصی. این عملیات <b>غیرقابلِ‌بازگشت</b> است — همه‌ی پاسخ‌ها، یادداشت‌ها، و روندِ خلقِ این کاربر برایِ همیشه پاک می‌شود.
