@@ -376,6 +376,9 @@ const TOPICS = [
   { key: "forgiveness", title: "بخشش", subtitle: "رهاشدن از کینه", icon: "🕊️", core: "#4C8778", bg: "#DCEEE8", blobA: "#84BBAB", blobB: "#BEDDD3", enabled: false },
   { key: "rumination", title: "نشخوارِ فکری", subtitle: "افکارِ تکرارشونده", icon: "🌀", core: "#77685A", bg: "#EDE6DE", blobA: "#B0A18F", blobB: "#D6CDBF", enabled: false },
   { key: "aboutUs", title: "دربارهٔ ما", subtitle: "اهداف و چشم‌انداز", icon: "🎯", core: "#8A5A4E", bg: "#F2E1DC", blobA: "#C69086", blobB: "#E6C3BB", enabled: true },
+  { key: "consultCall", title: "تماس با مشاور", subtitle: "گفت‌وگویِ مستقیم", icon: "☎️", core: "#2B6777", bg: "#DCEAEA", blobA: "#8FB8B8", blobB: "#C7DEDA", enabled: true },
+  { key: "slipPrevention", title: "پیشگیری از خیانت", subtitle: "برنامه‌ی شخصیِ من", icon: "🛑", core: "#B9822F", bg: "#FBF3E2", blobA: "#E8C888", blobB: "#F5E2B8", enabled: true },
+  { key: "compulsiveSexual", title: "رفتارِ جنسیِ اجباری", subtitle: "به‌زودی", icon: "🔄", core: "#845A76", bg: "#F0DFE8", blobA: "#C08FAE", blobB: "#E1C0D3", enabled: false },
   { key: "predivorce", title: "مشاورهٔ پیش از طلاق", subtitle: "تصمیمِ آگاهانه", icon: "⚖️", core: "#8A5A4E", bg: "#F2E1DC", blobA: "#C69086", blobB: "#E6C3BB", enabled: false },
 ];
 
@@ -453,6 +456,9 @@ const CHECKIN_ITEMS = [
   { key: "practice", q: "چقدر توانستم از تکنیک‌ها/تمرین‌ها استفاده کنم؟", keyword: "تمرین" },
   { key: "hope", q: "سطحِ امیدواری‌ام به بهبودی چقدر است؟", keyword: "امید" },
   { key: "rumination", q: "چقدر کمتر درگیرِ افکارِ مزاحم/نشخوارِ فکری بودم؟", keyword: "نشخوار" },
+  { key: "muscle_tension", q: "بدنم (شانه/فک/معده) چقدر بدونِ تنش بوده؟", keyword: "تنش" },
+  { key: "sleep", q: "کیفیتِ خوابم این چند شب چطور بوده؟", keyword: "خواب" },
+  { key: "physical_pain", q: "چقدر کمتر دچارِ سردرد/دلِ‌درد/خستگیِ جسمی بوده‌ام؟", keyword: "بدنی" },
 ];
 // آستانه‌یِ زمان‌بندیِ پیشنهادی برایِ چک‌این، بر اساسِ شدتِ مسیرِ درمانی
 const SUGGESTED_CHECKIN_DAYS = { betrayed: 4, unfaithful: 4, advanced: 7, moderate: 14 };
@@ -1255,6 +1261,49 @@ function OnboardingModal({ onClose }) {
         )}
       </div>
     </div>
+  );
+}
+
+function SlipPreventionScreen({ onBack, userEmail }) {
+  const storageKey = `slip_plan_${userEmail || "anon"}`;
+  const [plan, setPlan] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || { warningSigns: "", immediateAction: "", values: "" }; }
+    catch (e) { return { warningSigns: "", immediateAction: "", values: "" }; }
+  });
+  const [saved, setSaved] = useState(true);
+  function updateField(field, value) {
+    const next = { ...plan, [field]: value };
+    setPlan(next); setSaved(false);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+  }
+  useEffect(() => {
+    if (saved || !userEmail) return;
+    const t = setTimeout(() => {
+      fetch("/api/safety-plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userEmail, planType: "slipPrevention", plan }) })
+        .then(() => setSaved(true)).catch(() => {});
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [plan, saved, userEmail]);
+
+  const fields = [
+    { key: "warningSigns", label: "🚩 نشانه‌هایِ شخصیِ من که دارم به‌سمتِ خطر می‌روم", placeholder: "مثلاً: پیامِ مخفیانه، فکرکردنِ مکررِ به یک نفر، توجیه‌کردنِ ملاقات‌هایِ غیرِضروری..." },
+    { key: "immediateAction", label: "🛑 اقدامی که همان لحظه انجام می‌دهم", placeholder: "مثلاً: قطعِ فوریِ تماس، تماس با همسر، دورشدنِ فیزیکی از موقعیت..." },
+    { key: "values", label: "🧭 ارزش‌هایِ من که یادم می‌آورم", placeholder: "چرا این رابطه/این تعهد برایم مهم است؟" },
+  ];
+  return (
+    <Card>
+      <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+      <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🛑 برنامه‌ی شخصیِ پیشگیری</h2>
+      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>کاملاً خصوصی است — فقط برایِ خودِ شما. بدونِ نامِ افراد، فقط موقعیت‌ها و نشانه‌ها.</p>
+      {fields.map((f) => (
+        <div key={f.key} style={{ marginBottom: 14 }}>
+          <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", margin: "0 0 6px" }}>{f.label}</p>
+          <textarea value={plan[f.key]} onChange={(e) => updateField(f.key, e.target.value)} placeholder={f.placeholder}
+            style={{ width: "100%", minHeight: 70, padding: "9px 11px", borderRadius: 10, border: "1px solid #DCE8F0", fontSize: 12.5, fontFamily: "inherit", resize: "vertical", boxSizing: "border-box" }} />
+        </div>
+      ))}
+      {userEmail && <p style={{ fontSize: 9.5, color: saved ? "#8CA3B0" : "#B9822F", textAlign: "center" }}>{saved ? "ذخیره شد ✓" : "در حالِ ذخیره..."}</p>}
+    </Card>
   );
 }
 
@@ -2484,6 +2533,8 @@ export default function App() {
                     else if (t.key === "relationship") setScreen("treatmentDirect");
                     else if (t.key === "assessments") setScreen("start");
                     else if (t.key === "aboutUs") setScreen("aboutUs");
+                    else if (t.key === "consultCall") setScreen("feedback");
+                    else if (t.key === "slipPrevention") setScreen("slipPrevention");
                   }}
                   style={{
                     position: "relative", overflow: "hidden", textAlign: "center",
@@ -2589,6 +2640,10 @@ export default function App() {
 
         {screen === "safetyPlan" && (
           <SafetyPlanScreen onBack={() => setScreen("topics")} userEmail={user?.email} />
+        )}
+
+        {screen === "slipPrevention" && (
+          <SlipPreventionScreen onBack={() => setScreen("topics")} userEmail={user?.email} />
         )}
 
         {screen === "checkin" && (() => {
@@ -2780,6 +2835,11 @@ export default function App() {
           <Card>
             <p style={{ fontWeight: 800, marginBottom: 6 }}>سلام {therapistSession.name}</p>
             <p style={{ fontSize: 13, marginBottom: 10 }}>سهمِ شما: {therapistSession.sharePercent}٪</p>
+            <p style={{ fontSize: 12, fontWeight: 700, marginBottom: 4 }}>لینکِ اختصاصیِ شما:</p>
+            <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
+              <input readOnly value={`https://naghshe-rabete-ashy.vercel.app/?ref=${therapistSession.id}`} style={{ flex: 1, fontSize: 11, padding: 8, borderRadius: 6, border: "1px solid #ddd" }} onClick={(e) => e.target.select()} />
+              <button onClick={() => navigator.clipboard.writeText(`https://naghshe-rabete-ashy.vercel.app/?ref=${therapistSession.id}`)} style={{ fontSize: 11, padding: "8px 14px", borderRadius: 6, border: "none", background: "#2B6777", color: "#fff" }}>کپی</button>
+            </div>
             <button onClick={async () => {
               const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "dashboard", therapistId: therapistSession.id }) });
               const d = await r.json();
@@ -3666,8 +3726,12 @@ export default function App() {
             {therapistMsg && <p style={{ fontSize: 11, color: "#666" }}>{therapistMsg}</p>}
             <button onClick={loadTherapists} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #2B6777", color: "#2B6777", background: "#fff", fontSize: 11, marginBottom: 8 }}>بروزرسانیِ فهرست</button>
             {therapistList.map((t) => (
-              <div key={t.id} style={{ fontSize: 12, padding: "6px 0", borderBottom: "1px solid #eee" }}>
-                {t.name} ({t.id}) — سهم: {t.sharePercent}٪ — فروش: {t.salesCount}
+              <div key={t.id} style={{ fontSize: 12, padding: "8px 0", borderBottom: "1px solid #eee" }}>
+                <div>{t.name} ({t.id}) — سهم: {t.sharePercent}٪ — فروش: {t.salesCount}</div>
+                <div style={{ display: "flex", gap: 6, marginTop: 4, alignItems: "center" }}>
+                  <input readOnly value={`https://naghshe-rabete-ashy.vercel.app/?ref=${t.id}`} style={{ flex: 1, fontSize: 10, padding: 5, borderRadius: 6, border: "1px solid #ddd", color: "#666" }} onClick={(e) => e.target.select()} />
+                  <button onClick={() => navigator.clipboard.writeText(`https://naghshe-rabete-ashy.vercel.app/?ref=${t.id}`)} style={{ fontSize: 10, padding: "5px 10px", borderRadius: 6, border: "1px solid #2B6777", color: "#2B6777", background: "#fff" }}>کپی</button>
+                </div>
               </div>
             ))}
           </Card>
