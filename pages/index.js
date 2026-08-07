@@ -1784,6 +1784,14 @@ function ChatWidget({ scores, overall, mode }) {
 
 export default function App() {
   const [screen, setScreen] = useState("topics");
+  const [referredBy, setReferredBy] = useState(null);
+  useEffect(() => {
+    try {
+      const p = new URLSearchParams(window.location.search).get("ref");
+      if (p) { setReferredBy(p); localStorage.setItem("naghshe_ref", p); }
+      else { const stored = localStorage.getItem("naghshe_ref"); if (stored) setReferredBy(stored); }
+    } catch (e) {}
+  }, []);
   const [isAdmin, setIsAdmin] = useState(() => {
     try { return typeof window !== "undefined" && localStorage.getItem("naghshe_admin") === "1"; } catch (e) { return false; }
   });
@@ -2235,6 +2243,7 @@ export default function App() {
     if (code === "PREVIEW") return { ok: true, detail: "پیش‌نمایش — ذخیره نشد" };
     const payload = {
       code,
+      referredBy,
       createdAt: patch.createdAt ?? Date.now(),
       context: patch.context ?? context,
       ans1: patch.ans1 ?? ans1,
@@ -3661,6 +3670,16 @@ export default function App() {
                 {t.name} ({t.id}) — سهم: {t.sharePercent}٪ — فروش: {t.salesCount}
               </div>
             ))}
+          </Card>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🔗 تعدادِ پرسشنامه بر اساسِ معرف</p>
+            {adminRows && (() => {
+              const counts = {};
+              adminRows.forEach(r => { const k = r.referredBy || "بدونِ معرف"; counts[k] = (counts[k]||0)+1; });
+              return Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,v]) => (
+                <div key={k} style={{ fontSize: 12, padding: "4px 0", borderBottom: "1px solid #eee" }}>{k}: {v} پرسشنامه</div>
+              ));
+            })()}
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#A6432F", marginBottom: 4 }}>🗑️ حذفِ کاملِ داده‌هایِ یک کاربر</p>
