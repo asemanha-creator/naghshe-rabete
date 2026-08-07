@@ -2,21 +2,23 @@ import { Redis } from "@upstash/redis";
 
 const redis = Redis.fromEnv();
 
-// ذخیره‌ی برنامه‌ی ایمنیِ هر کاربر
+// ذخیره‌ی برنامه‌ی ایمنی و برنامه‌ی پیشگیریِ لغزش — هر کاربر، هر نوع، کلیدِ جدا
 export default async function handler(req, res) {
   try {
     if (req.method === "GET") {
       const email = (req.query.email || "").toLowerCase().trim();
+      const planType = req.query.planType === "slipPrevention" ? "slip_plan" : "safety_plan";
       if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
-      const raw = await redis.get(`safety_plan:${email}`);
+      const raw = await redis.get(`${planType}:${email}`);
       const plan = typeof raw === "string" ? JSON.parse(raw) : raw;
       return res.status(200).json({ ok: true, plan: plan || null });
     }
     if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
-    const { userEmail, plan } = req.body;
+    const { userEmail, plan, planType } = req.body;
     if (!userEmail || !plan) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
     const emailKey = userEmail.toLowerCase().trim();
-    await redis.set(`safety_plan:${emailKey}`, JSON.stringify(plan));
+    const keyPrefix = planType === "slipPrevention" ? "slip_plan" : "safety_plan";
+    await redis.set(`${keyPrefix}:${emailKey}`, JSON.stringify(plan));
     res.status(200).json({ ok: true });
   } catch (e) {
     console.error(e);
