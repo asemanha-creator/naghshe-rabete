@@ -1854,6 +1854,11 @@ export default function App() {
   const [therapistLoginPass, setTherapistLoginPass] = useState("");
   const [therapistSession, setTherapistSession] = useState(null);
   const [therapistDash, setTherapistDash] = useState(null);
+  const [feedbackType, setFeedbackType] = useState("پیشنهاد");
+  const [feedbackMsg, setFeedbackMsg] = useState("");
+  const [feedbackContact, setFeedbackContact] = useState("");
+  const [feedbackStatus, setFeedbackStatus] = useState("");
+  const [feedbackList, setFeedbackList] = useState([]);
   async function loadTherapists() {
     const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "listAll", adminPass: ADMIN_PASS }) });
     const d = await r.json();
@@ -2499,8 +2504,48 @@ export default function App() {
             </p>
             <p style={{ textAlign: "center", marginTop: 10 }}>
               <a onClick={() => setScreen("therapistLogin")} style={{ fontSize: 11, color: "#999", cursor: "pointer" }}>ورودِ همکاران</a>
+              {" · "}
+              <a onClick={() => setScreen("aboutUs")} style={{ fontSize: 11, color: "#999", cursor: "pointer" }}>دربارهٔ ما</a>
+              {" · "}
+              <a onClick={() => setScreen("feedback")} style={{ fontSize: 11, color: "#999", cursor: "pointer" }}>تماس / پیشنهاد / گزارشِ خرابی</a>
             </p>
           </div>
+        )}
+
+        {screen === "aboutUs" && (
+          <Card>
+            <a onClick={() => setScreen("topics")} style={{ fontSize: 12, color: "#2B6777", cursor: "pointer" }}>‹ بازگشت</a>
+            <h2 style={{ fontWeight: 800, margin: "10px 0" }}>دربارهٔ ما</h2>
+            <p style={{ fontWeight: 700, marginTop: 10 }}>چشم‌انداز</p>
+            <p style={{ fontSize: 13, lineHeight: 1.9 }}>تبدیل‌شدن به مرجعِ دیجیتالِ درمانِ خیانتِ زناشویی و تقویتِ رابطه در ایران، با تکیه بر علم و اخلاقِ حرفه‌ای.</p>
+            <p style={{ fontWeight: 700, marginTop: 10 }}>ماموریت</p>
+            <p style={{ fontSize: 13, lineHeight: 1.9 }}>ارائه‌ی محتوایِ درمانیِ معتبر، در دسترس، و مقرون‌به‌صرفه به زوج‌ها و افراد، و توانمندسازیِ درمانگرانِ ایرانی با ابزارهایِ علمیِ به‌روز.</p>
+            <p style={{ fontWeight: 700, marginTop: 10 }}>اهداف</p>
+            <p style={{ fontSize: 13, lineHeight: 1.9 }}>گسترشِ دسترسیِ عادلانه به درمان، همکاری با روان‌شناسانِ سراسرِ کشور، و پیشبردِ پژوهشِ علمی در حوزه‌یِ خیانتِ زناشویی.</p>
+          </Card>
+        )}
+
+        {screen === "feedback" && (
+          <Card>
+            <a onClick={() => setScreen("topics")} style={{ fontSize: 12, color: "#2B6777", cursor: "pointer" }}>‹ بازگشت</a>
+            <h2 style={{ fontWeight: 800, margin: "10px 0" }}>تماس با ما</h2>
+            <select value={feedbackType} onChange={(e) => setFeedbackType(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }}>
+              <option value="پیشنهاد">پیشنهاد</option>
+              <option value="انتقاد">انتقاد</option>
+              <option value="گزارشِ خرابی">گزارشِ خرابی (تیکت)</option>
+              <option value="تماس با مدیریت">تماس با مدیریت</option>
+            </select>
+            <textarea placeholder="پیامِ خود را بنویسید..." value={feedbackMsg} onChange={(e) => setFeedbackMsg(e.target.value)} style={{ width: "100%", minHeight: 100, padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
+            <input placeholder="ایمیل یا شماره برایِ پیگیری (اختیاری)" value={feedbackContact} onChange={(e) => setFeedbackContact(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
+            <button onClick={async () => {
+              const r = await fetch("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: feedbackType, message: feedbackMsg, contact: feedbackContact, email: user?.email }) });
+              const d = await r.json();
+              setFeedbackStatus(d.ok ? "✅ ارسال شد، ممنون از شما" : "❌ خطا");
+              if (d.ok) setFeedbackMsg("");
+            }} style={{ width: "100%", padding: 10, borderRadius: 8, border: "none", background: "#2B6777", color: "#fff" }}>ارسال</button>
+            {feedbackStatus && <p style={{ fontSize: 12, marginTop: 8 }}>{feedbackStatus}</p>}
+            <p style={{ fontSize: 12, marginTop: 14, color: "#666" }}>یا مستقیم تماس بگیرید: {BRAND.phone}</p>
+          </Card>
         )}
 
         {screen === "faq" && (
@@ -3561,6 +3606,19 @@ export default function App() {
             )}
           </Card>
           <Card style={{ border: "1.5px solid #A6432F" }}>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📬 پیشنهادات / انتقادات / تیکت‌ها</p>
+            <button onClick={async () => {
+              const r = await fetch(`/api/feedback?adminPass=${ADMIN_PASS}`);
+              const d = await r.json();
+              if (d.ok) setFeedbackList(d.list);
+            }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #2B6777", color: "#2B6777", background: "#fff", fontSize: 11, marginBottom: 8 }}>بروزرسانی</button>
+            {feedbackList.map((f, i) => (
+              <div key={i} style={{ fontSize: 12, padding: "6px 0", borderBottom: "1px solid #eee" }}>
+                <b>{f.type}</b> — {f.message} {f.contact && `(${f.contact})`} — {new Date(f.ts).toLocaleDateString("fa-IR")}
+              </div>
+            ))}
+          </Card>
+          <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>👥 مدیریتِ همکاران/درمانگران</p>
             <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
               <input placeholder="کدِ درمانگر (لاتین)" value={newTherapistId} onChange={(e) => setNewTherapistId(e.target.value)} style={{ flex: 1, minWidth: 100, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
