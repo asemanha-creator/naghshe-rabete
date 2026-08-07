@@ -1,22 +1,15 @@
 import { Redis } from "@upstash/redis";
-
 const redis = Redis.fromEnv();
-
 export default async function handler(req, res) {
   try {
     const codes = await redis.smembers("couple:index");
     const rows = [];
-    for (const code of codes || []) {
-      try {
-        const raw = await redis.get(`couple:${code}`);
-        if (!raw) continue;
-        const d = typeof raw === "string" ? JSON.parse(raw) : raw;
-        rows.push(d);
-      } catch (e) {}
+    for (const c of codes) {
+      const raw = await redis.get(`couple:${c}`);
+      if (raw) rows.push(typeof raw === "string" ? JSON.parse(raw) : raw);
     }
-    res.status(200).json({ rows });
+    res.status(200).json({ ok: true, rows });
   } catch (e) {
-    console.error(e);
-    res.status(500).json({ rows: [], error: e.message || "unknown error" });
+    res.status(500).json({ ok: false, error: e.message });
   }
 }
