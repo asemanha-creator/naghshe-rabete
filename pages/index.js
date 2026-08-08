@@ -2896,7 +2896,7 @@ export default function App() {
   }
 
   return (
-    <div dir="rtl" style={{ ...FONT, minHeight: "100vh", background: "#EAF4FB", padding: "24px 16px", zoom: fontScale }}>
+    <div dir="rtl" style={{ ...FONT, minHeight: "100vh", background: "#EAF4FB", padding: "24px 16px", ...(fontScale !== 1 ? { zoom: fontScale } : {}) }}>
       {showOnboarding && <OnboardingModal onClose={closeOnboarding} />}
       {showStreakCelebration && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(20,30,35,0.6)", zIndex: 998, display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
