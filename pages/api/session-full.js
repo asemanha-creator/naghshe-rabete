@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     if (!pkgKey || !num) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
 
     const isAdmin = adminPass === ADMIN_PASS;
-    let unlocked = isAdmin;
+    let unlocked = isAdmin || Number(num) === 1;
     if (!unlocked && email) {
       const raw = (await redis.get(`unlocked:${email.toLowerCase().trim()}`)) || [];
       const list = typeof raw === "string" ? JSON.parse(raw) : raw;
