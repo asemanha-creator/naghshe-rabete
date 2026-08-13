@@ -2327,7 +2327,7 @@ export default function App() {
   const [ans2, setAns2] = useState({});
   const [sd1, setSd1] = useState({});
   const [sd2, setSd2] = useState({});
-  const [context, setContext] = useState({ duration: "", age: "", gender: "", children: "", researchConsent: false, contact: "" });
+  const [context, setContext] = useState({ duration: "", age: "", gender: "", children: "" });
   const [consentChecked, setConsentChecked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
@@ -2654,7 +2654,7 @@ export default function App() {
   function previewResults(mode, profile) {
     const a1 = generatePreviewAnswers(profile);
     setAns1(a1);
-    setContext({ duration: "بیش از ۱۰ سال", age: "۳۵ تا ۴۴", gender: "زن", children: "یک فرزند", researchConsent: false, contact: "" });
+    setContext({ duration: "بیش از ۱۰ سال", age: "۳۵ تا ۴۴", gender: "زن", children: "یک فرزند" });
     if (mode === "couple") {
       const a2 = generatePreviewAnswers(profile);
       setAns2(a2);
@@ -2793,7 +2793,7 @@ export default function App() {
   function startNew() {
     setCode(genCode());
     setAns1({}); setAns2({}); setSd1({}); setSd2({});
-    setContext({ duration: "", age: "", gender: "", children: "", researchConsent: false, contact: "" });
+    setContext({ duration: "", age: "", gender: "", children: "" });
     setConsentChecked(false);
     setPartner(1);
     setDomainIdx(0);
@@ -2804,7 +2804,7 @@ export default function App() {
   function startSolo() {
     setCode(genCode());
     setAns1({}); setAns2({}); setSd1({}); setSd2({});
-    setContext({ duration: "", age: "", gender: "", children: "", researchConsent: false, contact: "" });
+    setContext({ duration: "", age: "", gender: "", children: "" });
     setConsentChecked(false);
     setPartner(1);
     setDomainIdx(0);
@@ -3485,6 +3485,7 @@ export default function App() {
                   <div style={{ flex: 1 }}>
                     <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", margin: 0 }}>
                       جلسه‌ی {num}: {title}
+                      {num === 1 && <span style={{ fontSize: 9.5, color: "#B9822F", fontWeight: 800, marginRight: 6 }}>· 🎁 رایگان</span>}
                       {num === 1 && libraryWeakestDomain && <span style={{ fontSize: 9.5, color: "#4C8778", fontWeight: 700, marginRight: 6 }}>· شخصی‌سازی‌شده</span>}
                       {!isSessionLikelyRelevant(libraryPkg, num, context) && <span style={{ fontSize: 9.5, color: "#B9822F", fontWeight: 700, marginRight: 6 }}>· شاید کمتر کاربردی</span>}
                     </p>
@@ -3729,18 +3730,6 @@ export default function App() {
                 <option value="">انتخاب کنید</option>
                 <option>ندارند</option><option>یک فرزند</option><option>دو فرزند یا بیشتر</option>
               </select>
-            </div>
-
-            <div style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 18 }}>
-              <label style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: "#7A5B2E", cursor: "pointer", fontWeight: 600 }}>
-                <input type="checkbox" checked={context.researchConsent} onChange={(e) => setContext({ ...context, researchConsent: e.target.checked })} style={{ marginTop: 3 }} />
-                <span>(اختیاری) مایلم در پژوهش‌های آتیِ همین طرح هم شرکت کنم و در صورتِ لزوم با من تماس گرفته شود.</span>
-              </label>
-              {context.researchConsent && (
-                <input value={context.contact} onChange={(e) => setContext({ ...context, contact: e.target.value })}
-                  placeholder="شماره تماس یا ایمیل (اختیاری)"
-                  style={{ width: "100%", marginTop: 10, padding: "9px 10px", borderRadius: 10, border: "1px solid #E8DCC8", fontSize: 12.5, ...FONT }} />
-              )}
             </div>
 
             <label style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12.5, color: "#4B6070", marginBottom: 18, cursor: "pointer" }}>
@@ -4859,7 +4848,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
 }
 
 function buildRawCSV(rows) {
-  const header = ["code", "partner", "duration", "age", "gender", "children", "researchConsent", "contact"];
+  const header = ["code", "partner", "duration", "age", "gender", "children"];
   DOMAINS.forEach((d) => d.items.forEach((_, i) => header.push(`${d.key}_${i + 1}`)));
   SD_ITEMS.forEach((_, i) => header.push(`sd_${i + 1}`));
 
@@ -4870,14 +4859,14 @@ function buildRawCSV(rows) {
       [1, 2].forEach((p) => {
         const ans = p === 1 ? r.ans1 : r.ans2;
         const sd = p === 1 ? r.sd1 : r.sd2;
-        const row = [r.code, p, r.context?.duration || "", r.context?.age || "", r.context?.gender || "", r.context?.children || "", r.context?.researchConsent ? "بله" : "", r.context?.contact || ""];
+        const row = [r.code, p, r.context?.duration || "", r.context?.age || "", r.context?.gender || "", r.context?.children || ""];
         DOMAINS.forEach((d) => d.items.forEach((_, i) => row.push((ans[d.key] || {})[i] ?? "")));
         SD_ITEMS.forEach((_, i) => row.push((sd || {})[i] ?? ""));
         lines.push(row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
       });
     } else if (r.ans1Done && !r.ans2Done) {
       // solo: single independent respondent
-      const row = [r.code, 1, r.context?.duration || "", r.context?.age || "", r.context?.gender || "", r.context?.children || "", r.context?.researchConsent ? "بله" : "", r.context?.contact || ""];
+      const row = [r.code, 1, r.context?.duration || "", r.context?.age || "", r.context?.gender || "", r.context?.children || ""];
       DOMAINS.forEach((d) => d.items.forEach((_, i) => row.push((r.ans1[d.key] || {})[i] ?? "")));
       SD_ITEMS.forEach((_, i) => row.push((r.sd1 || {})[i] ?? ""));
       lines.push(row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","));
