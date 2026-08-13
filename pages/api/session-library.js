@@ -37,11 +37,8 @@ export default async function handler(req, res) {
       const sess = getSessionContent(pkgKey, num, weakestDomain || null, "excellent");
       if (searchQuery && !sessionMatchesSearch(sess, searchQuery)) continue;
       const sid = `${pkgKey}-${num}`;
-      const unlocked = isAdmin || unlockedSessions.includes(sid);
+      const unlocked = num === 1 ? true : (isAdmin || unlockedSessions.includes(sid));
       const item = { num, title: sess.title, approach: sess.approach, unlocked };
-      if (num === 1 && !unlocked) {
-        item.freePreview = (sess.body || []).filter((b) => b.type === "h" || b.type === "p").slice(0, 2);
-      }
       results.push(item);
     }
 
