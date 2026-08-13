@@ -1747,7 +1747,7 @@ const SLIP_STRATEGIES = [
   "اگر متوجهِ الگویِ تکرارشونده‌ای در خودتان شدید، همان لحظه با یک متخصص مشورت کنید.",
 ];
 
-function SlipPreventionScreen({ onBack, userEmail }) {
+function SlipPreventionScreen({ onBack, userEmail, userToken }) {
   const storageKey = `slip_rounds_${userEmail || "anon"}`;
   const [rounds, setRounds] = useState(() => {
     try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
@@ -1767,8 +1767,8 @@ function SlipPreventionScreen({ onBack, userEmail }) {
   function persistRounds(next) {
     setRounds(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
-    if (userEmail) {
-      fetch("/api/safety-plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userEmail, planType: "slipPrevention", plan: { rounds: next } }) }).catch(() => {});
+    if (userToken) {
+      fetch("/api/safety-plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: userToken, planType: "slipPrevention", plan: { rounds: next } }) }).catch(() => {});
     }
   }
 
@@ -1930,7 +1930,7 @@ function SlipPreventionScreen({ onBack, userEmail }) {
   );
 }
 
-function SafetyPlanScreen({ onBack, userEmail }) {
+function SafetyPlanScreen({ onBack, userEmail, userToken }) {
   const storageKey = `safety_plan_${userEmail || "anon"}`;
   const [plan, setPlan] = useState(() => {
     try { return JSON.parse(localStorage.getItem(storageKey)) || { warningSigns: "", copingStrategies: "", contacts: "", safePlaces: "" }; }
@@ -1946,15 +1946,15 @@ function SafetyPlanScreen({ onBack, userEmail }) {
   }
 
   useEffect(() => {
-    if (saved || !userEmail) return;
+    if (saved || !userToken) return;
     const t = setTimeout(() => {
       fetch("/api/safety-plan", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userEmail, plan }),
+        body: JSON.stringify({ token: userToken, plan }),
       }).then(() => setSaved(true)).catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
-  }, [plan, saved, userEmail]);
+  }, [plan, saved, userToken]);
 
   const fields = [
     { key: "warningSigns", label: "🚩 نشانه‌هایِ هشدارِ من", placeholder: "چه‌احساس/فکر/رفتاری به من می‌گوید دارم وارد بحران می‌شوم؟ (مثلاً: بی‌خوابیِ شدید، افکارِ تکرارشونده‌ی منفی...)" },
@@ -2847,8 +2847,8 @@ export default function App() {
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا در ثبت‌نام");
-      setUser({ email: data.email, name: data.name });
-      localStorage.setItem("naghshe_user", JSON.stringify({ email: data.email, name: data.name }));
+      setUser({ email: data.email, name: data.name, token: data.token });
+      localStorage.setItem("naghshe_user", JSON.stringify({ email: data.email, name: data.name, token: data.token }));
       setScreen("start");
     } catch (e) { setAuthErr(e.message); }
     setAuthBusy(false);
@@ -2863,8 +2863,8 @@ export default function App() {
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا در ورود");
-      setUser({ email: data.email, name: data.name });
-      localStorage.setItem("naghshe_user", JSON.stringify({ email: data.email, name: data.name }));
+      setUser({ email: data.email, name: data.name, token: data.token });
+      localStorage.setItem("naghshe_user", JSON.stringify({ email: data.email, name: data.name, token: data.token }));
       setScreen("start");
     } catch (e) { setAuthErr(e.message); }
     setAuthBusy(false);
@@ -3282,11 +3282,11 @@ export default function App() {
         )}
 
         {screen === "safetyPlan" && (
-          <SafetyPlanScreen onBack={() => setScreen("topics")} userEmail={user?.email} />
+          <SafetyPlanScreen onBack={() => setScreen("topics")} userEmail={user?.email} userToken={user?.token} />
         )}
 
         {screen === "slipPrevention" && (
-          <SlipPreventionScreen onBack={() => setScreen("topics")} userEmail={user?.email} />
+          <SlipPreventionScreen onBack={() => setScreen("topics")} userEmail={user?.email} userToken={user?.token} />
         )}
 
         {screen === "checkin" && (() => {
