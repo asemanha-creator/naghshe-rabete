@@ -1240,6 +1240,10 @@ function MoodRating({ sessionKey, phase, onChange }) {
       <p style={{ fontSize: 12, fontWeight: 700, color: "#7A5B2E", margin: "0 0 8px" }}>
         {phase === "before" ? "قبل از شروع: الان چقدر ناراحت/مضطربید؟" : "بعد از این جلسه: الان چقدر ناراحت/مضطربید؟"}
       </p>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9.5, color: "#9A8560", marginBottom: 4 }}>
+        <span>۱ = اصلاً ناراحت نیستم</span>
+        <span>۱۰ = بی‌نهایت ناراحتم</span>
+      </div>
       <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
         {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
           <button key={n} onClick={() => pick(n)}
@@ -2966,6 +2970,21 @@ export default function App() {
                   🧭 راهنمایِ اپ
                 </button>
               </div>
+
+              {user ? (
+                <p style={{ fontSize: 11, color: "#5A7080", margin: "0 0 12px" }}>
+                  سلام {user.name || user.email} ·{" "}
+                  <a onClick={() => setScreen("myProgress")} style={{ color: "#2B6777", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>📈 پیشرفتِ من</a> ·{" "}
+                  <a onClick={() => setScreen("checkin")} style={{ color: "#2B6777", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>📋 چک‌این</a> ·{" "}
+                  <a onClick={() => setScreen("safetyPlan")} style={{ color: "#2B6777", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>🛡️ برنامه‌ی ایمنی</a> ·{" "}
+                  <a onClick={logout} style={{ color: "#8CA3B0", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
+                </p>
+              ) : (
+                <p style={{ fontSize: 11, margin: "0 0 12px" }}>
+                  <a onClick={() => setScreen("authLogin")} style={{ color: "#2B6777", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>ورود / ثبت‌نام</a>
+                  <span style={{ color: "#8CA3B0" }}> — برایِ دیدنِ پیشرفت، چک‌این، و برنامه‌ی ایمنی</span>
+                </p>
+              )}
               {showBio && (
                 <div style={{ background: "#fff", border: "1px solid #DCE8F0", borderRadius: 14, padding: "12px 14px", margin: "6px auto 10px", maxWidth: 320, textAlign: "right" }}>
                   <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: 0 }}>{BRAND.credential}</p>
@@ -3155,13 +3174,7 @@ export default function App() {
                 )}
               </div>
               <p style={{ fontSize: 13, color: "#D6E4F0", margin: "0 0 4px", fontWeight: 700 }}>{BRAND.academy}</p>
-              <h1 style={{ fontSize: 25, color: "#fff", margin: "0 0 10px", fontWeight: 800 }}>کجای راهم؟</h1>
-              <p style={{ fontSize: 16, color: "#EAF2F9", lineHeight: 1.9, margin: "0 0 11px", fontWeight: 500 }}>
-                سنجشِ رابطه‌یِ ما
-              </p>
-              <p style={{ fontSize: 15, color: "#DCE8F3", lineHeight: 1.9, margin: 0, fontWeight: 500 }}>
-                می‌خواهم بدانم که زندگی من چگونه پیش می‌رود؟<br />و من کجای زندگی خودم هستم و چقدر از همسرم دور یا نزدیکم؟
-              </p>
+              <h1 style={{ fontSize: 22, color: "#fff", margin: 0, fontWeight: 800 }}>کجای راهم؟</h1>
             </div>
 
             <div style={{ padding: "22px 20px 20px" }}>
