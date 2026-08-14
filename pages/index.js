@@ -2501,6 +2501,12 @@ export default function App() {
       else { const stored = localStorage.getItem("naghshe_ref"); if (stored) setReferredBy(stored); }
     } catch (e) {}
   }, []);
+  useEffect(() => {
+    try {
+      const rt = new URLSearchParams(window.location.search).get("resetToken");
+      if (rt) setScreen("resetPassword");
+    } catch (e) {}
+  }, []);
   const [isAdmin, setIsAdmin] = useState(() => {
     try { return typeof window !== "undefined" && localStorage.getItem("naghshe_admin") === "1"; } catch (e) { return false; }
   });
@@ -2860,6 +2866,9 @@ export default function App() {
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authName, setAuthName] = useState("");
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotMsg, setForgotMsg] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [authErr, setAuthErr] = useState("");
   const [authBusy, setAuthBusy] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
@@ -3533,6 +3542,58 @@ export default function App() {
           </Card>
         )}
 
+        {screen === "forgotPassword" && (
+          <Card>
+            <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 10 }}>بازیابیِ رمزِعبور</h2>
+            <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>ایمیلِ حسابتان را وارد کنید — لینکِ بازیابی برایتان ارسال می‌شود.</p>
+            <input value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} placeholder="ایمیل"
+              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 13 }} />
+            {forgotMsg && <p style={{ color: forgotMsg.startsWith("✅") ? "#4C8778" : "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>{forgotMsg}</p>}
+            <button onClick={async () => {
+              setForgotMsg(""); setAuthBusy(true);
+              try {
+                const r = await fetch("/api/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: forgotEmail }) });
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.error || "خطا");
+                setForgotMsg("✅ اگر این ایمیل ثبت‌نام کرده باشد، لینکِ بازیابی برایش ارسال شد. صندوقِ ورودی (و اسپم) را چک کنید.");
+              } catch (e) { setForgotMsg("❌ " + e.message); }
+              setAuthBusy(false);
+            }} disabled={authBusy}
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+              {authBusy ? "..." : "ارسالِ لینکِ بازیابی"}
+            </button>
+            <button onClick={() => { setForgotMsg(""); setScreen("authLogin"); }}
+              style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12.5 }}>
+              بازگشت به ورود
+            </button>
+          </Card>
+        )}
+
+        {screen === "resetPassword" && (
+          <Card>
+            <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 10 }}>تنظیمِ رمزِ جدید</h2>
+            <input value={newPassword} onChange={(e) => setNewPassword(e.target.value)} placeholder="رمزِعبورِ جدید (حداقل ۶ کاراکتر)" type="password"
+              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 13 }} />
+            {forgotMsg && <p style={{ color: forgotMsg.startsWith("✅") ? "#4C8778" : "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>{forgotMsg}</p>}
+            <button onClick={async () => {
+              setForgotMsg(""); setAuthBusy(true);
+              try {
+                const params = new URLSearchParams(window.location.search);
+                const resetToken = params.get("resetToken");
+                const r = await fetch("/api/reset-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ resetToken, newPassword }) });
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.error || "خطا");
+                setForgotMsg("✅ رمز تغییر کرد — حالا می‌توانید وارد شوید.");
+                setTimeout(() => { window.location.href = "/"; }, 2000);
+              } catch (e) { setForgotMsg("❌ " + e.message); }
+              setAuthBusy(false);
+            }} disabled={authBusy}
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+              {authBusy ? "..." : "تغییرِ رمز"}
+            </button>
+          </Card>
+        )}
+
         {screen === "authLogin" && (
           <Card>
             <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 16 }}>ورود به حساب</h2>
@@ -3541,6 +3602,9 @@ export default function App() {
             <input value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="رمزِعبور" type="password"
               style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 13 }} />
             {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
+            <p style={{ textAlign: "center", marginBottom: 10 }}>
+              <a onClick={() => { setAuthErr(""); setScreen("forgotPassword"); }} style={{ fontSize: 12, color: "#B8873A", cursor: "pointer", textDecoration: "underline" }}>رمزتان را فراموش کرده‌اید؟</a>
+            </p>
             <button onClick={doLogin} disabled={authBusy}
               style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
               {authBusy ? "..." : "ورود"}
