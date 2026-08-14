@@ -1,4 +1,5 @@
 import { Redis } from "@upstash/redis";
+import { verifySession } from "../../lib/auth";
 
 const redis = Redis.fromEnv();
 const ADMIN_PASS = "AGHILI-PANEL";
@@ -25,17 +26,20 @@ export default async function handler(req, res) {
       return res.status(200).json({ ok: true, code });
     }
 
-    // ---------- استفاده از کد (کاربر) ----------
+    // ---------- استفاده از کد (کاربر — حالا با نشستِ تاییدشده، نه ایمیلِ خام) ----------
     if (action === "redeem") {
-      const { code, email } = req.body;
-      if (!code || !email) return res.status(400).json({ error: "کد و ایمیل لازم است" });
+      const { code, token } = req.body;
+      if (!code || !token) return res.status(400).json({ error: "کد لازم است — لطفاً وارد حساب شوید" });
+      const email = await verifySession(token);
+      if (!email) return res.status(401).json({ error: "نشستِ نامعتبر — لطفاً دوباره وارد شوید" });
+
       const key = `code:${code.toUpperCase().trim()}`;
       const raw = await redis.get(key);
       if (!raw) return res.status(404).json({ error: "این کد معتبر نیست" });
       const data = typeof raw === "string" ? JSON.parse(raw) : raw;
       if (data.used) return res.status(409).json({ error: "این کد قبلاً استفاده شده است" });
 
-      const uKey = `unlocked:${email.toLowerCase().trim()}`;
+      const uKey = `unlocked:${email}`;
       const rawU = (await redis.get(uKey)) || [];
       const current = typeof rawU === "string" ? JSON.parse(rawU) : rawU || [];
       if (!current.includes(data.sessionId)) current.push(data.sessionId);
@@ -47,7 +51,7 @@ export default async function handler(req, res) {
       await redis.set(key, JSON.stringify(data));
 
       if (data.therapistId) {
-        await redis.set(`patient_therapist:${email.toLowerCase().trim()}`, data.therapistId);
+        await redis.set(`patient_therapist:${email}`, data.therapistId);
         const salesKey = `therapist_sales:${data.therapistId}`;
         const rawSales = (await redis.get(salesKey)) || [];
         const sales = typeof rawSales === "string" ? JSON.parse(rawSales) : rawSales;
