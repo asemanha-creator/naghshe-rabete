@@ -2507,6 +2507,22 @@ export default function App() {
       if (rt) setScreen("resetPassword");
     } catch (e) {}
   }, []);
+  function navigateToTopic(key) {
+    const t = TOPICS.find((x) => x.key === key);
+    if (!t || !t.enabled) return;
+    if (key === "prevention") openSessionLibrary("moderate");
+    else if (key === "relationship") setScreen("treatmentDirect");
+    else if (key === "assessments") setScreen("start");
+    else if (key === "aboutUs") setScreen("aboutUs");
+    else if (key === "consultCall") setScreen("feedback");
+    else if (key === "slipPrevention") setScreen("slipPrevention");
+  }
+  useEffect(() => {
+    try {
+      const goto = new URLSearchParams(window.location.search).get("goto");
+      if (goto) navigateToTopic(goto);
+    } catch (e) {}
+  }, []);
   const [isAdmin, setIsAdmin] = useState(() => {
     try { return typeof window !== "undefined" && localStorage.getItem("naghshe_admin") === "1"; } catch (e) { return false; }
   });
@@ -3219,15 +3235,7 @@ export default function App() {
               {TOPICS.map((t) => (
                 <button
                   key={t.key}
-                  onClick={() => {
-                    if (!t.enabled) return;
-                    if (t.key === "prevention") openSessionLibrary("moderate");
-                    else if (t.key === "relationship") setScreen("treatmentDirect");
-                    else if (t.key === "assessments") setScreen("start");
-                    else if (t.key === "aboutUs") setScreen("aboutUs");
-                    else if (t.key === "consultCall") setScreen("feedback");
-                    else if (t.key === "slipPrevention") setScreen("slipPrevention");
-                  }}
+                  onClick={() => navigateToTopic(t.key)}
                   style={{
                     position: "relative", overflow: "hidden", textAlign: "center",
                     height: 92, borderRadius: 16, cursor: t.enabled ? "pointer" : "default",
