@@ -1,13 +1,15 @@
 import { Redis } from "@upstash/redis";
+import { verifySession } from "../../lib/auth";
 
 const redis = Redis.fromEnv();
 
-// بازیابیِ پیشرفتِ خودِ کاربر (بدونِ نیازِ رمزِ ادمین) — برایِ نمایشِ یکپارچه در همه‌ی ماژول‌ها
+// بازیابیِ پیشرفتِ خودِ کاربر — حالا با تاییدِ نشست، نه ایمیلِ خام
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
-    const email = (req.query.email || "").toLowerCase().trim();
-    if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
+    const token = req.query.token;
+    const email = await verifySession(token);
+    if (!email) return res.status(401).json({ error: "نشستِ نامعتبر — لطفاً دوباره وارد شوید" });
 
     const rawUnlocked = (await redis.get(`unlocked:${email}`)) || [];
     const unlockedSessions = typeof rawUnlocked === "string" ? JSON.parse(rawUnlocked) : rawUnlocked;
