@@ -363,9 +363,10 @@ const SD_ITEMS = [
 ];
 
 const TOPICS = [
+  { key: "prevention", title: "افزایشِ وفاداری", subtitle: "(واکسیناسیونِ زندگیِ زناشویی)", icon: "🛡️", core: "#4C8778", bg: "#DCEEE8", blobA: "#84BBAB", blobB: "#BEDDD3", enabled: true },
+  { key: "slipPrevention", title: "پیشگیری از خیانت", subtitle: "برنامه‌ی شخصیِ من", icon: "🛑", core: "#B9822F", bg: "#FBF3E2", blobA: "#E8C888", blobB: "#F5E2B8", enabled: true },
   { key: "relationship", title: "خیانتِ زناشویی", subtitle: "درمان و بازسازی", icon: "💞", core: "#2B6777", bg: "#DCEAEA", blobA: "#8FB8B8", blobB: "#C7DEDA", enabled: true },
   { key: "assessments", title: "آزمون‌ها", subtitle: "کجای راهم؟", icon: "📝", core: "#6E5A9C", bg: "#EAE4F5", blobA: "#B5A2D6", blobB: "#D6C9E8", enabled: true },
-  { key: "prevention", title: "افزایشِ وفاداری و تعهد", subtitle: "واکسیناسیونِ زوجی", icon: "🛡️", core: "#4C8778", bg: "#DCEEE8", blobA: "#84BBAB", blobB: "#BEDDD3", enabled: true },
   { key: "premarriage", title: "پیش از ازدواج", subtitle: "آماده‌ام؟", icon: "💍", core: "#B8853A", bg: "#FBF0DC", blobA: "#E8C888", blobB: "#F5E2B8", enabled: false },
   { key: "aggression", title: "پرخاشگری", subtitle: "کنترلِ خشم", icon: "🔥", core: "#B5654E", bg: "#F5E3DC", blobA: "#DDA48F", blobB: "#EFCBBA", enabled: false },
   { key: "distrust", title: "بی‌اعتمادی", subtitle: "بدبینی در رابطه", icon: "🔍", core: "#4E7290", bg: "#DCE6EC", blobA: "#8FADC2", blobB: "#C3D5E1", enabled: false },
@@ -377,7 +378,6 @@ const TOPICS = [
   { key: "rumination", title: "نشخوارِ فکری", subtitle: "افکارِ تکرارشونده", icon: "🌀", core: "#77685A", bg: "#EDE6DE", blobA: "#B0A18F", blobB: "#D6CDBF", enabled: false },
   { key: "aboutUs", title: "دربارهٔ ما", subtitle: "اهداف و چشم‌انداز", icon: "🎯", core: "#8A5A4E", bg: "#F2E1DC", blobA: "#C69086", blobB: "#E6C3BB", enabled: true },
   { key: "consultCall", title: "تماس با مشاور", subtitle: "گفت‌وگویِ مستقیم", icon: "☎️", core: "#2B6777", bg: "#DCEAEA", blobA: "#8FB8B8", blobB: "#C7DEDA", enabled: true },
-  { key: "slipPrevention", title: "پیشگیری از خیانت", subtitle: "برنامه‌ی شخصیِ من", icon: "🛑", core: "#B9822F", bg: "#FBF3E2", blobA: "#E8C888", blobB: "#F5E2B8", enabled: true },
   { key: "compulsiveSexual", title: "رفتارِ جنسیِ اجباری", subtitle: "به‌زودی", icon: "🔄", core: "#845A76", bg: "#F0DFE8", blobA: "#C08FAE", blobB: "#E1C0D3", enabled: false },
   { key: "predivorce", title: "مشاورهٔ پیش از طلاق", subtitle: "تصمیمِ آگاهانه", icon: "⚖️", core: "#8A5A4E", bg: "#F2E1DC", blobA: "#C69086", blobB: "#E6C3BB", enabled: false },
 ];
@@ -1664,10 +1664,23 @@ const DAILY_TIPS = [
   "قبل از قضاوت، بپرسید: «این رفتار از چه نیازی می‌آید؟» — کنجکاوی، دشمنیِ کمتری می‌سازد.",
   "امروز یک سوالِ عمیق از همسرتان بپرسید که تا حالا نپرسیده‌اید.",
   "نفسِ ۴-۷-۸ را همین حالا امتحان کنید: ۴ ثانیه دَم، ۷ ثانیه نگه‌داشتن، ۸ ثانیه بازدَم.",
+  "امروز، به‌جایِ «تو همیشه...»، بگویید «من وقتی ... اتفاق می‌افتد، این‌طور احساس می‌کنم».",
+  "یک لمسِ کوچکِ غیرِجنسی (دستی روی شانه، بوسه‌ای کوتاه) همین امروز، بدونِ دلیلِ خاص.",
+  "پیش از خواب، از همسرتان بپرسید: «امروز چه‌چیزی برایت سخت بود؟» و فقط گوش دهید.",
+  "یک تصمیمِ کوچکِ روزمره را امروز کاملاً به همسرتان بسپارید — اعتماد را عملی نشان دهید.",
+  "به‌جایِ حدس‌زدن، امروز مستقیم بپرسید: «چطور می‌توانم امروز کمکت کنم؟»",
+  "۵ دقیقه امروز، فقط چشم‌درچشمِ همسرتان بنشینید، بدونِ حرف — این تمرین، صمیمیت را عمیق می‌کند.",
+  "یک عادتِ کوچکِ آزاردهنده را امروز بدونِ گلایه، فقط برایِ او تغییر دهید.",
+  "امروز بگویید: «ممنونم که کنارم هستی» — حتی اگر روزِ سختی گذشته.",
+  "وقتی عصبانی شدید، پیش از پاسخ، تا ۱۰ در ذهنتان بشمارید — فضا برایِ فکرکردن بسازید.",
+  "امروز یک عکسِ قدیمیِ خوب از دورانِ اولِ رابطه‌تان را با هم ببینید و دربارهٔ آن حرف بزنید.",
+  "به‌جایِ «باشه»، امروز واقعاً بپرسید همسرتان چه احساسی دارد و منتظرِ پاسخِ کامل بمانید.",
+  "یک کارِ کوچکِ خانه را بدونِ اینکه بخواهند، امروز برایِ همسرتان انجام دهید.",
+  "امروز، دستِ‌کم یک‌بار، به‌جایِ گوشی، به چشم‌هایِ همسرتان نگاه کنید وقتی صحبت می‌کند.",
 ];
 function getTodayTip() {
-  const dayIndex = Math.floor(Date.now() / 86400000) % DAILY_TIPS.length;
-  return DAILY_TIPS[dayIndex];
+  const fiveMinIndex = Math.floor(Date.now() / (5 * 60 * 1000)) % DAILY_TIPS.length;
+  return DAILY_TIPS[fiveMinIndex];
 }
 
 const ONBOARDING_SLIDES = [
@@ -2097,7 +2110,7 @@ function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, default
 }
 
 
-function PartnerSyncWidget({ userEmail, pkgKey, totalSessions }) {
+function PartnerSyncWidget({ userEmail, userToken, pkgKey, totalSessions }) {
   const storageKey = `partner_email_${userEmail}`;
   const [partnerEmail, setPartnerEmailState] = useState(() => {
     try { return localStorage.getItem(storageKey) || ""; } catch (e) { return ""; }
@@ -2107,26 +2120,27 @@ function PartnerSyncWidget({ userEmail, pkgKey, totalSessions }) {
   const [msg, setMsg] = useState("");
 
   useEffect(() => {
-    if (partnerEmail) fetchPartnerProgress(partnerEmail);
+    if (partnerEmail) fetchPartnerProgress();
   }, [partnerEmail, pkgKey]);
 
-  function fetchPartnerProgress(email) {
-    fetch(`/api/partner-link?partnerEmail=${encodeURIComponent(email)}&pkgKey=${encodeURIComponent(pkgKey)}`)
+  function fetchPartnerProgress() {
+    if (!userToken) return;
+    fetch(`/api/partner-link?token=${encodeURIComponent(userToken)}&pkgKey=${encodeURIComponent(pkgKey)}`)
       .then((r) => r.json())
       .then((d) => { if (d.ok) setPartnerCount(d.unlockedCount); })
       .catch(() => {});
   }
 
   function linkPartner() {
-    if (!inputVal) return;
+    if (!inputVal || !userToken) return;
     fetch("/api/partner-link", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userEmail, partnerEmail: inputVal }),
+      body: JSON.stringify({ token: userToken, partnerEmail: inputVal }),
     }).then(() => {
       setPartnerEmailState(inputVal);
       try { localStorage.setItem(storageKey, inputVal); } catch (e) {}
       setMsg("اتصال برقرار شد ✓");
-      fetchPartnerProgress(inputVal);
+      fetchPartnerProgress();
     }).catch(() => setMsg("خطا در اتصال"));
   }
 
@@ -2456,6 +2470,11 @@ function ChatWidget({ scores, overall, mode }) {
 
 export default function App() {
   const [screen, setScreen] = useState("topics");
+  const [todayTip, setTodayTip] = useState(() => getTodayTip());
+  useEffect(() => {
+    const t = setInterval(() => setTodayTip(getTodayTip()), 5 * 60 * 1000);
+    return () => clearInterval(t);
+  }, []);
   const [referredBy, setReferredBy] = useState(null);
   useEffect(() => {
     try {
@@ -2694,7 +2713,7 @@ export default function App() {
 
   async function generateActivationCode(pkgKey, num) {
     try {
-      const r = await fetch("/api/sessions/redeem", {
+      const r = await fetch("/api/redeem", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "generate", sessionId: sessionId(pkgKey, num), adminPass: ADMIN_PASS }),
       });
@@ -3159,8 +3178,8 @@ export default function App() {
               </div>
 
               <div style={{ background: "linear-gradient(135deg, #FBF3E2, #F5E8CC)", borderRadius: 14, padding: "12px 14px", marginBottom: 16, textAlign: "right" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, color: "#B9822F", margin: "0 0 4px" }}>💡 نکته‌ی امروز (رایگان)</p>
-                <p style={{ fontSize: 11.5, color: "#7A5B2E", lineHeight: 1.8, margin: 0 }}>{getTodayTip()}</p>
+                <p style={{ fontSize: 10, fontWeight: 700, color: "#B9822F", margin: "0 0 4px" }}>💡 نکته‌ی امروز</p>
+                <p style={{ fontSize: 11.5, color: "#7A5B2E", lineHeight: 1.8, margin: 0 }}>{todayTip}</p>
               </div>
 
               <p style={{ fontSize: 11.5, color: "#5A7080", margin: 0 }}>می‌خواهید امروز رویِ کدام موضوع کار کنیم؟</p>
@@ -3572,7 +3591,7 @@ export default function App() {
               {TREATMENT_PACKAGES[libraryPkg].sessions} جلسه · هر جلسه {toman(sessionPrice(libraryPkg))}
             </p>
             {libraryPkg === "advanced" && user && (
-              <PartnerSyncWidget userEmail={user.email} pkgKey={libraryPkg} totalSessions={TREATMENT_PACKAGES[libraryPkg].sessions} />
+              <PartnerSyncWidget userEmail={user.email} userToken={user.token} pkgKey={libraryPkg} totalSessions={TREATMENT_PACKAGES[libraryPkg].sessions} />
             )}
             <p style={{ textAlign: "center", marginBottom: 16, fontSize: 11 }}>
               <span style={{ color: "#8CA3B0" }}>مسیرِ من اشتباه است — نمایشِ: </span>
@@ -3696,9 +3715,9 @@ export default function App() {
                   <button onClick={async () => {
                     setRedeemMsg("");
                     try {
-                      const r = await fetch("/api/sessions/redeem", {
+                      const r = await fetch("/api/redeem", {
                         method: "POST", headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ action: "redeem", code: redeemCode, email: user.email }),
+                        body: JSON.stringify({ action: "redeem", code: redeemCode, token: user.token }),
                       });
                       const data = await r.json();
                       if (!r.ok) throw new Error(data.error || "خطا");
