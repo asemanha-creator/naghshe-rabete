@@ -2841,7 +2841,7 @@ export default function App() {
     if (!privacyConsent) { setAuthErr("لطفاً ابتدا با شرایطِ حریمِ خصوصی موافقت کنید."); return; }
     setAuthErr(""); setAuthBusy(true);
     try {
-      const r = await fetch("/api/auth/signup", {
+      const r = await fetch("/api/signup", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: authEmail, password: authPassword, name: authName }),
       });
@@ -2850,14 +2850,14 @@ export default function App() {
       setUser({ email: data.email, name: data.name, token: data.token });
       localStorage.setItem("naghshe_user", JSON.stringify({ email: data.email, name: data.name, token: data.token }));
       setScreen("start");
-    } catch (e) { setAuthErr(e.message); }
+    } catch (e) { setAuthErr(`${e.name || "Error"}: ${e.message} ${e.stack ? "| " + e.stack.split("\n")[0] : ""}`); }
     setAuthBusy(false);
   }
 
   async function doLogin() {
     setAuthErr(""); setAuthBusy(true);
     try {
-      const r = await fetch("/api/auth/login", {
+      const r = await fetch("/api/login", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: authEmail, password: authPassword }),
       });
@@ -2866,7 +2866,7 @@ export default function App() {
       setUser({ email: data.email, name: data.name, token: data.token });
       localStorage.setItem("naghshe_user", JSON.stringify({ email: data.email, name: data.name, token: data.token }));
       setScreen("start");
-    } catch (e) { setAuthErr(e.message); }
+    } catch (e) { setAuthErr(`${e.name || "Error"}: ${e.message} ${e.stack ? "| " + e.stack.split("\n")[0] : ""}`); }
     setAuthBusy(false);
   }
 
