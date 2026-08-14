@@ -1270,11 +1270,11 @@ function Technique({ id, name, time, howTo, effect, more }) {
   useEffect(() => {
     if (noteSaved || !id) return;
     const t = setTimeout(() => {
-      let userEmail = null;
-      try { userEmail = JSON.parse(localStorage.getItem("naghshe_user") || "{}").email; } catch (e) {}
+      let userToken = null;
+      try { userToken = JSON.parse(localStorage.getItem("naghshe_user") || "{}").token; } catch (e) {}
       fetch("/api/session-notes", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ techniqueId: id, note, userEmail }),
+        body: JSON.stringify({ techniqueId: id, note, token: userToken }),
       }).then(() => setNoteSaved(true)).catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
@@ -1373,12 +1373,12 @@ function MoodRating({ sessionKey, phase, onChange }) {
   function pick(n) {
     setVal(n);
     try { localStorage.setItem(storageKey, JSON.stringify({ value: n, ts: Date.now(), sessionKey, phase })); } catch (e) {}
-    let userEmail = null;
-    try { userEmail = JSON.parse(localStorage.getItem("naghshe_user") || "{}").email; } catch (e) {}
-    if (userEmail) {
+    let userToken = null;
+    try { userToken = JSON.parse(localStorage.getItem("naghshe_user") || "{}").token; } catch (e) {}
+    if (userToken) {
       fetch("/api/mood-log", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userEmail, sessionKey, phase, value: n }),
+        body: JSON.stringify({ token: userToken, sessionKey, phase, value: n }),
       }).catch(() => {});
     }
     if (onChange) onChange(n);
@@ -1562,18 +1562,18 @@ function GrowthScoreGauge({ score, components }) {
   );
 }
 
-function MyProgressScreen({ onBack, userEmail }) {
+function MyProgressScreen({ onBack, userEmail, userToken }) {
   const [serverData, setServerData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!userEmail) { setLoading(false); return; }
-    fetch(`/api/my-progress?email=${encodeURIComponent(userEmail)}`)
+    if (!userToken) { setLoading(false); return; }
+    fetch(`/api/my-progress?token=${encodeURIComponent(userToken)}`)
       .then((r) => r.json())
       .then((d) => { if (d.ok) setServerData(d); })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [userEmail]);
+  }, [userToken]);
 
   // اگر داده‌ی سرور در دسترس بود از آن استفاده کن، وگرنه به localStorage برگرد (سازگاریِ عقب‌رو)
   const history = useMemo(() => {
@@ -1988,7 +1988,7 @@ function SafetyPlanScreen({ onBack, userEmail, userToken }) {
 }
 
 // ---------- چک‌اینِ دوره‌ای — پایشِ کوتاهِ خلق/رابطه + پیشنهادِ خودکارِ جلسه ----------
-function CheckinScreen({ onBack, userEmail, unlockedSessions, defaultIntervalDays }) {
+function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, defaultIntervalDays }) {
   const [answers, setAnswers] = useState({});
   const [intervalDays, setIntervalDays] = useState(defaultIntervalDays || 7);
   const [submitted, setSubmitted] = useState(false);
@@ -2023,7 +2023,7 @@ function CheckinScreen({ onBack, userEmail, unlockedSessions, defaultIntervalDay
     try {
       await fetch("/api/checkin", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userEmail, answers, intervalDays }),
+        body: JSON.stringify({ token: userToken, answers, intervalDays }),
       });
     } catch (e) {}
     setSaving(false);
@@ -3278,7 +3278,7 @@ export default function App() {
         )}
 
         {screen === "myProgress" && (
-          <MyProgressScreen onBack={() => setScreen("topics")} userEmail={user?.email} />
+          <MyProgressScreen onBack={() => setScreen("topics")} userEmail={user?.email} userToken={user?.token} />
         )}
 
         {screen === "safetyPlan" && (
@@ -3295,7 +3295,7 @@ export default function App() {
             ? Math.min(...activePkgs.map((p) => SUGGESTED_CHECKIN_DAYS[p] || 7))
             : 7;
           return (
-            <CheckinScreen onBack={() => setScreen("topics")} userEmail={user?.email}
+            <CheckinScreen onBack={() => setScreen("topics")} userEmail={user?.email} userToken={user?.token}
               unlockedSessions={unlockedSessions} defaultIntervalDays={defaultIntervalDays} />
           );
         })()}
