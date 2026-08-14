@@ -1760,6 +1760,24 @@ const SLIP_STRATEGIES = [
   "اگر متوجهِ الگویِ تکرارشونده‌ای در خودتان شدید، همان لحظه با یک متخصص مشورت کنید.",
 ];
 
+function SessionAudioPlayer({ sessionKey }) {
+  const [audioUrl, setAudioUrl] = useState(null);
+  useEffect(() => {
+    if (!sessionKey) return;
+    fetch(`/api/audio?sessionId=${encodeURIComponent(sessionKey)}`)
+      .then((r) => r.json())
+      .then((d) => { if (d.ok) setAudioUrl(d.url); })
+      .catch(() => {});
+  }, [sessionKey]);
+  if (!audioUrl) return null;
+  return (
+    <div style={{ background: "#F5EAD0", borderRadius: 12, padding: "10px 12px", marginBottom: 14 }}>
+      <p style={{ fontSize: 11.5, fontWeight: 700, color: "#7A5B2E", margin: "0 0 6px" }}>🎧 نسخه‌ی صوتیِ این جلسه</p>
+      <audio controls src={audioUrl} style={{ width: "100%" }} />
+    </div>
+  );
+}
+
 function SlipPreventionScreen({ onBack, userEmail, userToken }) {
   const storageKey = `slip_rounds_${userEmail || "anon"}`;
   const [rounds, setRounds] = useState(() => {
@@ -2616,6 +2634,9 @@ export default function App() {
   const [adminUnlockEmail, setAdminUnlockEmail] = useState("");
   const [adminUnlockMsg, setAdminUnlockMsg] = useState("");
   const [generatedCode, setGeneratedCode] = useState("");
+  const [audioPkgKey, setAudioPkgKey] = useState("moderate");
+  const [audioNum, setAudioNum] = useState(1);
+  const [audioUploadMsg, setAudioUploadMsg] = useState("");
   const [backupBusy, setBackupBusy] = useState(false);
   const [backupMsg, setBackupMsg] = useState("");
   const [backupList, setBackupList] = useState([]);
@@ -3785,6 +3806,7 @@ export default function App() {
                 style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>
                 ‹ بازگشت به فهرستِ جلسات
               </button>
+              <SessionAudioPlayer sessionKey={sessKey} />
               <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>
                 جلسه‌ی {viewingSession.num}: {sess.title}
               </h2>
@@ -4340,6 +4362,32 @@ export default function App() {
                 <p style={{ fontSize: 18, fontWeight: 800, color: "#7A5B2E", letterSpacing: 2, margin: 0 }}>{generatedCode}</p>
               </div>
             )}
+          </Card>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🎙️ آپلودِ صوتِ هر جلسه</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>فایلِ mp3/m4a را برایِ همان جلسه انتخاب کنید؛ خودکار ذخیره و به پخش‌کننده‌ی همان جلسه وصل می‌شود.</p>
+            <select value={audioPkgKey} onChange={(e) => setAudioPkgKey(e.target.value)} style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12, marginBottom: 6 }}>
+              {Object.entries(TREATMENT_PACKAGES).map(([k, p]) => <option key={k} value={k}>{p.label}</option>)}
+            </select>
+            <select value={audioNum} onChange={(e) => setAudioNum(Number(e.target.value))} style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12, marginBottom: 8 }}>
+              {Array.from({ length: TREATMENT_PACKAGES[audioPkgKey].sessions }, (_, i) => i + 1).map((n) => <option key={n} value={n}>جلسه {n}</option>)}
+            </select>
+            <input type="file" accept="audio/*" onChange={async (e) => {
+              const file = e.target.files[0];
+              if (!file) return;
+              setAudioUploadMsg("در حالِ آپلود...");
+              try {
+                const { upload } = await import("@vercel/blob/client");
+                const sid = `${audioPkgKey}-${audioNum}`;
+                await upload(file.name, file, {
+                  access: "public",
+                  handleUploadUrl: "/api/audio-upload",
+                  clientPayload: JSON.stringify({ adminPass: ADMIN_PASS, sessionId: sid }),
+                });
+                setAudioUploadMsg("✅ آپلود شد");
+              } catch (err) { setAudioUploadMsg("❌ " + err.message); }
+            }} style={{ width: "100%", fontSize: 12 }} />
+            {audioUploadMsg && <p style={{ fontSize: 11, color: "#4C8778", marginTop: 6 }}>{audioUploadMsg}</p>}
           </Card>
           <Card style={{ border: "1.5px solid #A6432F" }}>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📬 پیشنهادات / انتقادات / تیکت‌ها</p>
