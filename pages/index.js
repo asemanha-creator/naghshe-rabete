@@ -2489,6 +2489,8 @@ function ChatWidget({ scores, overall, mode }) {
 export default function App() {
   const [screen, setScreen] = useState("topics");
   const [todayTip, setTodayTip] = useState(() => getTodayTip());
+  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [globalSearch, setGlobalSearch] = useState("");
   useEffect(() => {
     const t = setInterval(() => setTodayTip(getTodayTip()), 5 * 60 * 1000);
     return () => clearInterval(t);
@@ -3228,22 +3230,51 @@ export default function App() {
                 <p style={{ fontSize: 11.5, color: "#7A5B2E", lineHeight: 1.8, margin: 0 }}>{todayTip}</p>
               </div>
 
+              <div style={{ position: "relative", marginBottom: 14 }}>
+                <input value={globalSearch} onChange={(e) => setGlobalSearch(e.target.value)}
+                  placeholder="🔍 جست‌وجو در سوالات، موضوعات..."
+                  style={{ width: "100%", padding: "10px 12px", borderRadius: 12, border: "1px solid #DCE8F0", fontSize: 12.5, boxSizing: "border-box" }} />
+                {globalSearch.trim().length > 1 && (() => {
+                  const q = globalSearch.trim().toLowerCase();
+                  const faqHits = INFIDELITY_FAQ.filter((f) => (f.q + " " + f.a + " " + f.category).toLowerCase().includes(q)).slice(0, 4);
+                  const topicHits = TOPICS.filter((t) => t.enabled && (t.title + " " + t.subtitle).toLowerCase().includes(q)).slice(0, 3);
+                  if (faqHits.length === 0 && topicHits.length === 0) {
+                    return <div style={{ position: "absolute", top: "105%", right: 0, left: 0, background: "#fff", border: "1px solid #DCE8F0", borderRadius: 12, padding: "12px", fontSize: 11.5, color: "#8CA3B0", textAlign: "center", zIndex: 20, boxShadow: "0 8px 20px rgba(0,0,0,0.08)" }}>نتیجه‌ای پیدا نشد</div>;
+                  }
+                  return (
+                    <div style={{ position: "absolute", top: "105%", right: 0, left: 0, background: "#fff", border: "1px solid #DCE8F0", borderRadius: 12, padding: "8px", zIndex: 20, boxShadow: "0 8px 20px rgba(0,0,0,0.08)", maxHeight: 280, overflowY: "auto" }}>
+                      {topicHits.map((t) => (
+                        <div key={t.key} onClick={() => { setGlobalSearch(""); navigateToTopic(t.key); }}
+                          style={{ padding: "8px 10px", borderRadius: 8, cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", gap: 6 }}>
+                          <span>{t.icon}</span><b>{t.title}</b><span style={{ color: "#8CA3B0", fontSize: 10.5 }}>· موضوع</span>
+                        </div>
+                      ))}
+                      {faqHits.map((f) => (
+                        <div key={f.rank} onClick={() => { setGlobalSearch(""); setScreen("faq"); }}
+                          style={{ padding: "8px 10px", borderRadius: 8, cursor: "pointer", fontSize: 12 }}>
+                          ❓ {f.q} <span style={{ color: "#8CA3B0", fontSize: 10.5 }}>· سوالِ متداول</span>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+
               <p style={{ fontSize: 11.5, color: "#5A7080", margin: 0 }}>می‌خواهید امروز رویِ کدام موضوع کار کنیم؟</p>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 9 }}>
-              {TOPICS.map((t) => (
+              {TOPICS.filter((t) => t.enabled).map((t) => (
                 <button
                   key={t.key}
                   onClick={() => navigateToTopic(t.key)}
                   style={{
                     position: "relative", overflow: "hidden", textAlign: "center",
-                    height: 92, borderRadius: 16, cursor: t.enabled ? "pointer" : "default",
-                    background: t.enabled ? "#fff" : "#FAFCFD",
-                    border: t.enabled ? `1.5px solid ${t.core}` : "1px solid #EDF2F5",
+                    height: 92, borderRadius: 16, cursor: "pointer",
+                    background: "#fff",
+                    border: `1.5px solid ${t.core}`,
                     padding: "10px 6px 8px",
-                    boxShadow: t.enabled ? `0 6px 16px ${t.core}30` : "none",
-                    opacity: t.enabled ? 1 : 0.75,
+                    boxShadow: `0 6px 16px ${t.core}30`,
                     display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3,
                     transition: "transform 0.15s ease",
                   }}
@@ -3252,18 +3283,35 @@ export default function App() {
                 >
                   <span style={{ fontSize: 20 }}>{t.icon}</span>
                   <span style={{ fontSize: 11.5, fontWeight: 700, color: "#20303A", lineHeight: 1.25 }}>{t.title}</span>
-                  {t.enabled ? (
-                    <span style={{ fontSize: 9, fontWeight: 700, color: t.core }}>شروع ←</span>
-                  ) : (
-                    <span style={{ fontSize: 8.5, fontWeight: 600, color: "#A3B2BA" }}>به‌زودی</span>
-                  )}
+                  <span style={{ fontSize: 9, fontWeight: 700, color: t.core }}>شروع ←</span>
                 </button>
               ))}
             </div>
 
-            <p style={{ textAlign: "center", fontSize: 10.5, color: "#8CA3B0", marginTop: 14, lineHeight: 1.8 }}>
-              ماژول‌هایِ «به‌زودی» در حالِ آماده‌سازیِ علمی‌اند.
-            </p>
+            {TOPICS.some((t) => !t.enabled) && (
+              <div style={{ marginTop: 16 }}>
+                <button onClick={() => setShowComingSoon(!showComingSoon)}
+                  style={{ width: "100%", padding: "9px", borderRadius: 10, border: "1px dashed #C9D4DA", background: "transparent", color: "#8CA3B0", fontSize: 11, cursor: "pointer" }}>
+                  {showComingSoon ? "▲ بستنِ ماژول‌هایِ به‌زودی" : `▼ ${TOPICS.filter((t) => !t.enabled).length} ماژولِ دیگر، در حالِ آماده‌سازی`}
+                </button>
+                {showComingSoon && (
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 9, marginTop: 9 }}>
+                    {TOPICS.filter((t) => !t.enabled).map((t) => (
+                      <div key={t.key} style={{
+                        textAlign: "center", height: 92, borderRadius: 16,
+                        background: "#FAFCFD", border: "1px solid #EDF2F5", opacity: 0.75,
+                        padding: "10px 6px 8px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3,
+                      }}>
+                        <span style={{ fontSize: 20 }}>{t.icon}</span>
+                        <span style={{ fontSize: 11.5, fontWeight: 700, color: "#20303A", lineHeight: 1.25 }}>{t.title}</span>
+                        <span style={{ fontSize: 8.5, fontWeight: 600, color: "#A3B2BA" }}>به‌زودی</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
             <p style={{ textAlign: "center", marginTop: 10 }}>
               <a onClick={() => setScreen("therapistLogin")} style={{ fontSize: 11, color: "#999", cursor: "pointer" }}>ورودِ همکاران</a>
               {" · "}
@@ -3683,6 +3731,22 @@ export default function App() {
             <p style={{ fontSize: 11.5, color: "#8CA3B0", textAlign: "center", marginBottom: 8 }}>
               {TREATMENT_PACKAGES[libraryPkg].sessions} جلسه · هر جلسه {toman(sessionPrice(libraryPkg))}
             </p>
+            {(() => {
+              const total = TREATMENT_PACKAGES[libraryPkg].sessions;
+              const doneCount = unlockedSessions.filter((sid) => sid.startsWith(`${libraryPkg}-`)).length;
+              const pct = Math.round((doneCount / total) * 100);
+              return (
+                <div style={{ marginBottom: 16 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10.5, color: "#5A7080", marginBottom: 4 }}>
+                    <span>{doneCount} از {total} جلسه باز شده</span>
+                    <span>{pct}٪</span>
+                  </div>
+                  <div style={{ height: 8, background: "#EDF2F5", borderRadius: 999, overflow: "hidden" }}>
+                    <div style={{ height: "100%", width: `${pct}%`, background: "#B8873A", borderRadius: 999, transition: "width 0.3s" }} />
+                  </div>
+                </div>
+              );
+            })()}
             {libraryPkg === "advanced" && user && (
               <PartnerSyncWidget userEmail={user.email} userToken={user.token} pkgKey={libraryPkg} totalSessions={TREATMENT_PACKAGES[libraryPkg].sessions} />
             )}
