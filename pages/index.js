@@ -9,7 +9,6 @@ const BRAND = {
   instagram: "dr_mojtaba_aghili",
   city: "گرگان",
 };
-const ADMIN_PASS = "AGHILI-PANEL";
 // لینکِ خریدِ بسته‌ی آموزشی/وبینار (برایِ سطحِ متوسط) — این را با لینکِ واقعیِ خودتان جایگزین کنید
 const WEBINAR_PACKAGE_LINK = "https://zarinp.al/your-webinar-link";
 // لینکِ رزروِ جلسه‌ی مشاوره (برایِ سطحِ پرخطر) — این را با لینکِ واقعیِ خودتان جایگزین کنید
@@ -2491,6 +2490,17 @@ export default function App() {
   const [todayTip, setTodayTip] = useState(() => getTodayTip());
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [globalSearch, setGlobalSearch] = useState("");
+  const [paymentBusy, setPaymentBusy] = useState(false);
+  const [paymentResultMsg, setPaymentResultMsg] = useState(null);
+  useEffect(() => {
+    try {
+      const status = new URLSearchParams(window.location.search).get("payment");
+      if (status === "success") setPaymentResultMsg({ ok: true, text: "پرداخت با موفقیت انجام شد! جلسه/بسته باز شد." });
+      else if (status === "failed" || status === "error") setPaymentResultMsg({ ok: false, text: "پرداخت ناموفق بود — دوباره امتحان کنید." });
+      else if (status === "cancelled") setPaymentResultMsg({ ok: false, text: "پرداخت لغو شد." });
+      else if (status === "expired") setPaymentResultMsg({ ok: false, text: "زمانِ پرداخت منقضی شد — دوباره تلاش کنید." });
+    } catch (e) {}
+  }, []);
   useEffect(() => {
     const t = setInterval(() => setTodayTip(getTodayTip()), 5 * 60 * 1000);
     return () => clearInterval(t);
@@ -2525,12 +2535,13 @@ export default function App() {
       if (goto) navigateToTopic(goto);
     } catch (e) {}
   }, []);
-  const [isAdmin, setIsAdmin] = useState(() => {
-    try { return typeof window !== "undefined" && localStorage.getItem("naghshe_admin") === "1"; } catch (e) { return false; }
+  const [adminToken, setAdminToken] = useState(() => {
+    try { return typeof window !== "undefined" ? localStorage.getItem("naghshe_admin_token") : null; } catch (e) { return null; }
   });
-  function markAdmin() {
-    setIsAdmin(true);
-    try { localStorage.setItem("naghshe_admin", "1"); } catch (e) {}
+  const isAdmin = !!adminToken;
+  function markAdmin(token) {
+    setAdminToken(token);
+    try { localStorage.setItem("naghshe_admin_token", token); } catch (e) {}
   }
   const [code, setCode] = useState("");
   const [codeInput, setCodeInput] = useState("");
@@ -2602,7 +2613,7 @@ export default function App() {
   const [feedbackStatus, setFeedbackStatus] = useState("");
   const [feedbackList, setFeedbackList] = useState([]);
   async function loadTherapists() {
-    const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "listAll", adminPass: ADMIN_PASS }) });
+    const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "listAll", adminToken }) });
     const d = await r.json();
     if (d.ok) setTherapistList(d.therapists);
   }
@@ -2698,6 +2709,23 @@ export default function App() {
     loadUnlockedSessions();
   }
 
+  async function startZarinpalPayment(pkgKey, num) {
+    if (!user?.token) { setScreen("authLogin"); return; }
+    setPaymentBusy(true);
+    try {
+      const r = await fetch("/api/zarinpal-request", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: user.token, pkgKey, num: num || null, referredBy }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || "خطا در اتصال به درگاه");
+      window.location.href = d.paymentUrl;
+    } catch (e) {
+      alert("❌ " + e.message);
+      setPaymentBusy(false);
+    }
+  }
+
   useEffect(() => {
     window.__naghsheOpenModerate = () => openSessionLibrary("moderate");
     return () => { delete window.__naghsheOpenModerate; };
@@ -2712,7 +2740,7 @@ export default function App() {
       if (libraryWeakestDomain) params.set("weakestDomain", libraryWeakestDomain);
       if (librarySearchQuery) params.set("searchQuery", librarySearchQuery);
       if (user?.email) params.set("email", user.email);
-      if (isAdmin) params.set("adminPass", ADMIN_PASS);
+      if (isAdmin) params.set("adminToken", adminToken);
       fetch(`/api/session-library?${params.toString()}`)
         .then(async (r) => {
           const d = await r.json().catch(() => null);
@@ -2733,7 +2761,7 @@ export default function App() {
     const params = new URLSearchParams({ pkgKey: viewingSession.pkgKey, num: String(viewingSession.num), level: sessionLevel });
     if (viewingSession.weakestDomain) params.set("weakestDomain", viewingSession.weakestDomain);
     if (user?.email) params.set("email", user.email);
-    if (isAdmin) params.set("adminPass", ADMIN_PASS);
+    if (isAdmin) params.set("adminToken", adminToken);
     fetch(`/api/session-full?${params.toString()}`)
       .then((r) => r.json())
       .then((d) => {
@@ -2748,7 +2776,7 @@ export default function App() {
     try {
       const r = await fetch("/api/sessions/status", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: adminUnlockEmail, sessionId: sessionId(pkgKey, num), adminPass: ADMIN_PASS }),
+        body: JSON.stringify({ email: adminUnlockEmail, sessionId: sessionId(pkgKey, num), adminToken }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
@@ -2760,7 +2788,7 @@ export default function App() {
     try {
       const r = await fetch("/api/redeem", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "generate", sessionId: sessionId(pkgKey, num), adminPass: ADMIN_PASS }),
+        body: JSON.stringify({ action: "generate", sessionId: sessionId(pkgKey, num), adminToken }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
@@ -2771,7 +2799,7 @@ export default function App() {
   async function runManualBackup() {
     setBackupBusy(true); setBackupMsg("");
     try {
-      const r = await fetch(`/api/backup?adminPass=${encodeURIComponent(ADMIN_PASS)}`, { method: "POST" });
+      const r = await fetch(`/api/backup?adminToken=${encodeURIComponent(adminToken)}`, { method: "POST" });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setBackupMsg(`بک‌آپ با موفقیت ساخته شد ✅ (${data.meta?.totalKeys ?? "?"} رکورد)`);
@@ -2782,7 +2810,7 @@ export default function App() {
 
   async function loadBackupList() {
     try {
-      const r = await fetch(`/api/backup?adminPass=${encodeURIComponent(ADMIN_PASS)}`);
+      const r = await fetch(`/api/backup?adminToken=${encodeURIComponent(adminToken)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setBackupList(data.backups || []);
@@ -2791,7 +2819,7 @@ export default function App() {
 
   async function loadTechniqueReport() {
     try {
-      const r = await fetch(`/api/technique-feedback?adminPass=${encodeURIComponent(ADMIN_PASS)}`);
+      const r = await fetch(`/api/technique-feedback?adminToken=${encodeURIComponent(adminToken)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setTechniqueReport(data.report || []);
@@ -2803,7 +2831,7 @@ export default function App() {
     if (!patientEmailInput) { setPatientMsg("ایمیلِ مراجع را وارد کنید"); return; }
     setPatientMsg("در حالِ بارگذاری..."); setPatientData(null);
     try {
-      const r = await fetch(`/api/patient-dashboard?adminPass=${encodeURIComponent(ADMIN_PASS)}&email=${encodeURIComponent(patientEmailInput)}`);
+      const r = await fetch(`/api/patient-dashboard?adminToken=${encodeURIComponent(adminToken)}&email=${encodeURIComponent(patientEmailInput)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setPatientData(data);
@@ -2813,7 +2841,7 @@ export default function App() {
 
   async function loadInactiveUsers() {
     try {
-      const r = await fetch(`/api/inactive-users?adminPass=${encodeURIComponent(ADMIN_PASS)}`);
+      const r = await fetch(`/api/inactive-users?adminToken=${encodeURIComponent(adminToken)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setInactiveUsers(data.users || []);
@@ -2822,7 +2850,7 @@ export default function App() {
 
   async function loadRiskAlerts() {
     try {
-      const r = await fetch(`/api/risk-alerts?adminPass=${encodeURIComponent(ADMIN_PASS)}`);
+      const r = await fetch(`/api/risk-alerts?adminToken=${encodeURIComponent(adminToken)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setRiskAlerts(data.alerts || []);
@@ -2840,7 +2868,7 @@ export default function App() {
     }
     setDeleteBusy(true); setDeleteMsg("");
     try {
-      const r = await fetch(`/api/delete-user-data?adminPass=${encodeURIComponent(ADMIN_PASS)}`, {
+      const r = await fetch(`/api/delete-user-data?adminToken=${encodeURIComponent(adminToken)}`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: deleteEmailInput, confirm: deleteConfirmInput }),
       });
@@ -3260,6 +3288,14 @@ export default function App() {
                 })()}
               </div>
 
+              {paymentResultMsg && (
+                <div style={{ background: paymentResultMsg.ok ? "#F3F8F5" : "#FBF0EC", border: `1px solid ${paymentResultMsg.ok ? "#CFE6D8" : "#E8C9BC"}`, borderRadius: 12, padding: "10px 14px", marginBottom: 14, textAlign: "center", position: "relative" }}>
+                  <p style={{ fontSize: 12.5, fontWeight: 700, color: paymentResultMsg.ok ? "#4C8778" : "#A6432F", margin: 0 }}>
+                    {paymentResultMsg.ok ? "✅" : "⚠️"} {paymentResultMsg.text}
+                  </p>
+                  <button onClick={() => setPaymentResultMsg(null)} style={{ position: "absolute", left: 8, top: 8, border: "none", background: "none", color: "#8CA3B0", cursor: "pointer", fontSize: 14 }}>✕</button>
+                </div>
+              )}
               <p style={{ fontSize: 11.5, color: "#5A7080", margin: 0 }}>می‌خواهید امروز رویِ کدام موضوع کار کنیم؟</p>
             </div>
 
@@ -3744,6 +3780,12 @@ export default function App() {
                   <div style={{ height: 8, background: "#EDF2F5", borderRadius: 999, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${pct}%`, background: "#B8873A", borderRadius: 999, transition: "width 0.3s" }} />
                   </div>
+                  {user && doneCount < total && (
+                    <button onClick={() => startZarinpalPayment(libraryPkg, null)} disabled={paymentBusy}
+                      style={{ width: "100%", marginTop: 10, padding: "10px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+                      💳 {paymentBusy ? "..." : `خریدِ کاملِ بسته — ${toman(TREATMENT_PACKAGES[libraryPkg].sessions * sessionPrice(libraryPkg))}`}
+                    </button>
+                  )}
                 </div>
               );
             })()}
@@ -3834,10 +3876,10 @@ export default function App() {
                       مشاهده
                     </button>
                   ) : (
-                    <a href={CONSULT_BOOKING_LINK}
-                      style={{ padding: "7px 10px", borderRadius: 10, border: "1px solid #17383D", color: "#17383D", fontWeight: 700, fontSize: 10.5, flexShrink: 0, textDecoration: "none", textAlign: "center" }}>
-                      🔒 خریدِ تکی<br />{toman(sessionPrice(libraryPkg))}
-                    </a>
+                    <button onClick={() => startZarinpalPayment(libraryPkg, num)} disabled={paymentBusy}
+                      style={{ padding: "7px 10px", borderRadius: 10, border: "1px solid #17383D", color: "#17383D", background: "#fff", fontWeight: 700, fontSize: 10.5, flexShrink: 0, cursor: "pointer", textAlign: "center" }}>
+                      💳 خریدِ تکی<br />{toman(sessionPrice(libraryPkg))}
+                    </button>
                   )}
                 </div>
                 {num === 1 && !unlocked && freePreview && (
@@ -4414,7 +4456,14 @@ export default function App() {
             <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", margin: "0 0 14px" }}>ورود به پنل آموزشی</h2>
             <input type="password" value={adminPassInput} onChange={(e) => setAdminPassInput(e.target.value)} placeholder="رمز عبور"
               style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid #C9DEE8", fontSize: 14, marginBottom: 12, ...FONT }} />
-            <button onClick={async () => { if (adminPassInput === ADMIN_PASS) { markAdmin(); await loadAdmin(); setScreen("admin"); } else setErr("رمز نادرست است."); }}
+            <button onClick={async () => {
+              try {
+                const r = await fetch("/api/admin-login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: adminPassInput }) });
+                const d = await r.json();
+                if (!r.ok) { setErr(d.error || "رمز نادرست است."); return; }
+                markAdmin(d.token); await loadAdmin(); setScreen("admin");
+              } catch (e) { setErr("خطا در ورود"); }
+            }}
               style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
               ورود
             </button>
@@ -4518,7 +4567,7 @@ export default function App() {
                 await upload(file.name, file, {
                   access: "public",
                   handleUploadUrl: "/api/audio-upload",
-                  clientPayload: JSON.stringify({ adminPass: ADMIN_PASS, sessionId: sid }),
+                  clientPayload: JSON.stringify({ adminToken, sessionId: sid }),
                 });
                 setAudioUploadMsg("✅ آپلود شد");
               } catch (err) { setAudioUploadMsg("❌ " + err.message); }
@@ -4528,7 +4577,7 @@ export default function App() {
           <Card style={{ border: "1.5px solid #A6432F" }}>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📬 پیشنهادات / انتقادات / تیکت‌ها</p>
             <button onClick={async () => {
-              const r = await fetch(`/api/feedback?adminPass=${ADMIN_PASS}`);
+              const r = await fetch(`/api/feedback?adminToken=${adminToken}`);
               const d = await r.json();
               if (d.ok) setFeedbackList(d.list);
             }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", color: "#17383D", background: "#fff", fontSize: 11, marginBottom: 8 }}>بروزرسانی</button>
@@ -4547,7 +4596,7 @@ export default function App() {
               <input placeholder="سهم٪" type="number" value={newTherapistShare} onChange={(e) => setNewTherapistShare(e.target.value)} style={{ width: 60, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
             </div>
             <button onClick={async () => {
-              const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", adminPass: ADMIN_PASS, therapistId: newTherapistId, name: newTherapistName, password: newTherapistPass, sharePercent: Number(newTherapistShare) || 70 }) });
+              const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", adminToken, therapistId: newTherapistId, name: newTherapistName, password: newTherapistPass, sharePercent: Number(newTherapistShare) || 70 }) });
               const d = await r.json();
               setTherapistMsg(d.ok ? "✅ ساخته شد" : "❌ " + d.error);
               if (d.ok) loadTherapists();
