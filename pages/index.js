@@ -365,7 +365,7 @@ const SD_ITEMS = [
 const TOPICS = [
   { key: "prevention", title: "افزایشِ وفاداری", subtitle: "(واکسیناسیونِ زندگیِ زناشویی)", icon: "🛡️", core: "#4C8778", bg: "#DCEEE8", blobA: "#84BBAB", blobB: "#BEDDD3", enabled: true },
   { key: "slipPrevention", title: "پیشگیری از خیانت", subtitle: "برنامه‌ی شخصیِ من", icon: "🛑", core: "#B9822F", bg: "#FBF3E2", blobA: "#E8C888", blobB: "#F5E2B8", enabled: true },
-  { key: "relationship", title: "خیانتِ زناشویی", subtitle: "درمان و بازسازی", icon: "💞", core: "#2B6777", bg: "#DCEAEA", blobA: "#8FB8B8", blobB: "#C7DEDA", enabled: true },
+  { key: "relationship", title: "خیانتِ زناشویی", subtitle: "درمان و بازسازی", icon: "💞", core: "#17383D", bg: "#EFE4CE", blobA: "#C9A667", blobB: "#E3D3AC", enabled: true },
   { key: "assessments", title: "آزمون‌ها", subtitle: "کجای راهم؟", icon: "📝", core: "#6E5A9C", bg: "#EAE4F5", blobA: "#B5A2D6", blobB: "#D6C9E8", enabled: true },
   { key: "premarriage", title: "پیش از ازدواج", subtitle: "آماده‌ام؟", icon: "💍", core: "#B8853A", bg: "#FBF0DC", blobA: "#E8C888", blobB: "#F5E2B8", enabled: false },
   { key: "aggression", title: "پرخاشگری", subtitle: "کنترلِ خشم", icon: "🔥", core: "#B5654E", bg: "#F5E3DC", blobA: "#DDA48F", blobB: "#EFCBBA", enabled: false },
@@ -377,7 +377,7 @@ const TOPICS = [
   { key: "forgiveness", title: "بخشش", subtitle: "رهاشدن از کینه", icon: "🕊️", core: "#4C8778", bg: "#DCEEE8", blobA: "#84BBAB", blobB: "#BEDDD3", enabled: false },
   { key: "rumination", title: "نشخوارِ فکری", subtitle: "افکارِ تکرارشونده", icon: "🌀", core: "#77685A", bg: "#EDE6DE", blobA: "#B0A18F", blobB: "#D6CDBF", enabled: false },
   { key: "aboutUs", title: "دربارهٔ ما", subtitle: "اهداف و چشم‌انداز", icon: "🎯", core: "#8A5A4E", bg: "#F2E1DC", blobA: "#C69086", blobB: "#E6C3BB", enabled: true },
-  { key: "consultCall", title: "تماس با مشاور", subtitle: "گفت‌وگویِ مستقیم", icon: "☎️", core: "#2B6777", bg: "#DCEAEA", blobA: "#8FB8B8", blobB: "#C7DEDA", enabled: true },
+  { key: "consultCall", title: "تماس با مشاور", subtitle: "گفت‌وگویِ مستقیم", icon: "☎️", core: "#17383D", bg: "#EFE4CE", blobA: "#C9A667", blobB: "#E3D3AC", enabled: true },
   { key: "compulsiveSexual", title: "رفتارِ جنسیِ اجباری", subtitle: "به‌زودی", icon: "🔄", core: "#845A76", bg: "#F0DFE8", blobA: "#C08FAE", blobB: "#E1C0D3", enabled: false },
   { key: "predivorce", title: "مشاورهٔ پیش از طلاق", subtitle: "تصمیمِ آگاهانه", icon: "⚖️", core: "#8A5A4E", bg: "#F2E1DC", blobA: "#C69086", blobB: "#E6C3BB", enabled: false },
 ];
@@ -1180,7 +1180,7 @@ function polar(cx, cy, r, angleDeg) {
 }
 
 const FONT = { fontFamily: "'Vazirmatn', Tahoma, sans-serif" };
-const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');`;
+const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');`;
 
 // ---------- Small UI atoms ----------
 function LikertRow({ text, value, onChange }) {
@@ -1199,8 +1199,8 @@ function LikertRow({ text, value, onChange }) {
               flex: 1,
               padding: "10px 4px",
               borderRadius: 10,
-              border: value === o ? "2px solid #2B6777" : "1px solid #C9DEE8",
-              background: value === o ? "#2B6777" : "#FFFFFF",
+              border: value === o ? "2px solid #17383D" : "1px solid #C9DEE8",
+              background: value === o ? "#17383D" : "#FFFFFF",
               color: value === o ? "#FFFFFF" : "#5A7080",
               fontSize: 12.5,
               cursor: "pointer",
@@ -1230,14 +1230,14 @@ function Card({ children, style }) {
 function Collapsible({ title, icon, defaultOpen, children }) {
   const [open, setOpen] = useState(!!defaultOpen);
   return (
-    <div style={{ marginTop: 16, border: `1.5px solid ${open ? "#8FB8B8" : "#DCE8F0"}`, borderRadius: 16, overflow: "hidden" }}>
+    <div style={{ marginTop: 16, border: `1.5px solid ${open ? "#C9A667" : "#DCE8F0"}`, borderRadius: 16, overflow: "hidden" }}>
       <button onClick={() => setOpen(!open)}
         style={{
           width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "17px 18px", background: open ? "#E5F1EC" : "#F0F6F9", border: "none", cursor: "pointer", textAlign: "right",
         }}>
         <span style={{ fontSize: 15, fontWeight: 800, color: "#1F2D3D" }}>{icon ? `${icon} ` : ""}{title}</span>
-        <span style={{ fontSize: 20, color: "#2B6777", fontWeight: 800, transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
+        <span style={{ fontSize: 20, color: "#17383D", fontWeight: 800, transform: open ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
       </button>
       {open && <div style={{ padding: "16px 16px" }}>{children}</div>}
     </div>
@@ -1290,7 +1290,7 @@ function Technique({ id, name, time, howTo, effect, more }) {
       {more && (
         <>
           <button onClick={() => setShowMore(!showMore)}
-            style={{ border: "none", background: "none", color: "#2B6777", fontSize: 11, fontWeight: 700, cursor: "pointer", padding: 0, textDecoration: "underline" }}>
+            style={{ border: "none", background: "none", color: "#17383D", fontSize: 11, fontWeight: 700, cursor: "pointer", padding: 0, textDecoration: "underline" }}>
             {showMore ? "بستنِ توضیحاتِ بیشتر ▴" : "بیشتر بخوانید ▾"}
           </button>
           {showMore && (
@@ -1424,7 +1424,7 @@ function collectMoodHistory() {
   return entries;
 }
 
-function MiniLineChart({ points, width = 300, height = 140, color = "#2B6777" }) {
+function MiniLineChart({ points, width = 300, height = 140, color = "#17383D" }) {
   if (!points.length) return null;
   const pad = 24;
   const maxY = 10, minY = 1;
@@ -1454,7 +1454,7 @@ function FAQScreen({ onBack }) {
 
   return (
     <Card>
-      <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+      <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>❓ سوالاتِ کلیدیِ خیانتِ زناشویی</h2>
       <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 14 }}>
         رتبه‌بندی‌شده بر اساسِ اهمیت — راهنماییِ سریع، نه جایگزینِ جلساتِ کامل.
@@ -1470,7 +1470,7 @@ function FAQScreen({ onBack }) {
             <span style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D" }}>
               <span style={{ color: "#8CA3B0", fontWeight: 600 }}>#{f.rank}</span> {f.q}
             </span>
-            <span style={{ fontSize: 16, color: "#2B6777", flexShrink: 0, marginRight: 6, transform: openId === f.rank ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
+            <span style={{ fontSize: 16, color: "#17383D", flexShrink: 0, marginRight: 6, transform: openId === f.rank ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
           </button>
           {openId === f.rank && (
             <div style={{ padding: "0 2px 14px" }}>
@@ -1605,7 +1605,7 @@ function MyProgressScreen({ onBack, userEmail, userToken }) {
 
   return (
     <Card>
-      <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+      <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📈 پیشرفتِ من</h2>
       <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>نمایِ یکپارچه‌یِ پیشرفتِ شما در همه‌ی برنامه‌هایی که تا‌کنون دنبال کرده‌اید.</p>
 
@@ -1722,7 +1722,7 @@ function OnboardingModal({ onClose }) {
         <p style={{ fontSize: 12.5, color: "#5A7080", lineHeight: 2, margin: "0 0 20px" }}>{slide.body}</p>
         <div style={{ display: "flex", justifyContent: "center", gap: 5, marginBottom: 18 }}>
           {ONBOARDING_SLIDES.map((_, i) => (
-            <div key={i} style={{ width: i === step ? 18 : 6, height: 6, borderRadius: 999, background: i === step ? "#2B6777" : "#DCE8F0", transition: "all 0.2s" }} />
+            <div key={i} style={{ width: i === step ? 18 : 6, height: 6, borderRadius: 999, background: i === step ? "#17383D" : "#DCE8F0", transition: "all 0.2s" }} />
           ))}
         </div>
         <div style={{ display: "flex", gap: 8 }}>
@@ -1733,7 +1733,7 @@ function OnboardingModal({ onClose }) {
             </button>
           )}
           <button onClick={() => (isLast ? onClose() : setStep(step + 1))}
-            style={{ flex: 2, padding: "11px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+            style={{ flex: 2, padding: "11px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
             {isLast ? "شروع کنیم ←" : "بعدی"}
           </button>
         </div>
@@ -1843,7 +1843,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
 
   return (
     <Card>
-      <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+      <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🛑 خودآگاهیِ دوره‌ای — پیشگیری از خیانت</h2>
       <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>هر دوره ۶ موضوعِ چرخشی (۱۲ سوالِ گزینه‌ای) می‌پرسد. کاملاً خصوصی، بدونِ نامِ افراد.</p>
 
@@ -1902,7 +1902,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
                 <div key={i} style={{ background: "#fff", borderRadius: 8, padding: "8px 10px", marginBottom: 6 }}>
                   <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", margin: "0 0 5px" }}>{c.label}</p>
                   <button onClick={() => window.__naghsheOpenModerate && window.__naghsheOpenModerate()}
-                    style={{ fontSize: 11, padding: "6px 12px", borderRadius: 8, border: "1px solid #2B6777", background: "#EAF4FB", color: "#2B6777", fontWeight: 700, cursor: "pointer" }}>
+                    style={{ fontSize: 11, padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", background: "#F1E8D4", color: "#17383D", fontWeight: 700, cursor: "pointer" }}>
                     📚 {c.suggest} — مشاهده و خرید ←
                   </button>
                 </div>
@@ -1978,7 +1978,7 @@ function SafetyPlanScreen({ onBack, userEmail, userToken }) {
 
   return (
     <Card>
-      <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+      <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🛡️ برنامه‌ی ایمنیِ من</h2>
       <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>
         این صفحه، مستقل از جلسات، همیشه در دسترسِ شماست — برایِ لحظاتی که احساسِ بحران می‌کنید. همین حالا، در آرامش، پرش کنید.
@@ -1994,7 +1994,7 @@ function SafetyPlanScreen({ onBack, userEmail, userToken }) {
       <div style={{ background: "#FBF0EC", border: "1px solid #E8C9BC", borderRadius: 10, padding: "12px 14px", marginTop: 8 }}>
         <p style={{ fontSize: 12, color: "#8A5A4E", fontWeight: 700, margin: "0 0 4px" }}>📞 اورژانسِ فوری</p>
         <p style={{ fontSize: 12, color: "#8A5A4E", margin: 0 }}>در بحرانِ حاد، همین حالا با اورژانس (۱۱۵) یا نزدیک‌ترین مرکزِ درمانی تماس بگیرید — منتظرِ نوبتِ جلسه نمانید.</p>
-        <a href={CONSULT_BOOKING_LINK} style={{ display: "inline-block", marginTop: 6, fontSize: 12, fontWeight: 700, color: "#2B6777" }}>📞 تماس با دفتر: {BRAND.phone}</a>
+        <a href={CONSULT_BOOKING_LINK} style={{ display: "inline-block", marginTop: 6, fontSize: 12, fontWeight: 700, color: "#17383D" }}>📞 تماس با دفتر: {BRAND.phone}</a>
       </div>
     </Card>
   );
@@ -2046,7 +2046,7 @@ function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, default
   if (submitted) {
     return (
       <Card>
-        <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+        <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
         <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>✅ چک‌این ثبت شد</h2>
         <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>ممنون — چک‌اینِ بعدی طبقِ زمان‌بندی‌تان یادآوری می‌شود.</p>
         {suggestions.length > 0 ? (
@@ -2070,7 +2070,7 @@ function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, default
 
   return (
     <Card>
-      <button onClick={onBack} style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
+      <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📋 چک‌اینِ دوره‌ای</h2>
       <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>۶ سوالِ کوتاه، ۲ دقیقه — برایِ رصدِ روندِ حالتان بینِ جلسات.</p>
 
@@ -2080,7 +2080,7 @@ function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, default
           <div style={{ display: "flex", gap: 5 }}>
             {[1, 2, 3, 4, 5].map((n) => (
               <button key={n} onClick={() => setAnswer(item.key, n)}
-                style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1.5px solid ${answers[item.key] === n ? "#2B6777" : "#DCE8F0"}`, background: answers[item.key] === n ? "#2B6777" : "#fff", color: answers[item.key] === n ? "#fff" : "#5A7080", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1.5px solid ${answers[item.key] === n ? "#17383D" : "#DCE8F0"}`, background: answers[item.key] === n ? "#17383D" : "#fff", color: answers[item.key] === n ? "#fff" : "#5A7080", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
                 {n}
               </button>
             ))}
@@ -2102,7 +2102,7 @@ function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, default
       </div>
 
       <button onClick={handleSubmit} disabled={!allAnswered || saving}
-        style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: allAnswered ? "#2B6777" : "#C9DEE8", color: "#fff", fontWeight: 700, fontSize: 13, cursor: allAnswered ? "pointer" : "default" }}>
+        style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: allAnswered ? "#17383D" : "#C9DEE8", color: "#fff", fontWeight: 700, fontSize: 13, cursor: allAnswered ? "pointer" : "default" }}>
         {saving ? "در حالِ ثبت..." : "ثبتِ چک‌این"}
       </button>
     </Card>
@@ -2147,8 +2147,8 @@ function PartnerSyncWidget({ userEmail, userToken, pkgKey, totalSessions }) {
   if (!userEmail) return null;
 
   return (
-    <div style={{ background: "#EAF4FB", borderRadius: 12, padding: "12px 14px", marginBottom: 14 }}>
-      <p style={{ fontSize: 12, fontWeight: 700, color: "#2B6777", margin: "0 0 8px" }}>👫 هماهنگیِ زوجین</p>
+    <div style={{ background: "#F1E8D4", borderRadius: 12, padding: "12px 14px", marginBottom: 14 }}>
+      <p style={{ fontSize: 12, fontWeight: 700, color: "#17383D", margin: "0 0 8px" }}>👫 هماهنگیِ زوجین</p>
       {!partnerEmail ? (
         <>
           <p style={{ fontSize: 11, color: "#3A4A52", margin: "0 0 8px" }}>ایمیلِ حسابِ همسرتان را وارد کنید تا پیشرفتِ او را هم اینجا ببینید.</p>
@@ -2156,7 +2156,7 @@ function PartnerSyncWidget({ userEmail, userToken, pkgKey, totalSessions }) {
             <input value={inputVal} onChange={(e) => setInputVal(e.target.value)} placeholder="ایمیلِ همسر"
               style={{ flex: 1, padding: "7px 9px", borderRadius: 8, border: "1px solid #C9DEE8", fontSize: 12 }} />
             <button onClick={linkPartner}
-              style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, fontSize: 11.5, cursor: "pointer" }}>
+              style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 11.5, cursor: "pointer" }}>
               اتصال
             </button>
           </div>
@@ -2209,12 +2209,12 @@ function RadarChart({ p1, p2, domains }) {
           return <line key={i} x1={cx} y1={cy} x2={p.x} y2={p.y} stroke="#FFFFFF" strokeWidth={1.5} />;
         })}
 
-        <path d={pathFor(p1)} fill="#2B6777" fillOpacity={0.22} stroke="#2B6777" strokeWidth={3} />
+        <path d={pathFor(p1)} fill="#17383D" fillOpacity={0.22} stroke="#17383D" strokeWidth={3} />
         <path d={pathFor(p2)} fill="#E8975C" fillOpacity={0.22} stroke="#E8975C" strokeWidth={3} />
 
         {vertexPts(p1).map((p, i) => (
           <g key={"a" + i}>
-            <circle cx={p.x} cy={p.y} r={10} fill="#2B6777" stroke="#fff" strokeWidth={1.5} />
+            <circle cx={p.x} cy={p.y} r={10} fill="#17383D" stroke="#fff" strokeWidth={1.5} />
             <text x={p.x} y={p.y + 0.5} textAnchor="middle" dominantBaseline="middle" fontSize="9" fontWeight="700" fill="#fff">{p.val}</text>
           </g>
         ))}
@@ -2263,7 +2263,7 @@ function DomainBarChart({ p1, p2, domains }) {
       {domains.map((d) => (
         <div key={d.key} style={{ marginBottom: 14 }}>
           <div style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 5 }}>{d.title}</div>
-          {[{ label: "نفر ۱", val: p1[d.key], color: "#2B6777" }, { label: "نفر ۲", val: p2[d.key], color: "#E8975C" }].map((row) => (
+          {[{ label: "نفر ۱", val: p1[d.key], color: "#17383D" }, { label: "نفر ۲", val: p2[d.key], color: "#E8975C" }].map((row) => (
             <div key={row.label} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3 }}>
               <span style={{ fontSize: 10.5, color: row.color, width: 34, flexShrink: 0 }}>{row.label}</span>
               <div style={{ flex: 1, height: 14, background: "#EEF3F6", borderRadius: 7, overflow: "hidden", position: "relative" }}>
@@ -2357,7 +2357,7 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
       <div style={{ background: "#fff", borderRadius: 14, padding: "12px 14px", marginBottom: 10 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 4 }}>
           <span style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D" }}>{pkg.label} ({pkg.sessions} جلسه)</span>
-          <span style={{ fontSize: 15, fontWeight: 800, color: "#2B6777" }}>{toman(pkg.price)}</span>
+          <span style={{ fontSize: 15, fontWeight: 800, color: "#17383D" }}>{toman(pkg.price)}</span>
         </div>
         <p style={{ fontSize: 11, color: "#8CA3B0", margin: "0 0 6px" }}>{pkg.note}</p>
         <p style={{ fontSize: 11, color: "#5A7080", margin: 0 }}>
@@ -2366,7 +2366,7 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
         </p>
       </div>
       <button onClick={() => onOpenLibrary && onOpenLibrary(chosenTrack, weakestDomain)}
-        style={{ display: "block", width: "100%", textAlign: "center", padding: "12px", borderRadius: 12, border: "none", background: isPostInfidelity ? "#8A5A4E" : "#2B6777", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer", marginBottom: 8 }}>
+        style={{ display: "block", width: "100%", textAlign: "center", padding: "12px", borderRadius: 12, border: "none", background: isPostInfidelity ? "#8A5A4E" : "#17383D", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer", marginBottom: 8 }}>
         مشاهده و خریدِ جلسات
       </button>
       <a href={CONSULT_BOOKING_LINK}
@@ -2425,12 +2425,12 @@ function ChatWidget({ scores, overall, mode }) {
   return (
     <>
       <button onClick={handleToggle} className="no-print"
-        style={{ position: "fixed", bottom: 20, left: 20, width: 56, height: 56, borderRadius: "50%", background: "#2B6777", color: "#fff", border: "none", fontSize: 24, boxShadow: "0 4px 14px rgba(0,0,0,0.2)", cursor: "pointer", zIndex: 1000 }}>
+        style={{ position: "fixed", bottom: 20, left: 20, width: 56, height: 56, borderRadius: "50%", background: "#17383D", color: "#fff", border: "none", fontSize: 24, boxShadow: "0 4px 14px rgba(0,0,0,0.2)", cursor: "pointer", zIndex: 1000 }}>
         {open ? "✕" : "💬"}
       </button>
       {open && (
         <div className="no-print" style={{ position: "fixed", bottom: 86, left: 20, width: 320, maxWidth: "88vw", height: 420, background: "#fff", borderRadius: 16, boxShadow: "0 8px 30px rgba(0,0,0,0.25)", display: "flex", flexDirection: "column", zIndex: 1000, overflow: "hidden" }}>
-          <div style={{ background: "#2B6777", color: "#fff", padding: "12px 14px", fontSize: 13, fontWeight: 700 }}>
+          <div style={{ background: "#17383D", color: "#fff", padding: "12px 14px", fontSize: 13, fontWeight: 700 }}>
             💬 پرسش درباره‌ی نتیجه‌ی شما
           </div>
           <div style={{ flex: 1, overflowY: "auto", padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8 }}>
@@ -2442,7 +2442,7 @@ function ChatWidget({ scores, overall, mode }) {
             {messages.map((m, i) => (
               <div key={i} style={{
                 alignSelf: m.role === "user" ? "flex-end" : "flex-start",
-                background: m.role === "user" ? "#2B6777" : "#F7FAFC",
+                background: m.role === "user" ? "#17383D" : "#F7FAFC",
                 color: m.role === "user" ? "#fff" : "#1F2D3D",
                 borderRadius: 12, padding: "8px 12px", fontSize: 12.5, maxWidth: "85%", lineHeight: 1.8,
               }}>
@@ -2458,7 +2458,7 @@ function ChatWidget({ scores, overall, mode }) {
               placeholder="سوالتان را بنویسید..."
               style={{ flex: 1, border: "1px solid #DCE8F0", borderRadius: 10, padding: "8px 10px", fontSize: 12.5 }} />
             <button onClick={send} disabled={busy}
-              style={{ padding: "8px 14px", borderRadius: 10, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
+              style={{ padding: "8px 14px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
               ارسال
             </button>
           </div>
@@ -3067,7 +3067,7 @@ export default function App() {
   }
 
   return (
-    <div dir="rtl" style={{ ...FONT, minHeight: "100vh", background: "#EAF4FB", padding: "24px 16px", ...(fontScale !== 1 ? { zoom: fontScale } : {}) }}>
+    <div dir="rtl" style={{ ...FONT, minHeight: "100vh", background: "#F1E8D4", padding: "24px 16px", ...(fontScale !== 1 ? { zoom: fontScale } : {}) }}>
       {showOnboarding && <OnboardingModal onClose={closeOnboarding} />}
       {showStreakCelebration && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(20,30,35,0.6)", zIndex: 998, display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
@@ -3078,7 +3078,7 @@ export default function App() {
               پیوستگیِ روزانه، یکی از قوی‌ترین عواملِ موفقیت در بهبودیِ رابطه است. همین مسیر را ادامه دهید!
             </p>
             <button onClick={() => setShowStreakCelebration(false)}
-              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
               ادامه می‌دهم ←
             </button>
           </div>
@@ -3087,7 +3087,7 @@ export default function App() {
       <style>{`
         ${FONT_IMPORT}
         * { box-sizing: border-box; }
-        button:focus-visible { outline: 2px solid #2B6777; outline-offset: 2px; }
+        button:focus-visible { outline: 2px solid #17383D; outline-offset: 2px; }
         @media print {
           html, body { height: auto !important; overflow: visible !important; background: #fff !important; }
           body * { visibility: hidden !important; }
@@ -3102,7 +3102,7 @@ export default function App() {
           style={{
             position: "fixed", top: 14, right: 14, zIndex: 1000,
             display: "flex", alignItems: "center", gap: 5,
-            background: "#fff", color: "#2B6777", border: "1px solid #C9DEE8",
+            background: "#fff", color: "#17383D", border: "1px solid #C9DEE8",
             borderRadius: 999, padding: "7px 13px", fontSize: 12, fontWeight: 700,
             cursor: "pointer", boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
           }}>
@@ -3120,16 +3120,16 @@ export default function App() {
             <div style={{ textAlign: "center", marginBottom: 14 }}>
               <div style={{
                 width: 40, height: 40, margin: "0 auto 8px", borderRadius: 13,
-                background: "linear-gradient(145deg, #2B6777, #1F4D58)",
+                background: "linear-gradient(145deg, #17383D, #0E2529)",
                 display: "flex", alignItems: "center", justifyContent: "center",
                 boxShadow: "0 6px 14px rgba(43,103,119,0.3)", transform: "rotate(-4deg)",
               }}>
                 <span style={{ fontSize: 18, display: "block", transform: "rotate(4deg)" }}>🌿</span>
               </div>
-              <p style={{ fontSize: 10, color: "#2B6777", fontWeight: 700, margin: "0 0 6px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
+              <p style={{ fontSize: 10, color: "#17383D", fontWeight: 700, margin: "0 0 6px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
               <div>
                 <button onClick={() => setShowBio(!showBio)}
-                  style={{ border: "1px solid #2B6777", background: showBio ? "#2B6777" : "#fff", color: showBio ? "#fff" : "#2B6777", padding: "4px 12px", borderRadius: 999, fontSize: 10.5, fontWeight: 700, cursor: "pointer", marginBottom: 4, marginLeft: 5 }}>
+                  style={{ border: "1px solid #17383D", background: showBio ? "#17383D" : "#fff", color: showBio ? "#fff" : "#17383D", padding: "4px 12px", borderRadius: 999, fontSize: 10.5, fontWeight: 700, cursor: "pointer", marginBottom: 4, marginLeft: 5 }}>
                   دربارهٔ دکتر عقیلی
                 </button>
                 <button onClick={() => setShowOnboarding(true)}
@@ -3141,23 +3141,23 @@ export default function App() {
               {user ? (
                 <p style={{ fontSize: 11, color: "#5A7080", margin: "0 0 12px" }}>
                   سلام {user.name || user.email} ·{" "}
-                  <a onClick={() => setScreen("myProgress")} style={{ color: "#2B6777", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>📈 پیشرفتِ من</a> ·{" "}
-                  <a onClick={() => setScreen("checkin")} style={{ color: "#2B6777", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>📋 چک‌این</a> ·{" "}
-                  <a onClick={() => setScreen("safetyPlan")} style={{ color: "#2B6777", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>🛡️ برنامه‌ی ایمنی</a> ·{" "}
+                  <a onClick={() => setScreen("myProgress")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>📈 پیشرفتِ من</a> ·{" "}
+                  <a onClick={() => setScreen("checkin")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>📋 چک‌این</a> ·{" "}
+                  <a onClick={() => setScreen("safetyPlan")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>🛡️ برنامه‌ی ایمنی</a> ·{" "}
                   <a onClick={logout} style={{ color: "#8CA3B0", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
                 </p>
               ) : (
                 <p style={{ fontSize: 11, margin: "0 0 12px" }}>
-                  <a onClick={() => setScreen("authLogin")} style={{ color: "#2B6777", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>ورود / ثبت‌نام</a>
+                  <a onClick={() => setScreen("authLogin")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>ورود / ثبت‌نام</a>
                   <span style={{ color: "#8CA3B0" }}> — برایِ دیدنِ پیشرفت، چک‌این، و برنامه‌ی ایمنی</span>
                 </p>
               )}
               {showBio && (
                 <div style={{ background: "#fff", border: "1px solid #DCE8F0", borderRadius: 14, padding: "12px 14px", margin: "6px auto 10px", maxWidth: 320, textAlign: "right" }}>
                   <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: 0 }}>{BRAND.credential}</p>
-                  <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 11.5, color: "#2B6777", margin: "8px 0 0", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
-                  <a href="https://civilica.com/p/74353/" target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 11.5, color: "#2B6777", margin: "6px 0 0", fontWeight: 600, textDecoration: "none" }}>📄 لینکِ مقالاتِ علمی‌پژوهشیِ دکتر عقیلی</a>
-                  <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 11.5, color: "#2B6777", margin: "6px 0 0", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
+                  <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 11.5, color: "#17383D", margin: "8px 0 0", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
+                  <a href="https://civilica.com/p/74353/" target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 11.5, color: "#17383D", margin: "6px 0 0", fontWeight: 600, textDecoration: "none" }}>📄 لینکِ مقالاتِ علمی‌پژوهشیِ دکتر عقیلی</a>
+                  <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 11.5, color: "#17383D", margin: "6px 0 0", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
                 </div>
               )}
 
@@ -3170,7 +3170,7 @@ export default function App() {
                 <div style={{ display: "flex", gap: 3, background: "#fff", borderRadius: 999, padding: 3, border: "1px solid #DCE8F0" }}>
                   {[{ label: "A", scale: 1 }, { label: "A", scale: 1.15, big: true }, { label: "A", scale: 1.3, big: true }].map((f, i) => (
                     <button key={i} onClick={() => changeFontScale(f.scale)}
-                      style={{ border: "none", borderRadius: 999, padding: "3px 9px", background: fontScale === f.scale ? "#2B6777" : "transparent", color: fontScale === f.scale ? "#fff" : "#8CA3B0", fontSize: f.big ? 13 : 10, fontWeight: 700, cursor: "pointer" }}>
+                      style={{ border: "none", borderRadius: 999, padding: "3px 9px", background: fontScale === f.scale ? "#17383D" : "transparent", color: fontScale === f.scale ? "#fff" : "#8CA3B0", fontSize: f.big ? 13 : 10, fontWeight: 700, cursor: "pointer" }}>
                       {f.label}
                     </button>
                   ))}
@@ -3236,7 +3236,7 @@ export default function App() {
 
         {screen === "aboutUs" && (
           <Card>
-            <a onClick={() => setScreen("topics")} style={{ fontSize: 12, color: "#2B6777", cursor: "pointer" }}>‹ بازگشت</a>
+            <a onClick={() => setScreen("topics")} style={{ fontSize: 12, color: "#17383D", cursor: "pointer" }}>‹ بازگشت</a>
             <h2 style={{ fontWeight: 800, margin: "10px 0" }}>دربارهٔ ما</h2>
 
             <p style={{ fontSize: 13, lineHeight: 2 }}>
@@ -3271,7 +3271,7 @@ export default function App() {
 
         {screen === "feedback" && (
           <Card>
-            <a onClick={() => setScreen("topics")} style={{ fontSize: 12, color: "#2B6777", cursor: "pointer" }}>‹ بازگشت</a>
+            <a onClick={() => setScreen("topics")} style={{ fontSize: 12, color: "#17383D", cursor: "pointer" }}>‹ بازگشت</a>
             <h2 style={{ fontWeight: 800, margin: "10px 0" }}>تماس با ما</h2>
             <select value={feedbackType} onChange={(e) => setFeedbackType(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }}>
               <option value="پیشنهاد">پیشنهاد</option>
@@ -3286,7 +3286,7 @@ export default function App() {
               const d = await r.json();
               setFeedbackStatus(d.ok ? "✅ ارسال شد، ممنون از شما" : "❌ خطا");
               if (d.ok) setFeedbackMsg("");
-            }} style={{ width: "100%", padding: 10, borderRadius: 8, border: "none", background: "#2B6777", color: "#fff" }}>ارسال</button>
+            }} style={{ width: "100%", padding: 10, borderRadius: 8, border: "none", background: "#17383D", color: "#fff" }}>ارسال</button>
             {feedbackStatus && <p style={{ fontSize: 12, marginTop: 8 }}>{feedbackStatus}</p>}
             <p style={{ fontSize: 12, marginTop: 14, color: "#666" }}>یا مستقیم تماس بگیرید: {BRAND.phone}</p>
           </Card>
@@ -3367,12 +3367,12 @@ export default function App() {
               </p>
 
               <button onClick={startNew} style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, textAlign: "right", padding: "16px", borderRadius: 16, border: "1px solid #D9E8EA", background: "#F7FAFC", cursor: "pointer", marginBottom: 10 }}>
-                <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 12, background: "#2B6777", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>👫</div>
+                <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 12, background: "#17383D", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>👫</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 14, fontWeight: 800, color: "#1F2D3D" }}>زوجی — نقشه‌ی مشترک</div>
                   <div style={{ fontSize: 11, color: "#8CA3B0", marginTop: 2 }}>هردویتان پاسخ می‌دهید، نقشه‌ی مشترک می‌بینید</div>
                 </div>
-                <div style={{ fontSize: 18, color: "#2B6777" }}>‹</div>
+                <div style={{ fontSize: 18, color: "#17383D" }}>‹</div>
               </button>
 
               <button onClick={startSolo} style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, textAlign: "right", padding: "16px", borderRadius: 16, border: "1px solid #F0DDBB", background: "#FBF3E7", cursor: "pointer" }}>
@@ -3395,7 +3395,7 @@ export default function App() {
                   style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 10.5, fontFamily: "monospace", direction: "ltr", resize: "vertical" }} />
                 <button onClick={() => { setPrevResultText(prevResultInput.trim()); setShowPrevInput(false); }}
                   disabled={!prevResultInput.trim()}
-                  style={{ width: "100%", marginTop: 6, padding: "9px", borderRadius: 10, border: "none", background: prevResultInput.trim() ? "#2B6777" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: prevResultInput.trim() ? "pointer" : "not-allowed", fontSize: 12 }}>
+                  style={{ width: "100%", marginTop: 6, padding: "9px", borderRadius: 10, border: "none", background: prevResultInput.trim() ? "#17383D" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: prevResultInput.trim() ? "pointer" : "not-allowed", fontSize: 12 }}>
                   ثبتِ نتیجه‌ی قبلی برایِ مقایسه
                 </button>
                 {prevResultText && <p style={{ fontSize: 10.5, color: "#4C7A5E", marginTop: 6 }}>✅ ثبت شد؛ در پایانِ این سنجش، مقایسه نمایش داده می‌شود.</p>}
@@ -3415,7 +3415,7 @@ export default function App() {
             <div style={{ display: "flex", gap: 8 }}>
               <input value={codeInput} onChange={(e) => setCodeInput(e.target.value.toUpperCase())} placeholder="مثلاً: A2K9QZ"
                 style={{ flex: 1, padding: "12px 14px", borderRadius: 12, border: "1px solid #C9DEE8", fontSize: 14, textAlign: "center", letterSpacing: 2, ...FONT }} maxLength={6} />
-              <button onClick={loadByCode} disabled={busy} style={{ padding: "0 18px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer" }}>
+              <button onClick={loadByCode} disabled={busy} style={{ padding: "0 18px", borderRadius: 12, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer" }}>
                 ورود
               </button>
             </div>
@@ -3430,8 +3430,8 @@ export default function App() {
             <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
               <p style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{BRAND.name}</p>
               <p style={{ fontSize: 11, color: "#5A7080", margin: "0 0 10px", lineHeight: 1.8 }}>{BRAND.credential}</p>
-              <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
-              <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
+              <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 12, color: "#17383D", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
+              <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 12, color: "#17383D", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
               <p style={{ fontSize: 12, color: "#5A7080", margin: 0 }}>📍 {BRAND.city}</p>
             </div>
 
@@ -3445,13 +3445,13 @@ export default function App() {
         {screen === "treatmentDirect" && (
           <Card>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14 }}>
-              <a onClick={() => setScreen("topics")} style={{ color: "#2B6777", fontSize: 12, cursor: "pointer" }}>‹ موضوعاتِ دیگر</a>
+              <a onClick={() => setScreen("topics")} style={{ color: "#17383D", fontSize: 12, cursor: "pointer" }}>‹ موضوعاتِ دیگر</a>
               {user ? (
                 <span style={{ fontSize: 11, color: "#8CA3B0" }}>
-                  سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#2B6777", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a>
+                  سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a>
                 </span>
               ) : (
-                <a onClick={() => setScreen("authLogin")} style={{ color: "#2B6777", fontSize: 11, cursor: "pointer", textDecoration: "underline" }}>ورود / ثبت‌نام</a>
+                <a onClick={() => setScreen("authLogin")} style={{ color: "#17383D", fontSize: 11, cursor: "pointer", textDecoration: "underline" }}>ورود / ثبت‌نام</a>
               )}
             </div>
             <h2 style={{ fontSize: 18, fontWeight: 800, color: "#1F2D3D", marginBottom: 6 }}>💞 خیانتِ زناشویی — درمان و بازسازی</h2>
@@ -3465,7 +3465,7 @@ export default function App() {
             </button>
 
             <button onClick={() => setScreen("start")}
-              style={{ width: "100%", padding: "10px", borderRadius: 12, border: "1px solid #C9DEE8", background: "#F7FAFC", color: "#2B6777", fontWeight: 700, fontSize: 12, cursor: "pointer", marginBottom: 18 }}>
+              style={{ width: "100%", padding: "10px", borderRadius: 12, border: "1px solid #C9DEE8", background: "#F7FAFC", color: "#17383D", fontWeight: 700, fontSize: 12, cursor: "pointer", marginBottom: 18 }}>
               📝 ترجیح می‌دهم اول آزمونِ «کجای راهم؟» را انجام دهم
             </button>
 
@@ -3482,7 +3482,7 @@ export default function App() {
               const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "login", therapistId: therapistLoginId, password: therapistLoginPass }) });
               const d = await r.json();
               if (d.ok) { setTherapistSession(d); setScreen("therapistDashboard"); } else setTherapistMsg(d.error);
-            }} style={{ width: "100%", padding: 10, borderRadius: 8, border: "none", background: "#2B6777", color: "#fff" }}>ورود</button>
+            }} style={{ width: "100%", padding: 10, borderRadius: 8, border: "none", background: "#17383D", color: "#fff" }}>ورود</button>
             {therapistMsg && <p style={{ color: "red", fontSize: 12 }}>{therapistMsg}</p>}
           </Card>
         )}
@@ -3494,13 +3494,13 @@ export default function App() {
             <p style={{ fontSize: 12, fontWeight: 700, marginBottom: 4 }}>لینکِ اختصاصیِ شما:</p>
             <div style={{ display: "flex", gap: 6, marginBottom: 14 }}>
               <input readOnly value={`https://naghshe-rabete-ashy.vercel.app/?ref=${therapistSession.id}`} style={{ flex: 1, fontSize: 11, padding: 8, borderRadius: 6, border: "1px solid #ddd" }} onClick={(e) => e.target.select()} />
-              <button onClick={() => navigator.clipboard.writeText(`https://naghshe-rabete-ashy.vercel.app/?ref=${therapistSession.id}`)} style={{ fontSize: 11, padding: "8px 14px", borderRadius: 6, border: "none", background: "#2B6777", color: "#fff" }}>کپی</button>
+              <button onClick={() => navigator.clipboard.writeText(`https://naghshe-rabete-ashy.vercel.app/?ref=${therapistSession.id}`)} style={{ fontSize: 11, padding: "8px 14px", borderRadius: 6, border: "none", background: "#17383D", color: "#fff" }}>کپی</button>
             </div>
             <button onClick={async () => {
               const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "dashboard", therapistId: therapistSession.id }) });
               const d = await r.json();
               if (d.ok) setTherapistDash(d);
-            }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #2B6777", color: "#2B6777", background: "#fff", marginBottom: 10 }}>بروزرسانیِ فروش</button>
+            }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", color: "#17383D", background: "#fff", marginBottom: 10 }}>بروزرسانیِ فروش</button>
             {therapistDash && (
               <>
                 <p style={{ fontSize: 13, marginBottom: 8 }}>تعدادِ فروش: {therapistDash.count}</p>
@@ -3521,11 +3521,11 @@ export default function App() {
               style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 13 }} />
             {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
             <button onClick={doLogin} disabled={authBusy}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
               {authBusy ? "..." : "ورود"}
             </button>
             <button onClick={() => { setAuthErr(""); setScreen("authSignup"); }}
-              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
+              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
               حساب ندارم — ثبت‌نام
             </button>
             <button onClick={() => setScreen("start")}
@@ -3549,7 +3549,7 @@ export default function App() {
               <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer" }}>
                 <input type="checkbox" checked={privacyConsent} onChange={(e) => setPrivacyConsent(e.target.checked)} style={{ marginTop: 3 }} />
                 <span style={{ fontSize: 11.5, color: "#3A4A52", lineHeight: 1.8 }}>
-                  با <a onClick={(e) => { e.preventDefault(); setShowPrivacyText(!showPrivacyText); }} style={{ color: "#2B6777", fontWeight: 700, textDecoration: "underline", cursor: "pointer" }}>شرایطِ حریمِ خصوصی</a> موافقم.
+                  با <a onClick={(e) => { e.preventDefault(); setShowPrivacyText(!showPrivacyText); }} style={{ color: "#17383D", fontWeight: 700, textDecoration: "underline", cursor: "pointer" }}>شرایطِ حریمِ خصوصی</a> موافقم.
                 </span>
               </label>
               {showPrivacyText && (
@@ -3563,11 +3563,11 @@ export default function App() {
             </div>
             {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
             <button onClick={doSignup} disabled={authBusy}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
               {authBusy ? "..." : "ثبت‌نام"}
             </button>
             <button onClick={() => { setAuthErr(""); setScreen("authLogin"); }}
-              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
+              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
               حساب دارم — ورود
             </button>
             <button onClick={() => setScreen("start")}
@@ -3598,7 +3598,7 @@ export default function App() {
               {Object.entries(TREATMENT_PACKAGES).filter(([k]) => k !== libraryPkg).map(([k, v], i, arr) => (
                 <span key={k}>
                   <button onClick={() => setLibraryPkg(k)}
-                    style={{ border: "none", background: "none", color: "#2B6777", fontSize: 11, textDecoration: "underline", cursor: "pointer", padding: 0 }}>
+                    style={{ border: "none", background: "none", color: "#17383D", fontSize: 11, textDecoration: "underline", cursor: "pointer", padding: 0 }}>
                     {v.label}
                   </button>
                   {i < arr.length - 1 && " · "}
@@ -3610,7 +3610,7 @@ export default function App() {
               <div style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "center" }}>
                 <p style={{ fontSize: 12, color: "#7A5B2E", margin: "0 0 8px" }}>برایِ خرید و دسترسی به جلسات، ابتدا وارد حساب شوید.</p>
                 <button onClick={() => setScreen("authLogin")}
-                  style={{ padding: "8px 16px", borderRadius: 10, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
+                  style={{ padding: "8px 16px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
                   ورود / ثبت‌نام
                 </button>
               </div>
@@ -3678,7 +3678,7 @@ export default function App() {
                     </button>
                   ) : (
                     <a href={CONSULT_BOOKING_LINK}
-                      style={{ padding: "7px 10px", borderRadius: 10, border: "1px solid #2B6777", color: "#2B6777", fontWeight: 700, fontSize: 10.5, flexShrink: 0, textDecoration: "none", textAlign: "center" }}>
+                      style={{ padding: "7px 10px", borderRadius: 10, border: "1px solid #17383D", color: "#17383D", fontWeight: 700, fontSize: 10.5, flexShrink: 0, textDecoration: "none", textAlign: "center" }}>
                       🔒 خریدِ تکی<br />{toman(sessionPrice(libraryPkg))}
                     </a>
                   )}
@@ -3699,11 +3699,11 @@ export default function App() {
               });
             })()}
 
-            <div style={{ background: "#EAF4FB", borderRadius: 12, padding: "12px 14px", marginTop: 12, textAlign: "center" }}>
+            <div style={{ background: "#F1E8D4", borderRadius: 12, padding: "12px 14px", marginTop: 12, textAlign: "center" }}>
               <p style={{ fontSize: 11.5, color: "#3A4A52", lineHeight: 1.9, margin: 0 }}>
                 برایِ خریدِ تکیِ یک جلسه یا کلِ بسته، فعلاً با دفتر تماس بگیرید و شماره‌ی جلسه(ها) را اعلام کنید — بعد از پرداخت، همان جلسه(ها) از طریقِ همین حساب برایتان فعال می‌شود.
               </p>
-              <a href={CONSULT_BOOKING_LINK} style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 700, color: "#2B6777" }}>📞 {BRAND.phone}</a>
+              <a href={CONSULT_BOOKING_LINK} style={{ display: "inline-block", marginTop: 8, fontSize: 12, fontWeight: 700, color: "#17383D" }}>📞 {BRAND.phone}</a>
             </div>
 
             {user && (
@@ -3782,7 +3782,7 @@ export default function App() {
               )}
             <Card>
               <button onClick={() => setScreen("sessionLibrary")}
-                style={{ border: "none", background: "none", color: "#2B6777", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>
+                style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>
                 ‹ بازگشت به فهرستِ جلسات
               </button>
               <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>
@@ -3790,8 +3790,8 @@ export default function App() {
               </h2>
               <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 12 }}>رویکردِ محور: {sess.approach}</p>
               {sess.summary && (
-                <div style={{ background: "#EAF4FB", borderRadius: 10, padding: "9px 12px", marginBottom: 14 }}>
-                  <p style={{ fontSize: 11.5, color: "#2B6777", fontWeight: 700, margin: 0 }}>👁️ این جلسه در یک نگاه: {sess.summary}</p>
+                <div style={{ background: "#F1E8D4", borderRadius: 10, padding: "9px 12px", marginBottom: 14 }}>
+                  <p style={{ fontSize: 11.5, color: "#17383D", fontWeight: 700, margin: 0 }}>👁️ این جلسه در یک نگاه: {sess.summary}</p>
                 </div>
               )}
               {sess.hasLevels && (
@@ -3800,7 +3800,7 @@ export default function App() {
                   <div style={{ display: "flex", gap: 6 }}>
                     {[["simple", "ساده"], ["excellent", "عالی"], ["advanced", "پیشرفته"]].map(([key, label]) => (
                       <button key={key} onClick={() => setSessionLevel(key)}
-                        style={{ flex: 1, padding: "8px", borderRadius: 9, border: `1.5px solid ${sessionLevel === key ? "#2B6777" : "#DCE8F0"}`, background: sessionLevel === key ? "#2B6777" : "#fff", color: sessionLevel === key ? "#fff" : "#5A7080", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                        style={{ flex: 1, padding: "8px", borderRadius: 9, border: `1.5px solid ${sessionLevel === key ? "#17383D" : "#DCE8F0"}`, background: sessionLevel === key ? "#17383D" : "#fff", color: sessionLevel === key ? "#fff" : "#5A7080", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
                         {label}
                       </button>
                     ))}
@@ -3918,7 +3918,7 @@ export default function App() {
             </label>
 
             <button onClick={() => setScreen("quiz")} disabled={!consentChecked}
-              style={{ width: "100%", padding: "14px", borderRadius: 14, border: "none", background: consentChecked ? "#2B6777" : "#D6E3EA", color: "#fff", fontSize: 15, fontWeight: 700, cursor: consentChecked ? "pointer" : "not-allowed" }}>
+              style={{ width: "100%", padding: "14px", borderRadius: 14, border: "none", background: consentChecked ? "#17383D" : "#D6E3EA", color: "#fff", fontSize: 15, fontWeight: 700, cursor: consentChecked ? "pointer" : "not-allowed" }}>
               شروعِ پاسخ‌دهیِ نفر اول
             </button>
           </Card>
@@ -3927,11 +3927,11 @@ export default function App() {
         {screen === "quiz" && (
           <Card>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: partner === 1 ? "#2B6777" : "#E8975C" }}>نفر {partner === 1 ? "اول" : "دوم"}</span>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: partner === 1 ? "#17383D" : "#E8975C" }}>نفر {partner === 1 ? "اول" : "دوم"}</span>
               <span style={{ fontSize: 11.5, color: "#8CA3B0" }}>بخش {domainIdx + 1} از {DOMAINS.length + 1}</span>
             </div>
-            <div style={{ height: 5, background: "#EAF4FB", borderRadius: 4, overflow: "hidden", marginBottom: 18 }}>
-              <div style={{ height: "100%", width: `${(domainIdx / (DOMAINS.length + 1)) * 100}%`, background: partner === 1 ? "#2B6777" : "#E8975C", transition: "width .3s" }} />
+            <div style={{ height: 5, background: "#F1E8D4", borderRadius: 4, overflow: "hidden", marginBottom: 18 }}>
+              <div style={{ height: "100%", width: `${(domainIdx / (DOMAINS.length + 1)) * 100}%`, background: partner === 1 ? "#17383D" : "#E8975C", transition: "width .3s" }} />
             </div>
 
             {!isSdPage ? (
@@ -3953,7 +3953,7 @@ export default function App() {
             )}
 
             <button onClick={nextPage} disabled={!domainComplete || busy}
-              style={{ width: "100%", marginTop: 20, padding: "14px", borderRadius: 14, border: "none", background: domainComplete ? (partner === 1 ? "#2B6777" : "#E8975C") : "#D6E3EA", color: "#fff", fontSize: 15, fontWeight: 700, cursor: domainComplete ? "pointer" : "not-allowed" }}>
+              style={{ width: "100%", marginTop: 20, padding: "14px", borderRadius: 14, border: "none", background: domainComplete ? (partner === 1 ? "#17383D" : "#E8975C") : "#D6E3EA", color: "#fff", fontSize: 15, fontWeight: 700, cursor: domainComplete ? "pointer" : "not-allowed" }}>
               {busy ? "در حال ثبت…" : domainIdx < DOMAINS.length ? "بخش بعدی" : "پایان و ثبت پاسخ‌ها"}
             </button>
             {err && <p style={{ color: "#A6432F", fontSize: 12, marginTop: 10, lineHeight: 1.8, textAlign: "center" }}>{err}</p>}
@@ -3984,7 +3984,7 @@ export default function App() {
                 </p>
               </div>
 
-              <div style={{ background: "#EAF4FB", borderRadius: 12, padding: "12px", textAlign: "center", marginBottom: 16 }}>
+              <div style={{ background: "#F1E8D4", borderRadius: 12, padding: "12px", textAlign: "center", marginBottom: 16 }}>
                 <span style={{ fontSize: 11.5, color: "#5A7080" }}>امتیازِ کلیِ شخصیِ شما</span>
                 <div style={{ fontSize: 24, fontWeight: 800, color: LEVEL_COLOR[level(myOverall)] }}>{myOverall} از ۱۰۰</div>
               </div>
@@ -3992,7 +3992,7 @@ export default function App() {
               {DOMAINS.map((d) => (
                 <div key={d.key} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
                   <span style={{ fontSize: 11.5, width: 70, color: "#4B6070" }}>{d.short}</span>
-                  <div style={{ flex: 1, height: 8, background: "#EAF4FB", borderRadius: 4, overflow: "hidden" }}>
+                  <div style={{ flex: 1, height: 8, background: "#F1E8D4", borderRadius: 4, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${myScores[d.key]}%`, background: LEVEL_COLOR[level(myScores[d.key])] }} />
                   </div>
                   <span style={{ fontSize: 11, color: "#8CA3B0", width: 26 }}>{myScores[d.key]}</span>
@@ -4005,7 +4005,7 @@ export default function App() {
                   {myFlags.map((f, i) => (
                     <div key={i} style={{ fontSize: 11.5, color: "#4B6070", marginBottom: 8, background: f.severity === "بالا" ? "#FBEAE7" : "#F7FAFC", borderRadius: 10, padding: "9px 11px" }}>
                       <div style={{ fontWeight: 700, color: "#1F2D3D", marginBottom: 4 }}>🔺 {f.label}</div>
-                      <p style={{ margin: 0, lineHeight: 1.85, color: "#2B6777" }}>➜ {f.action}</p>
+                      <p style={{ margin: 0, lineHeight: 1.85, color: "#17383D" }}>➜ {f.action}</p>
                     </div>
                   ))}
                   {hasHighSeverity && (
@@ -4022,7 +4022,7 @@ export default function App() {
                     📤 یا به‌جایِ دادنِ همین گوشی، لینک را برایِ همسرتان با پیامک بفرستید تا با گوشیِ خودش ادامه دهد:
                   </p>
                   <a href={`sms:${/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream ? "&" : "?"}body=${encodeURIComponent(buildJoinUrl())}`}
-                    style={{ display: "block", width: "100%", padding: "12px", borderRadius: 10, background: "#2B6777", color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13, marginBottom: 8 }}>
+                    style={{ display: "block", width: "100%", padding: "12px", borderRadius: 10, background: "#17383D", color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13, marginBottom: 8 }}>
                     💬 ارسالِ لینک با پیامک برایِ همسر
                   </a>
                   <p style={{ fontSize: 10, color: "#9AAEB9", marginBottom: 10 }}>
@@ -4032,7 +4032,7 @@ export default function App() {
                     style={{ width: "100%", padding: "8px 10px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
                   <button onClick={async () => {
                     try { await navigator.clipboard.writeText(buildJoinUrl()); setLinkCopyStatus("copied"); } catch (e) { setLinkCopyStatus("failed"); }
-                  }} style={{ width: "100%", marginTop: 8, padding: "10px", borderRadius: 10, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
+                  }} style={{ width: "100%", marginTop: 8, padding: "10px", borderRadius: 10, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
                     {linkCopyStatus === "copied" ? "✅ کپی شد! برایِ همسرتان بفرستید" : linkCopyStatus === "failed" ? "❌ کپیِ خودکار کار نکرد — از باکسِ بالا با انگشت انتخاب کنید" : "📋 اگر پیامک باز نشد: کپیِ لینک"}
                   </button>
                   <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 8, lineHeight: 1.7 }}>
@@ -4041,7 +4041,7 @@ export default function App() {
                 </div>
               )}
 
-              <button onClick={goNext} style={{ width: "100%", marginTop: 20, padding: "14px", borderRadius: 14, border: "none", background: partner === 1 ? "#2B6777" : "#E8975C", color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+              <button onClick={goNext} style={{ width: "100%", marginTop: 20, padding: "14px", borderRadius: 14, border: "none", background: partner === 1 ? "#17383D" : "#E8975C", color: "#fff", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
                 {partner === 1 ? "یا: ادامه با همینِ گوشی (دادنِ دستگاه به همسر)" : "متوجه شدم — دیدنِ نتیجه‌ی مشترک"}
               </button>
             </Card>
@@ -4061,7 +4061,7 @@ export default function App() {
               <div style={{ textAlign: "center", marginBottom: 14 }}>
                 <div style={{ fontSize: 30, marginBottom: 6 }}>✅</div>
                 <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>نتیجه‌ی شما</h2>
-                <p style={{ fontSize: 11.5, color: "#8CA3B0", lineHeight: 1.85 }}>کدِ شما: <b style={{ color: "#2B6777" }}>{code}</b></p>
+                <p style={{ fontSize: 11.5, color: "#8CA3B0", lineHeight: 1.85 }}>کدِ شما: <b style={{ color: "#17383D" }}>{code}</b></p>
               </div>
 
               {(() => {
@@ -4092,7 +4092,7 @@ export default function App() {
                         <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>درصدِ وضعیتِ کلی</div>
                       </div>
                       <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
-                        <div style={{ fontSize: 14, fontWeight: 800, color: "#2B6777" }}>{weakestOv.d.short}</div>
+                        <div style={{ fontSize: 14, fontWeight: 800, color: "#17383D" }}>{weakestOv.d.short}</div>
                         <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>بیشترین مشکل در این ناحیه</div>
                       </div>
                       <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
@@ -4100,7 +4100,7 @@ export default function App() {
                         <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>شدتِ وضعیت</div>
                       </div>
                       <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: "#2B6777", lineHeight: 1.5 }}>{treatability}</div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "#17383D", lineHeight: 1.5 }}>{treatability}</div>
                         <div style={{ fontSize: 10.5, color: "#8CA3B0", marginTop: 4 }}>چشم‌اندازِ بهبود</div>
                       </div>
                     </div>
@@ -4161,9 +4161,9 @@ export default function App() {
                           <div style={{ fontSize: 13, fontWeight: 800, color: "#7A5B2E", marginBottom: 4 }}>⚠ {p.title}</div>
                           <p style={{ fontSize: 10.5, color: "#8C6D3F", margin: "0 0 6px", fontFamily: "monospace", direction: "ltr", textAlign: "right" }}>نمره‌هایِ شما: {scoreStr}</p>
                           <p style={{ fontSize: 11.5, color: "#5A4B33", lineHeight: 1.85, margin: "0 0 8px" }}>{p.mechanism}</p>
-                          <p style={{ fontSize: 11, fontWeight: 700, color: "#2B6777", margin: "0 0 5px" }}>راهکارهایِ فوری:</p>
+                          <p style={{ fontSize: 11, fontWeight: 700, color: "#17383D", margin: "0 0 5px" }}>راهکارهایِ فوری:</p>
                           {p.actions.map((a, i) => (
-                            <div key={i} style={{ fontSize: 11.5, color: "#2B6777", lineHeight: 1.85, marginBottom: 3 }}>➜ {a}</div>
+                            <div key={i} style={{ fontSize: 11.5, color: "#17383D", lineHeight: 1.85, marginBottom: 3 }}>➜ {a}</div>
                           ))}
                         </div>
                       );
@@ -4178,7 +4178,7 @@ export default function App() {
                   {myFlags.map((f, i) => (
                     <div key={i} style={{ fontSize: 11.5, color: "#4B6070", marginBottom: 8, background: f.severity === "بالا" ? "#FBEAE7" : "#F7FAFC", borderRadius: 10, padding: "9px 11px" }}>
                       <div style={{ fontWeight: 700, color: "#1F2D3D", marginBottom: 4 }}>🔺 {f.label}</div>
-                      <p style={{ margin: 0, lineHeight: 1.85, color: "#2B6777" }}>➜ {f.action}</p>
+                      <p style={{ margin: 0, lineHeight: 1.85, color: "#17383D" }}>➜ {f.action}</p>
                     </div>
                   ))}
                   {hasHighSeverity && (
@@ -4201,20 +4201,20 @@ export default function App() {
                 return null;
               })()}
 
-              <div style={{ marginTop: 18, background: "#EAF4FB", borderRadius: 12, padding: "16px", textAlign: "center" }}>
-                <p style={{ fontSize: 12.5, color: "#2B6777", lineHeight: 1.9, fontWeight: 700, margin: "0 0 4px" }}>
+              <div style={{ marginTop: 18, background: "#F1E8D4", borderRadius: 12, padding: "16px", textAlign: "center" }}>
+                <p style={{ fontSize: 12.5, color: "#17383D", lineHeight: 1.9, fontWeight: 700, margin: "0 0 4px" }}>
                   برایِ بحث و بررسیِ تکمیلیِ این نتیجه، می‌توانید از دفترِ {BRAND.name} وقتِ مشاوره بگیرید.
                 </p>
               </div>
 
               <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
                 <p style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{BRAND.name}</p>
-                <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "6px 0 4px", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
-                <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
+                <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 12, color: "#17383D", margin: "6px 0 4px", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
+                <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 12, color: "#17383D", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
               </div>
 
               <button onClick={() => { setScreen("start"); }}
-                style={{ width: "100%", marginTop: 16, padding: "12px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer" }}>
+                style={{ width: "100%", marginTop: 16, padding: "12px", borderRadius: 12, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer" }}>
                 بازگشت به صفحه‌ی شروع
               </button>
             </Card>
@@ -4232,9 +4232,9 @@ export default function App() {
                 ? "همسرتان شما را برای تکمیلِ این ارزیابی دعوت کرده. پاسخِ نفرِ اول قبلاً ثبت شده و بعد از تکمیلِ پاسخ‌هایِ شما، نقشه‌ی مشترک نمایش داده می‌شود."
                 : "لطفاً دستگاه را به همسرتان بدهید. پاسخ‌های نفر اول ذخیره شد و بعد از تکمیل پاسخ‌های نفر دوم، نقشه‌ی مشترک نمایش داده می‌شود."}
             </p>
-            <div style={{ background: "#EAF4FB", borderRadius: 12, padding: "12px", marginBottom: 16 }}>
+            <div style={{ background: "#F1E8D4", borderRadius: 12, padding: "12px", marginBottom: 16 }}>
               <span style={{ fontSize: 11.5, color: "#5A7080" }}>کدِ رابطه‌ی شما</span>
-              <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: 3, color: "#2B6777" }}>{code}</div>
+              <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: 3, color: "#17383D" }}>{code}</div>
             </div>
             <label style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12.5, color: "#4B6070", marginBottom: 16, textAlign: "right", cursor: "pointer" }}>
               <input type="checkbox" checked={consentChecked} onChange={(e) => setConsentChecked(e.target.checked)} style={{ marginTop: 3 }} />
@@ -4257,7 +4257,7 @@ export default function App() {
             <input type="password" value={adminPassInput} onChange={(e) => setAdminPassInput(e.target.value)} placeholder="رمز عبور"
               style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid #C9DEE8", fontSize: 14, marginBottom: 12, ...FONT }} />
             <button onClick={async () => { if (adminPassInput === ADMIN_PASS) { markAdmin(); await loadAdmin(); setScreen("admin"); } else setErr("رمز نادرست است."); }}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
               ورود
             </button>
             {err && <p style={{ color: "#A6432F", fontSize: 12.5, marginTop: 8 }}>{err}</p>}
@@ -4309,7 +4309,7 @@ export default function App() {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                   {Array.from({ length: pkg.sessions }, (_, i) => i + 1).map((num) => (
                     <button key={num} onClick={() => adminUnlockSession(pkgKey, num)}
-                      style={{ padding: "5px 10px", borderRadius: 8, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontSize: 11, cursor: "pointer" }}>
+                      style={{ padding: "5px 10px", borderRadius: 8, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontSize: 11, cursor: "pointer" }}>
                       جلسه {num}
                     </button>
                   ))}
@@ -4347,7 +4347,7 @@ export default function App() {
               const r = await fetch(`/api/feedback?adminPass=${ADMIN_PASS}`);
               const d = await r.json();
               if (d.ok) setFeedbackList(d.list);
-            }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #2B6777", color: "#2B6777", background: "#fff", fontSize: 11, marginBottom: 8 }}>بروزرسانی</button>
+            }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", color: "#17383D", background: "#fff", fontSize: 11, marginBottom: 8 }}>بروزرسانی</button>
             {feedbackList.map((f, i) => (
               <div key={i} style={{ fontSize: 12, padding: "6px 0", borderBottom: "1px solid #eee" }}>
                 <b>{f.type}</b> — {f.message} {f.contact && `(${f.contact})`} — {new Date(f.ts).toLocaleDateString("fa-IR")}
@@ -4367,15 +4367,15 @@ export default function App() {
               const d = await r.json();
               setTherapistMsg(d.ok ? "✅ ساخته شد" : "❌ " + d.error);
               if (d.ok) loadTherapists();
-            }} style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "#2B6777", color: "#fff", fontSize: 12, marginBottom: 8 }}>ساختنِ درمانگر</button>
+            }} style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "#17383D", color: "#fff", fontSize: 12, marginBottom: 8 }}>ساختنِ درمانگر</button>
             {therapistMsg && <p style={{ fontSize: 11, color: "#666" }}>{therapistMsg}</p>}
-            <button onClick={loadTherapists} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #2B6777", color: "#2B6777", background: "#fff", fontSize: 11, marginBottom: 8 }}>بروزرسانیِ فهرست</button>
+            <button onClick={loadTherapists} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", color: "#17383D", background: "#fff", fontSize: 11, marginBottom: 8 }}>بروزرسانیِ فهرست</button>
             {therapistList.map((t) => (
               <div key={t.id} style={{ fontSize: 12, padding: "8px 0", borderBottom: "1px solid #eee" }}>
                 <div>{t.name} ({t.id}) — سهم: {t.sharePercent}٪ — فروش: {t.salesCount}</div>
                 <div style={{ display: "flex", gap: 6, marginTop: 4, alignItems: "center" }}>
                   <input readOnly value={`https://naghshe-rabete-ashy.vercel.app/?ref=${t.id}`} style={{ flex: 1, fontSize: 10, padding: 5, borderRadius: 6, border: "1px solid #ddd", color: "#666" }} onClick={(e) => e.target.select()} />
-                  <button onClick={() => navigator.clipboard.writeText(`https://naghshe-rabete-ashy.vercel.app/?ref=${t.id}`)} style={{ fontSize: 10, padding: "5px 10px", borderRadius: 6, border: "1px solid #2B6777", color: "#2B6777", background: "#fff" }}>کپی</button>
+                  <button onClick={() => navigator.clipboard.writeText(`https://naghshe-rabete-ashy.vercel.app/?ref=${t.id}`)} style={{ fontSize: 10, padding: "5px 10px", borderRadius: 6, border: "1px solid #17383D", color: "#17383D", background: "#fff" }}>کپی</button>
                 </div>
               </div>
             ))}
@@ -4416,7 +4416,7 @@ export default function App() {
               چون سرویسِ ارسالِ خودکارِ ایمیل/پیامک هنوز وصل نیست، این فهرست کمک می‌کند کاربرانی که مدتی است فعالیتی نداشته‌اند را خودتان پیگیری کنید.
             </p>
             <button onClick={loadInactiveUsers}
-              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
+              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
               نمایشِ فهرست
             </button>
             {inactiveUsers && (
@@ -4447,7 +4447,7 @@ export default function App() {
               <input value={patientEmailInput} onChange={(e) => setPatientEmailInput(e.target.value)} placeholder="ایمیلِ مراجع"
                 style={{ flex: 1, padding: "9px 10px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 12.5 }} />
               <button onClick={loadPatientDashboard}
-                style={{ padding: "9px 16px", borderRadius: 10, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                style={{ padding: "9px 16px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
                 نمایش
               </button>
             </div>
@@ -4539,7 +4539,7 @@ export default function App() {
               نشان می‌دهد چند نفر گفته‌اند هر تکنیک برایشان کار کرده یا نه — برایِ فهمیدنِ نقاطِ قوت/ضعفِ محتوا.
             </p>
             <button onClick={loadTechniqueReport}
-              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
+              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
               نمایشِ گزارشِ بازخوردها
             </button>
             {techniqueReport.length > 0 && (
@@ -4566,19 +4566,19 @@ export default function App() {
               هر ساعت، یک نسخه‌ی کاملِ داده‌ها (پاسخ‌ها، حساب‌ها، جلساتِ بازشده) خودکار در **Vercel Blob Storage** (سرویسِ ذخیره‌سازیِ جداگانه از Redis) ذخیره می‌شود — اگر مشکلی برایِ Redis پیش بیاید، این نسخه‌ها سالم می‌مانند.
             </p>
             <button onClick={runManualBackup} disabled={backupBusy}
-              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "#2B6777", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
+              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
               {backupBusy ? "در حالِ ساختِ بک‌آپ..." : "📥 ساختِ بک‌آپِ دستی همین الان"}
             </button>
             {backupMsg && <p style={{ fontSize: 11, color: backupMsg.includes("✅") ? "#4C8778" : "#A6432F", marginBottom: 8 }}>{backupMsg}</p>}
             <button onClick={loadBackupList}
-              style={{ width: "100%", padding: "8px", borderRadius: 10, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, fontSize: 11.5, cursor: "pointer", marginBottom: 8 }}>
+              style={{ width: "100%", padding: "8px", borderRadius: 10, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, fontSize: 11.5, cursor: "pointer", marginBottom: 8 }}>
               نمایشِ لیستِ بک‌آپ‌هایِ موجود
             </button>
             {backupList.length > 0 && (
               <div style={{ maxHeight: 180, overflowY: "auto" }}>
                 {backupList.map((b, i) => (
                   <a key={i} href={b.url} target="_blank" rel="noreferrer"
-                    style={{ display: "block", fontSize: 11, color: "#2B6777", padding: "6px 0", borderBottom: i < backupList.length - 1 ? "1px solid #F0F4F7" : "none" }}>
+                    style={{ display: "block", fontSize: 11, color: "#17383D", padding: "6px 0", borderBottom: i < backupList.length - 1 ? "1px solid #F0F4F7" : "none" }}>
                     📄 {new Date(b.uploadedAt).toLocaleString("fa-IR")}
                   </a>
                 ))}
@@ -4644,7 +4644,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
             📌 نتیجه‌ی این زوج را برایِ دفتر بفرستید:
           </p>
           <a href={smsLink()} className="no-print"
-            style={{ display: "block", width: "100%", padding: "13px", borderRadius: 12, background: "#2B6777", color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13.5, marginBottom: 8 }}>
+            style={{ display: "block", width: "100%", padding: "13px", borderRadius: 12, background: "#17383D", color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13.5, marginBottom: 8 }}>
             💬 ارسالِ خودکار با پیامک به دفتر
           </a>
           <p style={{ fontSize: 10.5, color: "#9AAEB9", marginBottom: 10, textAlign: "center" }}>
@@ -4653,14 +4653,14 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           <button onClick={async () => {
             try { await navigator.clipboard.writeText(rawDataText()); setCopyStatus("copied"); } catch (e) { setCopyStatus("failed"); }
           }} className="no-print"
-            style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer", fontSize: 12.5, marginBottom: 8 }}>
+            style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", fontSize: 12.5, marginBottom: 8 }}>
             {copyStatus === "copied" ? "✅ کپی شد! حالا در پیامک/واتساپ بچسبانید و بفرستید" : copyStatus === "failed" ? "❌ کپی نشد — از باکسِ زیر با انگشت انتخاب کنید" : "📋 اگر پیامکِ خودکار باز نشد: کپیِ نتیجه"}
           </button>
           {copyStatus === "failed" && (
             <>
               <textarea readOnly value={rawDataText()} rows={4} onFocus={(e) => e.target.select()}
                 className="no-print"
-                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "2px solid #2B6777", fontSize: 11, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
+                style={{ width: "100%", padding: "10px 12px", borderRadius: 10, border: "2px solid #17383D", fontSize: 11, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
               <p style={{ fontSize: 11, color: "#5A7080", marginTop: 10, lineHeight: 1.9 }}>
                 <b>راهنما:</b> انگشت را رویِ متنِ بالا نگه دارید تا گزینه‌ی «Select All / انتخابِ همه» ظاهر شود ← «Copy / کپی» را بزنید.
               </p>
@@ -4671,7 +4671,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
       <Card>
         <div style={{ textAlign: "center", marginBottom: 6 }}>
           <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: "0 0 2px", fontWeight: 700 }}>{BRAND.academy}</p>
-          <p style={{ fontSize: 11.5, color: "#8CA3B0", margin: 0 }}>کدِ رابطه: <b style={{ color: "#2B6777" }}>{code}</b></p>
+          <p style={{ fontSize: 11.5, color: "#8CA3B0", margin: 0 }}>کدِ رابطه: <b style={{ color: "#17383D" }}>{code}</b></p>
           <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1F2D3D", margin: "6px 0" }}>نقشه‌ی مشترک شما</h2>
           <p style={{ fontSize: 12.5, color: "#5A7080" }}>امتیاز کلی تعهد و پایبندیِ رابطه: <b style={{ color: LEVEL_COLOR[level(overall)] }}>{overall} از ۱۰۰</b></p>
           {(context.duration || context.age || context.children) && (
@@ -4711,7 +4711,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
                   <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>درصدِ وضعیتِ کلی</div>
                 </div>
                 <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: "#2B6777" }}>{weakestOv.d.short}</div>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: "#17383D" }}>{weakestOv.d.short}</div>
                   <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>بیشترین مشکل در این ناحیه</div>
                 </div>
                 <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
@@ -4719,7 +4719,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
                   <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>شدتِ وضعیت</div>
                 </div>
                 <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: "#2B6777", lineHeight: 1.5 }}>{treatability}</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: "#17383D", lineHeight: 1.5 }}>{treatability}</div>
                   <div style={{ fontSize: 10.5, color: "#8CA3B0", marginTop: 4 }}>چشم‌اندازِ بهبود</div>
                 </div>
               </div>
@@ -4754,7 +4754,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           const prevOverall = Math.round(DOMAINS.reduce((s, d) => s + prevS1[d.key] + prevS2[d.key], 0) / (DOMAINS.length * 2));
           const deltaOverall = overall - prevOverall;
           return (
-            <div style={{ marginBottom: 18, background: "#EAF4FB", borderRadius: 12, padding: "14px" }}>
+            <div style={{ marginBottom: 18, background: "#F1E8D4", borderRadius: 12, padding: "14px" }}>
               <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>📊 مقایسه با سنجشِ قبلی</p>
               <p style={{ fontSize: 12.5, color: "#4B6070", marginBottom: 10 }}>
                 امتیازِ کلی: از <b>{prevOverall}</b> به <b>{overall}</b>{" "}
@@ -4797,7 +4797,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
         <RadarChart p1={s1} p2={s2} domains={DOMAINS} />
 
         <details style={{ marginTop: 10 }}>
-          <summary style={{ fontSize: 12, color: "#2B6777", fontWeight: 700, cursor: "pointer", textAlign: "center", listStyle: "none" }}>
+          <summary style={{ fontSize: 12, color: "#17383D", fontWeight: 700, cursor: "pointer", textAlign: "center", listStyle: "none" }}>
             📊 نمایشِ دقیقِ عددی روی خط‌کش (برای خوانشِ بدونِ ابهام)
           </summary>
           <div style={{ marginTop: 10 }}>
@@ -4806,7 +4806,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
         </details>
 
         <div style={{ display: "flex", justifyContent: "center", gap: 20, margin: "10px 0 18px", fontSize: 12.5 }}>
-          <span style={{ color: "#2B6777", fontWeight: 700 }}>● نفر اول</span>
+          <span style={{ color: "#17383D", fontWeight: 700 }}>● نفر اول</span>
           <span style={{ color: "#E8975C", fontWeight: 700 }}>● نفر دوم</span>
         </div>
 
@@ -4851,9 +4851,9 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
                       <div style={{ fontSize: 13, fontWeight: 800, color: "#7A5B2E", marginBottom: 4 }}>⚠ {p.title}</div>
                       <p style={{ fontSize: 10.5, color: "#8C6D3F", margin: "0 0 6px", fontFamily: "monospace", direction: "ltr", textAlign: "right" }}>نمره‌هایِ شما: {scoreStr}</p>
                       <p style={{ fontSize: 11.5, color: "#5A4B33", lineHeight: 1.85, margin: "0 0 8px" }}>{p.mechanism}</p>
-                      <p style={{ fontSize: 11, fontWeight: 700, color: "#2B6777", margin: "0 0 5px" }}>راهکارهایِ فوری:</p>
+                      <p style={{ fontSize: 11, fontWeight: 700, color: "#17383D", margin: "0 0 5px" }}>راهکارهایِ فوری:</p>
                       {p.actions.map((a, i) => (
-                        <div key={i} style={{ fontSize: 11.5, color: "#2B6777", lineHeight: 1.85, marginBottom: 3 }}>➜ {a}</div>
+                        <div key={i} style={{ fontSize: 11.5, color: "#17383D", lineHeight: 1.85, marginBottom: 3 }}>➜ {a}</div>
                       ))}
                     </div>
                   );
@@ -4939,7 +4939,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
                 className="no-print"
                 style={{ width: "100%", padding: "8px 10px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff", marginBottom: 8 }} />
               <a href={calUrl} target="_blank" rel="noopener noreferrer" className="no-print"
-                style={{ display: "block", width: "100%", padding: "10px", borderRadius: 10, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 12.5 }}>
+                style={{ display: "block", width: "100%", padding: "10px", borderRadius: 10, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 12.5 }}>
                 📅 افزودنِ یادآوری به تقویمِ گوگل (۳ ماهِ دیگر)
               </a>
             </div>
@@ -4999,7 +4999,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
         </Collapsible>
 
         <button onClick={() => window.print()} className="no-print"
-          style={{ width: "100%", marginTop: 20, padding: "13px", borderRadius: 14, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
+          style={{ width: "100%", marginTop: 20, padding: "13px", borderRadius: 14, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
           🖨 چاپ / ذخیره به‌صورت PDF
         </button>
 
@@ -5013,8 +5013,8 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
         <div style={{ marginTop: 20, paddingTop: 18, borderTop: "1px solid #EEF3F6", textAlign: "center" }}>
           <p style={{ fontSize: 13.5, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{BRAND.name}</p>
           <p style={{ fontSize: 11, color: "#5A7080", margin: "0 0 10px", lineHeight: 1.8 }}>{BRAND.credential}</p>
-          <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
-          <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 12, color: "#2B6777", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
+          <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 12, color: "#17383D", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
+          <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 12, color: "#17383D", margin: "0 0 4px", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
           <p style={{ fontSize: 12, color: "#5A7080", margin: 0 }}>📍 {BRAND.city}</p>
         </div>
       </Card>
@@ -5176,7 +5176,7 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
             setPasteText("");
             setPasteErr(failedCount > 0 ? `${parsed.length} زوج اضافه شد؛ ${failedCount} بخش قابلِ خواندن نبود.` : `${parsed.length} زوج با موفقیت اضافه شد.`);
           }} disabled={!pasteText.trim()}
-            style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: pasteText.trim() ? "#2B6777" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: pasteText.trim() ? "pointer" : "not-allowed", fontSize: 12.5 }}>
+            style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: pasteText.trim() ? "#17383D" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: pasteText.trim() ? "pointer" : "not-allowed", fontSize: 12.5 }}>
             افزودن به نتایج
           </button>
           {pasteErr && <p style={{ fontSize: 11, color: "#5A7080", marginTop: 6 }}>{pasteErr}</p>}
@@ -5188,16 +5188,16 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
       {!busy && (
         <>
           <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
-            <div style={{ flex: 1, background: "#EAF4FB", borderRadius: 12, padding: "12px", textAlign: "center" }}>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "#2B6777" }}>{allRows.length}</div>
+            <div style={{ flex: 1, background: "#F1E8D4", borderRadius: 12, padding: "12px", textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#17383D" }}>{allRows.length}</div>
               <div style={{ fontSize: 10.5, color: "#5A7080" }}>کل کدهای ثبت‌شده</div>
             </div>
-            <div style={{ flex: 1, background: "#EAF4FB", borderRadius: 12, padding: "12px", textAlign: "center" }}>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "#2B6777" }}>{completed.length}</div>
+            <div style={{ flex: 1, background: "#F1E8D4", borderRadius: 12, padding: "12px", textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#17383D" }}>{completed.length}</div>
               <div style={{ fontSize: 10.5, color: "#5A7080" }}>زوج‌های تکمیل‌شده</div>
             </div>
-            <div style={{ flex: 1, background: "#EAF4FB", borderRadius: 12, padding: "12px", textAlign: "center" }}>
-              <div style={{ fontSize: 20, fontWeight: 800, color: "#2B6777" }}>{soloCount}</div>
+            <div style={{ flex: 1, background: "#F1E8D4", borderRadius: 12, padding: "12px", textAlign: "center" }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#17383D" }}>{soloCount}</div>
               <div style={{ fontSize: 10.5, color: "#5A7080" }}>پاسخ‌دهندگانِ فردی</div>
             </div>
           </div>
@@ -5206,8 +5206,8 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
           {DOMAINS.map((d) => (
             <div key={d.key} style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
               <span style={{ fontSize: 11.5, width: 90, color: "#4B6070" }}>{d.short}</span>
-              <div style={{ flex: 1, height: 8, background: "#EAF4FB", borderRadius: 4, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${domainAvgAll[d.key]}%`, background: "#2B6777" }} />
+              <div style={{ flex: 1, height: 8, background: "#F1E8D4", borderRadius: 4, overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${domainAvgAll[d.key]}%`, background: "#17383D" }} />
               </div>
               <span style={{ fontSize: 11, color: "#8CA3B0", width: 26 }}>{domainAvgAll[d.key]}</span>
             </div>
@@ -5235,13 +5235,13 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
             </table>
           </div>
 
-          <button onClick={onRefresh} style={{ width: "100%", marginTop: 14, padding: "11px", borderRadius: 12, border: "1px solid #2B6777", background: "#fff", color: "#2B6777", fontWeight: 700, cursor: "pointer" }}>
+          <button onClick={onRefresh} style={{ width: "100%", marginTop: 14, padding: "11px", borderRadius: 12, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer" }}>
             بروزرسانی داده‌ها
           </button>
 
           <p style={{ fontSize: 11.5, fontWeight: 700, color: "#1F2D3D", marginTop: 16, marginBottom: 6 }}>۱) همه‌ی داده‌ها (از ابتدا تا الان)</p>
           <button onClick={() => exportRawCSV(allRows)} disabled={!completed.length && !soloCount}
-            style={{ width: "100%", padding: "11px", borderRadius: 12, border: "none", background: (completed.length || soloCount) ? "#2B6777" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: (completed.length || soloCount) ? "pointer" : "not-allowed" }}>
+            style={{ width: "100%", padding: "11px", borderRadius: 12, border: "none", background: (completed.length || soloCount) ? "#17383D" : "#D6E3EA", color: "#fff", fontWeight: 700, cursor: (completed.length || soloCount) ? "pointer" : "not-allowed" }}>
             ⬇ دانلودِ همه‌ی داده‌ها (CSV)
           </button>
           <button onClick={async () => {
@@ -5252,7 +5252,7 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
           </button>
           {csvCopyStatus === "failed" && (
             <textarea readOnly value={buildRawCSV(allRows)} rows={5} onFocus={(e) => e.target.select()}
-              style={{ width: "100%", padding: "8px 10px", marginTop: 8, borderRadius: 10, border: "2px solid #2B6777", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
+              style={{ width: "100%", padding: "8px 10px", marginTop: 8, borderRadius: 10, border: "2px solid #17383D", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
           )}
 
           <div style={{ borderTop: "1px dashed #DCE8F0", margin: "18px 0 14px" }} />
