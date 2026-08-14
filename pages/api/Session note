@@ -1,4 +1,5 @@
 import { Redis } from "@upstash/redis";
+import { verifySession } from "../../lib/auth";
 
 const redis = Redis.fromEnv();
 
@@ -16,23 +17,28 @@ function scanForRisk(text) {
   return RISK_KEYWORDS.some((kw) => normalized.includes(kw));
 }
 
-// ذخیره‌ی یادداشت‌هایِ کاربر برایِ هر تکنیک — پایه‌یِ داشبوردِ بالینیِ آینده
+// ذخیره‌ی یادداشت‌هایِ کاربر برایِ هر تکنیک — قابلِ‌استفاده هم بدونِ ورود (ناشناس)، هم با ورود (تاییدشده با نشست)
 export default async function handler(req, res) {
   try {
     if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
-    const { techniqueId, note, userEmail } = req.body;
+    const { techniqueId, note, token } = req.body;
     if (!techniqueId) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
 
-    const emailKey = (userEmail || "anonymous").toLowerCase().trim();
+    // اگر توکن داده شده، باید معتبر باشد؛ وگرنه ناشناس ثبت می‌شود
+    let emailKey = "anonymous";
+    if (token) {
+      const verifiedEmail = await verifySession(token);
+      if (!verifiedEmail) return res.status(401).json({ error: "نشستِ نامعتبر — لطفاً دوباره وارد شوید" });
+      emailKey = verifiedEmail;
+    }
+
     const key = `session_note:${emailKey}:${techniqueId}`;
     const riskFlag = scanForRisk(note);
     await redis.set(key, JSON.stringify({ techniqueId, note, userEmail: emailKey, savedAt: Date.now(), riskFlag }));
 
-    // نگه‌داریِ فهرستِ کاربرانی که یادداشت دارند، برایِ داشبوردِ بالینی
-    if (userEmail) await redis.sadd("session_notes:users_index", emailKey);
+    if (emailKey !== "anonymous") await redis.sadd("session_notes:users_index", emailKey);
 
-    // اگر کلمه‌ی هشدار یافت شد، در فهرستِ جداگانه‌یِ هشدارهایِ فوری هم ثبت کن
-    if (riskFlag && userEmail) {
+    if (riskFlag && emailKey !== "anonymous") {
       const alert = { userEmail: emailKey, techniqueId, notePreview: note.slice(0, 120), ts: Date.now() };
       const rawAlerts = (await redis.get("risk_alerts:list")) || [];
       const alerts = typeof rawAlerts === "string" ? JSON.parse(rawAlerts) : rawAlerts;
