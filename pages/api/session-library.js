@@ -2,7 +2,7 @@ import { Redis } from "@upstash/redis";
 import { getSessionContent } from "../../lib/sessionContent";
 
 const redis = Redis.fromEnv();
-const ADMIN_PASS = "AGHILI-PANEL";
+import { verifyAdminToken } from "../../lib/auth";
 
 const TREATMENT_PACKAGES_SESSIONS = { moderate: 20, advanced: 8, betrayed: 30, unfaithful: 30 };
 
@@ -21,11 +21,11 @@ function sessionMatchesSearch(sess, query) {
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
-    const { pkgKey, weakestDomain, searchQuery, email, adminPass } = req.query;
+    const { pkgKey, weakestDomain, searchQuery, email, adminToken } = req.query;
     const total = TREATMENT_PACKAGES_SESSIONS[pkgKey];
     if (!total) return res.status(400).json({ error: "بسته‌یِ نامعتبر" });
 
-    const isAdmin = adminPass === ADMIN_PASS;
+    const isAdmin = await verifyAdminToken(adminToken);
     let unlockedSessions = [];
     if (email) {
       const raw = (await redis.get(`unlocked:${email.toLowerCase().trim()}`)) || [];
