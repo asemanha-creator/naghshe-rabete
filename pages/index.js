@@ -4564,12 +4564,18 @@ export default function App() {
               try {
                 const { upload } = await import("@vercel/blob/client");
                 const sid = `${audioPkgKey}-${audioNum}`;
-                await upload(file.name, file, {
+                const blob = await upload(file.name, file, {
                   access: "public",
                   handleUploadUrl: "/api/audio-upload",
-                  clientPayload: JSON.stringify({ adminToken, sessionId: sid }),
+                  clientPayload: JSON.stringify({ adminToken }),
                 });
-                setAudioUploadMsg("✅ آپلود شد");
+                setAudioUploadMsg("در حالِ ذخیره...");
+                const saveRes = await fetch("/api/audio", {
+                  method: "POST", headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ sessionId: sid, url: blob.url, adminToken }),
+                });
+                if (!saveRes.ok) throw new Error("خطا در ذخیره‌سازی");
+                setAudioUploadMsg("✅ آپلود و ذخیره شد");
               } catch (err) { setAudioUploadMsg("❌ " + err.message); }
             }} style={{ width: "100%", fontSize: 12 }} />
             {audioUploadMsg && <p style={{ fontSize: 11, color: "#4C8778", marginTop: 6 }}>{audioUploadMsg}</p>}
