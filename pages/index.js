@@ -3194,7 +3194,7 @@ export default function App() {
             borderRadius: 24,
           }}>
             <div style={{ textAlign: "center", marginBottom: 14 }}>
-              <h1 style={{ fontFamily: "'Noto Nastaliq Urdu', serif", fontSize: 34, color: "#17383D", margin: "6px 0 6px", fontWeight: 700, lineHeight: 1.3 }}>گدار</h1>
+              <h1 style={{ fontFamily: "'Noto Nastaliq Urdu', serif", fontSize: 34, color: "#17383D", margin: "6px 0 6px", fontWeight: 700, lineHeight: 1.3 }}>گُدار</h1>
               <p style={{ fontSize: 12, color: "#8A5A4E", fontWeight: 700, margin: "0 0 4px", fontStyle: "italic" }}>بی‌گدار به آب نزن</p>
               <p style={{ fontSize: 10.5, color: "#17383D", fontWeight: 700, margin: "0 0 10px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
               <div>
