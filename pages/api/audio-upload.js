@@ -1,8 +1,8 @@
 import { handleUpload } from "@vercel/blob/client";
 import { Redis } from "@upstash/redis";
+import { verifyAdminToken } from "../../lib/auth";
 
 const redis = Redis.fromEnv();
-const ADMIN_PASS = "AGHILI-PANEL";
 
 // آپلودِ فایلِ صوتیِ هر جلسه — فقط ادمین، مستقیم به Vercel Blob (بدونِ عبور از سرور، برایِ فایل‌هایِ بزرگ)
 export default async function handler(req, res) {
@@ -13,7 +13,7 @@ export default async function handler(req, res) {
       request: req,
       onBeforeGenerateToken: async (pathname, clientPayload) => {
         const payload = clientPayload ? JSON.parse(clientPayload) : {};
-        if (payload.adminPass !== ADMIN_PASS) {
+        if (!(await verifyAdminToken(payload.adminToken))) {
           throw new Error("دسترسی غیرمجاز");
         }
         return {
