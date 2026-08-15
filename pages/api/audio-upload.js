@@ -17,7 +17,7 @@ export default async function handler(req, res) {
           throw new Error("دسترسی غیرمجاز");
         }
         return {
-          allowedContentTypes: ["audio/mpeg", "audio/mp3", "audio/mp4", "audio/wav", "audio/x-m4a"],
+          allowedContentTypes: ["audio/mpeg", "audio/mp3", "audio/mp4", "audio/wav", "audio/x-m4a", "audio/aac", "video/mp4", "application/octet-stream"],
           addRandomSuffix: true,
           tokenPayload: JSON.stringify({ sessionId: payload.sessionId }),
         };
