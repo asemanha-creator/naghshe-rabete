@@ -1,6 +1,6 @@
 import { Redis } from "@upstash/redis";
+import { verifyAdminToken } from "../../lib/auth";
 const redis = Redis.fromEnv();
-const ADMIN_PASS = "AGHILI-PANEL";
 
 export default async function handler(req, res) {
   try {
@@ -9,8 +9,8 @@ export default async function handler(req, res) {
 
     // ادمین: ساختِ درمانگرِ جدید
     if (action === "create") {
-      const { adminPass, therapistId, name, password, sharePercent } = req.body;
-      if (adminPass !== ADMIN_PASS) return res.status(403).json({ error: "رمز نامعتبر است" });
+      const { adminToken, therapistId, name, password, sharePercent } = req.body;
+      if (!(await verifyAdminToken(adminToken))) return res.status(403).json({ error: "رمز نامعتبر است" });
       if (!therapistId || !name || !password) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
       const id = therapistId.toLowerCase().trim();
       const exists = await redis.get(`therapist:${id}`);
@@ -32,8 +32,8 @@ export default async function handler(req, res) {
 
     // درمانگر یا ادمین: داشبورد فروش
     if (action === "dashboard") {
-      const { therapistId, adminPass } = req.body;
-      if (adminPass !== ADMIN_PASS) {
+      const { therapistId, adminToken } = req.body;
+      if (!(await verifyAdminToken(adminToken))) {
         // درمانگر فقط با ورودِ قبلی (therapistId معتبر) مجاز است — بررسیِ سبک
         const t = await redis.get(`therapist:${therapistId}`);
         if (!t) return res.status(403).json({ error: "دسترسی غیرمجاز" });
@@ -48,8 +48,8 @@ export default async function handler(req, res) {
 
     // ادمین: فهرستِ همه‌ی درمانگران + جمعِ فروش
     if (action === "listAll") {
-      const { adminPass } = req.body;
-      if (adminPass !== ADMIN_PASS) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+      const { adminToken } = req.body;
+      if (!(await verifyAdminToken(adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
       const ids = await redis.smembers("therapists:index");
       const list = [];
       for (const id of ids) {
