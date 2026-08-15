@@ -1,10 +1,8 @@
 import { handleUpload } from "@vercel/blob/client";
-import { Redis } from "@upstash/redis";
 import { verifyAdminToken } from "../../lib/auth";
 
-const redis = Redis.fromEnv();
-
 // آپلودِ فایلِ صوتیِ هر جلسه — فقط ادمین، مستقیم به Vercel Blob (بدونِ عبور از سرور، برایِ فایل‌هایِ بزرگ)
+// نکته: ذخیره‌ی آدرسِ نهایی در Redis، جداگانه و مستقیم توسطِ کلاینت انجام می‌شود (نه از طریقِ onUploadCompleted) — قابلِ‌اعتمادتر رویِ شبکه‌هایِ موبایل
 export default async function handler(req, res) {
   try {
     const body = req.body;
@@ -19,12 +17,7 @@ export default async function handler(req, res) {
         return {
           allowedContentTypes: ["audio/mpeg", "audio/mp3", "audio/mp4", "audio/wav", "audio/x-m4a", "audio/aac", "video/mp4", "application/octet-stream"],
           addRandomSuffix: true,
-          tokenPayload: JSON.stringify({ sessionId: payload.sessionId }),
         };
-      },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
-        const { sessionId } = JSON.parse(tokenPayload);
-        await redis.set(`session_audio:${sessionId}`, blob.url);
       },
     });
     res.status(200).json(jsonResponse);
