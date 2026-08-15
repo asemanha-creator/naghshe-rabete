@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { put, list } from "@vercel/blob";
+import { verifyAdminToken } from "../../lib/auth";
 
 const redis = Redis.fromEnv();
 
@@ -7,7 +8,7 @@ export default async function handler(req, res) {
   try {
     // ---------- فهرستِ بک‌آپ‌هایِ موجود ----------
     if (req.method === "GET") {
-      if (req.query.adminPass !== "AGHILI-PANEL") return res.status(403).json({ error: "دسترسی غیرمجاز" });
+      if (!(await verifyAdminToken(req.query.adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
       const { blobs } = await list({ prefix: "backups/" });
       const sorted = blobs.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
       return res.status(200).json({ ok: true, backups: sorted.slice(0, 30) });
@@ -16,7 +17,7 @@ export default async function handler(req, res) {
     // اگر از Vercel Cron صدا زده شده، هدرِ مخصوصِ آن را قبول می‌کنیم؛
     // اگر دستی از اپ صدا زده شده، رمزِ ادمین لازم است.
     const isCron = req.headers["x-vercel-cron"] || req.headers.authorization === `Bearer ${process.env.CRON_SECRET}`;
-    if (!isCron && req.query.adminPass !== "AGHILI-PANEL") {
+    if (!isCron && !(await verifyAdminToken(req.query.adminToken))) {
       return res.status(403).json({ error: "دسترسی غیرمجاز" });
     }
 
