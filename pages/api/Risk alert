@@ -1,13 +1,13 @@
 import { Redis } from "@upstash/redis";
 
 const redis = Redis.fromEnv();
-const ADMIN_PASS = "AGHILI-PANEL";
+import { verifyAdminToken } from "../../lib/auth";
 
 // فهرستِ یادداشت‌هایی که کلماتِ هشدارِ بحرانی در آن‌ها یافت شده — برایِ توجهِ فوریِ درمانگر
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
-    if (req.query.adminPass !== ADMIN_PASS) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+    if (!(await verifyAdminToken(req.query.adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
 
     const raw = (await redis.get("risk_alerts:list")) || [];
     const alerts = typeof raw === "string" ? JSON.parse(raw) : raw;
