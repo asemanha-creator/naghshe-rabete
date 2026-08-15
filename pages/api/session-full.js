@@ -2,16 +2,16 @@ import { Redis } from "@upstash/redis";
 import { getSessionContent } from "../../lib/sessionContent";
 
 const redis = Redis.fromEnv();
-const ADMIN_PASS = "AGHILI-PANEL";
+import { verifyAdminToken } from "../../lib/auth";
 
 // متنِ کاملِ یک جلسه — فقط بعد از تاییدِ سرورِ اینکه کاربر آن را خریده (یا ادمین است)
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
-    const { pkgKey, num, weakestDomain, level, email, adminPass } = req.query;
+    const { pkgKey, num, weakestDomain, level, email, adminToken } = req.query;
     if (!pkgKey || !num) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
 
-    const isAdmin = adminPass === ADMIN_PASS;
+    const isAdmin = await verifyAdminToken(adminToken);
     let unlocked = isAdmin || Number(num) === 1;
     if (!unlocked && email) {
       const raw = (await redis.get(`unlocked:${email.toLowerCase().trim()}`)) || [];
