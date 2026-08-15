@@ -1,13 +1,13 @@
 import { Redis } from "@upstash/redis";
 
 const redis = Redis.fromEnv();
-const ADMIN_PASS = "AGHILI-PANEL";
+import { verifyAdminToken } from "../../lib/auth";
 
 // داشبوردِ بالینی: تجمیعِ جلساتِ بازشده، روندِ خلق، و یادداشت‌هایِ یک مراجعِ خاص
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
-    if (req.query.adminPass !== ADMIN_PASS) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+    if (!(await verifyAdminToken(req.query.adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
     const email = (req.query.email || "").toLowerCase().trim();
     if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
 
@@ -29,7 +29,12 @@ export default async function handler(req, res) {
     }
     notes.sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
 
-    res.status(200).json({ ok: true, email, unlockedSessions, moodLog, notes });
+    // چک‌این‌هایِ دوره‌ای
+    const rawCheckinLog = (await redis.get(`checkin_log:${email}`)) || [];
+    const checkinLog = typeof rawCheckinLog === "string" ? JSON.parse(rawCheckinLog) : rawCheckinLog;
+    const checkinIntervalDays = await redis.get(`checkin_interval:${email}`);
+
+    res.status(200).json({ ok: true, email, unlockedSessions, moodLog, notes, checkinLog, checkinIntervalDays });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: e.message || "unknown error" });
