@@ -3194,15 +3194,18 @@ export default function App() {
             borderRadius: 24,
           }}>
             <div style={{ textAlign: "center", marginBottom: 14 }}>
-              <div style={{
-                width: 40, height: 40, margin: "0 auto 8px", borderRadius: 13,
-                background: "linear-gradient(145deg, #17383D, #0E2529)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                boxShadow: "0 6px 14px rgba(43,103,119,0.3)", transform: "rotate(-4deg)",
-              }}>
-                <span style={{ fontSize: 18, display: "block", transform: "rotate(4deg)" }}>🌿</span>
+              <div style={{ width: 68, height: 44, margin: "0 auto 10px" }}>
+                <svg viewBox="0 0 100 64" width="68" height="44" style={{ display: "block", margin: "0 auto" }}>
+                  <path d="M0,50 Q20,40 30,50 T50,48 Q65,44 70,52 Q80,58 100,50 L100,64 L0,64 Z" fill="#B8873A" opacity="0.35" />
+                  <path d="M0,14 Q20,24 30,14 T50,16 Q65,20 70,12 Q80,6 100,14 L100,0 L0,0 Z" fill="#B8873A" opacity="0.35" />
+                  <path d="M0,32 Q15,20 28,32 Q42,44 55,32 Q68,20 82,32 Q90,38 100,32"
+                    fill="none" stroke="#17383D" strokeWidth="4" strokeLinecap="round" />
+                  <path d="M0,32 Q15,20 28,32 Q42,44 55,32 Q68,20 82,32 Q90,38 100,32"
+                    fill="none" stroke="#5C7E7A" strokeWidth="1.5" strokeLinecap="round" opacity="0.7" transform="translate(0,3)" />
+                </svg>
               </div>
-              <p style={{ fontSize: 10, color: "#17383D", fontWeight: 700, margin: "0 0 6px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
+              <h1 style={{ fontSize: 25, color: "#17383D", margin: "0 0 4px", fontWeight: 800, letterSpacing: "0.5px" }}>گدار</h1>
+              <p style={{ fontSize: 11.5, color: "#8A5A4E", fontWeight: 700, margin: "0 0 10px", fontStyle: "italic" }}>بی‌گدار به آب نزن</p>
               <div>
                 <button onClick={() => setShowBio(!showBio)}
                   style={{ border: "1px solid #17383D", background: showBio ? "#17383D" : "#fff", color: showBio ? "#fff" : "#17383D", padding: "4px 12px", borderRadius: 999, fontSize: 10.5, fontWeight: 700, cursor: "pointer", marginBottom: 4, marginLeft: 5 }}>
