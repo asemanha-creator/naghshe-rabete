@@ -4560,21 +4560,23 @@ export default function App() {
             <input type="file" accept="audio/*,.m4a,.mp3,.wav,.mp4" onChange={async (e) => {
               const file = e.target.files[0];
               if (!file) return;
-              setAudioUploadMsg("در حالِ آپلود...");
+              if (file.size > 6 * 1024 * 1024) { setAudioUploadMsg("❌ فایل بزرگ‌تر از ۶ مگابایت است — فعلاً پشتیبانی نمی‌شود"); return; }
+              setAudioUploadMsg("در حالِ آماده‌سازی...");
               try {
-                const { upload } = await import("@vercel/blob/client");
                 const sid = `${audioPkgKey}-${audioNum}`;
-                const blob = await upload(file.name, file, {
-                  access: "public",
-                  handleUploadUrl: "/api/audio-upload",
-                  clientPayload: JSON.stringify({ adminToken }),
+                const reader = new FileReader();
+                const fileBase64 = await new Promise((resolve, reject) => {
+                  reader.onload = () => resolve(reader.result.split(",")[1]);
+                  reader.onerror = reject;
+                  reader.readAsDataURL(file);
                 });
-                setAudioUploadMsg("در حالِ ذخیره...");
-                const saveRes = await fetch("/api/audio", {
+                setAudioUploadMsg("در حالِ آپلود...");
+                const r = await fetch("/api/audio-upload", {
                   method: "POST", headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ sessionId: sid, url: blob.url, adminToken }),
+                  body: JSON.stringify({ sessionId: sid, adminToken, fileBase64, fileName: file.name, contentType: file.type }),
                 });
-                if (!saveRes.ok) throw new Error("خطا در ذخیره‌سازی");
+                const d = await r.json();
+                if (!r.ok) throw new Error(d.error || "خطا");
                 setAudioUploadMsg("✅ آپلود و ذخیره شد");
               } catch (err) { setAudioUploadMsg("❌ " + err.message); }
             }} style={{ width: "100%", fontSize: 12 }} />
