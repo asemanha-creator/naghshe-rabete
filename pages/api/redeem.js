@@ -1,8 +1,8 @@
 import { Redis } from "@upstash/redis";
-import { verifySession } from "../../lib/auth";
+import { verifySession, verifyAdminToken } from "../../lib/auth";
 
 const redis = Redis.fromEnv();
-const ADMIN_PASS = "AGHILI-PANEL";
+
 
 function randomCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -18,8 +18,8 @@ export default async function handler(req, res) {
 
     // ---------- ساختِ کد (فقط ادمین) ----------
     if (action === "generate") {
-      const { sessionId, adminPass, therapistId } = req.body;
-      if (adminPass !== ADMIN_PASS) return res.status(403).json({ error: "رمز نامعتبر است" });
+      const { sessionId, adminToken, therapistId } = req.body;
+      if (!(await verifyAdminToken(adminToken))) return res.status(403).json({ error: "رمز نامعتبر است" });
       if (!sessionId) return res.status(400).json({ error: "sessionId لازم است" });
       const code = randomCode();
       await redis.set(`code:${code}`, JSON.stringify({ sessionId, used: false, createdAt: Date.now(), therapistId: therapistId || null }));
