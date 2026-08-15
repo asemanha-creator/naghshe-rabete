@@ -12,6 +12,13 @@ export default async function handler(req, res) {
       const url = await redis.get(`session_audio:${sessionId}`);
       return res.status(200).json({ ok: true, url: url || null });
     }
+    if (req.method === "POST") {
+      const { sessionId, url, adminToken } = req.body;
+      if (!(await verifyAdminToken(adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+      if (!sessionId || !url) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
+      await redis.set(`session_audio:${sessionId}`, url);
+      return res.status(200).json({ ok: true });
+    }
     if (req.method === "DELETE") {
       const { sessionId, adminToken } = req.body;
       if (!(await verifyAdminToken(adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
