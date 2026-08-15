@@ -1,13 +1,13 @@
 import { Redis } from "@upstash/redis";
 
 const redis = Redis.fromEnv();
-const ADMIN_PASS = "AGHILI-PANEL";
+import { verifyAdminToken } from "../../lib/auth";
 
 // فهرستِ کاربرانِ ثبت‌نامی به‌همراهِ آخرین زمانِ فعالیت — برایِ پیگیریِ دستیِ کاربرانِ غیرفعال
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
-    if (req.query.adminPass !== ADMIN_PASS) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+    if (!(await verifyAdminToken(req.query.adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
 
     const emails = await redis.smembers("mood_log:users_index");
     const users = [];
