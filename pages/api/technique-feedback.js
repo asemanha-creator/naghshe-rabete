@@ -1,0 +1,43 @@
+import { Redis } from "@upstash/redis";
+import { verifyAdminToken } from "../../lib/auth";
+
+const redis = Redis.fromEnv();
+
+// ذخیره‌ی بازخوردِ هر تکنیک برایِ تحلیلِ بعدی (کدامِ تکنیک‌ها موثرترند)
+export default async function handler(req, res) {
+  try {
+    // ---------- گزارشِ کاملِ بازخوردها (فقط ادمین) ----------
+    if (req.method === "GET") {
+      if (!(await verifyAdminToken(req.query.adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+      const ids = await redis.smembers("technique_feedback:index");
+      const report = [];
+      for (const id of ids) {
+        const raw = await redis.get(`technique_feedback:${id}`);
+        const data = typeof raw === "string" ? JSON.parse(raw) : raw;
+        const total = (data?.very || 0) + (data?.somewhat || 0) + (data?.no || 0) + (data?.confusing || 0);
+        const weightedScore = (data?.very || 0) * 1 + (data?.somewhat || 0) * 0.5;
+        report.push({ id, very: data?.very || 0, somewhat: data?.somewhat || 0, no: data?.no || 0, confusing: data?.confusing || 0, total, successRate: total ? Math.round((weightedScore / total) * 100) : 0 });
+      }
+      report.sort((a, b) => b.total - a.total);
+      return res.status(200).json({ ok: true, report });
+    }
+
+    if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
+    const { techniqueId, feedback } = req.body; // feedback: "yes" | "no"
+    if (!techniqueId || !feedback) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
+
+    const key = `technique_feedback:${techniqueId}`;
+    const raw = (await redis.get(key)) || { yes: 0, no: 0 };
+    const data = typeof raw === "string" ? JSON.parse(raw) : raw;
+    data[feedback] = (data[feedback] || 0) + 1;
+    await redis.set(key, JSON.stringify(data));
+
+    // نگه‌داریِ فهرستِ همه‌ی technique idها برایِ گزارش‌گیریِ راحت‌تر
+    await redis.sadd("technique_feedback:index", techniqueId);
+
+    res.status(200).json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message || "unknown error" });
+  }
+}
