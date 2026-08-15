@@ -1,14 +1,14 @@
 import { Redis } from "@upstash/redis";
 
 const redis = Redis.fromEnv();
-const ADMIN_PASS = "AGHILI-PANEL";
+import { verifyAdminToken } from "../../lib/auth";
 
 // حذفِ کاملِ داده‌هایِ یک کاربر — برایِ وفای به قولِ «حقِ حذف» در متنِ رضایتِ حریمِ خصوصی
 // این عملیات غیرقابلِ‌بازگشت است.
 export default async function handler(req, res) {
   try {
     if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
-    if (req.query.adminPass !== ADMIN_PASS) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+    if (!(await verifyAdminToken(req.query.adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
     const { email, confirm } = req.body;
     if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
     if (confirm !== email) return res.status(400).json({ error: "تاییدیه مطابقت ندارد" });
