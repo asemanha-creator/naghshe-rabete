@@ -3194,43 +3194,9 @@ export default function App() {
             borderRadius: 24,
           }}>
             <div style={{ textAlign: "center", marginBottom: 14 }}>
-              <div style={{ width: 96, height: 62, margin: "0 auto 10px" }}>
-                <svg viewBox="0 0 200 130" width="96" height="62" style={{ display: "block", margin: "0 auto" }}>
-                  <defs>
-                    <linearGradient id="waterG" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#3D5A5E" />
-                      <stop offset="100%" stopColor="#17383D" />
-                    </linearGradient>
-                    <linearGradient id="bankTopG" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#D4B361" />
-                      <stop offset="100%" stopColor="#B8873A" />
-                    </linearGradient>
-                    <linearGradient id="bankBotG" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#B8873A" />
-                      <stop offset="100%" stopColor="#9C6B2F" />
-                    </linearGradient>
-                  </defs>
-                  <path d="M0,38 Q30,20 55,32 Q80,44 105,28 Q135,10 160,26 Q180,36 200,30 L200,0 L0,0 Z" fill="url(#bankTopG)" opacity="0.9" />
-                  <g stroke="#7A5B2E" strokeWidth="1.4" strokeLinecap="round" opacity="0.6">
-                    <path d="M25,30 L25,20 M22,24 L28,24" />
-                    <path d="M95,26 L95,16 M92,20 L98,20" />
-                    <path d="M150,24 L150,14 M147,18 L153,18" />
-                  </g>
-                  <path d="M0,55 C25,45 25,70 50,62 C75,54 75,78 100,68 C125,58 125,82 150,72 C170,64 185,68 200,58 L200,88 C185,96 170,92 150,100 C125,110 125,86 100,96 C75,106 75,82 50,90 C25,98 25,74 0,84 Z" fill="url(#waterG)" />
-                  <path d="M5,60 C28,52 28,72 52,66 C76,60 76,80 100,72 C124,64 124,84 148,76 C168,70 182,72 195,64" fill="none" stroke="#C9A667" strokeWidth="1.3" opacity="0.55" strokeLinecap="round" />
-                  <path d="M5,76 C28,68 28,86 52,80 C76,74 76,92 100,86 C124,78 124,96 148,90" fill="none" stroke="#5C7E7A" strokeWidth="1" opacity="0.45" strokeLinecap="round" />
-                  <path d="M0,84 Q25,74 50,90 Q75,106 100,96 Q125,86 150,100 Q175,112 200,88 L200,130 L0,130 Z" fill="url(#bankBotG)" opacity="0.95" />
-                  <g fill="#6B4A35" opacity="0.5">
-                    <circle cx="40" cy="108" r="2.2" />
-                    <circle cx="47" cy="112" r="1.6" />
-                    <circle cx="115" cy="112" r="2" />
-                    <circle cx="122" cy="108" r="1.4" />
-                    <circle cx="170" cy="104" r="2.1" />
-                  </g>
-                </svg>
-              </div>
-              <h1 style={{ fontSize: 25, color: "#17383D", margin: "0 0 4px", fontWeight: 800, letterSpacing: "0.5px" }}>گدار</h1>
-              <p style={{ fontSize: 11.5, color: "#8A5A4E", fontWeight: 700, margin: "0 0 10px", fontStyle: "italic" }}>بی‌گدار به آب نزن</p>
+              <h1 style={{ fontFamily: "'Noto Nastaliq Urdu', serif", fontSize: 34, color: "#17383D", margin: "6px 0 6px", fontWeight: 700, lineHeight: 1.3 }}>گدار</h1>
+              <p style={{ fontSize: 12, color: "#8A5A4E", fontWeight: 700, margin: "0 0 4px", fontStyle: "italic" }}>بی‌گدار به آب نزن</p>
+              <p style={{ fontSize: 10.5, color: "#17383D", fontWeight: 700, margin: "0 0 10px", letterSpacing: "0.2px" }}>{BRAND.academy}</p>
               <div>
                 <button onClick={() => setShowBio(!showBio)}
                   style={{ border: "1px solid #17383D", background: showBio ? "#17383D" : "#fff", color: showBio ? "#fff" : "#17383D", padding: "4px 12px", borderRadius: 999, fontSize: 10.5, fontWeight: 700, cursor: "pointer", marginBottom: 4, marginLeft: 5 }}>
