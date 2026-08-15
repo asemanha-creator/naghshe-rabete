@@ -4557,7 +4557,7 @@ export default function App() {
             <select value={audioNum} onChange={(e) => setAudioNum(Number(e.target.value))} style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12, marginBottom: 8 }}>
               {Array.from({ length: TREATMENT_PACKAGES[audioPkgKey].sessions }, (_, i) => i + 1).map((n) => <option key={n} value={n}>جلسه {n}</option>)}
             </select>
-            <input type="file" accept="audio/*" onChange={async (e) => {
+            <input type="file" accept="audio/*,.m4a,.mp3,.wav,.mp4" onChange={async (e) => {
               const file = e.target.files[0];
               if (!file) return;
               setAudioUploadMsg("در حالِ آپلود...");
