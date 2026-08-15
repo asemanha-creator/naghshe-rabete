@@ -1,0 +1,20 @@
+import { Redis } from "@upstash/redis";
+
+const redis = Redis.fromEnv();
+import { verifyAdminToken } from "../../lib/auth";
+
+// فهرستِ یادداشت‌هایی که کلماتِ هشدارِ بحرانی در آن‌ها یافت شده — برایِ توجهِ فوریِ درمانگر
+export default async function handler(req, res) {
+  try {
+    if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
+    if (!(await verifyAdminToken(req.query.adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+
+    const raw = (await redis.get("risk_alerts:list")) || [];
+    const alerts = typeof raw === "string" ? JSON.parse(raw) : raw;
+
+    res.status(200).json({ ok: true, alerts });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: e.message || "unknown error" });
+  }
+}
