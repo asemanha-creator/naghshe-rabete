@@ -1967,7 +1967,13 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
         <div style={{ background: "#F3F8F5", borderRadius: 14, padding: "16px", marginBottom: 16 }}>
           <p style={{ fontSize: 13, fontWeight: 700, color: "#4C8778", marginBottom: 10 }}>✅ این دوره تمام شد.</p>
           {lastResult.concerningThemes.length === 0 ? (
-            <p style={{ fontSize: 12.5, color: "#4C8778" }}>در این دوره، هیچ موردِ نگران‌کننده‌ای ثبت نشد. 🌱</p>
+            <div>
+              <p style={{ fontSize: 12.5, color: "#4C8778", marginBottom: 10 }}>در این دوره، هیچ موردِ نگران‌کننده‌ای ثبت نشد. 🌱</p>
+              <a onClick={() => window.__naghsheOpenModerate && window.__naghsheOpenModerate()}
+                style={{ fontSize: 10.5, color: "#8CA3B0", cursor: "pointer", textDecoration: "underline" }}>
+                برایِ تقویتِ بیشترِ رابطه، حتی در حالتِ خوب، می‌توانید نگاهی به «افزایشِ وفاداری» هم بیندازید ←
+              </a>
+            </div>
           ) : (
             <>
               {lastResult.concerningThemes.length >= 2 && (
