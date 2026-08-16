@@ -1,10 +1,10 @@
 {
-  "name": "کجای راهم؟ | آکادمی روان‌شناختی دکتر مجتبی عقیلی",
-  "short_name": "کجای راهم؟",
+  "name": "گُدار (کجای راهم؟)",
+  "short_name": "گُدار",
   "description": "پلتفرم درمان خیانت زناشویی و تقویت رابطه",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#EAF4FB",
+  "background_color": "#F1E8D4",
   "theme_color": "#2B6777",
   "orientation": "portrait",
   "dir": "rtl",
