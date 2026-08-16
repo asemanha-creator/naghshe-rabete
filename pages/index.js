@@ -1783,7 +1783,7 @@ function OnboardingModal({ onClose }) {
             </button>
           )}
           <button onClick={() => (isLast ? onClose() : setStep(step + 1))}
-            style={{ flex: 2, padding: "11px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+            style={{ flex: 2, padding: "11px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", fontSize: 12.5, cursor: "pointer" }}>
             {isLast ? "شروع کنیم ←" : "بعدی"}
           </button>
         </div>
@@ -2356,7 +2356,7 @@ function PartnerSyncWidget({ userEmail, userToken, pkgKey, totalSessions }) {
             <input value={inputVal} onChange={(e) => setInputVal(e.target.value)} placeholder="ایمیلِ همسر"
               style={{ flex: 1, padding: "7px 9px", borderRadius: 8, border: "1px solid #C9DEE8", fontSize: 12 }} />
             <button onClick={linkPartner}
-              style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 11.5, cursor: "pointer" }}>
+              style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", fontSize: 11.5, cursor: "pointer" }}>
               اتصال
             </button>
           </div>
@@ -2658,7 +2658,7 @@ function ChatWidget({ scores, overall, mode }) {
               placeholder="سوالتان را بنویسید..."
               style={{ flex: 1, border: "1px solid #DCE8F0", borderRadius: 10, padding: "8px 10px", fontSize: 12.5 }} />
             <button onClick={send} disabled={busy}
-              style={{ padding: "8px 14px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
+              style={{ padding: "8px 14px", borderRadius: 10, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer", fontSize: 12.5 }}>
               ارسال
             </button>
           </div>
@@ -3337,7 +3337,7 @@ export default function App() {
               پیوستگیِ روزانه، یکی از قوی‌ترین عواملِ موفقیت در بهبودیِ رابطه است. همین مسیر را ادامه دهید!
             </p>
             <button onClick={() => setShowStreakCelebration(false)}
-              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", fontSize: 12.5, cursor: "pointer" }}>
               ادامه می‌دهم ←
             </button>
           </div>
@@ -3476,30 +3476,38 @@ export default function App() {
               <p style={{ fontSize: 11.5, color: "#5A7080", margin: 0 }}>می‌خواهید امروز رویِ کدام موضوع کار کنیم؟</p>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 9 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
               {TOPICS.filter((t) => t.enabled).map((t) => (
                 <button
                   key={t.key}
                   onClick={() => navigateToTopic(t.key)}
                   style={{
                     position: "relative", overflow: "hidden", textAlign: "center",
-                    height: 92, borderRadius: 16, cursor: "pointer",
-                    background: "#fff",
-                    border: `1.5px solid ${t.core}`,
-                    padding: "10px 6px 8px",
-                    boxShadow: `0 6px 16px ${t.core}30`,
-                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3,
-                    transition: "transform 0.15s ease",
+                    height: 96, borderRadius: 20, cursor: "pointer",
+                    background: `linear-gradient(160deg, ${t.bg} 0%, #fff 45%, ${t.bg} 100%)`,
+                    border: `1px solid ${t.core}25`,
+                    padding: "12px 6px 9px",
+                    boxShadow: `0 10px 20px ${t.core}35, 0 2px 4px ${t.core}25, inset 0 1.5px 0 rgba(255,255,255,0.9), inset 0 -3px 6px ${t.core}18`,
+                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4,
+                    transition: "transform 0.22s cubic-bezier(.34,1.56,.64,1), box-shadow 0.22s ease",
                   }}
-                  onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.96)"; }}
+                  onMouseDown={(e) => { e.currentTarget.style.transform = "scale(0.93)"; }}
                   onMouseUp={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
+                  onTouchStart={(e) => { e.currentTarget.style.transform = "scale(0.93)"; }}
+                  onTouchEnd={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
                 >
-                  <span style={{ fontSize: 20 }}>{t.icon}</span>
-                  <span style={{ fontSize: 11.5, fontWeight: 700, color: "#20303A", lineHeight: 1.25 }}>{t.title}</span>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: t.core }}>شروع ←</span>
+                  <div style={{
+                    position: "absolute", top: -20, left: "10%", width: "80%", height: 34,
+                    background: "radial-gradient(ellipse at center, rgba(255,255,255,0.85), transparent 70%)",
+                    borderRadius: "50%", pointerEvents: "none",
+                  }} />
+                  <span style={{ fontSize: 22, filter: "drop-shadow(0 2px 2px rgba(0,0,0,0.12))", position: "relative" }}>{t.icon}</span>
+                  <span style={{ fontSize: 11.5, fontWeight: 700, color: "#20303A", lineHeight: 1.25, position: "relative" }}>{t.title}</span>
+                  <span style={{ fontSize: 9, fontWeight: 800, color: t.core, position: "relative" }}>شروع ←</span>
                 </button>
               ))}
             </div>
+            <p style={{ fontSize: 9.5, color: "#B8873A", textAlign: "center", marginTop: 10, opacity: 0.85 }}>💫 هرروز یک سرِ کوچک بزنید — حتی ۲ دقیقه هم فرق می‌سازد</p>
 
             {TOPICS.some((t) => !t.enabled) && (
               <div style={{ marginTop: 16 }}>
@@ -3828,7 +3836,7 @@ export default function App() {
               } catch (e) { setForgotMsg("❌ " + e.message); }
               setAuthBusy(false);
             }} disabled={authBusy}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer", marginBottom: 10 }}>
               {authBusy ? "..." : "ارسالِ لینکِ بازیابی"}
             </button>
             <button onClick={() => { setForgotMsg(""); setScreen("authLogin"); }}
@@ -3857,7 +3865,7 @@ export default function App() {
               } catch (e) { setForgotMsg("❌ " + e.message); }
               setAuthBusy(false);
             }} disabled={authBusy}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer" }}>
               {authBusy ? "..." : "تغییرِ رمز"}
             </button>
           </Card>
@@ -3875,7 +3883,7 @@ export default function App() {
               <a onClick={() => { setAuthErr(""); setScreen("forgotPassword"); }} style={{ fontSize: 12, color: "#B8873A", cursor: "pointer", textDecoration: "underline" }}>رمزتان را فراموش کرده‌اید؟</a>
             </p>
             <button onClick={doLogin} disabled={authBusy}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer", marginBottom: 10 }}>
               {authBusy ? "..." : "ورود"}
             </button>
             <button onClick={() => { setAuthErr(""); setScreen("authSignup"); }}
@@ -3917,7 +3925,7 @@ export default function App() {
             </div>
             {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
             <button onClick={doSignup} disabled={authBusy}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer", marginBottom: 10 }}>
               {authBusy ? "..." : "ثبت‌نام"}
             </button>
             <button onClick={() => { setAuthErr(""); setScreen("authLogin"); }}
@@ -3959,7 +3967,7 @@ export default function App() {
                   </div>
                   {user && doneCount < total && (
                     <button onClick={() => startZarinpalPayment(libraryPkg, null)} disabled={paymentBusy}
-                      style={{ width: "100%", marginTop: 10, padding: "10px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer" }}>
+                      style={{ width: "100%", marginTop: 10, padding: "10px", borderRadius: 10, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", fontSize: 12.5, cursor: "pointer" }}>
                       💳 {paymentBusy ? "..." : `خریدِ کاملِ بسته — ${toman(TREATMENT_PACKAGES[libraryPkg].sessions * sessionPrice(libraryPkg))}`}
                     </button>
                   )}
@@ -3986,7 +3994,7 @@ export default function App() {
               <div style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 14, textAlign: "center" }}>
                 <p style={{ fontSize: 12, color: "#7A5B2E", margin: "0 0 8px" }}>برایِ خرید و دسترسی به جلسات، ابتدا وارد حساب شوید.</p>
                 <button onClick={() => setScreen("authLogin")}
-                  style={{ padding: "8px 16px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
+                  style={{ padding: "8px 16px", borderRadius: 10, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer", fontSize: 12.5 }}>
                   ورود / ثبت‌نام
                 </button>
               </div>
@@ -4641,7 +4649,7 @@ export default function App() {
                 markAdmin(d.token); await loadAdmin(); setScreen("admin");
               } catch (e) { setErr("خطا در ورود"); }
             }}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer" }}>
               ورود
             </button>
             {err && <p style={{ color: "#A6432F", fontSize: 12.5, marginTop: 8 }}>{err}</p>}
@@ -4865,7 +4873,7 @@ export default function App() {
               <input value={patientEmailInput} onChange={(e) => setPatientEmailInput(e.target.value)} placeholder="ایمیلِ مراجع"
                 style={{ flex: 1, padding: "9px 10px", borderRadius: 10, border: "1px solid #C9DEE8", fontSize: 12.5 }} />
               <button onClick={loadPatientDashboard}
-                style={{ padding: "9px 16px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                style={{ padding: "9px 16px", borderRadius: 10, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", fontSize: 12, cursor: "pointer" }}>
                 نمایش
               </button>
             </div>
@@ -4984,7 +4992,7 @@ export default function App() {
               هر ساعت، یک نسخه‌ی کاملِ داده‌ها (پاسخ‌ها، حساب‌ها، جلساتِ بازشده) خودکار در **Vercel Blob Storage** (سرویسِ ذخیره‌سازیِ جداگانه از Redis) ذخیره می‌شود — اگر مشکلی برایِ Redis پیش بیاید، این نسخه‌ها سالم می‌مانند.
             </p>
             <button onClick={runManualBackup} disabled={backupBusy}
-              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
+              style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", fontSize: 12.5, cursor: "pointer", marginBottom: 10 }}>
               {backupBusy ? "در حالِ ساختِ بک‌آپ..." : "📥 ساختِ بک‌آپِ دستی همین الان"}
             </button>
             {backupMsg && <p style={{ fontSize: 11, color: backupMsg.includes("✅") ? "#4C8778" : "#A6432F", marginBottom: 8 }}>{backupMsg}</p>}
