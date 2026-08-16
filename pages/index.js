@@ -516,6 +516,7 @@ const SLIP_THEMES = [
     },
     suggest: "جلسه‌ی «جذابیتِ بیرونی» — بستهٔ افزایشِ وفاداری و تعهد",
     patternInsight: { title: "الگویِ ذهنیِ کشش به دیگری", explanation: "این پاسخ‌ها نشان می‌دهند بخشی از توجهِ ذهنی‌تان به‌سمتِ فردی خارج از رابطه کشیده شده — این معمولاً نشانه‌ی نیازِ برآورده‌نشده یا فاصله‌ی عاطفی در رابطه‌ی فعلی است، نه لزوماً «تصمیم به خیانت»." },
+    microExercise: "همین حالا، ۲ دقیقه چشمانتان را ببندید و این فکر را مثلِ ابری تصور کنید که از آسمان می‌گذرد — نه آن را دنبال کنید، نه با آن بجنگید، فقط تماشا کنید تا بگذرد. این تمرینِ «دیفیوژنِ اکت» است.",
     cbtActFollowUps: [
       { q: "چه شواهدِ واقعی برایِ این فکر دارید، و چه شواهدی برخلافش؟ (سی‌بی‌تی: بررسیِ شواهد)", options: ["شواهدِ موافق بیشتر است", "شواهدِ مخالف بیشتر است", "هنوز مطمئن نیستم"] },
       { q: "اگر این فکر را فقط یک «فکر» ببینید، نه یک «واقعیت» یا «دستور»، چه تغییری در احساستان می‌کند؟ (اکت: دیفیوژن)", options: ["آرام‌تر می‌شوم", "فرقی نمی‌کند", "سخت است این‌طور دیدنش"] },
@@ -612,6 +613,7 @@ const SLIP_THEMES = [
     },
     suggest: "جلسه‌ی «مرزهایِ دیجیتال» — بستهٔ افزایشِ وفاداری و تعهد",
     patternInsight: { title: "الگویِ پنهان‌کاریِ دیجیتال", explanation: "تمایل به مخفی‌نگه‌داشتنِ برخی ارتباطاتِ آنلاین دیده می‌شود — این الگو معمولاً پیش از هر تصمیمِ آگاهانه‌ای شکل می‌گیرد و ارزشِ توجهِ زودهنگام دارد." },
+    microExercise: "همین حالا یک کاغذ بردارید و بنویسید: «اگر همسرم همین الان این گفت‌وگو را ببیند، دقیقاً چه احساسی پیدا می‌کنم؟» بدونِ سانسور بنویسید — این تمرین، صداقتِ درونی را روشن می‌کند.",
     cbtActFollowUps: [
       { q: "اگر یک دوستِ نزدیک، همین الگویِ پنهان‌کاری را داشت، به او چه می‌گفتید؟ (سی‌بی‌تی: دیدگاهِ بیرونی)", options: ["می‌گفتم شفاف باش", "می‌گفتم حقِ خصوصی داری", "نمی‌دانم چه می‌گفتم"] },
       { q: "این فکرِ «باید پنهان بماند» را چند درصد باور دارید؟ (سی‌بی‌تی: درجه‌بندیِ باور)", options: ["خیلی زیاد", "متوسط", "کم"] },
@@ -686,6 +688,7 @@ const SLIP_THEMES = [
     },
     suggest: "جلسه‌ی «صمیمیتِ هیجانی» — بستهٔ افزایشِ وفاداری و تعهد",
     patternInsight: { title: "الگویِ جابه‌جاییِ صمیمیتِ عاطفی", explanation: "بخشی از نیازِ شنیده‌شدن و صمیمیتِ عاطفی‌تان، به‌جایِ همسرتان، جایِ دیگری برآورده می‌شود — این خودش می‌تواند سرآغازِ فاصله‌گیریِ تدریجی باشد." },
+    microExercise: "امروز، یک موضوعی که معمولاً با آن فرد در میان می‌گذارید را انتخاب کنید و به‌جایش، همان را با همسرتان در میان بگذارید — حتی اگر کوتاه باشد. این یک آزمایشِ کوچکِ رفتاری است.",
     cbtActFollowUps: [
       { q: "چه شواهدی دارید که همسرتان «نمی‌تواند» این نیاز را برآورده کند، در برابرِ اینکه «هنوز نخواسته‌اید»؟ (سی‌بی‌تی)", options: ["واقعاً امتحان کرده‌ام و نشده", "هنوز مستقیم نخواسته‌ام", "نمی‌دانم"] },
       { q: "اگر این نیاز را مستقیم با همسرتان مطرح کنید، بدترین و بهترین اتفاقی که می‌افتد چیست؟ (سی‌بی‌تی: پیش‌بینیِ فاجعه)", options: ["بدترین: طردشدن", "بهترین: نزدیک‌ترشدن", "هردو ممکن است"] },
@@ -746,6 +749,7 @@ const SLIP_THEMES = [
     },
     suggest: "جلسه‌ی «گذارِ پرخطر / سفرِ کاری» — بستهٔ افزایشِ وفاداری و تعهد",
     patternInsight: { title: "الگویِ کم‌اهمیت‌شمردنِ موقعیتِ پرخطر", explanation: "پاسخ‌هایتان نشان می‌دهد گاهی وارد موقعیت‌هایی می‌شوید که مرزهایتان را در معرضِ آزمایش قرار می‌دهد، بدونِ آماده‌گیِ کافی." },
+    microExercise: "همین حالا، پیش از رسیدن به آن موقعیت، یک جمله‌ی مشخص بنویسید که اگر مرزی نزدیک شد، به خودتان بگویید (مثلاً: «همین الان می‌روم»). این «برنامه‌یِ اگر-آنگاه» نامیده می‌شود و در روان‌شناسی اثباتاً کمک‌کننده است.",
     cbtActFollowUps: [
       { q: "اگر بدترین سناریو در این موقعیت رخ دهد، چقدر واقعاً محتمل است؟ (سی‌بی‌تی: احتمال‌سنجیِ واقع‌بینانه)", options: ["خیلی محتمل", "کمی محتمل", "بعید است"] },
       { q: "چه مرزِ مشخصی می‌توانید از پیش، مثلِ یک قرارداد با خودتان، تعیین کنید؟ (اکت: اقدامِ متعهدانه)", options: ["مرزِ زمانی", "مرزِ مکانی", "هنوز مشخص نکرده‌ام"] },
@@ -797,6 +801,7 @@ const SLIP_THEMES = [
     },
     suggest: "جلسه‌ی «تشخیصِ فاصله» — بستهٔ افزایشِ وفاداری و تعهد",
     patternInsight: { title: "الگویِ توجیه‌گری", explanation: "ساختنِ توجیه برایِ یک رفتار، معمولاً نشانه‌ی این است که بخشی از وجودتان از‌قبل می‌داند آن رفتار با ارزش‌هایتان همخوانی ندارد." },
+    microExercise: "توجیهی که همین امروز ساختید را بنویسید، بعد زیرش بنویسید «واقعیتِ ساده‌تر این است که...». دیدنِ این دو کنارِ هم، فاصله‌ی شناختی می‌سازد.",
     cbtActFollowUps: [
       { q: "این توجیه را اگر با صدایِ بلند برایِ خودتان بخوانید، چقدر قانع‌کننده به‌نظر می‌رسد؟ (سی‌بی‌تی: فاصله‌گرفتنِ شناختی)", options: ["خیلی قانع‌کننده", "کمی مشکوک به‌نظر می‌رسد", "اصلاً قانع‌کننده نیست"] },
       { q: "اگر این توجیه را کنار بگذارید و فقط رفتار را ببینید، با کدام ارزش‌تان همخوانی ندارد؟ (اکت)", options: ["صداقت", "تعهد", "احترام به همسرم"] },
@@ -841,6 +846,7 @@ const SLIP_THEMES = [
     },
     suggest: "بستهٔ افزایشِ وفاداری و تعهد (نگاهِ کلی)",
     patternInsight: { title: "الگویِ تکرارشوندهٔ گذشته", explanation: "این کشش یا موقعیت، شباهتِ زیادی به تجربه‌ای از گذشته دارد — شناختِ این تکرار، اولین قدم برایِ تغییرِ الگوست." },
+    microExercise: "یک جمله به «خودِ گذشته‌تان» در آن موقعیتِ مشابه بنویسید — چه‌چیزی می‌خواستید آن‌موقع بدانید؟ این تمرین، خودِ امروزتان را هم آگاه‌تر می‌کند.",
     cbtActFollowUps: [
       { q: "چه‌چیزی در آن تجربه‌ی قبلی، اگر می‌دانستید، مسیر را تغییر می‌داد؟ (سی‌بی‌تی: بازنگریِ شناختی)", options: ["آگاهیِ زودتر از نشانه‌ها", "صحبت‌کردنِ به‌موقع", "کمکِ حرفه‌ای"] },
       { q: "اگر آن تجربه را مثلِ یک معلم ببینید نه یک شکست، چه درسی می‌دهد؟ (اکت: پذیرش)", options: ["درسِ خودآگاهی", "درسِ مرزگذاری", "هنوز روشن نیست"] },
@@ -883,6 +889,7 @@ const SLIP_THEMES = [
     },
     suggest: "جلسه‌ی «زبانِ نیاز» — بستهٔ افزایشِ وفاداری و تعهد",
     patternInsight: { title: "الگویِ سکوت دربارهٔ نیازها", explanation: "نیازی مهم برایتان وجود دارد که هنوز مستقیم و صریح با همسرتان در میان نگذاشته‌اید — این سکوت، به‌مرور فاصله می‌سازد." },
+    microExercise: "همین امروز، این نیاز را در یک جمله‌ی کوتاه (بدونِ گلایه) برایِ خودتان بنویسید — آماده‌اش کنید برایِ وقتی که آماده‌ی گفتنش به همسرتان باشید.",
     cbtActFollowUps: [
       { q: "چه فکرِ خودکاری مانعِ گفتنِ این نیاز می‌شود؟ («اگر بگویم...») (سی‌بی‌تی)", options: ["اگر بگویم طرد می‌شوم", "اگر بگویم ضعیف به‌نظر می‌رسم", "فکرِ خاصی ندارم"] },
       { q: "گفتنِ این نیاز، شما را به‌سمتِ کدام ارزش نزدیک می‌کند؟ (اکت)", options: ["صداقت", "صمیمیت", "احترام به خودم"] },
@@ -925,6 +932,7 @@ const SLIP_THEMES = [
     },
     suggest: "جلسه‌ی «قراردادِ مرزها» — بستهٔ افزایشِ وفاداری و تعهد",
     patternInsight: { title: "الگویِ دوگانگیِ رفتار و ارزش", explanation: "بخشی از رفتار یا افکارتان را از همسرتان پنهان نگه داشته‌اید — این فاصله‌یِ بینِ «آنچه هستید» و «آنچه نشان می‌دهید»، ارزشِ بازبینی دارد." },
+    microExercise: "یک کلمه بنویسید که بیشترین ارزش را برایِ رابطه‌تان دارد (مثلاً «صداقت»). امشب، حتی یک کارِ کوچک در راستایِ همان کلمه انجام دهید.",
     cbtActFollowUps: [
       { q: "اگر این بخشِ پنهان‌شده را با صدایِ بلند برایِ خودتان توصیف کنید، چه احساسی دارید؟ (سی‌بی‌تی)", options: ["شرم", "ترس", "آرامشِ نسبی"] },
       { q: "شفافیتِ کامل، شما را به کدام نسخه از خودتان نزدیک‌تر می‌کند؟ (اکت: خودِ ارزش‌محور)", options: ["نسخه‌ی صادق‌تر", "نسخه‌ی آسیب‌پذیرتر", "هردو"] },
@@ -1860,7 +1868,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
 
   function answerRootChoice(opt) {
     const isConcerning = (theme.root.concerning || []).includes(opt);
-    const qaEntry = { label: theme.label, q: theme.root.q, a: opt, concerning: isConcerning, suggest: theme.suggest, patternInsight: theme.patternInsight };
+    const qaEntry = { label: theme.label, q: theme.root.q, a: opt, concerning: isConcerning, suggest: theme.suggest, patternInsight: theme.patternInsight, microExercise: theme.microExercise };
     const nextAnswers = { ...roundAnswers, [theme.key]: qaEntry };
     setRoundAnswers(nextAnswers);
 
@@ -1962,21 +1970,35 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
             <p style={{ fontSize: 12.5, color: "#4C8778" }}>در این دوره، هیچ موردِ نگران‌کننده‌ای ثبت نشد. 🌱</p>
           ) : (
             <>
+              {lastResult.concerningThemes.length >= 2 && (
+                <div style={{ background: "#FBF3E2", borderRadius: 10, padding: "12px 14px", marginBottom: 14, border: "1px solid #E8D8B0" }}>
+                  <p style={{ fontSize: 12, fontWeight: 700, color: "#7A5B2E", margin: "0 0 6px" }}>🧩 تصویرِ کلی‌تر</p>
+                  <p style={{ fontSize: 12, color: "#5A4020", lineHeight: 1.9, margin: "0 0 10px" }}>
+                    در این دوره، {lastResult.concerningThemes.length} موضوعِ متفاوت («{lastResult.concerningThemes.map((c) => c.label).join("»، «")}») هم‌زمان دیده شدند. وقتی چند الگو با هم ظاهر می‌شوند، معمولاً یک ریشه‌ی مشترک دارند — مثلاً فاصله‌ی عاطفیِ کلی، یا دوره‌ای از استرسِ زندگی.
+                  </p>
+                </div>
+              )}
               <p style={{ fontSize: 12.5, fontWeight: 700, color: "#A6432F", marginBottom: 8 }}>الگوهایی که در پاسخ‌هایتان دیده شد:</p>
               {lastResult.concerningThemes.map((c, i) => (
                 <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "10px 12px", marginBottom: 8 }}>
                   {c.patternInsight ? (
                     <>
                       <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", margin: "0 0 4px" }}>🔎 {c.patternInsight.title}</p>
-                      <p style={{ fontSize: 11.5, color: "#5A7080", lineHeight: 1.8, margin: "0 0 8px" }}>{c.patternInsight.explanation}</p>
+                      <p style={{ fontSize: 11.5, color: "#5A7080", lineHeight: 1.8, margin: "0 0 10px" }}>{c.patternInsight.explanation}</p>
                     </>
                   ) : (
                     <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", margin: "0 0 5px" }}>{c.label}</p>
                   )}
-                  <button onClick={() => window.__naghsheOpenModerate && window.__naghsheOpenModerate()}
-                    style={{ fontSize: 11, padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", background: "#F1E8D4", color: "#17383D", fontWeight: 700, cursor: "pointer" }}>
-                    📚 {c.suggest} — مشاهده و خرید ←
-                  </button>
+                  {c.microExercise && (
+                    <div style={{ background: "#F3F8F5", borderRadius: 8, padding: "10px", marginBottom: 10 }}>
+                      <p style={{ fontSize: 11, fontWeight: 700, color: "#4C8778", margin: "0 0 4px" }}>🌱 یک تمرینِ رایگان، همین حالا:</p>
+                      <p style={{ fontSize: 11.5, color: "#3A4A52", lineHeight: 1.8, margin: 0 }}>{c.microExercise}</p>
+                    </div>
+                  )}
+                  <a onClick={() => window.__naghsheOpenModerate && window.__naghsheOpenModerate()}
+                    style={{ fontSize: 10.5, color: "#8A5A4E", cursor: "pointer", textDecoration: "underline" }}>
+                    برایِ کارِ عمیق‌تر: {c.suggest} ←
+                  </a>
                 </div>
               ))}
               {lastResult.comparison.length > 0 && (
@@ -1990,6 +2012,50 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
         </div>
       )}
 
+      {rounds.length > 0 && (
+        <>
+          {(() => {
+            const chartRounds = rounds.slice(-10);
+            const maxConcerning = Math.max(1, ...chartRounds.map((r) => Object.values(r.answers).filter((a) => a.concerning).length));
+            const barW = 24, gap = 8, chartH = 90;
+            const svgW = chartRounds.length * (barW + gap);
+            return (
+              <div style={{ background: "#fff", border: "1px solid #EDF2F5", borderRadius: 14, padding: "16px", marginBottom: 16 }}>
+                <p style={{ fontSize: 13, fontWeight: 700, color: "#1F2D3D", marginBottom: 4 }}>📈 نمودارِ روندِ شما</p>
+                <p style={{ fontSize: 10.5, color: "#8CA3B0", marginBottom: 12 }}>تعدادِ الگوهایِ نگران‌کننده، دوره‌به‌دوره (هرچه پایین‌تر، بهتر)</p>
+                <svg width="100%" height={chartH + 24} viewBox={`0 0 ${svgW} ${chartH + 24}`} style={{ overflow: "visible" }}>
+                  {chartRounds.map((r, i) => {
+                    const count = Object.values(r.answers).filter((a) => a.concerning).length;
+                    const h = Math.max(4, (count / maxConcerning) * chartH);
+                    const x = i * (barW + gap);
+                    const color = count === 0 ? "#4C8778" : count <= 2 ? "#B8873A" : "#A6432F";
+                    return (
+                      <g key={i}>
+                        <rect x={x} y={chartH - h} width={barW} height={h} rx={4} fill={color} opacity={i === chartRounds.length - 1 ? 1 : 0.55} />
+                        <text x={x + barW / 2} y={chartH + 14} fontSize="8" fill="#8CA3B0" textAnchor="middle">
+                          {new Date(r.ts).toLocaleDateString("fa-IR", { month: "numeric", day: "numeric" })}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+                {chartRounds.length >= 3 && (() => {
+                  const firstHalf = chartRounds.slice(0, Math.ceil(chartRounds.length / 2));
+                  const secondHalf = chartRounds.slice(Math.ceil(chartRounds.length / 2));
+                  const avg = (arr) => arr.reduce((s, r) => s + Object.values(r.answers).filter((a) => a.concerning).length, 0) / arr.length;
+                  const trend = avg(secondHalf) - avg(firstHalf);
+                  return (
+                    <p style={{ fontSize: 11.5, fontWeight: 700, color: trend < -0.3 ? "#4C8778" : trend > 0.3 ? "#A6432F" : "#8CA3B0", marginTop: 10 }}>
+                      {trend < -0.3 ? "🌱 روندِ شما رو‌به‌بهبود است — ادامه دهید." : trend > 0.3 ? "⚠ روندِ اخیر نسبت به قبل، نگران‌کننده‌تر شده — شاید وقتِ توجهِ بیشتری باشد." : "روندتان نسبتاً ثابت است."}
+                    </p>
+                  );
+                })()}
+              </div>
+            );
+          })()}
+        </>
+      )}
+
       <div style={{ background: "#F7FAFC", borderRadius: 14, padding: "16px", marginBottom: 16 }}>
         <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 8 }}>💡 ۱۰ راهکارِ کلی برایِ پیشگیری</p>
         {SLIP_STRATEGIES.map((s, i) => (
@@ -1999,6 +2065,33 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
 
       {rounds.length > 0 && (
         <>
+          {rounds.length >= 2 && (() => {
+            const last14 = rounds.slice(-14);
+            const maxConcern = Math.max(1, ...last14.map((r) => Object.values(r.answers).filter((a) => a.concerning).length));
+            const chartW = 300, chartH = 90, barGap = 4;
+            const barW = (chartW - barGap * (last14.length - 1)) / last14.length;
+            return (
+              <div style={{ background: "#fff", border: "1px solid #EDF2F5", borderRadius: 14, padding: "16px", marginBottom: 16 }}>
+                <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 10 }}>📈 روندِ نگرانی در {last14.length} دوره‌ی اخیر</p>
+                <svg viewBox={`0 0 ${chartW} ${chartH + 20}`} width="100%" height={chartH + 20}>
+                  {last14.map((r, i) => {
+                    const cCount = Object.values(r.answers).filter((a) => a.concerning).length;
+                    const h = (cCount / maxConcern) * chartH;
+                    const x = i * (barW + barGap);
+                    const color = cCount === 0 ? "#4C8778" : cCount <= 1 ? "#B8873A" : "#A6432F";
+                    return (
+                      <g key={i}>
+                        <rect x={x} y={chartH - h} width={barW} height={Math.max(h, 3)} rx={2} fill={color} opacity={0.85} />
+                        {cCount > 0 && <text x={x + barW / 2} y={chartH - h - 4} fontSize="8" fill={color} textAnchor="middle">{cCount}</text>}
+                      </g>
+                    );
+                  })}
+                  <line x1="0" y1={chartH} x2={chartW} y2={chartH} stroke="#EDF2F5" strokeWidth="1" />
+                </svg>
+                <p style={{ fontSize: 10, color: "#8CA3B0", marginTop: 6, textAlign: "center" }}>هر ستون یک دوره است؛ ارتفاعِ بیشتر = موضوعاتِ نگران‌کننده‌ی بیشتر در آن دوره</p>
+              </div>
+            );
+          })()}
           {(() => {
             const oneWeekAgo = Date.now() - 7 * 86400000;
             const weekRounds = rounds.filter((r) => r.ts >= oneWeekAgo);
