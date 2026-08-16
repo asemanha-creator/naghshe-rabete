@@ -2668,7 +2668,7 @@ function ChatWidget({ scores, overall, mode }) {
   );
 }
 
-export default function App() {
+function App() {
   const [screen, setScreen] = useState("topics");
   const [todayTip, setTodayTip] = useState(() => getTodayTip());
   const [showComingSoon, setShowComingSoon] = useState(false);
@@ -5715,5 +5715,60 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
         </>
       )}
     </Card>
+  );
+}
+
+// جلوگیری از «صفحه‌ی سفیدِ خالی» — اگر جایی در اپ خطایِ غیرِمنتظره رخ دهد،
+// به‌جایِ کرش‌کردنِ کاملِ صفحه، یک پیامِ آرام و راهِ بازگشت نشان می‌دهد
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error, info) {
+    console.error("App crashed:", error, info);
+  }
+  handleReset = () => {
+    this.setState({ hasError: false });
+    try { window.location.href = "/"; } catch (e) {}
+  };
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{
+          minHeight: "100vh", display: "flex", flexDirection: "column",
+          alignItems: "center", justifyContent: "center", padding: 24,
+          background: "#F1E8D4", fontFamily: "'Vazirmatn', Tahoma, sans-serif", textAlign: "center",
+        }}>
+          <span style={{ fontSize: 40, marginBottom: 12 }}>🌊</span>
+          <h2 style={{ fontSize: 17, color: "#17383D", fontWeight: 800, marginBottom: 8 }}>
+            یک مشکلِ موقت پیش آمد
+          </h2>
+          <p style={{ fontSize: 13, color: "#5A7080", marginBottom: 20, maxWidth: 320, lineHeight: 1.8 }}>
+            نگران نباشید — اطلاعاتتان از بین نرفته. لطفاً یک‌بار دیگر امتحان کنید.
+          </p>
+          <button onClick={this.handleReset} style={{
+            padding: "12px 28px", borderRadius: 14, border: "none",
+            background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)",
+            color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer",
+            boxShadow: "0 8px 16px rgba(23,56,61,0.35)",
+          }}>
+            بازگشت به صفحه‌ی اصلی
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+export default function AppWithErrorBoundary() {
+  return (
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   );
 }
