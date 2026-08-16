@@ -1230,6 +1230,26 @@ function polar(cx, cy, r, angleDeg) {
 }
 
 const FONT = { fontFamily: "'Vazirmatn', Tahoma, sans-serif" };
+
+// درخواست با محدودیتِ زمانی — جلوگیری از گیرکردنِ دائمیِ «در حالِ بارگذاری»
+async function fetchWithTimeout(url, options = {}, timeoutMs = 15000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    return res;
+  } catch (e) {
+    if (e.name === "AbortError") throw new Error("درخواست خیلی طول کشید — اتصالِ اینترنتتان را چک کنید");
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// تشخیصِ انقضایِ نشست — اگر سرور ۴۰۱ برگرداند، نشستِ کاربر را پاک و به‌روشنی اطلاع می‌دهد
+function isSessionExpiredResponse(res, data) {
+  return res.status === 401;
+}
 const FONT_IMPORT = `@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap');`;
 
 // ---------- Small UI atoms ----------
@@ -1615,12 +1635,16 @@ function GrowthScoreGauge({ score, components }) {
 function MyProgressScreen({ onBack, userEmail, userToken }) {
   const [serverData, setServerData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [sessionExpired, setSessionExpired] = useState(false);
 
   useEffect(() => {
     if (!userToken) { setLoading(false); return; }
-    fetch(`/api/my-progress?token=${encodeURIComponent(userToken)}`)
-      .then((r) => r.json())
-      .then((d) => { if (d.ok) setServerData(d); })
+    fetchWithTimeout(`/api/my-progress?token=${encodeURIComponent(userToken)}`)
+      .then((r) => {
+        if (r.status === 401) { setSessionExpired(true); return null; }
+        return r.json();
+      })
+      .then((d) => { if (d?.ok) setServerData(d); })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [userToken]);
@@ -1661,6 +1685,12 @@ function MyProgressScreen({ onBack, userEmail, userToken }) {
 
       {loading ? (
         <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>در حالِ بارگذاری...</p>
+      ) : sessionExpired ? (
+        <div style={{ textAlign: "center", padding: "20px 12px", background: "#FBF3E2", borderRadius: 12 }}>
+          <p style={{ fontSize: 26, marginBottom: 8 }}>🔑</p>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "#7A5B2E", marginBottom: 4 }}>نشستتان منقضی شده</p>
+          <p style={{ fontSize: 11.5, color: "#8A6B3E" }}>برایِ دیدنِ پیشرفتتان، لطفاً از منویِ اصلی دوباره وارد حساب شوید.</p>
+        </div>
       ) : (
         <>
           <GrowthScoreGauge score={score} components={components} />
@@ -2896,7 +2926,7 @@ function App() {
     if (!user?.token) { setScreen("authLogin"); return; }
     setPaymentBusy(true);
     try {
-      const r = await fetch("/api/zarinpal-request", {
+      const r = await fetchWithTimeout("/api/zarinpal-request", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: user.token, pkgKey, num: num || null, referredBy }),
       });
@@ -3119,7 +3149,7 @@ function App() {
     if (!privacyConsent) { setAuthErr("لطفاً ابتدا با شرایطِ حریمِ خصوصی موافقت کنید."); return; }
     setAuthErr(""); setAuthBusy(true);
     try {
-      const r = await fetch("/api/signup", {
+      const r = await fetchWithTimeout("/api/signup", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: authEmail, password: authPassword, name: authName }),
       });
@@ -3135,7 +3165,7 @@ function App() {
   async function doLogin() {
     setAuthErr(""); setAuthBusy(true);
     try {
-      const r = await fetch("/api/login", {
+      const r = await fetchWithTimeout("/api/login", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: authEmail, password: authPassword }),
       });
@@ -4756,7 +4786,7 @@ function App() {
                   reader.readAsDataURL(file);
                 });
                 setAudioUploadMsg("در حالِ آپلود...");
-                const r = await fetch("/api/audio-upload", {
+                const r = await fetchWithTimeout("/api/audio-upload", {
                   method: "POST", headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ sessionId: sid, adminToken, fileBase64, fileName: file.name, contentType: file.type }),
                 });
