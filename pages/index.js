@@ -1327,7 +1327,7 @@ function Technique({ id, name, time, howTo, effect, more }) {
   function giveFeedback(val) {
     setFeedback(val);
     try { localStorage.setItem(`tech_fb_${id}`, val); } catch (e) {}
-    fetch("/api/technique-feedback", {
+    fetchWithTimeout("/api/technique-feedback", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ techniqueId: id, feedback: val }),
     }).catch(() => {});
@@ -1342,7 +1342,7 @@ function Technique({ id, name, time, howTo, effect, more }) {
     const t = setTimeout(() => {
       let userToken = null;
       try { userToken = JSON.parse(localStorage.getItem("naghshe_user") || "{}").token; } catch (e) {}
-      fetch("/api/session-notes", {
+      fetchWithTimeout("/api/session-notes", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ techniqueId: id, note, token: userToken }),
       }).then(() => setNoteSaved(true)).catch(() => {});
@@ -1446,7 +1446,7 @@ function MoodRating({ sessionKey, phase, onChange }) {
     let userToken = null;
     try { userToken = JSON.parse(localStorage.getItem("naghshe_user") || "{}").token; } catch (e) {}
     if (userToken) {
-      fetch("/api/mood-log", {
+      fetchWithTimeout("/api/mood-log", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: userToken, sessionKey, phase, value: n }),
       }).catch(() => {});
@@ -1844,7 +1844,7 @@ function SessionAudioPlayer({ sessionKey }) {
   const [audioUrl, setAudioUrl] = useState(null);
   useEffect(() => {
     if (!sessionKey) return;
-    fetch(`/api/audio?sessionId=${encodeURIComponent(sessionKey)}`)
+    fetchWithTimeout(`/api/audio?sessionId=${encodeURIComponent(sessionKey)}`)
       .then((r) => r.json())
       .then((d) => { if (d.ok) setAudioUrl(d.url); })
       .catch(() => {});
@@ -1879,7 +1879,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
     setRounds(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
     if (userToken) {
-      fetch("/api/safety-plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: userToken, planType: "slipPrevention", plan: { rounds: next } }) }).catch(() => {});
+      fetchWithTimeout("/api/safety-plan", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: userToken, planType: "slipPrevention", plan: { rounds: next } }) }).catch(() => {});
     }
   }
 
@@ -2191,7 +2191,7 @@ function SafetyPlanScreen({ onBack, userEmail, userToken }) {
   useEffect(() => {
     if (saved || !userToken) return;
     const t = setTimeout(() => {
-      fetch("/api/safety-plan", {
+      fetchWithTimeout("/api/safety-plan", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: userToken, plan }),
       }).then(() => setSaved(true)).catch(() => {});
@@ -2249,7 +2249,7 @@ function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, default
   // پیشنهادِ جلسه بر اساسِ آیتم‌هایِ کم‌امتیاز: جست‌وجویِ سمتِ سرور در جلساتِ بازشده‌یِ کاربر
   useEffect(() => {
     if (!submitted || !unlockedSessions?.length || lowItems.length === 0) { setSuggestions([]); return; }
-    fetch("/api/session-suggest", {
+    fetchWithTimeout("/api/session-suggest", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         unlockedSessions,
@@ -2264,7 +2264,7 @@ function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, default
   async function handleSubmit() {
     setSaving(true);
     try {
-      await fetch("/api/checkin", {
+      await fetchWithTimeout("/api/checkin", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: userToken, answers, intervalDays }),
       });
@@ -2355,7 +2355,7 @@ function PartnerSyncWidget({ userEmail, userToken, pkgKey, totalSessions }) {
 
   function fetchPartnerProgress() {
     if (!userToken) return;
-    fetch(`/api/partner-link?token=${encodeURIComponent(userToken)}&pkgKey=${encodeURIComponent(pkgKey)}`)
+    fetchWithTimeout(`/api/partner-link?token=${encodeURIComponent(userToken)}&pkgKey=${encodeURIComponent(pkgKey)}`)
       .then((r) => r.json())
       .then((d) => { if (d.ok) setPartnerCount(d.unlockedCount); })
       .catch(() => {});
@@ -2363,7 +2363,7 @@ function PartnerSyncWidget({ userEmail, userToken, pkgKey, totalSessions }) {
 
   function linkPartner() {
     if (!inputVal || !userToken) return;
-    fetch("/api/partner-link", {
+    fetchWithTimeout("/api/partner-link", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token: userToken, partnerEmail: inputVal }),
     }).then(() => {
@@ -2620,7 +2620,7 @@ function ChatWidget({ scores, overall, mode }) {
     setBusy(true);
     setErr("");
     try {
-      const r = await fetch("/api/chat", {
+      const r = await fetchWithTimeout("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: newMessages, scores, overall, mode }),
@@ -2826,7 +2826,7 @@ function App() {
   const [feedbackStatus, setFeedbackStatus] = useState("");
   const [feedbackList, setFeedbackList] = useState([]);
   async function loadTherapists() {
-    const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "listAll", adminToken }) });
+    const r = await fetchWithTimeout("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "listAll", adminToken }) });
     const d = await r.json();
     if (d.ok) setTherapistList(d.therapists);
   }
@@ -2888,6 +2888,7 @@ function App() {
   const [backupBusy, setBackupBusy] = useState(false);
   const [backupMsg, setBackupMsg] = useState("");
   const [backupList, setBackupList] = useState([]);
+  const [failedPayments, setFailedPayments] = useState([]);
   const [techniqueReport, setTechniqueReport] = useState([]);
   const [techniqueReportLoaded, setTechniqueReportLoaded] = useState(false);
   const [patientEmailInput, setPatientEmailInput] = useState("");
@@ -2909,7 +2910,7 @@ function App() {
   async function loadUnlockedSessions() {
     if (!user) return;
     try {
-      const r = await fetch(`/api/sessions/status?email=${encodeURIComponent(user.email)}`);
+      const r = await fetchWithTimeout(`/api/sessions/status?email=${encodeURIComponent(user.email)}`);
       const data = await r.json();
       setUnlockedSessions(data.unlocked || []);
     } catch (e) {}
@@ -2954,7 +2955,7 @@ function App() {
       if (librarySearchQuery) params.set("searchQuery", librarySearchQuery);
       if (user?.email) params.set("email", user.email);
       if (isAdmin) params.set("adminToken", adminToken);
-      fetch(`/api/session-library?${params.toString()}`)
+      fetchWithTimeout(`/api/session-library?${params.toString()}`)
         .then(async (r) => {
           const d = await r.json().catch(() => null);
           if (!r.ok || !d?.ok) {
@@ -2975,7 +2976,7 @@ function App() {
     if (viewingSession.weakestDomain) params.set("weakestDomain", viewingSession.weakestDomain);
     if (user?.email) params.set("email", user.email);
     if (isAdmin) params.set("adminToken", adminToken);
-    fetch(`/api/session-full?${params.toString()}`)
+    fetchWithTimeout(`/api/session-full?${params.toString()}`)
       .then((r) => r.json())
       .then((d) => {
         if (d.ok) { setFetchedSessionData(d.session); setFetchedSessionUnlocked(d.unlocked); }
@@ -2987,7 +2988,7 @@ function App() {
   async function adminUnlockSession(pkgKey, num) {
     if (!adminUnlockEmail) { setAdminUnlockMsg("ایمیلِ کاربر را وارد کنید"); return; }
     try {
-      const r = await fetch("/api/sessions/status", {
+      const r = await fetchWithTimeout("/api/sessions/status", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: adminUnlockEmail, sessionId: sessionId(pkgKey, num), adminToken }),
       });
@@ -2999,7 +3000,7 @@ function App() {
 
   async function generateActivationCode(pkgKey, num) {
     try {
-      const r = await fetch("/api/redeem", {
+      const r = await fetchWithTimeout("/api/redeem", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "generate", sessionId: sessionId(pkgKey, num), adminToken }),
       });
@@ -3012,7 +3013,7 @@ function App() {
   async function runManualBackup() {
     setBackupBusy(true); setBackupMsg("");
     try {
-      const r = await fetch(`/api/backup?adminToken=${encodeURIComponent(adminToken)}`, { method: "POST" });
+      const r = await fetchWithTimeout(`/api/backup?adminToken=${encodeURIComponent(adminToken)}`, { method: "POST" });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setBackupMsg(`بک‌آپ با موفقیت ساخته شد ✅ (${data.meta?.totalKeys ?? "?"} رکورد)`);
@@ -3023,7 +3024,7 @@ function App() {
 
   async function loadBackupList() {
     try {
-      const r = await fetch(`/api/backup?adminToken=${encodeURIComponent(adminToken)}`);
+      const r = await fetchWithTimeout(`/api/backup?adminToken=${encodeURIComponent(adminToken)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setBackupList(data.backups || []);
@@ -3032,7 +3033,7 @@ function App() {
 
   async function loadTechniqueReport() {
     try {
-      const r = await fetch(`/api/technique-feedback?adminToken=${encodeURIComponent(adminToken)}`);
+      const r = await fetchWithTimeout(`/api/technique-feedback?adminToken=${encodeURIComponent(adminToken)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setTechniqueReport(data.report || []);
@@ -3044,7 +3045,7 @@ function App() {
     if (!patientEmailInput) { setPatientMsg("ایمیلِ مراجع را وارد کنید"); return; }
     setPatientMsg("در حالِ بارگذاری..."); setPatientData(null);
     try {
-      const r = await fetch(`/api/patient-dashboard?adminToken=${encodeURIComponent(adminToken)}&email=${encodeURIComponent(patientEmailInput)}`);
+      const r = await fetchWithTimeout(`/api/patient-dashboard?adminToken=${encodeURIComponent(adminToken)}&email=${encodeURIComponent(patientEmailInput)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setPatientData(data);
@@ -3054,7 +3055,7 @@ function App() {
 
   async function loadInactiveUsers() {
     try {
-      const r = await fetch(`/api/inactive-users?adminToken=${encodeURIComponent(adminToken)}`);
+      const r = await fetchWithTimeout(`/api/inactive-users?adminToken=${encodeURIComponent(adminToken)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setInactiveUsers(data.users || []);
@@ -3063,7 +3064,7 @@ function App() {
 
   async function loadRiskAlerts() {
     try {
-      const r = await fetch(`/api/risk-alerts?adminToken=${encodeURIComponent(adminToken)}`);
+      const r = await fetchWithTimeout(`/api/risk-alerts?adminToken=${encodeURIComponent(adminToken)}`);
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
       setRiskAlerts(data.alerts || []);
@@ -3081,7 +3082,7 @@ function App() {
     }
     setDeleteBusy(true); setDeleteMsg("");
     try {
-      const r = await fetch(`/api/delete-user-data?adminToken=${encodeURIComponent(adminToken)}`, {
+      const r = await fetchWithTimeout(`/api/delete-user-data?adminToken=${encodeURIComponent(adminToken)}`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: deleteEmailInput, confirm: deleteConfirmInput }),
       });
@@ -3240,7 +3241,7 @@ function App() {
       solo: patch.solo ?? false,
     };
     try {
-      const r = await fetch("/api/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const r = await fetchWithTimeout("/api/save", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const result = await r.json();
       if (!result.ok) return { ok: false, detail: result.error || "خطایِ نامشخص" };
       return { ok: true };
@@ -3278,7 +3279,7 @@ function App() {
     if (!c) return;
     setBusy(true);
     try {
-      const r = await fetch(`/api/get?code=${c}`);
+      const r = await fetchWithTimeout(`/api/get?code=${c}`);
       const res = await r.json();
       if (!res.ok) throw new Error(res.error);
       const data = res.data;
@@ -3346,7 +3347,7 @@ function App() {
   async function loadAdmin() {
     setBusy(true);
     try {
-      const r = await fetch("/api/list");
+      const r = await fetchWithTimeout("/api/list");
       const data = await r.json();
       setAdminRows(data.rows || []);
     } catch (e) {
@@ -3619,7 +3620,7 @@ function App() {
             <textarea placeholder="پیامِ خود را بنویسید..." value={feedbackMsg} onChange={(e) => setFeedbackMsg(e.target.value)} style={{ width: "100%", minHeight: 100, padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
             <input placeholder="ایمیل یا شماره برایِ پیگیری (اختیاری)" value={feedbackContact} onChange={(e) => setFeedbackContact(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
             <button onClick={async () => {
-              const r = await fetch("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: feedbackType, message: feedbackMsg, contact: feedbackContact, email: user?.email }) });
+              const r = await fetchWithTimeout("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: feedbackType, message: feedbackMsg, contact: feedbackContact, email: user?.email }) });
               const d = await r.json();
               setFeedbackStatus(d.ok ? "✅ ارسال شد، ممنون از شما" : "❌ خطا");
               if (d.ok) setFeedbackMsg("");
@@ -3816,7 +3817,7 @@ function App() {
             <input placeholder="کدِ درمانگر" value={therapistLoginId} onChange={(e) => setTherapistLoginId(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
             <input placeholder="رمز" type="password" value={therapistLoginPass} onChange={(e) => setTherapistLoginPass(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
             <button onClick={async () => {
-              const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "login", therapistId: therapistLoginId, password: therapistLoginPass }) });
+              const r = await fetchWithTimeout("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "login", therapistId: therapistLoginId, password: therapistLoginPass }) });
               const d = await r.json();
               if (d.ok) { setTherapistSession(d); setScreen("therapistDashboard"); } else setTherapistMsg(d.error);
             }} style={{ width: "100%", padding: 10, borderRadius: 8, border: "none", background: "#17383D", color: "#fff" }}>ورود</button>
@@ -3834,7 +3835,7 @@ function App() {
               <button onClick={() => navigator.clipboard.writeText(`https://naghshe-rabete-ashy.vercel.app/?ref=${therapistSession.id}`)} style={{ fontSize: 11, padding: "8px 14px", borderRadius: 6, border: "none", background: "#17383D", color: "#fff" }}>کپی</button>
             </div>
             <button onClick={async () => {
-              const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "dashboard", therapistId: therapistSession.id }) });
+              const r = await fetchWithTimeout("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "dashboard", therapistId: therapistSession.id }) });
               const d = await r.json();
               if (d.ok) setTherapistDash(d);
             }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", color: "#17383D", background: "#fff", marginBottom: 10 }}>بروزرسانیِ فروش</button>
@@ -3859,7 +3860,7 @@ function App() {
             <button onClick={async () => {
               setForgotMsg(""); setAuthBusy(true);
               try {
-                const r = await fetch("/api/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: forgotEmail }) });
+                const r = await fetchWithTimeout("/api/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: forgotEmail }) });
                 const d = await r.json();
                 if (!r.ok) throw new Error(d.error || "خطا");
                 setForgotMsg("✅ اگر این ایمیل ثبت‌نام کرده باشد، لینکِ بازیابی برایش ارسال شد. صندوقِ ورودی (و اسپم) را چک کنید.");
@@ -3887,7 +3888,7 @@ function App() {
               try {
                 const params = new URLSearchParams(window.location.search);
                 const resetToken = params.get("resetToken");
-                const r = await fetch("/api/reset-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ resetToken, newPassword }) });
+                const r = await fetchWithTimeout("/api/reset-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ resetToken, newPassword }) });
                 const d = await r.json();
                 if (!r.ok) throw new Error(d.error || "خطا");
                 setForgotMsg("✅ رمز تغییر کرد — حالا می‌توانید وارد شوید.");
@@ -4129,7 +4130,7 @@ function App() {
                   <button onClick={async () => {
                     setRedeemMsg("");
                     try {
-                      const r = await fetch("/api/redeem", {
+                      const r = await fetchWithTimeout("/api/redeem", {
                         method: "POST", headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ action: "redeem", code: redeemCode, token: user.token }),
                       });
@@ -4673,7 +4674,7 @@ function App() {
               style={{ width: "100%", padding: "12px 14px", borderRadius: 12, border: "1px solid #C9DEE8", fontSize: 14, marginBottom: 12, ...FONT }} />
             <button onClick={async () => {
               try {
-                const r = await fetch("/api/admin-login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: adminPassInput }) });
+                const r = await fetchWithTimeout("/api/admin-login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ password: adminPassInput }) });
                 const d = await r.json();
                 if (!r.ok) { setErr(d.error || "رمز نادرست است."); return; }
                 markAdmin(d.token); await loadAdmin(); setScreen("admin");
@@ -4800,7 +4801,7 @@ function App() {
           <Card style={{ border: "1.5px solid #A6432F" }}>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📬 پیشنهادات / انتقادات / تیکت‌ها</p>
             <button onClick={async () => {
-              const r = await fetch(`/api/feedback?adminToken=${adminToken}`);
+              const r = await fetchWithTimeout(`/api/feedback?adminToken=${adminToken}`);
               const d = await r.json();
               if (d.ok) setFeedbackList(d.list);
             }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", color: "#17383D", background: "#fff", fontSize: 11, marginBottom: 8 }}>بروزرسانی</button>
@@ -4819,7 +4820,7 @@ function App() {
               <input placeholder="سهم٪" type="number" value={newTherapistShare} onChange={(e) => setNewTherapistShare(e.target.value)} style={{ width: 60, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
             </div>
             <button onClick={async () => {
-              const r = await fetch("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", adminToken, therapistId: newTherapistId, name: newTherapistName, password: newTherapistPass, sharePercent: Number(newTherapistShare) || 70 }) });
+              const r = await fetchWithTimeout("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", adminToken, therapistId: newTherapistId, name: newTherapistName, password: newTherapistPass, sharePercent: Number(newTherapistShare) || 70 }) });
               const d = await r.json();
               setTherapistMsg(d.ok ? "✅ ساخته شد" : "❌ " + d.error);
               if (d.ok) loadTherapists();
@@ -5039,6 +5040,31 @@ function App() {
                   </a>
                 ))}
               </div>
+            )}
+          </Card>
+          <Card style={{ border: "1.5px solid #A6432F" }}>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>⚠️ پرداخت‌هایِ نیازمندِ بررسیِ دستی</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+              اگر پولی گرفته شده اما به‌خاطرِ خطایِ فنی، جلسه به‌طورِ خودکار باز نشده باشد، اینجا نمایان می‌شود.
+            </p>
+            <button onClick={async () => {
+              try {
+                const r = await fetchWithTimeout(`/api/failed-payments?adminToken=${encodeURIComponent(adminToken)}`);
+                const d = await r.json();
+                if (r.ok) setFailedPayments(d.failed || []);
+              } catch (e) {}
+            }} style={{ width: "100%", padding: "8px", borderRadius: 10, border: "1px solid #A6432F", background: "#fff", color: "#A6432F", fontWeight: 700, fontSize: 11.5, cursor: "pointer", marginBottom: 8 }}>
+              بررسیِ فهرست
+            </button>
+            {failedPayments.length === 0 ? (
+              <p style={{ fontSize: 11, color: "#4C8778" }}>✅ چیزی برایِ بررسی نیست.</p>
+            ) : (
+              failedPayments.map((f, i) => (
+                <div key={i} style={{ background: "#FBEEEA", borderRadius: 8, padding: "8px 10px", marginBottom: 6, fontSize: 11 }}>
+                  <p style={{ margin: "0 0 2px", fontWeight: 700 }}>{f.email} — {f.pkgKey}{f.num ? ` جلسه‌ی ${f.num}` : " (کاملِ بسته)"}</p>
+                  <p style={{ margin: 0, color: "#8CA3B0" }}>مبلغ: {f.amount?.toLocaleString("fa-IR")} ت · کدِ پیگیری: {f.refId} · {new Date(f.ts).toLocaleString("fa-IR")}</p>
+                </div>
+              ))
             )}
           </Card>
           <AdminDashboard rows={adminRows} busy={busy} onRefresh={loadAdmin} onBack={() => setScreen("start")} />
