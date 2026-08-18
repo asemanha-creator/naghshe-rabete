@@ -1,4 +1,5 @@
 import { Redis } from "@upstash/redis";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
 
 const redis = Redis.fromEnv();
 import { verifyAdminToken } from "../../lib/auth";
@@ -37,6 +38,7 @@ export default async function handler(req, res) {
     res.status(200).json({ ok: true, email, unlockedSessions, moodLog, notes, checkinLog, checkinIntervalDays });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "admin", "خطایِ سرور در patient-dashboard.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
