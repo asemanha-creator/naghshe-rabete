@@ -1,6 +1,7 @@
 import { Redis } from "@upstash/redis";
 import crypto from "crypto";
 import { createSession } from "../../lib/auth";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
 
 const redis = Redis.fromEnv();
 
@@ -27,6 +28,7 @@ export default async function handler(req, res) {
     res.status(200).json({ ok: true, email, name: name || "", token });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "auth", "خطایِ سرور در signup.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
