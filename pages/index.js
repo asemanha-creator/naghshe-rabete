@@ -2889,6 +2889,8 @@ function App() {
   const [backupMsg, setBackupMsg] = useState("");
   const [backupList, setBackupList] = useState([]);
   const [failedPayments, setFailedPayments] = useState([]);
+  const [logCategory, setLogCategory] = useState("critical");
+  const [logEntries, setLogEntries] = useState([]);
   const [techniqueReport, setTechniqueReport] = useState([]);
   const [techniqueReportLoaded, setTechniqueReportLoaded] = useState(false);
   const [patientEmailInput, setPatientEmailInput] = useState("");
@@ -3996,12 +3998,22 @@ function App() {
                   <div style={{ height: 8, background: "#EDF2F5", borderRadius: 999, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${pct}%`, background: "#B8873A", borderRadius: 999, transition: "width 0.3s" }} />
                   </div>
-                  {user && doneCount < total && (
-                    <button onClick={() => startZarinpalPayment(libraryPkg, null)} disabled={paymentBusy}
-                      style={{ width: "100%", marginTop: 10, padding: "10px", borderRadius: 10, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", fontSize: 12.5, cursor: "pointer" }}>
-                      💳 {paymentBusy ? "..." : `خریدِ کاملِ بسته — ${toman(TREATMENT_PACKAGES[libraryPkg].sessions * sessionPrice(libraryPkg))}`}
-                    </button>
-                  )}
+                  {user && doneCount < total && (() => {
+                    const noDiscountPrice = TREATMENT_PACKAGES[libraryPkg].sessions * sessionPrice(libraryPkg);
+                    const bundlePrice = Math.round((noDiscountPrice * 0.65) / 10000) * 10000;
+                    return (
+                      <div style={{ marginTop: 10 }}>
+                        <div style={{ textAlign: "center", marginBottom: 6 }}>
+                          <span style={{ fontSize: 11, color: "#8CA3B0", textDecoration: "line-through" }}>{toman(noDiscountPrice)}</span>
+                          <span style={{ fontSize: 10.5, fontWeight: 800, color: "#A6432F", marginRight: 8, background: "#FBEEEA", padding: "2px 8px", borderRadius: 999 }}>۳۵٪ تخفیف</span>
+                        </div>
+                        <button onClick={() => startZarinpalPayment(libraryPkg, null)} disabled={paymentBusy}
+                          style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", fontSize: 12.5, cursor: "pointer" }}>
+                          💳 {paymentBusy ? "..." : `خریدِ کاملِ بسته — ${toman(bundlePrice)}`}
+                        </button>
+                      </div>
+                    );
+                  })()}
                 </div>
               );
             })()}
@@ -5065,6 +5077,44 @@ function App() {
                   <p style={{ margin: 0, color: "#8CA3B0" }}>مبلغ: {f.amount?.toLocaleString("fa-IR")} ت · کدِ پیگیری: {f.refId} · {new Date(f.ts).toLocaleString("fa-IR")}</p>
                 </div>
               ))
+            )}
+          </Card>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📋 لاگِ رخدادهایِ سیستم</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>ثبتِ ساختاریافته‌ی رخدادهایِ ورود، پرداخت، و خطاهایِ سیستم.</p>
+            <select value={logCategory} onChange={(e) => setLogCategory(e.target.value)}
+              style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12, marginBottom: 8 }}>
+              <option value="critical">🔴 فقط بحرانی</option>
+              <option value="auth">ورود/ثبت‌نام</option>
+              <option value="payment">پرداخت</option>
+            </select>
+            <button onClick={async () => {
+              try {
+                const r = await fetchWithTimeout(`/api/logs-view?adminToken=${encodeURIComponent(adminToken)}&category=${logCategory}`);
+                const d = await r.json();
+                if (r.ok) setLogEntries(d.logs || []);
+              } catch (e) {}
+            }} style={{ width: "100%", padding: "8px", borderRadius: 10, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, fontSize: 11.5, cursor: "pointer", marginBottom: 8 }}>
+              نمایشِ لاگ‌ها
+            </button>
+            {logEntries.length === 0 ? (
+              <p style={{ fontSize: 11, color: "#8CA3B0" }}>چیزی برایِ نمایش نیست.</p>
+            ) : (
+              <div style={{ maxHeight: 280, overflowY: "auto" }}>
+                {logEntries.map((l, i) => (
+                  <div key={i} style={{
+                    background: l.level === "CRITICAL" ? "#FBEEEA" : l.level === "ERROR" ? "#FBEEEA" : l.level === "WARN" ? "#FBF3E2" : "#F7FAFC",
+                    borderRadius: 8, padding: "7px 10px", marginBottom: 5, fontSize: 10.5,
+                  }}>
+                    <p style={{ margin: "0 0 2px", fontWeight: 700, color: l.level === "CRITICAL" ? "#A6432F" : "#1F2D3D" }}>
+                      [{l.level}] {l.message}
+                    </p>
+                    <p style={{ margin: 0, color: "#8CA3B0" }}>
+                      {new Date(l.ts).toLocaleString("fa-IR")} {l.meta?.email ? `· ${l.meta.email}` : ""}
+                    </p>
+                  </div>
+                ))}
+              </div>
             )}
           </Card>
           <AdminDashboard rows={adminRows} busy={busy} onRefresh={loadAdmin} onBack={() => setScreen("start")} />
