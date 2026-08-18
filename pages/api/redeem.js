@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { verifySession, verifyAdminToken } from "../../lib/auth";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
 
 const redis = Redis.fromEnv();
 
@@ -65,6 +66,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "action نامعتبر است" });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "payment", "خطایِ سرور در redeem.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
