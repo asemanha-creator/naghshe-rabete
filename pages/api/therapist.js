@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { verifyAdminToken } from "../../lib/auth";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
 const redis = Redis.fromEnv();
 
 export default async function handler(req, res) {
@@ -64,6 +65,7 @@ export default async function handler(req, res) {
 
     return res.status(400).json({ error: "action نامعتبر" });
   } catch (e) {
+    await logEvent(LOG_LEVELS.ERROR, "admin", "خطایِ سرور در therapist.js", { error: e.message });
     res.status(500).json({ error: e.message });
   }
 }
