@@ -1,3 +1,4 @@
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
 // تنظیماتِ سرویس‌دهنده: به‌جایِ آدرسِ رسمیِ Anthropic، از پروکسیِ ایرانیِ GapGPT استفاده می‌کنیم
 // کلید و نامِ مدل را در Vercel، بخشِ Environment Variables، قرار دهید:
 //   GAPGPT_API_KEY = توکنی که از GapGPT گرفتید
@@ -89,6 +90,7 @@ export default async function handler(req, res) {
     res.status(200).json({ reply });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "content", "خطایِ سرور در chat.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
