@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { getSessionContent } from "../../lib/sessionContent";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
 
 const redis = Redis.fromEnv();
 import { verifyAdminToken } from "../../lib/auth";
@@ -45,6 +46,7 @@ export default async function handler(req, res) {
     res.status(200).json({ ok: true, sessions: results });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "content", "خطایِ سرور در session-library.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
