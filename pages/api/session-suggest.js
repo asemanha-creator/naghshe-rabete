@@ -1,4 +1,5 @@
 import { getSessionContent } from "../../lib/sessionContent";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
 
 function sessionMatchesSearch(sess, query) {
   if (!query) return true;
@@ -38,6 +39,7 @@ export default async function handler(req, res) {
     res.status(200).json({ ok: true, suggestions: results });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "content", "خطایِ سرور در session-suggest.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
