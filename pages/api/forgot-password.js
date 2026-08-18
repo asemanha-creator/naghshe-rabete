@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis";
 import crypto from "crypto";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
 
 const redis = Redis.fromEnv();
 const RESET_TTL_SECONDS = 60 * 60; // ۱ ساعت
@@ -50,6 +51,7 @@ export default async function handler(req, res) {
     res.status(200).json({ ok: true });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "auth", "خطایِ سرور در forgot-password.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
