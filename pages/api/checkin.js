@@ -1,5 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { verifySession } from "../../lib/auth";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
 
 const redis = Redis.fromEnv();
 
@@ -35,6 +36,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "method not allowed" });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "userdata", "خطایِ سرور در checkin.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
