@@ -1,8 +1,8 @@
 import { Redis } from "@upstash/redis";
+import { verifyAdminToken } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
 
 const redis = Redis.fromEnv();
-import { verifyAdminToken } from "../../lib/auth";
 
 // فهرستِ کاربرانِ ثبت‌نامی به‌همراهِ آخرین زمانِ فعالیت — برایِ پیگیریِ دستیِ کاربرانِ غیرفعال
 export default async function handler(req, res) {
