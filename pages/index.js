@@ -1440,8 +1440,10 @@ function MoodRating({ sessionKey, phase, onChange }) {
       return parsed?.value ?? raw; // سازگاری با نسخه‌ی قدیمی که فقط عدد ذخیره می‌کرد
     } catch (e) { return null; }
   });
+  const [syncFailed, setSyncFailed] = useState(false);
   function pick(n) {
     setVal(n);
+    setSyncFailed(false);
     try { localStorage.setItem(storageKey, JSON.stringify({ value: n, ts: Date.now(), sessionKey, phase })); } catch (e) {}
     let userToken = null;
     try { userToken = JSON.parse(localStorage.getItem("naghshe_user") || "{}").token; } catch (e) {}
@@ -1449,7 +1451,7 @@ function MoodRating({ sessionKey, phase, onChange }) {
       fetchWithTimeout("/api/mood-log", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: userToken, sessionKey, phase, value: n }),
-      }).catch(() => {});
+      }).then((r) => { if (!r.ok) setSyncFailed(true); }).catch(() => setSyncFailed(true));
     }
     if (onChange) onChange(n);
   }
@@ -1471,6 +1473,7 @@ function MoodRating({ sessionKey, phase, onChange }) {
         ))}
       </div>
       {val && <p style={{ fontSize: 10.5, color: "#9A8560", margin: "6px 0 0" }}>ثبت شد: {val}/۱۰</p>}
+      {syncFailed && <p style={{ fontSize: 10, color: "#A6432F", margin: "4px 0 0" }}>⚠️ روی گوشی ذخیره شد، اما هنوز با سرور همگام نشده — بعداً دوباره امتحان می‌شود</p>}
     </div>
   );
 }
@@ -2180,11 +2183,13 @@ function SafetyPlanScreen({ onBack, userEmail, userToken }) {
     catch (e) { return { warningSigns: "", copingStrategies: "", contacts: "", safePlaces: "" }; }
   });
   const [saved, setSaved] = useState(true);
+  const [saveError, setSaveError] = useState(false);
 
   function updateField(field, value) {
     const next = { ...plan, [field]: value };
     setPlan(next);
     setSaved(false);
+    setSaveError(false);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
   }
 
@@ -2194,7 +2199,8 @@ function SafetyPlanScreen({ onBack, userEmail, userToken }) {
       fetchWithTimeout("/api/safety-plan", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: userToken, plan }),
-      }).then(() => setSaved(true)).catch(() => {});
+      }).then((r) => { if (r.ok) { setSaved(true); setSaveError(false); } else { setSaveError(true); } })
+        .catch(() => setSaveError(true));
     }, 1200);
     return () => clearTimeout(t);
   }, [plan, saved, userToken]);
@@ -2220,7 +2226,7 @@ function SafetyPlanScreen({ onBack, userEmail, userToken }) {
             style={{ width: "100%", minHeight: 70, padding: "9px 11px", borderRadius: 10, border: "1px solid #DCE8F0", fontSize: 12.5, fontFamily: "inherit", resize: "vertical", boxSizing: "border-box" }} />
         </div>
       ))}
-      {userEmail && <p style={{ fontSize: 9.5, color: saved ? "#8CA3B0" : "#B9822F", textAlign: "center" }}>{saved ? "ذخیره شد ✓" : "در حالِ ذخیره..."}</p>}
+      {userEmail && <p style={{ fontSize: 9.5, color: saveError ? "#A6432F" : saved ? "#8CA3B0" : "#B9822F", textAlign: "center" }}>{saveError ? "⚠️ ذخیره در سرور ناموفق بود — فقط روی گوشی مانده" : saved ? "ذخیره شد ✓" : "در حالِ ذخیره..."}</p>}
       <div style={{ background: "#FBF0EC", border: "1px solid #E8C9BC", borderRadius: 10, padding: "12px 14px", marginTop: 8 }}>
         <p style={{ fontSize: 12, color: "#8A5A4E", fontWeight: 700, margin: "0 0 4px" }}>📞 اورژانسِ فوری</p>
         <p style={{ fontSize: 12, color: "#8A5A4E", margin: 0 }}>در بحرانِ حاد، همین حالا با اورژانس (۱۱۵) یا نزدیک‌ترین مرکزِ درمانی تماس بگیرید — منتظرِ نوبتِ جلسه نمانید.</p>
@@ -2891,6 +2897,7 @@ function App() {
   const [failedPayments, setFailedPayments] = useState([]);
   const [logCategory, setLogCategory] = useState("critical");
   const [logEntries, setLogEntries] = useState([]);
+  const [fixEmailMsg, setFixEmailMsg] = useState("");
   const [techniqueReport, setTechniqueReport] = useState([]);
   const [techniqueReportLoaded, setTechniqueReportLoaded] = useState(false);
   const [patientEmailInput, setPatientEmailInput] = useState("");
@@ -2912,7 +2919,7 @@ function App() {
   async function loadUnlockedSessions() {
     if (!user) return;
     try {
-      const r = await fetchWithTimeout(`/api/sessions/status?email=${encodeURIComponent(user.email)}`);
+      const r = await fetchWithTimeout(`/api/status?email=${encodeURIComponent(user.email)}`);
       const data = await r.json();
       setUnlockedSessions(data.unlocked || []);
     } catch (e) {}
@@ -2990,7 +2997,7 @@ function App() {
   async function adminUnlockSession(pkgKey, num) {
     if (!adminUnlockEmail) { setAdminUnlockMsg("ایمیلِ کاربر را وارد کنید"); return; }
     try {
-      const r = await fetchWithTimeout("/api/sessions/status", {
+      const r = await fetchWithTimeout("/api/status", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: adminUnlockEmail, sessionId: sessionId(pkgKey, num), adminToken }),
       });
@@ -5087,6 +5094,9 @@ function App() {
               <option value="critical">🔴 فقط بحرانی</option>
               <option value="auth">ورود/ثبت‌نام</option>
               <option value="payment">پرداخت</option>
+              <option value="content">محتوا/چت</option>
+              <option value="admin">ادمین</option>
+              <option value="userdata">داده‌یِ کاربر</option>
             </select>
             <button onClick={async () => {
               try {
@@ -5116,6 +5126,27 @@ function App() {
                 ))}
               </div>
             )}
+          </Card>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🔧 اصلاحِ یک‌بارهٔ ایمیل‌هایِ حروف‌بزرگ</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+              اگر جلسه‌ای برایِ ایمیلی با حروفِ بزرگ باز شده بود، این دکمه آن را با نسخه‌ی درست ادغام می‌کند. فقط یک‌بار لازم است بزنید.
+            </p>
+            <button onClick={async () => {
+              setFixEmailMsg("در حالِ بررسی...");
+              try {
+                const r = await fetchWithTimeout("/api/fix-email-case", {
+                  method: "POST", headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ adminToken }),
+                });
+                const d = await r.json();
+                if (r.ok) setFixEmailMsg(`✅ ${d.fixedCount} موردِ اصلاح‌شده${d.fixedCount ? ": " + d.fixedEmails.join("، ") : ""}`);
+                else setFixEmailMsg("❌ " + d.error);
+              } catch (e) { setFixEmailMsg("❌ خطا"); }
+            }} style={{ width: "100%", padding: "8px", borderRadius: 10, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, fontSize: 11.5, cursor: "pointer" }}>
+              بررسی و اصلاح
+            </button>
+            {fixEmailMsg && <p style={{ fontSize: 11, color: "#5A7080", marginTop: 8 }}>{fixEmailMsg}</p>}
           </Card>
           <AdminDashboard rows={adminRows} busy={busy} onRefresh={loadAdmin} onBack={() => setScreen("start")} />
           </>
