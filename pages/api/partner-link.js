@@ -1,11 +1,16 @@
 import { Redis } from "@upstash/redis";
 import { verifySession } from "../../lib/auth";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 const redis = Redis.fromEnv();
 
 // اتصالِ ایمیلِ همسر — حالا با تاییدِ نشست، و بدونِ اجازه‌ی حدس‌زدنِ ایمیلِ دلخواه برایِ دیدنِ داده‌ی دیگران
 export default async function handler(req, res) {
   try {
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`partner-link:${ip}`, 20, 3600);
+    if (!rl.allowed) return res.status(429).json({ error: "تعدادِ درخواست‌هایتان زیاد بوده — کمی صبر کنید" });
     const token = req.method === "GET" ? req.query.token : req.body?.token;
     const email = await verifySession(token);
     if (!email) return res.status(401).json({ error: "نشستِ نامعتبر — لطفاً دوباره وارد شوید" });
@@ -29,6 +34,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "method not allowed" });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "userdata", "خطایِ سرور در partner-link.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
