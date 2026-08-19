@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { createSession } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
 import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
+import { isValidEmail, isNonEmptyString } from "../../lib/validate";
 
 const redis = Redis.fromEnv();
 
@@ -22,8 +23,14 @@ export default async function handler(req, res) {
     }
 
     const { email: rawEmail, password, name } = req.body;
-    if (!rawEmail || !password || password.length < 6) {
-      return res.status(400).json({ error: "ایمیل یا رمزِعبور نامعتبر است (رمز حداقل ۶ کاراکتر)" });
+    if (!isValidEmail(rawEmail)) {
+      return res.status(400).json({ error: "ایمیل نامعتبر است" });
+    }
+    if (!isNonEmptyString(password) || password.length < 6 || password.length > 200) {
+      return res.status(400).json({ error: "رمزِعبور باید بینِ ۶ تا ۲۰۰ کاراکتر باشد" });
+    }
+    if (name && (typeof name !== "string" || name.length > 100)) {
+      return res.status(400).json({ error: "نام نامعتبر است" });
     }
     const email = rawEmail.toLowerCase().trim(); // نکته‌ی حیاتی: همه‌جایِ اپ، ایمیل باید یکدست (حروفِ کوچک) ذخیره شود
     const key = `user:${email}`;
