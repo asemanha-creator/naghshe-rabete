@@ -2,6 +2,7 @@ import { Redis } from "@upstash/redis";
 import { verifySession } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
 import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
+import { isNumberInRange } from "../../lib/validate";
 
 const redis = Redis.fromEnv();
 
@@ -25,9 +26,11 @@ export default async function handler(req, res) {
     if (req.method === "POST") {
       const { answers, intervalDays } = req.body;
       if (intervalDays) {
+        if (!isNumberInRange(intervalDays, 1, 90)) return res.status(400).json({ error: "بازه‌ی چک‌این باید بینِ ۱ تا ۹۰ روز باشد" });
         await redis.set(`checkin_interval:${email}`, Number(intervalDays));
       }
       if (answers) {
+        if (typeof answers !== "object" || Array.isArray(answers)) return res.status(400).json({ error: "answers نامعتبر است" });
         const rawLog = (await redis.get(`checkin_log:${email}`)) || [];
         const log = typeof rawLog === "string" ? JSON.parse(rawLog) : rawLog;
         log.push({ answers, ts: Date.now() });
