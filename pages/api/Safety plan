@@ -1,27 +1,35 @@
 import { Redis } from "@upstash/redis";
+import { verifySession } from "../../lib/auth";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 const redis = Redis.fromEnv();
 
-// ذخیره‌ی برنامه‌ی ایمنی و برنامه‌ی پیشگیریِ لغزش — هر کاربر، هر نوع، کلیدِ جدا
+// ذخیره‌ی برنامه‌ی ایمنی و برنامه‌ی پیشگیریِ لغزش — حالا با تاییدِ واقعیِ نشست (نه ایمیلِ خام)
 export default async function handler(req, res) {
   try {
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`safety-plan:${ip}`, 60, 3600);
+    if (!rl.allowed) return res.status(429).json({ error: "تعدادِ درخواست‌هایتان زیاد بوده — کمی صبر کنید" });
+    const token = req.method === "GET" ? req.query.token : req.body?.token;
+    const email = await verifySession(token);
+    if (!email) return res.status(401).json({ error: "نشستِ نامعتبر — لطفاً دوباره وارد شوید" });
+
     if (req.method === "GET") {
-      const email = (req.query.email || "").toLowerCase().trim();
       const planType = req.query.planType === "slipPrevention" ? "slip_plan" : "safety_plan";
-      if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
       const raw = await redis.get(`${planType}:${email}`);
       const plan = typeof raw === "string" ? JSON.parse(raw) : raw;
       return res.status(200).json({ ok: true, plan: plan || null });
     }
     if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
-    const { userEmail, plan, planType } = req.body;
-    if (!userEmail || !plan) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
-    const emailKey = userEmail.toLowerCase().trim();
+    const { plan, planType } = req.body;
+    if (!plan) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
     const keyPrefix = planType === "slipPrevention" ? "slip_plan" : "safety_plan";
-    await redis.set(`${keyPrefix}:${emailKey}`, JSON.stringify(plan));
+    await redis.set(`${keyPrefix}:${email}`, JSON.stringify(plan));
     res.status(200).json({ ok: true });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "userdata", "خطایِ سرور در safety-plan.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
