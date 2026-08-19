@@ -2,6 +2,7 @@ import { Redis } from "@upstash/redis";
 import crypto from "crypto";
 import { createSession } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 const redis = Redis.fromEnv();
 
@@ -12,6 +13,14 @@ function hashPassword(password, salt) {
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
   try {
+    const ip = getClientIp(req);
+    // حداکثر ۱۰ تلاشِ ورود در هر ۱۰ دقیقه، به‌ازایِ هر IP — جلوگیری از حدس‌زدنِ خودکارِ رمز
+    const rl = await checkRateLimit(`login:${ip}`, 10, 600);
+    if (!rl.allowed) {
+      await logEvent(LOG_LEVELS.WARN, "auth", "محدودیتِ نرخ فعال شد — تلاشِ بیش‌ازحد برایِ ورود", { ip });
+      return res.status(429).json({ error: "تعدادِ تلاش‌هایتان زیاد بوده — چند دقیقه صبر کنید" });
+    }
+
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: "ایمیل و رمزِعبور لازم است" });
     const key = `user:${email.toLowerCase().trim()}`;
