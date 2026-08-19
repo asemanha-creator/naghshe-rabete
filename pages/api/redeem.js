@@ -2,6 +2,7 @@ import { Redis } from "@upstash/redis";
 import { verifySession, verifyAdminToken } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
 import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
+import { isNonEmptyString } from "../../lib/validate";
 
 const redis = Redis.fromEnv();
 
@@ -39,7 +40,9 @@ export default async function handler(req, res) {
       }
 
       const { code, token } = req.body;
-      if (!code || !token) return res.status(400).json({ error: "کد لازم است — لطفاً وارد حساب شوید" });
+      if (!isNonEmptyString(code, 20) || !isNonEmptyString(token, 200)) {
+        return res.status(400).json({ error: "کد لازم است — لطفاً وارد حساب شوید" });
+      }
       const email = await verifySession(token);
       if (!email) return res.status(401).json({ error: "نشستِ نامعتبر — لطفاً دوباره وارد شوید" });
 
