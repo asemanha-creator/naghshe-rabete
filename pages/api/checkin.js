@@ -1,12 +1,16 @@
 import { Redis } from "@upstash/redis";
 import { verifySession } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 const redis = Redis.fromEnv();
 
 // ثبت و بازیابیِ چک‌این‌هایِ دوره‌ای — حالا با تاییدِ نشست
 export default async function handler(req, res) {
   try {
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`checkin:${ip}`, 30, 3600);
+    if (!rl.allowed) return res.status(429).json({ error: "تعدادِ درخواست‌هایتان زیاد بوده — کمی صبر کنید" });
     const token = req.method === "GET" ? req.query.token : req.body?.token;
     const email = await verifySession(token);
     if (!email) return res.status(401).json({ error: "نشستِ نامعتبر — لطفاً دوباره وارد شوید" });
