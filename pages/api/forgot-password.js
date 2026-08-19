@@ -1,6 +1,7 @@
 import { Redis } from "@upstash/redis";
 import crypto from "crypto";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 const redis = Redis.fromEnv();
 const RESET_TTL_SECONDS = 60 * 60; // ۱ ساعت
@@ -8,6 +9,14 @@ const RESET_TTL_SECONDS = 60 * 60; // ۱ ساعت
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
   try {
+    const ip = getClientIp(req);
+    // حداکثر ۳ درخواستِ بازیابی در هر ۱۵ دقیقه — جلوگیری از سیل‌کردنِ ایمیلِ یک نفر
+    const rl = await checkRateLimit(`forgot-password:${ip}`, 3, 900);
+    if (!rl.allowed) {
+      await logEvent(LOG_LEVELS.WARN, "auth", "محدودیتِ نرخ فعال شد — درخواستِ بازیابیِ رمزِ بیش‌ازحد", { ip });
+      return res.status(429).json({ error: "چند دقیقه صبر کنید و دوباره امتحان کنید" });
+    }
+
     const { email } = req.body;
     if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
     const emailKey = email.toLowerCase().trim();
