@@ -2,6 +2,7 @@ import { Redis } from "@upstash/redis";
 import { verifySession } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
 import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
+import { isNumberInRange, isValidSessionId, isOneOf } from "../../lib/validate";
 
 const redis = Redis.fromEnv();
 
@@ -13,7 +14,9 @@ export default async function handler(req, res) {
     if (!rl.allowed) return res.status(429).json({ error: "تعدادِ درخواست‌هایتان زیاد بوده — کمی صبر کنید" });
     if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
     const { token, sessionKey, phase, value } = req.body;
-    if (!sessionKey || !phase) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
+    if (!isValidSessionId(sessionKey)) return res.status(400).json({ error: "sessionKey نامعتبر است" });
+    if (!isOneOf(phase, ["before", "after"])) return res.status(400).json({ error: "phase نامعتبر است" });
+    if (!isNumberInRange(value, 1, 10)) return res.status(400).json({ error: "مقدارِ خلق باید بینِ ۱ تا ۱۰ باشد" });
 
     const email = await verifySession(token);
     if (!email) return res.status(401).json({ error: "نشستِ نامعتبر — لطفاً دوباره وارد شوید" });
