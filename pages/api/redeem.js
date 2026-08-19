@@ -1,6 +1,7 @@
 import { Redis } from "@upstash/redis";
 import { verifySession, verifyAdminToken } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 const redis = Redis.fromEnv();
 
@@ -29,6 +30,14 @@ export default async function handler(req, res) {
 
     // ---------- استفاده از کد (کاربر — حالا با نشستِ تاییدشده، نه ایمیلِ خام) ----------
     if (action === "redeem") {
+      const ip = getClientIp(req);
+      // حداکثر ۱۰ تلاش در ۱۰ دقیقه — جلوگیری از حدس‌زدنِ خودکارِ کدهایِ فعال‌سازی
+      const rl = await checkRateLimit(`redeem:${ip}`, 10, 600);
+      if (!rl.allowed) {
+        await logEvent(LOG_LEVELS.WARN, "payment", "محدودیتِ نرخ فعال شد — تلاشِ بیش‌ازحد برایِ کدِ فعال‌سازی", { ip });
+        return res.status(429).json({ error: "تعدادِ تلاش‌هایتان زیاد بوده — چند دقیقه صبر کنید" });
+      }
+
       const { code, token } = req.body;
       if (!code || !token) return res.status(400).json({ error: "کد لازم است — لطفاً وارد حساب شوید" });
       const email = await verifySession(token);
