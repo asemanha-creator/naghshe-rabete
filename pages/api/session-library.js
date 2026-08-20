@@ -5,7 +5,7 @@ import { logEvent, LOG_LEVELS } from "../../lib/logger";
 const redis = Redis.fromEnv();
 import { verifyAdminToken } from "../../lib/auth";
 
-const TREATMENT_PACKAGES_SESSIONS = { moderate: 20, advanced: 8, betrayed: 30, unfaithful: 30 };
+const TREATMENT_PACKAGES_SESSIONS = { moderate: 20, advanced: 8, betrayed: 30, unfaithful: 30, distrust: 10 };
 
 function sessionMatchesSearch(sess, query) {
   if (!query) return true;
