@@ -15,6 +15,79 @@ const WEBINAR_PACKAGE_LINK = "https://zarinp.al/your-webinar-link";
 const CONSULT_BOOKING_LINK = "tel:+989015091346"; // تا آماده‌شدنِ درگاهِ پرداخت، تماسِ مستقیم
 
 // بسته‌های درمانیِ زوج‌درمانی (ACT/EFT/گاتمن) — قیمت‌ها بر اساسِ تعرفه‌ی رسمیِ سازمانِ نظام (سطحِ دکتری) محاسبه شده‌اند
+const DISTRUST_QUIZ = [
+  {
+    q: "اگر به همسرم شک می‌کنم، حتماً او کاری اشتباه کرده که باعثِ این شک شده.",
+    options: [
+      { text: "درست است", correct: false, explain: "این باور، یکی از رایج‌ترین باورهایِ غلط است. پژوهش‌ها نشان می‌دهند بخشِ بزرگی از بدبینی، ریشه در تاریخچه‌ی فردی (دلبستگی، تجربه‌هایِ قبلی) دارد، نه لزوماً رفتارِ همسرِ فعلی. شک، همیشه «مدرک» نیست." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست است. شک می‌تواند از منابعِ کاملاً متفاوتی بیاید — گاهی از رفتارِ واقعیِ همسر، گاهی از الگوهایِ ذهنیِ قدیمی‌ترِ خودمان." },
+    ],
+  },
+  {
+    q: "چک‌کردنِ مکررِ گوشیِ همسرم، بهترین راه برایِ کاهشِ اضطرابم است.",
+    options: [
+      { text: "درست است", correct: false, explain: "برعکس! این کار فقط تسکینِ **موقت** می‌دهد. پژوهش‌هایِ روان‌شناسیِ اضطراب نشان می‌دهند این‌گونه «رفتارهایِ اطمینان‌طلبانه»، در درازمدت اضطراب را **تقویت** می‌کنند، نه کاهش — دقیقاً همان چرخه‌ای که در اختلالِ وسواسی هم دیده می‌شود." },
+      { text: "نادرست است", correct: true, explain: "درست تشخیص دادید. بازرسیِ مکرر، چرخه‌ای معیوب می‌سازد: آرامشِ کوتاه، بازگشتِ اضطرابِ قوی‌تر." },
+    ],
+  },
+  {
+    q: "اگر واقعاً به کسی اعتماد داشته باشم، هرگز کوچک‌ترین شکی به ذهنم نمی‌آید.",
+    options: [
+      { text: "درست است", correct: false, explain: "اعتماد، به‌معنایِ نبودِ کاملِ شک نیست. حتی در سالم‌ترین رابطه‌ها هم گاهی افکارِ شکاکانه می‌آیند — تفاوت در این است که فرد چطور با آن افکار برخورد می‌کند، نه اینکه اصلاً نیایند." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً. هدفِ درمان، رسیدن به «صفرِ فکرِ شکاکانه» نیست — بلکه یادگیریِ رابطه‌ی سالم‌تر با این افکار است." },
+    ],
+  },
+  {
+    q: "بدبینیِ من، فقط به رابطه‌ی فعلی‌ام مربوط است و ربطی به گذشته‌ام ندارد.",
+    options: [
+      { text: "درست است", correct: false, explain: "برایِ بسیاری از افراد، الگویِ بدبینی ریشه در تجربه‌هایِ اولیه‌یِ زندگی دارد — سبکِ دلبستگی، تجربه‌ی رهاشدن یا خیانتِ گذشته. این الگو حتی در رابطه‌ای کاملاً امن هم می‌تواند فعال شود." },
+      { text: "نادرست است", correct: true, explain: "درست است. شناختِ ریشه‌هایِ گذشته (نه برایِ سرزنش، بلکه برایِ درک)، یکی از قدم‌هایِ کلیدیِ این برنامه است." },
+    ],
+  },
+  {
+    q: "اگر شهودم به من می‌گوید چیزی درست نیست، همیشه باید بی‌چون‌وچرا به آن اعتماد کنم.",
+    options: [
+      { text: "درست است", correct: false, explain: "شهودِ واقعی و اضطرابِ مزمن، گاهی خیلی شبیه به‌نظر می‌رسند اما منشأشان فرق دارد. شهودِ واقعی معمولاً به یک رویدادِ مشخص مرتبط است؛ اضطراب، اغلب همیشگی و بدونِ محرکِ روشن است. یادگیریِ تمایزِ این دو، مهارتی قابلِ‌آموزش است." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً — نه هر احساسِ قوی، شهودِ قابلِ‌اعتماد است. تشخیصِ این تفاوت، یکی از مهارت‌هایِ اصلیِ این دوره است." },
+    ],
+  },
+  {
+    q: "صحبت‌کردن دربارهٔ نیازِ اطمینان با همسرم، نشانه‌ی ضعف است.",
+    options: [
+      { text: "درست است", correct: false, explain: "برعکس — بیانِ صادقانه‌یِ نیاز (به‌جایِ بازجویی یا سکوت)، نشانه‌ی بلوغِ عاطفی است. پژوهش‌هایِ زوج‌درمانی (از‌جمله کارِ جان گاتمن) نشان می‌دهند زوج‌هایی که می‌توانند نیازهایِ آسیب‌پذیرانه را مستقیم بیان کنند، رابطه‌هایِ پایدارتری دارند." },
+      { text: "نادرست است", correct: true, explain: "درست است. صداقتِ آسیب‌پذیرانه، از بازجویی یا سکوتِ نگران‌کننده، بسیار سالم‌تر است." },
+    ],
+  },
+  {
+    q: "بهترین راه برایِ مدیریتِ یک فکرِ شکاکانه، این است که آن را کاملاً از ذهن بیرون کنم و به آن فکر نکنم.",
+    options: [
+      { text: "درست است", correct: false, explain: "پژوهش‌هایِ روان‌شناسی (پدیده‌ی «اثرِ بازگشتِ سرکوب») نشان می‌دهند سرکوب‌کردنِ فکر، آن را قوی‌تر و مکررتر می‌کند، نه ضعیف‌تر. راهِ موثرتر، تغییرِ رابطه‌مان با فکر است (مثلِ تکنیک‌هایِ دیفیوژنِ شناختی)، نه جنگیدن با آن." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. هدف، حذفِ فکر نیست — بلکه یادگیریِ فاصله‌گرفتن از آن بدونِ باورِ کامل به آن است." },
+    ],
+  },
+  {
+    q: "اگر بدنم دچارِ اضطرابِ شدید (تپش‌قلب، تنگیِ‌نفس) شود، فقط با «فکرکردنِ درست» می‌توانم آرام شوم.",
+    options: [
+      { text: "درست است", correct: false, explain: "وقتی اضطراب به‌اوج می‌رسد، بخشِ منطقیِ مغز موقتاً «آفلاین» می‌شود. در این لحظات، ابتدا باید بدن را آرام کرد (مثلاً با تکنیک‌هایی مثلِ آبِ سرد یا تنفسِ کنترل‌شده) — و بعد سراغِ فکرها رفت." },
+      { text: "نادرست است", correct: true, explain: "درست تشخیص دادید. مدیریتِ بدن، پیش‌نیازِ مدیریتِ فکر است، به‌خصوص در اوجِ اضطراب." },
+    ],
+  },
+  {
+    q: "مرزهایِ مشخص در رابطه (مثلِ توافق بر پیام‌دادن هنگامِ دیرکردن)، همان بازرسی است.",
+    options: [
+      { text: "درست است", correct: false, explain: "این دو کاملاً متفاوت‌اند. مرزِ سالم، چیزی است که هردو طرف **آگاهانه و شفاف** توافق کرده‌اند. بازرسی، یک‌طرفه، مخفیانه، و مبتنی‌بر کنترل است. تفاوت در توافق و شفافیت است، نه در خودِ عمل." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. مرزِ توافقی، اعتمادساز است؛ بازرسیِ مخفیانه، اعتمادسوز." },
+    ],
+  },
+  {
+    q: "بدبینیِ عمیق، معمولاً با ۱۰ جلسه به‌طورِ کامل و برایِ همیشه از بین می‌رود.",
+    options: [
+      { text: "درست است", correct: false, explain: "واقع‌بینانه باشیم: بدبینیِ ریشه‌دار، به‌ندرت یک‌شبه یا حتی در ۱۰ جلسه کاملاً محو می‌شود. هدفِ این برنامه، دادنِ **ابزارِ واقعی** برایِ مدیریتِ آن است — نه وعده‌ی درمانِ فوری و همیشگی." },
+      { text: "نادرست است", correct: true, explain: "درست است، و این صداقت مهم است. تغییرِ الگوهایِ عمیق، زمان می‌برد؛ اما ابزارهایی که یاد می‌گیرید، واقعی و ماندگارند." },
+    ],
+  },
+];
+
 const TREATMENT_PACKAGES = {
   moderate: {
     label: "بستهٔ افزایشِ وفاداری (واکسیناسیونِ زندگیِ زناشویی)",
@@ -49,7 +122,7 @@ const TREATMENT_PACKAGES = {
     note: "درمانِ فردیِ کاملِ کسی که خیانت کرده — ۵ فاز، چندرویکردی (ACT، طرحواره‌درمانی، IFS)، با تمرکزِ ویژه بر پردازشِ سالمِ گناه، فهمِ ریشه‌ها، و ساختنِ نسخه‌ی قابلِ‌اعتمادتر",
   },
   distrust: {
-    label: "بستهٔ غلبه بر بی‌اعتمادی در رابطه (رایگان)",
+    label: "بستهٔ درمانِ بدبینی در رابطه (رایگان)",
     track: "distrust",
     sessions: 10,
     price: 0,
@@ -376,7 +449,7 @@ const TOPICS = [
   { key: "assessments", title: "آزمون‌ها", subtitle: "کجای راهم؟", icon: "📝", core: "#6B7A5E", bg: "#E5E8DC", blobA: "#9CAA8C", blobB: "#CCD6BE", enabled: true },
   { key: "premarriage", title: "پیش از ازدواج", subtitle: "آماده‌ام؟", icon: "💍", core: "#6B4A35", bg: "#EDE0D0", blobA: "#A9825E", blobB: "#D9C4A8", enabled: false },
   { key: "aggression", title: "پرخاشگری", subtitle: "کنترلِ خشم", icon: "🔥", core: "#3D5A5E", bg: "#DCE6E4", blobA: "#7A9C9E", blobB: "#BBD0CF", enabled: false },
-  { key: "distrust", title: "بی‌اعتمادی", subtitle: "بدبینی در رابطه", icon: "🔍", core: "#9C6B2F", bg: "#F2E4C8", blobA: "#C99B4F", blobB: "#E4C989", enabled: true },
+  { key: "distrust", title: "بدبینی", subtitle: "", icon: "🔍", core: "#9C6B2F", bg: "#F2E4C8", blobA: "#C99B4F", blobB: "#E4C989", enabled: true },
   { key: "anxiety", title: "اضطراب", subtitle: "دلواپسیِ روزمره", icon: "🌊", core: "#A66456", bg: "#F2DFD6", blobA: "#C9938A", blobB: "#E6C4BC", enabled: false },
   { key: "mood", title: "افسردگی", subtitle: "خلقِ پایین", icon: "🌫️", core: "#17383D", bg: "#DDE5E0", blobA: "#5C7E7A", blobB: "#AEC2BC", enabled: false },
   { key: "attention", title: "تمرکز و توجه", subtitle: "پراکندگیِ ذهن", icon: "🎯", core: "#B8873A", bg: "#F5EAD0", blobA: "#D4B361", blobB: "#EBD79A", enabled: false },
@@ -2622,6 +2695,97 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
   );
 }
 
+// آزمونِ آگاهی‌بخشِ بدبینی — نه پرسشنامه‌ی خودارزیابی، بلکه سنجشِ باورهایِ رایج با توضیحِ روشنگرانه
+function DistrustAwarenessQuiz({ onBack }) {
+  const [qIndex, setQIndex] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [score, setScore] = useState(0);
+  const [finished, setFinished] = useState(false);
+
+  const current = DISTRUST_QUIZ[qIndex];
+
+  function pick(opt, idx) {
+    if (selected !== null) return;
+    setSelected(idx);
+    if (opt.correct) setScore((s) => s + 1);
+  }
+
+  function next() {
+    if (qIndex + 1 >= DISTRUST_QUIZ.length) {
+      setFinished(true);
+    } else {
+      setQIndex((i) => i + 1);
+      setSelected(null);
+    }
+  }
+
+  function restart() {
+    setQIndex(0); setSelected(null); setScore(0); setFinished(false);
+  }
+
+  if (finished) {
+    return (
+      <Card>
+        <p style={{ fontSize: 30, textAlign: "center", marginBottom: 8 }}>🎯</p>
+        <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 10 }}>نتیجه‌ی آزمونِ آگاهی</h2>
+        <p style={{ fontSize: 13, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>
+          از {DISTRUST_QUIZ.length} سوال، به <b style={{ color: "#4C8778" }}>{score}</b> موردِ درست پاسخ دادید.
+        </p>
+        <p style={{ fontSize: 12, color: "#5A7080", lineHeight: 1.9, textAlign: "center", marginBottom: 20 }}>
+          {score >= 8
+            ? "آگاهیِ خوبی از دام‌هایِ فکریِ رایجِ بدبینی دارید — این خودش یک قدمِ بزرگ است."
+            : score >= 5
+            ? "بخشی از این باورهایِ رایج را می‌شناسید — ادامه‌ی جلسات، تصویرِ کامل‌تری می‌سازد."
+            : "جایِ خوبی برایِ شروع هستید — این ۱۰ جلسه دقیقاً برایِ روشن‌کردنِ همین باورها طراحی شده‌اند."}
+        </p>
+        <button onClick={restart} style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
+          دوباره امتحان کنم
+        </button>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12.5 }}>
+          بازگشت
+        </button>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <p style={{ fontSize: 10.5, color: "#9C6B2F", fontWeight: 700, marginBottom: 10 }}>سوال {qIndex + 1} از {DISTRUST_QUIZ.length}</p>
+      <div style={{ height: 5, background: "#F2E4C8", borderRadius: 999, marginBottom: 16, overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${((qIndex + (selected !== null ? 1 : 0)) / DISTRUST_QUIZ.length) * 100}%`, background: "#9C6B2F", transition: "width 0.3s" }} />
+      </div>
+      <p style={{ fontSize: 14.5, fontWeight: 700, color: "#1F2D3D", lineHeight: 1.9, marginBottom: 18 }}>{current.q}</p>
+      {current.options.map((opt, idx) => {
+        const isSelected = selected === idx;
+        const showResult = selected !== null;
+        const bg = !showResult ? "#fff" : opt.correct ? "#F3F8F5" : isSelected ? "#FBEEEA" : "#fff";
+        const border = !showResult ? "#DCE8F0" : opt.correct ? "#CFE6D8" : isSelected ? "#E8C9BC" : "#EEF3F6";
+        return (
+          <div key={idx}>
+            <button onClick={() => pick(opt, idx)} disabled={showResult}
+              style={{ width: "100%", textAlign: "right", padding: "12px 14px", borderRadius: 12, border: `1.5px solid ${border}`, background: bg, marginBottom: 8, cursor: showResult ? "default" : "pointer", fontSize: 13, fontWeight: 600, color: "#1F2D3D" }}>
+              {showResult && (opt.correct ? "✅ " : isSelected ? "❌ " : "")}{opt.text}
+            </button>
+            {showResult && isSelected && (
+              <div style={{ background: opt.correct ? "#F3F8F5" : "#FBF3E2", borderRadius: 10, padding: "10px 12px", marginBottom: 10, fontSize: 12, color: "#3A4A52", lineHeight: 1.9 }}>
+                💡 {opt.explain}
+              </div>
+            )}
+          </div>
+        );
+      })}
+      {selected !== null && (
+        <button onClick={next} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #C99B4F, #9C6B2F)", color: "#fff", fontWeight: 700, cursor: "pointer", marginTop: 10 }}>
+          {qIndex + 1 >= DISTRUST_QUIZ.length ? "دیدنِ نتیجه" : "سوالِ بعدی ←"}
+        </button>
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>
+        بازگشت
+      </button>
+    </Card>
+  );
+}
+
 function ChatWidget({ scores, overall, mode }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -2997,10 +3161,29 @@ function App() {
     fetchWithTimeout(`/api/session-full?${params.toString()}`)
       .then((r) => r.json())
       .then((d) => {
-        if (d.ok) { setFetchedSessionData(d.session); setFetchedSessionUnlocked(d.unlocked); }
+        if (d.ok) {
+          setFetchedSessionData(d.session);
+          setFetchedSessionUnlocked(d.unlocked);
+          if (d.unlocked) markSessionViewed(viewingSession.pkgKey, viewingSession.num);
+        }
       })
       .catch(() => {});
   }, [screen, viewingSession, sessionLevel, user, isAdmin]);
+
+  // ثبتِ «دیده‌شدنِ» یک جلسه — برایِ ماژول‌هایِ ترتیبی (مثلِ بی‌اعتمادی)
+  function getViewedSessions() {
+    try { return JSON.parse(localStorage.getItem("naghshe_viewed_sessions")) || []; } catch (e) { return []; }
+  }
+  function markSessionViewed(pkgKey, num) {
+    try {
+      const sid = sessionId(pkgKey, num);
+      const list = getViewedSessions();
+      if (!list.includes(sid)) {
+        list.push(sid);
+        localStorage.setItem("naghshe_viewed_sessions", JSON.stringify(list));
+      }
+    } catch (e) {}
+  }
 
 
   async function adminUnlockSession(pkgKey, num) {
@@ -3977,6 +4160,10 @@ function App() {
           </Card>
         )}
 
+        {screen === "distrustQuiz" && (
+          <DistrustAwarenessQuiz onBack={() => setScreen("sessionLibrary")} />
+        )}
+
         {screen === "sessionLibrary" && (
           <Card>
             {isAdmin && (
@@ -4048,6 +4235,13 @@ function App() {
               </div>
             )}
 
+            {libraryPkg === "distrust" && (
+              <button onClick={() => setScreen("distrustQuiz")}
+                style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #9C6B2F", background: "#FBF3E2", color: "#9C6B2F", fontWeight: 700, cursor: "pointer", marginBottom: 14, fontSize: 12.5 }}>
+                🎯 آزمونِ آگاهی: چقدر باورهایِ رایجِ بدبینی را می‌شناسید؟
+              </button>
+            )}
+
             <p style={{ fontSize: 11, color: "#5A7080", textAlign: "center", marginBottom: 14, lineHeight: 1.8 }}>
               می‌توانید کلِ بسته را یک‌جا بخرید، یا فقط همان جلسه‌ای که به آن نیاز دارید را <b>تکی</b> تهیه کنید.
             </p>
@@ -4084,7 +4278,12 @@ function App() {
                   </p>
                 );
               }
-              return items.map(({ num, title, approach, unlocked, freePreview }) => {
+              const viewedSessions = getViewedSessions();
+              return items.map((item) => {
+              const { num, title, approach, freePreview } = item;
+              // برایِ بستهٔ «بی‌اعتمادی»: قفلِ ترتیبی — هر جلسه فقط بعدِ از دیدنِ جلسه‌ی قبلی باز می‌شود
+              const sequentiallyUnlocked = libraryPkg !== "distrust" || num === 1 || viewedSessions.includes(sessionId(libraryPkg, num - 1));
+              const unlocked = item.unlocked && sequentiallyUnlocked;
               return (
                 <div key={num} style={{ marginBottom: 8 }}>
                 <div style={{
@@ -4108,6 +4307,10 @@ function App() {
                       style={{ padding: "7px 12px", borderRadius: 10, border: "none", background: "#4C8778", color: "#fff", fontWeight: 700, fontSize: 11, cursor: "pointer", flexShrink: 0 }}>
                       مشاهده
                     </button>
+                  ) : libraryPkg === "distrust" ? (
+                    <span style={{ padding: "7px 10px", borderRadius: 10, border: "1px solid #E8D8B0", color: "#9C8355", background: "#FBF3E2", fontWeight: 700, fontSize: 10, flexShrink: 0, textAlign: "center" }}>
+                      🔒 بعدِ جلسه‌ی {num - 1}
+                    </span>
                   ) : (
                     <button onClick={() => startZarinpalPayment(libraryPkg, num)} disabled={paymentBusy}
                       style={{ padding: "7px 10px", borderRadius: 10, border: "1px solid #17383D", color: "#17383D", background: "#fff", fontWeight: 700, fontSize: 10.5, flexShrink: 0, cursor: "pointer", textAlign: "center" }}>
