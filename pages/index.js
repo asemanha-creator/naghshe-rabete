@@ -2696,6 +2696,189 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
 }
 
 // آزمونِ آگاهی‌بخشِ بدبینی — نه پرسشنامه‌ی خودارزیابی، بلکه سنجشِ باورهایِ رایج با توضیحِ روشنگرانه
+// شاخص‌هایِ ۸گانه‌یِ بدبینی — همان پرسش‌نامه‌ی جلسه‌ی اول، برایِ سنجشِ مکرر
+const DISTRUST_INDICATORS = [
+  "چقدر از وقتِ روزانه‌ام صرفِ نگرانی دربارهٔ وفاداریِ همسرم می‌شود؟",
+  "چقدر سخت است این نگرانی‌ها را کنار بگذارم؟",
+  "چقدر این نگرانی‌ها به کیفیتِ رابطه‌مان آسیب زده؟",
+  "چقدر رفتارِ همسرم را محدود می‌کنم؟",
+  "چقدر رفتارهایِ او را بازرسی می‌کنم؟",
+  "چقدر حتی وقتی همسرم شفاف است، بازهم حسِ اطمینان نمی‌کنم؟",
+  "چقدر این الگو در رابطه‌هایِ قبلی‌ام هم تکرار شده؟",
+  "چقدر این نگرانی‌ها با علائمِ فیزیکی همراه است؟",
+];
+
+// پایشِ افکار — ثبتِ افکارِ منفی/مثبت/نشخوارِ فکری با ساعتِ دقیق
+function ThoughtTracker({ onBack }) {
+  const storageKey = "naghshe_distrust_thoughts";
+  const [entries, setEntries] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
+  });
+  const [note, setNote] = useState("");
+  const [pendingType, setPendingType] = useState(null);
+
+  function logThought(type) {
+    setPendingType(type);
+  }
+  function confirmLog() {
+    const entry = { type: pendingType, note: note.trim(), ts: Date.now() };
+    const next = [entry, ...entries];
+    setEntries(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    setNote(""); setPendingType(null);
+  }
+
+  const today = new Date().toDateString();
+  const todayEntries = entries.filter((e) => new Date(e.ts).toDateString() === today);
+  const last7Days = entries.filter((e) => Date.now() - e.ts < 7 * 86400000);
+  const counts = { negative: 0, positive: 0, rumination: 0 };
+  last7Days.forEach((e) => { counts[e.type] = (counts[e.type] || 0) + 1; });
+
+  // ساعاتِ پرتکرارِ افکارِ منفی — برایِ کمک به شناساییِ الگو
+  const negHours = last7Days.filter((e) => e.type === "negative").map((e) => new Date(e.ts).getHours());
+  const hourFreq = {};
+  negHours.forEach((h) => { hourFreq[h] = (hourFreq[h] || 0) + 1; });
+  const peakHour = Object.entries(hourFreq).sort((a, b) => b[1] - a[1])[0];
+
+  const typeLabels = { negative: "😟 فکرِ منفی", positive: "😊 فکرِ مثبت", rumination: "🔄 نشخوارِ فکری" };
+  const typeColors = { negative: "#A6432F", positive: "#4C8778", rumination: "#B8873A" };
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>📝 پایشِ افکار</h2>
+      <p style={{ fontSize: 11.5, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>هروقت فکرِ منفی، مثبت، یا نشخوارِ فکری داشتید، همین‌جا ثبت کنید.</p>
+
+      {pendingType ? (
+        <div style={{ background: "#F7FAFC", borderRadius: 12, padding: "14px", marginBottom: 14 }}>
+          <p style={{ fontSize: 12.5, fontWeight: 700, marginBottom: 8 }}>{typeLabels[pendingType]} — یادداشتِ کوتاه (اختیاری)</p>
+          <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="مثلاً: وقتی دیر جواب داد..."
+            style={{ width: "100%", minHeight: 60, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, marginBottom: 8, boxSizing: "border-box" }} />
+          <div style={{ display: "flex", gap: 8 }}>
+            <button onClick={confirmLog} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "none", background: typeColors[pendingType], color: "#fff", fontWeight: 700, cursor: "pointer" }}>ثبت</button>
+            <button onClick={() => { setPendingType(null); setNote(""); }} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "1px solid #DCE8F0", background: "#fff", color: "#8CA3B0", cursor: "pointer" }}>انصراف</button>
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 16 }}>
+          <button onClick={() => logThought("negative")} style={{ padding: "12px 6px", borderRadius: 12, border: "1.5px solid #E8C9BC", background: "#FBEEEA", color: "#A6432F", fontWeight: 700, fontSize: 11, cursor: "pointer" }}>😟<br />منفی</button>
+          <button onClick={() => logThought("positive")} style={{ padding: "12px 6px", borderRadius: 12, border: "1.5px solid #CFE6D8", background: "#F3F8F5", color: "#4C8778", fontWeight: 700, fontSize: 11, cursor: "pointer" }}>😊<br />مثبت</button>
+          <button onClick={() => logThought("rumination")} style={{ padding: "12px 6px", borderRadius: 12, border: "1.5px solid #E8D8B0", background: "#FBF3E2", color: "#B8873A", fontWeight: 700, fontSize: 11, cursor: "pointer" }}>🔄<br />نشخوار</button>
+        </div>
+      )}
+
+      <div style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 14 }}>
+        <p style={{ fontSize: 12, fontWeight: 700, color: "#7A5B2E", marginBottom: 6 }}>📊 خلاصه‌ی ۷ روزِ اخیر</p>
+        <p style={{ fontSize: 11.5, color: "#5A4020", margin: "0 0 3px" }}>😟 افکارِ منفی: {counts.negative} · 😊 افکارِ مثبت: {counts.positive} · 🔄 نشخوار: {counts.rumination}</p>
+        {peakHour && counts.negative >= 3 && (
+          <p style={{ fontSize: 11, color: "#5A4020", marginTop: 6 }}>⏰ افکارِ منفی‌تان بیشتر حوالیِ ساعتِ {peakHour[0]}:۰۰ رخ می‌دهند — شاید بدانید در آن ساعت معمولاً چه‌کار می‌کنید؟</p>
+        )}
+      </div>
+
+      {todayEntries.length > 0 && (
+        <>
+          <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", marginBottom: 8 }}>امروز</p>
+          {todayEntries.map((e, i) => (
+            <div key={i} style={{ background: "#F7FAFC", borderRadius: 10, padding: "8px 12px", marginBottom: 6 }}>
+              <p style={{ fontSize: 11.5, fontWeight: 700, color: typeColors[e.type], margin: "0 0 2px" }}>
+                {typeLabels[e.type]} · {new Date(e.ts).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" })}
+              </p>
+              {e.note && <p style={{ fontSize: 11, color: "#5A7080", margin: 0 }}>{e.note}</p>}
+            </div>
+          ))}
+        </>
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>
+        بازگشت
+      </button>
+    </Card>
+  );
+}
+
+// بازسنجیِ دوره‌ای — پیشنهاد می‌شود هفته‌ای دو بار برایِ دیدنِ روند
+function BiweeklyAssessment({ onBack }) {
+  const storageKey = "naghshe_distrust_assessments";
+  const [history, setHistory] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
+  });
+  const [answers, setAnswers] = useState(Array(8).fill(null));
+  const [showForm, setShowForm] = useState(history.length === 0);
+
+  function submit() {
+    if (answers.some((a) => a === null)) return;
+    const total = answers.reduce((a, b) => a + b, 0);
+    const entry = { answers, total, ts: Date.now() };
+    const next = [entry, ...history];
+    setHistory(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    setAnswers(Array(8).fill(null));
+    setShowForm(false);
+  }
+
+  const last = history[0];
+  const prev = history[1];
+  let trendMsg = null, trendColor = "#8CA3B0";
+  if (last && prev) {
+    const diff = last.total - prev.total;
+    if (diff <= -3) { trendMsg = `${Math.abs(diff)} نمره بهتر از سنجشِ قبلی — روندِ خوبی دارید 🌱`; trendColor = "#4C8778"; }
+    else if (diff >= 3) { trendMsg = `${diff} نمره بالاتر از سنجشِ قبلی — ممکن است هفته‌ی سختی بوده؛ به جلسات و پایشِ افکار برگردید`; trendColor = "#A6432F"; }
+    else { trendMsg = "نسبتاً پایدار نسبت به سنجشِ قبلی"; trendColor = "#B8873A"; }
+  }
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>📈 بازسنجیِ شاخص‌هایِ بدبینی</h2>
+      <p style={{ fontSize: 11.5, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>پیشنهاد می‌شود این را هفته‌ای ۲ بار (مثلاً یکشنبه و پنجشنبه) پر کنید.</p>
+
+      {!showForm && last && (
+        <div style={{ background: "#F3F8F5", borderRadius: 12, padding: "14px", marginBottom: 14 }}>
+          <p style={{ fontSize: 12, color: "#4C8778", fontWeight: 700, marginBottom: 4 }}>آخرین سنجش: {new Date(last.ts).toLocaleDateString("fa-IR")}</p>
+          <p style={{ fontSize: 20, fontWeight: 800, color: "#1F2D3D", margin: "4px 0" }}>{last.total} / ۳۲</p>
+          {trendMsg && <p style={{ fontSize: 12, color: trendColor, fontWeight: 700, marginTop: 6 }}>{trendMsg}</p>}
+          <button onClick={() => setShowForm(true)} style={{ width: "100%", marginTop: 10, padding: "10px", borderRadius: 10, border: "1px solid #4C8778", background: "#fff", color: "#4C8778", fontWeight: 700, cursor: "pointer" }}>
+            سنجشِ جدید
+          </button>
+        </div>
+      )}
+
+      {showForm && (
+        <>
+          {DISTRUST_INDICATORS.map((q, i) => (
+            <div key={i} style={{ marginBottom: 14 }}>
+              <p style={{ fontSize: 12.5, color: "#1F2D3D", marginBottom: 6 }}>{i + 1}. {q}</p>
+              <div style={{ display: "flex", gap: 6 }}>
+                {[0, 1, 2, 3, 4].map((v) => (
+                  <button key={v} onClick={() => { const a = [...answers]; a[i] = v; setAnswers(a); }}
+                    style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1.5px solid ${answers[i] === v ? "#9C6B2F" : "#DCE8F0"}`, background: answers[i] === v ? "#9C6B2F" : "#fff", color: answers[i] === v ? "#fff" : "#5A7080", fontWeight: 700, fontSize: 12, cursor: "pointer" }}>
+                    {v}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+          <button onClick={submit} disabled={answers.some((a) => a === null)}
+            style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #C99B4F, #9C6B2F)", color: "#fff", fontWeight: 700, cursor: "pointer", opacity: answers.some((a) => a === null) ? 0.5 : 1 }}>
+            ثبتِ سنجش
+          </button>
+        </>
+      )}
+
+      {history.length > 1 && !showForm && (
+        <>
+          <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", margin: "16px 0 8px" }}>تاریخچه</p>
+          {history.slice(0, 8).map((h, i) => (
+            <p key={i} style={{ fontSize: 11.5, color: "#5A7080", margin: "0 0 4px" }}>
+              {new Date(h.ts).toLocaleDateString("fa-IR")} — {h.total}/۳۲
+            </p>
+          ))}
+        </>
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>
+        بازگشت
+      </button>
+    </Card>
+  );
+}
+
 function DistrustAwarenessQuiz({ onBack }) {
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState(null);
@@ -3087,6 +3270,16 @@ function App() {
   const [sessionLevel, setSessionLevel] = useState("excellent");
   const [fetchedSessionData, setFetchedSessionData] = useState(null);
   const [fetchedSessionUnlocked, setFetchedSessionUnlocked] = useState(true);
+  const [hwTick, setHwTick] = useState(0); // فقط برایِ اجبارِ رندرِ دوباره بعدِ تیک‌زدنِ تکالیف
+  function toggleHomework(hwKey, idx, taskTitles) {
+    try {
+      const done = JSON.parse(localStorage.getItem(hwKey)) || Array(taskTitles.length).fill(false);
+      done[idx] = !done[idx];
+      localStorage.setItem(hwKey, JSON.stringify(done));
+      localStorage.setItem(hwKey + "_titles", JSON.stringify(taskTitles));
+    } catch (e) {}
+    setHwTick((t) => t + 1);
+  }
   const [suggestedLevel, setSuggestedLevel] = useState(null);
 
   async function loadUnlockedSessions() {
@@ -4163,6 +4356,12 @@ function App() {
         {screen === "distrustQuiz" && (
           <DistrustAwarenessQuiz onBack={() => setScreen("sessionLibrary")} />
         )}
+        {screen === "distrustThoughts" && (
+          <ThoughtTracker onBack={() => setScreen("sessionLibrary")} />
+        )}
+        {screen === "distrustAssessment" && (
+          <BiweeklyAssessment onBack={() => setScreen("sessionLibrary")} />
+        )}
 
         {screen === "sessionLibrary" && (
           <Card>
@@ -4236,10 +4435,20 @@ function App() {
             )}
 
             {libraryPkg === "distrust" && (
-              <button onClick={() => setScreen("distrustQuiz")}
-                style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #9C6B2F", background: "#FBF3E2", color: "#9C6B2F", fontWeight: 700, cursor: "pointer", marginBottom: 14, fontSize: 12.5 }}>
-                🎯 آزمونِ آگاهی: چقدر باورهایِ رایجِ بدبینی را می‌شناسید؟
-              </button>
+              <>
+                <button onClick={() => setScreen("distrustAssessment")}
+                  style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #9C6B2F", background: "#FBF3E2", color: "#9C6B2F", fontWeight: 700, cursor: "pointer", marginBottom: 8, fontSize: 12.5 }}>
+                  📈 بازسنجیِ شاخص‌هایِ بدبینی (پیشنهاد: هفته‌ای ۲ بار)
+                </button>
+                <button onClick={() => setScreen("distrustThoughts")}
+                  style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #9C6B2F", background: "#fff", color: "#9C6B2F", fontWeight: 700, cursor: "pointer", marginBottom: 8, fontSize: 12.5 }}>
+                  📝 پایشِ افکار (منفی / مثبت / نشخوارِ فکری)
+                </button>
+                <button onClick={() => setScreen("distrustQuiz")}
+                  style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #9C6B2F", background: "#fff", color: "#9C6B2F", fontWeight: 700, cursor: "pointer", marginBottom: 14, fontSize: 12.5 }}>
+                  🎯 آزمونِ آگاهی: چقدر باورهایِ رایجِ بدبینی را می‌شناسید؟
+                </button>
+              </>
             )}
 
             <p style={{ fontSize: 11, color: "#5A7080", textAlign: "center", marginBottom: 14, lineHeight: 1.8 }}>
@@ -4391,6 +4600,22 @@ function App() {
             else if (num <= 3) setSuggestedLevel("advanced");
             else setSuggestedLevel("excellent");
           }
+          // استخراجِ خودکارِ «تکالیف» از بخش‌هایِ 🧰 — فقط برایِ ماژولِ «بدبینی» استفاده می‌شود
+          const isDistrust = viewingSession.pkgKey === "distrust";
+          const taskTitles = isDistrust ? sess.body.filter((b) => b.type === "h" && b.text.startsWith("🧰")).map((b) => b.text) : [];
+          const hwKey = `naghshe_distrust_hw_${sessKey}`;
+          const prevHwKey = viewingSession.num > 1 ? `naghshe_distrust_hw_${sessionId(viewingSession.pkgKey, viewingSession.num - 1)}` : null;
+          let prevRecap = null;
+          if (isDistrust && prevHwKey) {
+            try {
+              const prevDone = JSON.parse(localStorage.getItem(prevHwKey)) || [];
+              const prevTitles = JSON.parse(localStorage.getItem(prevHwKey + "_titles")) || [];
+              if (prevTitles.length) {
+                const doneCount = prevDone.filter(Boolean).length;
+                prevRecap = { doneCount, total: prevTitles.length, titles: prevTitles, done: prevDone };
+              }
+            } catch (e) {}
+          }
           // چک‌لیست و پیام‌هایِ هشدار/تماس همیشه نمایان می‌مانند (نه پشتِ کشویی)؛ بقیه بر اساسِ تیتر گروه‌بندی می‌شوند
           const alwaysVisible = sess.body.filter((b) => b.type === "checklist" || b.type === "callout");
           const groupable = sess.body.filter((b) => b.type !== "checklist" && b.type !== "callout");
@@ -4402,6 +4627,21 @@ function App() {
           });
           return (
             <div style={{ position: "relative" }}>
+              {prevRecap && (
+                <div style={{ background: "#FBF3E2", border: "1px solid #E8D8B0", borderRadius: 14, padding: "14px", marginBottom: 14 }}>
+                  <p style={{ fontSize: 12.5, fontWeight: 700, color: "#7A5B2E", marginBottom: 8 }}>
+                    📋 مرورِ تکالیفِ جلسه‌ی قبل ({prevRecap.doneCount} از {prevRecap.total} انجام شد)
+                  </p>
+                  {prevRecap.titles.map((t, i) => (
+                    <p key={i} style={{ fontSize: 11.5, color: prevRecap.done[i] ? "#4C8778" : "#A6432F", margin: "0 0 4px" }}>
+                      {prevRecap.done[i] ? "✅" : "◻"} {t.replace("🧰 ", "")}
+                    </p>
+                  ))}
+                  {prevRecap.doneCount < prevRecap.total && (
+                    <p style={{ fontSize: 11, color: "#8A6B3E", marginTop: 6 }}>بدونِ نگرانی — می‌توانید هروقت خواستید به تمرین‌هایِ انجام‌نشده برگردید.</p>
+                  )}
+                </div>
+              )}
               {user?.email && (
                 <div style={{
                   position: "absolute", inset: 0, pointerEvents: "none", zIndex: 5, overflow: "hidden",
@@ -4498,6 +4738,34 @@ function App() {
                   </div>
                 )
               )}
+
+              {isDistrust && taskTitles.length > 0 && (() => {
+                let done = [];
+                try { done = JSON.parse(localStorage.getItem(hwKey)) || Array(taskTitles.length).fill(false); } catch (e) { done = Array(taskTitles.length).fill(false); }
+                if (done.length !== taskTitles.length) done = Array(taskTitles.length).fill(false);
+                try { localStorage.setItem(hwKey + "_titles", JSON.stringify(taskTitles)); } catch (e) {}
+                const doneCount = done.filter(Boolean).length;
+                return (
+                  <div style={{ background: "#F3F8F5", border: "1px solid #CFE6D8", borderRadius: 14, padding: "14px", marginBottom: 14 }}>
+                    <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 8 }}>
+                      ✅ چک‌لیستِ تکالیفِ این جلسه ({doneCount} از {taskTitles.length})
+                    </p>
+                    {taskTitles.map((t, i) => (
+                      <label key={i} onClick={() => toggleHomework(hwKey, i, taskTitles)}
+                        style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer", marginBottom: 8 }}>
+                        <span style={{
+                          width: 18, height: 18, borderRadius: 5, flexShrink: 0, marginTop: 1,
+                          border: `1.5px solid ${done[i] ? "#4C8778" : "#C9DEE8"}`, background: done[i] ? "#4C8778" : "#fff",
+                          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff",
+                        }}>{done[i] ? "✓" : ""}</span>
+                        <span style={{ fontSize: 12, color: done[i] ? "#8CA3B0" : "#3A4A52", textDecoration: done[i] ? "line-through" : "none" }}>
+                          {t.replace("🧰 ", "")}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                );
+              })()}
 
               <MoodRating sessionKey={sessKey} phase="after" />
             </Card>
@@ -6110,3 +6378,4 @@ export default function AppWithErrorBoundary() {
     </ErrorBoundary>
   );
 }
+وو
