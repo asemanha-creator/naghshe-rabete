@@ -13,7 +13,8 @@ export default async function handler(req, res) {
     if (!pkgKey || !num) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
 
     const isAdmin = await verifyAdminToken(adminToken);
-    let unlocked = isAdmin || Number(num) === 1;
+    // بستهٔ «بی‌اعتمادی» کاملاً رایگان است — همه‌ی جلساتش بدونِ نیازِ خرید باز است
+    let unlocked = isAdmin || Number(num) === 1 || pkgKey === "distrust";
     if (!unlocked && email) {
       const raw = (await redis.get(`unlocked:${email.toLowerCase().trim()}`)) || [];
       const list = typeof raw === "string" ? JSON.parse(raw) : raw;
