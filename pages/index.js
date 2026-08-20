@@ -48,6 +48,14 @@ const TREATMENT_PACKAGES = {
     inPersonEquivalent: 56250000,
     note: "درمانِ فردیِ کاملِ کسی که خیانت کرده — ۵ فاز، چندرویکردی (ACT، طرحواره‌درمانی، IFS)، با تمرکزِ ویژه بر پردازشِ سالمِ گناه، فهمِ ریشه‌ها، و ساختنِ نسخه‌ی قابلِ‌اعتمادتر",
   },
+  distrust: {
+    label: "بستهٔ غلبه بر بی‌اعتمادی در رابطه (رایگان)",
+    track: "distrust",
+    sessions: 10,
+    price: 0,
+    inPersonEquivalent: 18750000,
+    note: "برنامه‌ی کاملاً رایگانِ ۱۰جلسه‌ای، چندرویکردی (سی‌بی‌تی، اکت، DBT، EFT، طرحواره‌درمانی، IFS، گاتمن) — برایِ کسانی که با شکِ مداوم یا اضطرابِ دائمی دربارهٔ وفاداریِ همسرشان دست‌وپنجه نرم می‌کنند",
+  },
 };
 function toman(n) {
   return n.toLocaleString("fa-IR") + " تومان";
@@ -368,7 +376,7 @@ const TOPICS = [
   { key: "assessments", title: "آزمون‌ها", subtitle: "کجای راهم؟", icon: "📝", core: "#6B7A5E", bg: "#E5E8DC", blobA: "#9CAA8C", blobB: "#CCD6BE", enabled: true },
   { key: "premarriage", title: "پیش از ازدواج", subtitle: "آماده‌ام؟", icon: "💍", core: "#6B4A35", bg: "#EDE0D0", blobA: "#A9825E", blobB: "#D9C4A8", enabled: false },
   { key: "aggression", title: "پرخاشگری", subtitle: "کنترلِ خشم", icon: "🔥", core: "#3D5A5E", bg: "#DCE6E4", blobA: "#7A9C9E", blobB: "#BBD0CF", enabled: false },
-  { key: "distrust", title: "بی‌اعتمادی", subtitle: "بدبینی در رابطه", icon: "🔍", core: "#9C6B2F", bg: "#F2E4C8", blobA: "#C99B4F", blobB: "#E4C989", enabled: false },
+  { key: "distrust", title: "بی‌اعتمادی", subtitle: "بدبینی در رابطه", icon: "🔍", core: "#9C6B2F", bg: "#F2E4C8", blobA: "#C99B4F", blobB: "#E4C989", enabled: true },
   { key: "anxiety", title: "اضطراب", subtitle: "دلواپسیِ روزمره", icon: "🌊", core: "#A66456", bg: "#F2DFD6", blobA: "#C9938A", blobB: "#E6C4BC", enabled: false },
   { key: "mood", title: "افسردگی", subtitle: "خلقِ پایین", icon: "🌫️", core: "#17383D", bg: "#DDE5E0", blobA: "#5C7E7A", blobB: "#AEC2BC", enabled: false },
   { key: "attention", title: "تمرکز و توجه", subtitle: "پراکندگیِ ذهن", icon: "🎯", core: "#B8873A", bg: "#F5EAD0", blobA: "#D4B361", blobB: "#EBD79A", enabled: false },
@@ -2747,6 +2755,7 @@ function App() {
     else if (key === "aboutUs") setScreen("aboutUs");
     else if (key === "consultCall") setScreen("feedback");
     else if (key === "slipPrevention") setScreen("slipPrevention");
+    else if (key === "distrust") openSessionLibrary("distrust");
   }
   useEffect(() => {
     try {
@@ -3135,6 +3144,9 @@ function App() {
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authName, setAuthName] = useState("");
+  const [authPhone, setAuthPhone] = useState("");
+  const [otpStep, setOtpStep] = useState("phone"); // "phone" | "code"
+  const [otpCode, setOtpCode] = useState("");
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotMsg, setForgotMsg] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -3155,36 +3167,37 @@ function App() {
     try { localStorage.removeItem("naghshe_user"); } catch (e) {}
   }
 
-  async function doSignup() {
+  async function sendOtpCode() {
     if (!privacyConsent) { setAuthErr("لطفاً ابتدا با شرایطِ حریمِ خصوصی موافقت کنید."); return; }
+    if (!/^09\d{9}$/.test(authPhone)) { setAuthErr("شماره‌موبایل باید به‌فرمتِ ۰۹xxxxxxxxx باشد."); return; }
     setAuthErr(""); setAuthBusy(true);
     try {
-      const r = await fetchWithTimeout("/api/signup", {
+      const r = await fetchWithTimeout("/api/send-otp", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: authEmail, password: authPassword, name: authName }),
+        body: JSON.stringify({ phone: authPhone }),
       });
       const data = await r.json();
-      if (!r.ok) throw new Error(data.error || "خطا در ثبت‌نام");
-      setUser({ email: data.email, name: data.name, token: data.token });
-      localStorage.setItem("naghshe_user", JSON.stringify({ email: data.email, name: data.name, token: data.token }));
-      setScreen("start");
-    } catch (e) { setAuthErr(`${e.name || "Error"}: ${e.message} ${e.stack ? "| " + e.stack.split("\n")[0] : ""}`); }
+      if (!r.ok) throw new Error(data.error || "خطا در ارسالِ کد");
+      setOtpStep("code");
+    } catch (e) { setAuthErr(e.message); }
     setAuthBusy(false);
   }
 
-  async function doLogin() {
+  async function verifyOtpCode() {
+    if (otpCode.length !== 6) { setAuthErr("کد باید ۶ رقم باشد."); return; }
     setAuthErr(""); setAuthBusy(true);
     try {
-      const r = await fetchWithTimeout("/api/login", {
+      const r = await fetchWithTimeout("/api/verify-otp", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: authEmail, password: authPassword }),
+        body: JSON.stringify({ phone: authPhone, code: otpCode }),
       });
       const data = await r.json();
-      if (!r.ok) throw new Error(data.error || "خطا در ورود");
-      setUser({ email: data.email, name: data.name, token: data.token });
-      localStorage.setItem("naghshe_user", JSON.stringify({ email: data.email, name: data.name, token: data.token }));
+      if (!r.ok) throw new Error(data.error || "کد نامعتبر است");
+      setUser({ email: data.phone, name: data.name, token: data.token });
+      localStorage.setItem("naghshe_user", JSON.stringify({ email: data.phone, name: data.name, token: data.token }));
+      setOtpStep("phone"); setOtpCode("");
       setScreen("start");
-    } catch (e) { setAuthErr(`${e.name || "Error"}: ${e.message} ${e.stack ? "| " + e.stack.split("\n")[0] : ""}`); }
+    } catch (e) { setAuthErr(e.message); }
     setAuthBusy(false);
   }
 
@@ -3911,67 +3924,52 @@ function App() {
           </Card>
         )}
 
-        {screen === "authLogin" && (
+        {(screen === "authLogin" || screen === "authSignup") && (
           <Card>
-            <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 16 }}>ورود به حساب</h2>
-            <input value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="ایمیل"
-              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 10, fontSize: 13 }} />
-            <input value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="رمزِعبور" type="password"
-              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 13 }} />
-            {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
-            <p style={{ textAlign: "center", marginBottom: 10 }}>
-              <a onClick={() => { setAuthErr(""); setScreen("forgotPassword"); }} style={{ fontSize: 12, color: "#B8873A", cursor: "pointer", textDecoration: "underline" }}>رمزتان را فراموش کرده‌اید؟</a>
-            </p>
-            <button onClick={doLogin} disabled={authBusy}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer", marginBottom: 10 }}>
-              {authBusy ? "..." : "ورود"}
-            </button>
-            <button onClick={() => { setAuthErr(""); setScreen("authSignup"); }}
-              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
-              حساب ندارم — ثبت‌نام
-            </button>
-            <button onClick={() => setScreen("start")}
-              style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12.5 }}>
-              بازگشت
-            </button>
-          </Card>
-        )}
+            <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>ورود / ثبتِ‌نام</h2>
+            <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>با شماره‌موبایلتان، بدونِ نیازِ رمزِعبور</p>
 
-        {screen === "authSignup" && (
-          <Card>
-            <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 16 }}>ساختِ حساب</h2>
-            <input value={authName} onChange={(e) => setAuthName(e.target.value)} placeholder="نام (اختیاری)"
-              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 10, fontSize: 13 }} />
-            <input value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="ایمیل"
-              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 10, fontSize: 13 }} />
-            <input value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="رمزِعبور (حداقل ۶ کاراکتر)" type="password"
-              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 13 }} />
-
-            <div style={{ background: "#F7FAFC", borderRadius: 10, padding: "10px 12px", marginBottom: 14 }}>
-              <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer" }}>
-                <input type="checkbox" checked={privacyConsent} onChange={(e) => setPrivacyConsent(e.target.checked)} style={{ marginTop: 3 }} />
-                <span style={{ fontSize: 11.5, color: "#3A4A52", lineHeight: 1.8 }}>
-                  با <a onClick={(e) => { e.preventDefault(); setShowPrivacyText(!showPrivacyText); }} style={{ color: "#17383D", fontWeight: 700, textDecoration: "underline", cursor: "pointer" }}>شرایطِ حریمِ خصوصی</a> موافقم.
-                </span>
-              </label>
-              {showPrivacyText && (
-                <div style={{ marginTop: 10, fontSize: 11, color: "#5A7080", lineHeight: 2, background: "#fff", borderRadius: 8, padding: "10px 12px" }}>
-                  <p style={{ margin: "0 0 8px" }}><b>چه‌چیزی ذخیره می‌شود؟</b> پاسخ‌هایِ پرسشنامه، یادداشت‌هایِ نوشته‌شده زیرِ تمرین‌ها، و روندِ خلق‌تان — همه به ایمیلِ حساب‌تان متصل می‌شوند.</p>
-                  <p style={{ margin: "0 0 8px" }}><b>چه‌کسی می‌بیند؟</b> فقط دکتر عقیلی (به‌عنوانِ درمانگرِ مسئول) و از طریقِ پنلِ محافظت‌شده با رمزِ عبور. این اطلاعات با هیچ شخصِ ثالثی به اشتراک گذاشته نمی‌شود.</p>
-                  <p style={{ margin: "0 0 8px" }}><b>کجا ذخیره می‌شود؟</b> رویِ سرورهایِ Vercel/Upstash با پروتکل‌هایِ امنِ استاندارد.</p>
-                  <p style={{ margin: 0 }}><b>حقِ شما:</b> در هر زمان می‌توانید درخواستِ حذفِ کاملِ اطلاعاتتان را از طریقِ تماس با دفتر مطرح کنید.</p>
+            {otpStep === "phone" ? (
+              <>
+                <input value={authPhone} onChange={(e) => setAuthPhone(e.target.value.replace(/[^\d]/g, ""))} placeholder="۰۹xxxxxxxxx" type="tel" maxLength={11}
+                  style={{ width: "100%", padding: "13px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 15, textAlign: "center", letterSpacing: 1 }} />
+                <div style={{ background: "#F7FAFC", borderRadius: 10, padding: "10px 12px", marginBottom: 14 }}>
+                  <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer" }}>
+                    <input type="checkbox" checked={privacyConsent} onChange={(e) => setPrivacyConsent(e.target.checked)} style={{ marginTop: 3 }} />
+                    <span style={{ fontSize: 11.5, color: "#3A4A52", lineHeight: 1.8 }}>
+                      با <a onClick={(e) => { e.preventDefault(); setShowPrivacyText(!showPrivacyText); }} style={{ color: "#17383D", fontWeight: 700, textDecoration: "underline", cursor: "pointer" }}>شرایطِ حریمِ خصوصی</a> موافقم.
+                    </span>
+                  </label>
+                  {showPrivacyText && (
+                    <div style={{ marginTop: 10, fontSize: 11, color: "#5A7080", lineHeight: 2, background: "#fff", borderRadius: 8, padding: "10px 12px" }}>
+                      <p style={{ margin: "0 0 8px" }}><b>چه‌چیزی ذخیره می‌شود؟</b> پاسخ‌هایِ پرسشنامه، یادداشت‌هایِ نوشته‌شده زیرِ تمرین‌ها، و روندِ خلق‌تان — همه به شماره‌موبایلِ حساب‌تان متصل می‌شوند.</p>
+                      <p style={{ margin: "0 0 8px" }}><b>چه‌کسی می‌بیند؟</b> فقط دکتر عقیلی (به‌عنوانِ درمانگرِ مسئول) و از طریقِ پنلِ محافظت‌شده. این اطلاعات با هیچ شخصِ ثالثی به اشتراک گذاشته نمی‌شود.</p>
+                      <p style={{ margin: 0 }}><b>حقِ شما:</b> در هر زمان می‌توانید درخواستِ حذفِ کاملِ اطلاعاتتان را از طریقِ تماس با دفتر مطرح کنید.</p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-            {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
-            <button onClick={doSignup} disabled={authBusy}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer", marginBottom: 10 }}>
-              {authBusy ? "..." : "ثبت‌نام"}
-            </button>
-            <button onClick={() => { setAuthErr(""); setScreen("authLogin"); }}
-              style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
-              حساب دارم — ورود
-            </button>
+                {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
+                <button onClick={sendOtpCode} disabled={authBusy}
+                  style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer", marginBottom: 10 }}>
+                  {authBusy ? "..." : "ارسالِ کدِ تایید"}
+                </button>
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 10 }}>کدِ ۶رقمی به {authPhone} پیامک شد</p>
+                <input value={otpCode} onChange={(e) => setOtpCode(e.target.value.replace(/[^\d]/g, ""))} placeholder="------" maxLength={6}
+                  style={{ width: "100%", padding: "13px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 22, textAlign: "center", letterSpacing: 8 }} />
+                {authErr && <p style={{ color: "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>⚠ {authErr}</p>}
+                <button onClick={verifyOtpCode} disabled={authBusy}
+                  style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer", marginBottom: 10 }}>
+                  {authBusy ? "..." : "تاییدِ کد و ورود"}
+                </button>
+                <button onClick={() => { setOtpStep("phone"); setOtpCode(""); setAuthErr(""); }}
+                  style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>
+                  تغییرِ شماره / ارسالِ دوباره
+                </button>
+              </>
+            )}
             <button onClick={() => setScreen("start")}
               style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12.5 }}>
               بازگشت
@@ -4005,7 +4003,7 @@ function App() {
                   <div style={{ height: 8, background: "#EDF2F5", borderRadius: 999, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${pct}%`, background: "#B8873A", borderRadius: 999, transition: "width 0.3s" }} />
                   </div>
-                  {user && doneCount < total && (() => {
+                  {user && doneCount < total && libraryPkg !== "distrust" && (() => {
                     const noDiscountPrice = TREATMENT_PACKAGES[libraryPkg].sessions * sessionPrice(libraryPkg);
                     const bundlePrice = Math.round((noDiscountPrice * 0.65) / 10000) * 10000;
                     return (
@@ -4099,7 +4097,7 @@ function App() {
                   <div style={{ flex: 1 }}>
                     <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", margin: 0 }}>
                       جلسه‌ی {num}: {title}
-                      {num === 1 && <span style={{ fontSize: 9.5, color: "#B9822F", fontWeight: 800, marginRight: 6 }}>· 🎁 رایگان</span>}
+                      {(num === 1 || libraryPkg === "distrust") && <span style={{ fontSize: 9.5, color: "#B9822F", fontWeight: 800, marginRight: 6 }}>· 🎁 رایگان</span>}
                       {num === 1 && libraryWeakestDomain && <span style={{ fontSize: 9.5, color: "#4C8778", fontWeight: 700, marginRight: 6 }}>· شخصی‌سازی‌شده</span>}
                       {!isSessionLikelyRelevant(libraryPkg, num, context) && <span style={{ fontSize: 9.5, color: "#B9822F", fontWeight: 700, marginRight: 6 }}>· شاید کمتر کاربردی</span>}
                     </p>
