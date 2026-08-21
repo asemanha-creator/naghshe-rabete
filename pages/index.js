@@ -3187,12 +3187,12 @@ function AdventureGame({ onBack }) {
 
 // جدولِ کلماتِ متقاطعِ کوچک
 const CROSSWORD_DATA = {
-  size: 7,
+  size: 10,
   words: [
-    { word: "همدلی", row: 0, col: 1, dir: "down", clue: "توانِ درکِ احساسِ دیگری" },
-    { word: "مرز", row: 2, col: 0, dir: "across", clue: "حدِ سالمِ ارتباط با دیگران" },
-    { word: "دلبستگی", row: 0, col: 3, dir: "down", clue: "سبکِ عاطفیِ ارتباط با نزدیکان" },
-    { word: "اعتماد", row: 4, col: 1, dir: "across", clue: "پایه‌ی هر رابطه‌ی سالم" },
+    { word: "اعتماد", row: 2, col: 0, dir: "across", clue: "پایه‌ی هر رابطه‌ی سالم" },
+    { word: "همدلی", row: 1, col: 3, dir: "down", clue: "توانِ درکِ احساسِ دیگری" },
+    { word: "مرز", row: 7, col: 0, dir: "across", clue: "حدِ سالمِ ارتباط با دیگران" },
+    { word: "دلبستگی", row: 9, col: 0, dir: "across", clue: "سبکِ عاطفیِ ارتباط با نزدیکان" },
   ],
 };
 
