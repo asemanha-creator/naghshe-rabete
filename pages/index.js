@@ -3015,6 +3015,79 @@ function UnifiedDistrustReport({ onBack }) {
   );
 }
 
+// گزارشِ یکپارچه‌یِ عمومی — برایِ همه‌یِ بسته‌ها (تکالیف + رونـدِ خلق)
+function UnifiedProgressReport({ pkgKey, onBack }) {
+  const total = TREATMENT_PACKAGES[pkgKey].sessions;
+  let hwDone = 0, hwTotal = 0;
+  const moodPairs = [];
+  for (let num = 1; num <= total; num++) {
+    const sid = `${pkgKey}-${num}`;
+    try {
+      const titles = JSON.parse(localStorage.getItem(`naghshe_distrust_hw_${sid}_titles`)) || [];
+      const done = JSON.parse(localStorage.getItem(`naghshe_distrust_hw_${sid}`)) || [];
+      hwTotal += titles.length;
+      hwDone += done.filter(Boolean).length;
+    } catch (e) {}
+    try {
+      const beforeRaw = localStorage.getItem(`mood_before_${sid}`);
+      const afterRaw = localStorage.getItem(`mood_after_${sid}`);
+      const before = beforeRaw ? (JSON.parse(beforeRaw)?.value ?? beforeRaw) : null;
+      const after = afterRaw ? (JSON.parse(afterRaw)?.value ?? afterRaw) : null;
+      if (before !== null && after !== null) moodPairs.push({ num, before: Number(before), after: Number(after) });
+    } catch (e) {}
+  }
+
+  const avgBefore = moodPairs.length ? (moodPairs.reduce((a, b) => a + b.before, 0) / moodPairs.length) : null;
+  const avgAfter = moodPairs.length ? (moodPairs.reduce((a, b) => a + b.after, 0) / moodPairs.length) : null;
+
+  const narrative = (() => {
+    const parts = [];
+    if (hwTotal > 0) {
+      const pct = Math.round((hwDone / hwTotal) * 100);
+      parts.push(pct >= 70 ? `${pct}٪ از تکالیف را انجام داده‌اید — تعهدِ خوبی به مسیر دارید` : `${pct}٪ از تکالیف را انجام داده‌اید`);
+    }
+    if (avgBefore !== null && avgAfter !== null) {
+      const diff = avgAfter - avgBefore;
+      if (diff >= 1) parts.push("به‌طورِ میانگین، خلقتان بعدِ هر جلسه نسبت به قبلش بهتر شده — نشانه‌ی خوبی از تاثیرِ جلسات");
+      else if (diff <= -1) parts.push("خلقتان بعدِ جلسات گاهی افت کرده — این طبیعی است، به‌خصوص جلساتی که موضوعاتِ سخت را باز می‌کنند");
+      else parts.push("خلقتان قبل و بعدِ جلسات نسبتاً پایدار بوده");
+    }
+    return parts.length ? parts.join("؛ ") + "." : "با پیشرفت در جلسات و تکمیلِ تکالیف، این گزارش کامل‌تر می‌شود.";
+  })();
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 16 }}>🧩 گزارشِ یکپارچه‌ی مسیرِ درمان</h2>
+      <div style={{ background: "#F3F8F5", borderRadius: 14, padding: "16px", marginBottom: 16 }}>
+        <p style={{ fontSize: 12.5, fontWeight: 700, color: "#4C8778", marginBottom: 8 }}>📖 خلاصه‌ی روایی</p>
+        <p style={{ fontSize: 12.5, color: "#3A4A52", lineHeight: 2 }}>{narrative}</p>
+      </div>
+      <div style={{ marginBottom: 16 }}>
+        <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", marginBottom: 6 }}>📚 پیشرفتِ تکالیف</p>
+        <div style={{ height: 10, background: "#EDF2F5", borderRadius: 999, overflow: "hidden" }}>
+          <div style={{ height: "100%", width: `${hwTotal ? (hwDone / hwTotal) * 100 : 0}%`, background: "#17383D", borderRadius: 999 }} />
+        </div>
+        <p style={{ fontSize: 11, color: "#8CA3B0", marginTop: 4 }}>{hwDone} از {hwTotal} تکلیف انجام شده</p>
+      </div>
+      {avgBefore !== null && (
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+          <div style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px", textAlign: "center" }}>
+            <p style={{ fontSize: 10.5, color: "#9C6B2F", fontWeight: 700, marginBottom: 4 }}>میانگینِ خلق قبل</p>
+            <p style={{ fontSize: 20, fontWeight: 800, color: "#1F2D3D" }}>{avgBefore.toFixed(1)}/۱۰</p>
+          </div>
+          <div style={{ background: "#F3F8F5", borderRadius: 12, padding: "12px", textAlign: "center" }}>
+            <p style={{ fontSize: 10.5, color: "#4C8778", fontWeight: 700, marginBottom: 4 }}>میانگینِ خلق بعد</p>
+            <p style={{ fontSize: 20, fontWeight: 800, color: "#1F2D3D" }}>{avgAfter.toFixed(1)}/۱۰</p>
+          </div>
+        </div>
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>
+        بازگشت
+      </button>
+    </Card>
+  );
+}
+
 function BiweeklyAssessment({ onBack }) {
   const storageKey = "naghshe_distrust_assessments";
   const [history, setHistory] = useState(() => {
@@ -4600,6 +4673,9 @@ function App() {
           </Card>
         )}
 
+        {screen === "unifiedReport" && (
+          <UnifiedProgressReport pkgKey={libraryPkg} onBack={() => setScreen("sessionLibrary")} />
+        )}
         {screen === "distrustReport" && (
           <UnifiedDistrustReport onBack={() => setScreen("sessionLibrary")} />
         )}
@@ -4684,6 +4760,12 @@ function App() {
               </div>
             )}
 
+            {libraryPkg !== "distrust" && (
+              <button onClick={() => setScreen("unifiedReport")}
+                style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 14, fontSize: 13 }}>
+                🧩 گزارشِ یکپارچه‌ی مسیرِ درمان
+              </button>
+            )}
             {libraryPkg === "distrust" && (
               <>
                 <button onClick={() => setScreen("distrustReport")}
@@ -4855,7 +4937,7 @@ function App() {
             else setSuggestedLevel("excellent");
           }
           // استخراجِ خودکارِ «تکالیف» از بخش‌هایِ 🧰 — فقط برایِ ماژولِ «بدبینی» استفاده می‌شود
-          const isDistrust = viewingSession.pkgKey === "distrust";
+          const isDistrust = true; // چک‌لیستِ تکالیف و مرورِ جلسه‌ی قبل، حالا برایِ همه‌ی بسته‌ها فعال است
           const taskTitles = isDistrust ? sess.body.filter((b) => b.type === "h" && b.text.startsWith("🧰")).map((b) => b.text) : [];
           const hwKey = `naghshe_distrust_hw_${sessKey}`;
           const prevHwKey = viewingSession.num > 1 ? `naghshe_distrust_hw_${sessionId(viewingSession.pkgKey, viewingSession.num - 1)}` : null;
