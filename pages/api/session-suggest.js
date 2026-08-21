@@ -1,5 +1,6 @@
 import { getSessionContent } from "../../lib/sessionContent";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 function sessionMatchesSearch(sess, query) {
   if (!query) return true;
@@ -15,6 +16,9 @@ function sessionMatchesSearch(sess, query) {
 // پیشنهادِ جلسه بر اساسِ کلیدواژه، فقط در میانِ جلساتِ بازشده‌یِ خودِ کاربر (سمتِ سرور، بدونِ افشایِ محتوایِ دیگر)
 export default async function handler(req, res) {
   try {
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`session-suggest:${ip}`, 60, 3600);
+    if (!rl.allowed) return res.status(429).json({ error: "تعدادِ درخواست‌هایتان زیاد بوده — کمی صبر کنید" });
     if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
     const { unlockedSessions, keywords } = req.body;
     if (!Array.isArray(unlockedSessions) || !Array.isArray(keywords)) {
