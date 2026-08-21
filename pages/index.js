@@ -3529,6 +3529,8 @@ function App() {
   }
   const [streak, setStreak] = useState(0);
   const [showStreakCelebration, setShowStreakCelebration] = useState(false);
+  const [surpriseUnlocked, setSurpriseUnlocked] = useState(false);
+  const STREAK_SURPRISE_DAY = 15;
   useEffect(() => {
     try {
       const today = new Date().toDateString();
@@ -3540,7 +3542,13 @@ function App() {
         localStorage.setItem("naghshe_last_visit", today);
         localStorage.setItem("naghshe_streak", String(currentStreak));
         if ([3, 7, 14, 30, 60, 100].includes(currentStreak)) setShowStreakCelebration(true);
+        if (currentStreak >= STREAK_SURPRISE_DAY && !localStorage.getItem("naghshe_streak_surprise_given")) {
+          localStorage.setItem("naghshe_streak_surprise_given", "1");
+          setSurpriseUnlocked(true);
+          setShowStreakCelebration(true);
+        }
       }
+      if (localStorage.getItem("naghshe_streak_surprise_given")) setSurpriseUnlocked(true);
       setStreak(currentStreak);
     } catch (e) {}
   }, []);
@@ -3671,6 +3679,7 @@ function App() {
     if (viewingSession.weakestDomain) params.set("weakestDomain", viewingSession.weakestDomain);
     if (user?.email) params.set("email", user.email);
     if (isAdmin) params.set("adminToken", adminToken);
+    if (viewingSession.bonusClaim) params.set("streakBonus", "1");
     fetchWithTimeout(`/api/session-full?${params.toString()}`)
       .then((r) => r.json())
       .then((d) => {
@@ -4080,11 +4089,17 @@ function App() {
       {showStreakCelebration && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(20,30,35,0.6)", zIndex: 998, display: "flex", alignItems: "center", justifyContent: "center", padding: 18 }}>
           <div style={{ background: "#fff", borderRadius: 20, padding: "28px 22px", maxWidth: 320, textAlign: "center", boxShadow: "0 20px 50px rgba(0,0,0,0.25)" }}>
-            <div style={{ fontSize: 46, marginBottom: 10 }}>🔥🎉</div>
-            <h3 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>{streak} روزِ پیاپی!</h3>
-            <p style={{ fontSize: 12.5, color: "#5A7080", lineHeight: 1.9, margin: "0 0 18px" }}>
-              پیوستگیِ روزانه، یکی از قوی‌ترین عواملِ موفقیت در بهبودیِ رابطه است. همین مسیر را ادامه دهید!
-            </p>
+            <div style={{ fontSize: 46, marginBottom: 10 }}>{streak >= STREAK_SURPRISE_DAY ? "🎁🎉" : "🔥🎉"}</div>
+            <h3 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>{streak} روزِ پیاپی بازدیدِ اپ!</h3>
+            {streak >= STREAK_SURPRISE_DAY ? (
+              <p style={{ fontSize: 12.5, color: "#5A7080", lineHeight: 1.9, margin: "0 0 18px" }}>
+                🎁 <b>سوپرایز!</b> به‌خاطرِ این پیوستگیِ فوق‌العاده، یک جلسه‌ی بونسِ رایگان از هر بسته‌ای که بخواهید برایتان باز شد — همان جلسه‌ی دومِ هر بسته، بدونِ نیازِ خرید.
+              </p>
+            ) : (
+              <p style={{ fontSize: 12.5, color: "#5A7080", lineHeight: 1.9, margin: "0 0 18px" }}>
+                آفرین، {Math.max(0, STREAK_SURPRISE_DAY - streak)} روز مانده به سوپرایزِ شما! پیوستگیِ روزانه، یکی از قوی‌ترین عواملِ موفقیت در بهبودیِ رابطه است.
+              </p>
+            )}
             <button onClick={() => setShowStreakCelebration(false)}
               style={{ width: "100%", padding: "11px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", fontSize: 12.5, cursor: "pointer" }}>
               ادامه می‌دهم ←
@@ -4166,7 +4181,7 @@ function App() {
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 10 }}>
                 {streak > 1 && (
                   <span style={{ fontSize: 11, fontWeight: 700, color: "#B9822F", background: "#FBF3E2", padding: "3px 10px", borderRadius: 999 }}>
-                    🔥 {streak} روزِ پیاپی
+                    🔥 {streak} روز پیاپی بازدید اپ{streak < STREAK_SURPRISE_DAY ? ` · ${STREAK_SURPRISE_DAY - streak} روز تا سوپرایز 🎁` : ""}
                   </span>
                 )}
                 <div style={{ display: "flex", gap: 3, background: "#fff", borderRadius: 999, padding: 3, border: "1px solid #DCE8F0" }}>
@@ -4824,11 +4839,14 @@ function App() {
                 );
               }
               const viewedSessions = getViewedSessions();
+              let streakBonusGiven = false;
+              try { streakBonusGiven = !!localStorage.getItem("naghshe_streak_surprise_given"); } catch (e) {}
               return items.map((item) => {
               const { num, title, approach, freePreview } = item;
               // برایِ بستهٔ «بی‌اعتمادی»: قفلِ ترتیبی — هر جلسه فقط بعدِ از دیدنِ جلسه‌ی قبلی باز می‌شود
               const sequentiallyUnlocked = libraryPkg !== "distrust" || num === 1 || viewedSessions.includes(sessionId(libraryPkg, num - 1));
-              const unlocked = item.unlocked && sequentiallyUnlocked;
+              const isStreakBonus = num === 2 && streakBonusGiven;
+              const unlocked = (item.unlocked && sequentiallyUnlocked) || isStreakBonus;
               return (
                 <div key={num} style={{ marginBottom: 8 }}>
                 <div style={{
@@ -4848,7 +4866,7 @@ function App() {
                     <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: "2px 0 0" }}>رویکرد: {approach}</p>
                   </div>
                   {unlocked ? (
-                    <button onClick={() => { setViewingSession({ pkgKey: libraryPkg, num, weakestDomain: libraryWeakestDomain }); setScreen("sessionReader"); }}
+                    <button onClick={() => { setViewingSession({ pkgKey: libraryPkg, num, weakestDomain: libraryWeakestDomain, bonusClaim: isStreakBonus }); setScreen("sessionReader"); }}
                       style={{ padding: "7px 12px", borderRadius: 10, border: "none", background: "#4C8778", color: "#fff", fontWeight: 700, fontSize: 11, cursor: "pointer", flexShrink: 0 }}>
                       مشاهده
                     </button>
