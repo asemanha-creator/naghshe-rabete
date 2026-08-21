@@ -1647,6 +1647,32 @@ function InteractiveChecklist({ sessionKey, items }) {
   );
 }
 
+// دکمه‌ی درخواستِ نوبت — برایِ لحظاتِ حساس (چند الگویِ هم‌زمان، روندِ رو‌به‌وخامت، و...)
+function AppointmentRequestButton({ context, userToken }) {
+  const [state, setState] = useState("idle"); // idle | sending | sent | error
+  async function send() {
+    if (!userToken) { setState("error"); return; }
+    setState("sending");
+    try {
+      const r = await fetchWithTimeout("/api/request-appointment", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: userToken, context }),
+      });
+      if (!r.ok) throw new Error();
+      setState("sent");
+    } catch (e) { setState("error"); }
+  }
+  if (state === "sent") {
+    return <p style={{ fontSize: 11.5, color: "#4C8778", fontWeight: 700, textAlign: "center", margin: "8px 0 0" }}>✅ درخواستتان ثبت شد — به‌زودی با شما تماس گرفته می‌شود.</p>;
+  }
+  return (
+    <button onClick={send} disabled={state === "sending"}
+      style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1.5px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, fontSize: 12, cursor: "pointer", marginTop: 8 }}>
+      {state === "sending" ? "..." : state === "error" ? "❌ خطا — دوباره امتحان کنید" : "📞 درخواستِ نوبت با دکتر عقیلی"}
+    </button>
+  );
+}
+
 function MoodRating({ sessionKey, phase, onChange }) {
   const storageKey = `mood_${phase}_${sessionKey}`;
   const [val, setVal] = useState(() => {
@@ -2232,6 +2258,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
                   <p style={{ fontSize: 12, color: "#5A4020", lineHeight: 1.9, margin: "0 0 10px" }}>
                     در این دوره، {lastResult.concerningThemes.length} موضوعِ متفاوت («{lastResult.concerningThemes.map((c) => c.label).join("»، «")}») هم‌زمان دیده شدند. وقتی چند الگو با هم ظاهر می‌شوند، معمولاً یک ریشه‌ی مشترک دارند — مثلاً فاصله‌ی عاطفیِ کلی، یا دوره‌ای از استرسِ زندگی.
                   </p>
+                  <AppointmentRequestButton context="چند الگویِ هم‌زمان در پیشگیریِ خیانت" userToken={userToken} />
                 </div>
               )}
               <p style={{ fontSize: 12.5, fontWeight: 700, color: "#A6432F", marginBottom: 8 }}>الگوهایی که در پاسخ‌هایتان دیده شد:</p>
@@ -3667,7 +3694,7 @@ function PartnerGuide({ onBack }) {
   );
 }
 
-function BiweeklyAssessment({ onBack }) {
+function BiweeklyAssessment({ onBack, userToken }) {
   const storageKey = "naghshe_distrust_assessments";
   const [history, setHistory] = useState(() => {
     try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
@@ -3688,11 +3715,11 @@ function BiweeklyAssessment({ onBack }) {
 
   const last = history[0];
   const prev = history[1];
-  let trendMsg = null, trendColor = "#8CA3B0";
+  let trendMsg = null, trendColor = "#8CA3B0", isWorsening = false;
   if (last && prev) {
     const diff = last.total - prev.total;
     if (diff <= -3) { trendMsg = `${Math.abs(diff)} نمره بهتر از سنجشِ قبلی — روندِ خوبی دارید 🌱`; trendColor = "#4C8778"; }
-    else if (diff >= 3) { trendMsg = `${diff} نمره بالاتر از سنجشِ قبلی — ممکن است هفته‌ی سختی بوده؛ به جلسات و پایشِ افکار برگردید`; trendColor = "#A6432F"; }
+    else if (diff >= 3) { trendMsg = `${diff} نمره بالاتر از سنجشِ قبلی — ممکن است هفته‌ی سختی بوده؛ به جلسات و پایشِ افکار برگردید`; trendColor = "#A6432F"; isWorsening = true; }
     else { trendMsg = "نسبتاً پایدار نسبت به سنجشِ قبلی"; trendColor = "#B8873A"; }
   }
 
@@ -3706,6 +3733,7 @@ function BiweeklyAssessment({ onBack }) {
           <p style={{ fontSize: 12, color: "#4C8778", fontWeight: 700, marginBottom: 4 }}>آخرین سنجش: {new Date(last.ts).toLocaleDateString("fa-IR")}</p>
           <p style={{ fontSize: 20, fontWeight: 800, color: "#1F2D3D", margin: "4px 0" }}>{last.total} / ۳۲</p>
           {trendMsg && <p style={{ fontSize: 12, color: trendColor, fontWeight: 700, marginTop: 6 }}>{trendMsg}</p>}
+          {isWorsening && <AppointmentRequestButton context="روندِ رو‌به‌وخامت در بازسنجیِ بدبینی/خشم" userToken={userToken} />}
           <button onClick={() => setShowForm(true)} style={{ width: "100%", marginTop: 10, padding: "10px", borderRadius: 10, border: "1px solid #4C8778", background: "#fff", color: "#4C8778", fontWeight: 700, cursor: "pointer" }}>
             سنجشِ جدید
           </button>
@@ -5297,7 +5325,7 @@ function App() {
           <ThoughtTracker onBack={() => setScreen("sessionLibrary")} />
         )}
         {screen === "distrustAssessment" && (
-          <BiweeklyAssessment onBack={() => setScreen("sessionLibrary")} />
+          <BiweeklyAssessment onBack={() => setScreen("sessionLibrary")} userToken={user?.token} />
         )}
 
         {screen === "sessionLibrary" && (
