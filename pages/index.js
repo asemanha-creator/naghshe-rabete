@@ -3705,44 +3705,135 @@ const RELATIONSHIP_CONTRACT_PROMPTS = [
 ];
 
 function RelationshipContract({ onBack }) {
-  const storageKey = "naghshe_relationship_contract";
-  const [answers, setAnswers] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(storageKey)) || {}; } catch (e) { return {}; }
-  });
-  const [signed, setSigned] = useState(() => {
-    try { return !!localStorage.getItem(storageKey + "_signed"); } catch (e) { return false; }
-  });
+  const [stage, setStage] = useState("intro"); // intro | editing
+  const [code, setCode] = useState("");
+  const [joinCode, setJoinCode] = useState("");
+  const [role, setRole] = useState(null);
+  const [answers, setAnswers] = useState({});
+  const [signedA, setSignedA] = useState(false);
+  const [signedB, setSignedB] = useState(false);
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [saveTick, setSaveTick] = useState(0);
 
-  function update(key, value) {
+  async function createContract() {
+    setBusy(true); setErr("");
+    try {
+      const r = await fetchWithTimeout("/api/couple-contract", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create" }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error);
+      setCode(d.code); setRole("a"); setStage("editing");
+    } catch (e) { setErr(e.message); }
+    setBusy(false);
+  }
+
+  async function joinContract() {
+    if (joinCode.trim().length !== 6) { setErr("کد باید ۶ کاراکتر باشد"); return; }
+    setBusy(true); setErr("");
+    const c = joinCode.trim().toUpperCase();
+    try {
+      const r = await fetchWithTimeout(`/api/couple-contract?code=${c}`);
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error);
+      setCode(c); setRole("b"); setAnswers(d.answers || {}); setSignedA(d.signedA); setSignedB(d.signedB);
+      setStage("editing");
+    } catch (e) { setErr(e.message); }
+    setBusy(false);
+  }
+
+  async function refresh() {
+    try {
+      const r = await fetchWithTimeout(`/api/couple-contract?code=${code}`);
+      const d = await r.json();
+      if (r.ok) { setAnswers(d.answers || {}); setSignedA(d.signedA); setSignedB(d.signedB); }
+    } catch (e) {}
+  }
+
+  async function updateAnswer(key, value) {
     const next = { ...answers, [key]: value };
     setAnswers(next);
-    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    setSaveTick((t) => t + 1);
+    try {
+      await fetchWithTimeout("/api/couple-contract", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "update", code, answers: { [key]: value } }),
+      });
+    } catch (e) {}
   }
-  function sign() {
-    setSigned(true);
-    try { localStorage.setItem(storageKey + "_signed", String(Date.now())); } catch (e) {}
+
+  async function sign() {
+    setBusy(true);
+    try {
+      const r = await fetchWithTimeout("/api/couple-contract", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "sign", code, role }),
+      });
+      const d = await r.json();
+      if (role === "a") setSignedA(true); else setSignedB(true);
+    } catch (e) {}
+    setBusy(false);
   }
+
+  if (stage === "intro") {
+    return (
+      <Card>
+        <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🤝 قراردادِ رابطه‌مان</h2>
+        <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18, lineHeight: 1.9 }}>
+          این سندی است که <b>هردویتان مشترکاً</b> می‌نویسید — بر پایه‌ی پژوهش‌هایِ گاتمن، تعهدِ نوشته‌شده و مشترک، واقعی‌تر می‌شود.
+        </p>
+        <button onClick={createContract} disabled={busy}
+          style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+          {busy ? "..." : "شروعِ قراردادِ جدید (من اول شروع می‌کنم)"}
+        </button>
+        <p style={{ textAlign: "center", fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>— یا —</p>
+        <input value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} placeholder="کدی که همسرم فرستاده" maxLength={6}
+          style={{ width: "100%", padding: "12px", borderRadius: 10, border: "1px solid #DCE8F0", marginBottom: 10, fontSize: 15, textAlign: "center", letterSpacing: 2 }} />
+        <button onClick={joinContract} disabled={busy} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+          پیوستن با کد
+        </button>
+        {err && <p style={{ color: "#A6432F", fontSize: 12, textAlign: "center", marginBottom: 10 }}>⚠ {err}</p>}
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+      </Card>
+    );
+  }
+
+  const bothSigned = signedA && signedB;
 
   return (
     <Card>
-      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🤝 قراردادِ رابطه‌مان</h2>
-      <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18, lineHeight: 1.9 }}>
-        این سندی است که <b>خودتان و همسرتان</b> می‌سازید — نوشتنِ مشترکِ اصولِ رابطه، بر پایه‌ی پژوهش‌هایِ گاتمن، تعهد را واقعی‌تر می‌کند.
-      </p>
+      {role === "a" && (
+        <div style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px", marginBottom: 16, textAlign: "center" }}>
+          <p style={{ fontSize: 11.5, color: "#7A5B2E", marginBottom: 4 }}>این کد را برایِ همسرتان بفرستید تا او هم مشترکاً بنویسد:</p>
+          <p style={{ fontSize: 22, fontWeight: 800, color: "#9C6B2F", letterSpacing: 3 }}>{code}</p>
+        </div>
+      )}
+      <p style={{ fontSize: 11, color: "#8CA3B0", textAlign: "center", marginBottom: 14 }}>هردویتان می‌توانید هرقسمت را ویرایش کنید — تغییراتِ هم را می‌بینید.</p>
       {RELATIONSHIP_CONTRACT_PROMPTS.map((p) => (
         <div key={p.key} style={{ marginBottom: 14 }}>
           <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 6 }}>{p.label}</p>
-          <textarea value={answers[p.key] || ""} onChange={(e) => update(p.key, e.target.value)} disabled={signed}
-            style={{ width: "100%", minHeight: 55, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, boxSizing: "border-box", background: signed ? "#F7FAFC" : "#fff" }} />
+          <textarea value={answers[p.key] || ""} onChange={(e) => updateAnswer(p.key, e.target.value)} onFocus={refresh} disabled={bothSigned}
+            style={{ width: "100%", minHeight: 55, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, boxSizing: "border-box", background: bothSigned ? "#F7FAFC" : "#fff" }} />
         </div>
       ))}
-      {!signed ? (
-        <button onClick={sign} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
-          ✍️ امضایِ قرارداد
-        </button>
+      <button onClick={refresh} style={{ width: "100%", padding: "9px", borderRadius: 10, border: "1px solid #DCE8F0", background: "#fff", color: "#5A7080", cursor: "pointer", fontSize: 11.5, marginBottom: 10 }}>
+        🔄 دیدنِ آخرین تغییراتِ همسرم
+      </button>
+      {!bothSigned ? (
+        <>
+          <p style={{ fontSize: 11.5, color: "#8CA3B0", textAlign: "center", marginBottom: 8 }}>
+            امضایِ شما: {role === "a" ? (signedA ? "✅" : "◻") : (signedB ? "✅" : "◻")} · امضایِ همسرتان: {role === "a" ? (signedB ? "✅" : "◻") : (signedA ? "✅" : "◻")}
+          </p>
+          <button onClick={sign} disabled={busy || (role === "a" ? signedA : signedB)}
+            style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+            {(role === "a" ? signedA : signedB) ? "✅ شما امضا کردید — منتظرِ همسرتان" : "✍️ امضایِ من"}
+          </button>
+        </>
       ) : (
         <p style={{ textAlign: "center", fontSize: 13, fontWeight: 700, color: "#4C8778", background: "#F3F8F5", padding: "12px", borderRadius: 10 }}>
-          ✅ این قرارداد را با هم امضا کرده‌اید — گاه‌به‌گاه دوباره مرورش کنید.
+          ✅ هردویتان امضا کرده‌اید — این قرارداد، رسمی و مشترک است.
         </p>
       )}
       <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
@@ -4561,6 +4652,15 @@ function App() {
       localStorage.setItem(hwKey + "_titles", JSON.stringify(taskTitles));
     } catch (e) {}
     setHwTick((t) => t + 1);
+  }
+  function addToGuidebook(title, note) {
+    try {
+      const key = "naghshe_my_guidebook";
+      const guidebook = JSON.parse(localStorage.getItem(key)) || [];
+      if (guidebook.some((g) => g.title === title)) return;
+      guidebook.unshift({ title, note: note || "", ts: Date.now() });
+      localStorage.setItem(key, JSON.stringify(guidebook));
+    } catch (e) {}
   }
   const [suggestedLevel, setSuggestedLevel] = useState(null);
 
@@ -6105,19 +6205,33 @@ function App() {
                     <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 8 }}>
                       ✅ چک‌لیستِ تکالیفِ این جلسه ({doneCount} از {taskTitles.length})
                     </p>
-                    {taskTitles.map((t, i) => (
-                      <label key={i} onClick={() => toggleHomework(hwKey, i, taskTitles)}
-                        style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer", marginBottom: 8 }}>
-                        <span style={{
-                          width: 18, height: 18, borderRadius: 5, flexShrink: 0, marginTop: 1,
-                          border: `1.5px solid ${done[i] ? "#4C8778" : "#C9DEE8"}`, background: done[i] ? "#4C8778" : "#fff",
-                          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff",
-                        }}>{done[i] ? "✓" : ""}</span>
-                        <span style={{ fontSize: 12, color: done[i] ? "#8CA3B0" : "#3A4A52", textDecoration: done[i] ? "line-through" : "none" }}>
-                          {t.replace("🧰 ", "")}
-                        </span>
-                      </label>
-                    ))}
+                    {taskTitles.map((t, i) => {
+                      const cleanTitle = t.replace("🧰 ", "");
+                      let alreadyAdded = false;
+                      try {
+                        const guidebook = JSON.parse(localStorage.getItem("naghshe_my_guidebook")) || [];
+                        alreadyAdded = guidebook.some((g) => g.title === cleanTitle);
+                      } catch (e) {}
+                      return (
+                        <div key={i} style={{ marginBottom: 8 }}>
+                          <label onClick={() => toggleHomework(hwKey, i, taskTitles)}
+                            style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer" }}>
+                            <span style={{
+                              width: 18, height: 18, borderRadius: 5, flexShrink: 0, marginTop: 1,
+                              border: `1.5px solid ${done[i] ? "#4C8778" : "#C9DEE8"}`, background: done[i] ? "#4C8778" : "#fff",
+                              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff",
+                            }}>{done[i] ? "✓" : ""}</span>
+                            <span style={{ fontSize: 12, color: done[i] ? "#8CA3B0" : "#3A4A52", textDecoration: done[i] ? "line-through" : "none", flex: 1 }}>
+                              {cleanTitle}
+                            </span>
+                          </label>
+                          <button onClick={(e) => { e.stopPropagation(); addToGuidebook(cleanTitle, `از جلسه‌ی ${viewingSession.num}`); setHwTick((tt) => tt + 1); }} disabled={alreadyAdded}
+                            style={{ marginRight: 26, marginTop: 3, fontSize: 10, padding: "3px 8px", borderRadius: 999, border: `1px solid ${alreadyAdded ? "#CFE6D8" : "#B8873A"}`, background: alreadyAdded ? "#F3F8F5" : "#fff", color: alreadyAdded ? "#4C8778" : "#B8873A", cursor: alreadyAdded ? "default" : "pointer" }}>
+                            {alreadyAdded ? "✅ در کتابچه‌ام هست" : "📖 افزودن به کتابچه‌ام"}
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               })()}
