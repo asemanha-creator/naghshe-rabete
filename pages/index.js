@@ -6252,17 +6252,19 @@ function App() {
               const file = e.target.files[0];
               if (!file) return;
               if (file.size > 200 * 1024 * 1024) { setVideoUploadMsg("❌ فایل بزرگ‌تر از ۲۰۰ مگابایت است"); return; }
-              setVideoUploadMsg("در حالِ آپلود... (ممکن است کمی طول بکشد)");
+              setVideoUploadMsg(`در حالِ آپلود... (${(file.size / 1024 / 1024).toFixed(1)} مگابایت — لطفاً صبر کنید)`);
               try {
                 const { upload } = await import("@vercel/blob/client");
                 const sid = `${videoPkgKey}-${videoNum}`;
-                await upload(file.name, file, {
+                const uploadPromise = upload(file.name, file, {
                   access: "public",
                   handleUploadUrl: "/api/video-upload",
                   clientPayload: JSON.stringify({ adminToken, sessionId: sid }),
                 });
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("آپلود بیش‌ازحد طول کشید (۹۰ ثانیه) — اتصالِ اینترنتتان را چک کنید یا فایلِ کوچک‌تری امتحان کنید")), 90000));
+                await Promise.race([uploadPromise, timeoutPromise]);
                 setVideoUploadMsg("✅ آپلود و ذخیره شد");
-              } catch (err) { setVideoUploadMsg("❌ " + err.message); }
+              } catch (err) { setVideoUploadMsg("❌ " + (err?.message || "خطایِ ناشناخته در آپلود")); }
             }} style={{ width: "100%", fontSize: 12 }} />
             {videoUploadMsg && <p style={{ fontSize: 11, color: "#4C8778", marginTop: 6 }}>{videoUploadMsg}</p>}
           </Card>
