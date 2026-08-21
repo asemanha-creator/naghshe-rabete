@@ -576,6 +576,7 @@ const TOPICS = [
   { key: "premarriage", title: "پیش از ازدواج", subtitle: "آماده‌ام؟", icon: "💍", core: "#6B4A35", bg: "#EDE0D0", blobA: "#A9825E", blobB: "#D9C4A8", enabled: false },
   { key: "aggression", title: "پرخاشگری", subtitle: "کنترلِ خشم", icon: "🔥", core: "#3D5A5E", bg: "#DCE6E4", blobA: "#7A9C9E", blobB: "#BBD0CF", enabled: false },
   { key: "distrust", title: "بدبینی", subtitle: "", icon: "🔍", core: "#9C6B2F", bg: "#F2E4C8", blobA: "#C99B4F", blobB: "#E4C989", enabled: true },
+  { key: "games", title: "سرگرمی", subtitle: "خودآگاهی از طریقِ بازی", icon: "🎮", core: "#5C7E7A", bg: "#DCEAE8", blobA: "#7BA39E", blobB: "#A9C9C5", enabled: true },
   { key: "anxiety", title: "اضطراب", subtitle: "دلواپسیِ روزمره", icon: "🌊", core: "#A66456", bg: "#F2DFD6", blobA: "#C9938A", blobB: "#E6C4BC", enabled: false },
   { key: "mood", title: "افسردگی", subtitle: "خلقِ پایین", icon: "🌫️", core: "#17383D", bg: "#DDE5E0", blobA: "#5C7E7A", blobB: "#AEC2BC", enabled: false },
   { key: "attention", title: "تمرکز و توجه", subtitle: "پراکندگیِ ذهن", icon: "🎯", core: "#B8873A", bg: "#F5EAD0", blobA: "#D4B361", blobB: "#EBD79A", enabled: false },
@@ -3089,6 +3090,548 @@ function UnifiedProgressReport({ pkgKey, onBack }) {
 }
 
 // راهنمایِ کوتاه برایِ همسر — یک منبعِ مستقل، نه جلسه‌ای که باید «گذرانده» شود
+// ========== ماژولِ سرگرمی — یادگیریِ خودآگاهی از طریقِ بازی ==========
+
+// داده‌یِ داستانِ انتخابی
+const ADVENTURE_SCENARIOS = [
+  {
+    id: "late-night",
+    title: "دیرکردنِ همسر",
+    intro: "امشب همسرتان قرار بود ساعتِ ۸ خانه باشد. الان ساعتِ ۹:۳۰ است و خبری نشده.",
+    start: "s1",
+    nodes: {
+      s1: {
+        text: "چه‌کاری می‌کنید؟",
+        choices: [
+          { text: "فوراً پیامِ نگران‌کننده می‌فرستم", next: "s2a" },
+          { text: "چند دقیقه صبر می‌کنم و کارِ خودم را می‌کنم", next: "s2b" },
+          { text: "شروع می‌کنم به چک‌کردنِ شبکه‌هایِ اجتماعی‌اش", next: "s2c" },
+        ],
+      },
+      s2a: { text: "او جواب می‌دهد: «ترافیک بود، چرا این‌قدر نگران شدی؟» چه احساسی دارید؟", choices: [{ text: "احساسِ شرم می‌کنم", next: "end1" }, { text: "بازهم قانع نمی‌شوم", next: "end2" }] },
+      s2b: { text: "چند دقیقه بعد او زنگ می‌زند: «ببخشید، ترافیک بود!» چه احساسی دارید؟", choices: [{ text: "خوشحالم که آرام ماندم", next: "end3" }] },
+      s2c: { text: "چیزِ خاصی پیدا نمی‌کنید، اما حالا احساسِ گناه هم دارید. چه‌کار می‌کنید؟", choices: [{ text: "به او می‌گویم چه‌کار کردم", next: "end4" }, { text: "چیزی نمی‌گویم", next: "end5" }] },
+      end1: { text: "🔎 این الگو نشان می‌دهد گاهی واکنشِ اولیه، از تناسبِ لحظه فراتر می‌رود. تمرینِ «مکثِ ۱۰دقیقه‌ای» (جلسه‌ی ۹ بدبینی) می‌تواند کمک کند.", ending: true },
+      end2: { text: "🔎 حتی با توضیحِ منطقی، اضطراب گاهی باقی می‌ماند — این می‌تواند نشانه‌ی ریشه‌ی عمیق‌تری باشد که ارزشِ کاوش دارد.", ending: true },
+      end3: { text: "🌱 عالی! این دقیقاً همان «مکثِ آگاهانه» است که در دوره‌هایِ خودآگاهی تمرین می‌کنیم — قبل از واکنش، فضا دادن به موقعیت.", ending: true },
+      end4: { text: "🌱 صداقتِ فوری، حتی وقتی سخت است، اعتماد می‌سازد — این دقیقاً کاری است که جلسه‌ی ۸ بدبینی توصیه می‌کند.", ending: true },
+      end5: { text: "🔎 پنهان‌کاری، حتی دربارهٔ رفتارِ خودمان، می‌تواند فاصله بسازد. شفافیت (حتی از رفتارهایِ خودمان) پایه‌ی اعتماد است.", ending: true },
+    },
+  },
+  {
+    id: "phone-locked",
+    title: "گوشیِ رمزدارشده",
+    intro: "متوجه می‌شوید همسرتان تازگی رمزِ گوشی‌اش را عوض کرده و دیگر رمز را با شما به اشتراک نمی‌گذارد.",
+    start: "s1",
+    nodes: {
+      s1: {
+        text: "اولین فکری که به ذهنتان می‌رسد چیست؟",
+        choices: [
+          { text: "«حتماً چیزی برایِ پنهان‌کردن دارد»", next: "s2a" },
+          { text: "«شاید فقط دلیلِ امنیتی دارد»", next: "s2b" },
+        ],
+      },
+      s2a: { text: "با این فکر، چه‌کار می‌کنید؟", choices: [{ text: "مستقیم می‌پرسم چرا", next: "end1" }, { text: "مخفیانه سعی می‌کنم رمز را حدس بزنم", next: "end2" }] },
+      s2b: { text: "با این نگرشِ آرام‌تر، چه‌کار می‌کنید؟", choices: [{ text: "اگر کنجکاوم، محترمانه می‌پرسم", next: "end3" }] },
+      end1: { text: "🌱 پرسیدنِ مستقیم و بدونِ اتهام، دقیقاً همان چیزی است که در جلسه‌ی ۸ توصیه شد — شفافیت از طریقِ گفت‌وگو، نه حدس.", ending: true },
+      end2: { text: "🔎 این رفتار، دقیقاً همان «بازرسیِ مخفیانه» است که در جلسه‌ی ۳ درباره‌اش صحبت کردیم — معمولاً اعتماد را بیشتر خدشه‌دار می‌کند تا بسازد.", ending: true },
+      end3: { text: "🌱 عالی! تفسیرِ خنثی از یک رفتار، دقیقاً همان کاری است که «بررسیِ شواهد» به ما یاد می‌دهد.", ending: true },
+    },
+  },
+];
+
+function AdventureGame({ onBack }) {
+  const [scenarioIdx, setScenarioIdx] = useState(null);
+  const [nodeKey, setNodeKey] = useState(null);
+
+  if (scenarioIdx === null) {
+    return (
+      <Card>
+        <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 16 }}>📖 داستانِ انتخابی</h2>
+        <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>یک سناریو انتخاب کنید و ببینید انتخاب‌هایتان به کجا می‌رسند.</p>
+        {ADVENTURE_SCENARIOS.map((sc, i) => (
+          <button key={i} onClick={() => { setScenarioIdx(i); setNodeKey(sc.start); }}
+            style={{ width: "100%", textAlign: "right", padding: "14px", borderRadius: 12, border: "1px solid #DCE8F0", background: "#fff", marginBottom: 10, cursor: "pointer" }}>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#1F2D3D", margin: "0 0 4px" }}>{sc.title}</p>
+            <p style={{ fontSize: 11.5, color: "#8CA3B0", margin: 0 }}>{sc.intro}</p>
+          </button>
+        ))}
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+      </Card>
+    );
+  }
+
+  const scenario = ADVENTURE_SCENARIOS[scenarioIdx];
+  const node = scenario.nodes[nodeKey];
+
+  return (
+    <Card>
+      <p style={{ fontSize: 10.5, color: "#8CA3B0", marginBottom: 10 }}>{scenario.title}</p>
+      <p style={{ fontSize: 14, color: "#1F2D3D", lineHeight: 1.9, marginBottom: 18, fontWeight: node.ending ? 700 : 400 }}>{node.text}</p>
+      {node.choices && node.choices.map((c, i) => (
+        <button key={i} onClick={() => setNodeKey(c.next)}
+          style={{ width: "100%", textAlign: "right", padding: "12px 14px", borderRadius: 12, border: "1.5px solid #DCE8F0", background: "#fff", marginBottom: 8, cursor: "pointer", fontSize: 12.5, color: "#1F2D3D" }}>
+          {c.text}
+        </button>
+      ))}
+      {node.ending && (
+        <button onClick={() => { setScenarioIdx(null); setNodeKey(null); }}
+          style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer", marginTop: 10 }}>
+          سناریویِ دیگر ←
+        </button>
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>بازگشت به فهرست</button>
+    </Card>
+  );
+}
+
+// جدولِ کلماتِ متقاطعِ کوچک
+const CROSSWORD_DATA = {
+  size: 7,
+  words: [
+    { word: "همدلی", row: 0, col: 1, dir: "down", clue: "توانِ درکِ احساسِ دیگری" },
+    { word: "مرز", row: 2, col: 0, dir: "across", clue: "حدِ سالمِ ارتباط با دیگران" },
+    { word: "دلبستگی", row: 0, col: 3, dir: "down", clue: "سبکِ عاطفیِ ارتباط با نزدیکان" },
+    { word: "اعتماد", row: 4, col: 1, dir: "across", clue: "پایه‌ی هر رابطه‌ی سالم" },
+  ],
+};
+
+function CrosswordPuzzle({ onBack }) {
+  const [answers, setAnswers] = useState({});
+  const [checked, setChecked] = useState(false);
+
+  function cellKey(r, c) { return `${r}-${c}`; }
+  const grid = {};
+  CROSSWORD_DATA.words.forEach((w) => {
+    for (let i = 0; i < w.word.length; i++) {
+      const r = w.dir === "down" ? w.row + i : w.row;
+      const c = w.dir === "across" ? w.col + i : w.col;
+      grid[cellKey(r, c)] = { letter: w.word[i], wordIdx: CROSSWORD_DATA.words.indexOf(w), pos: i };
+    }
+  });
+
+  function isCorrect() {
+    return Object.entries(grid).every(([key, info]) => (answers[key] || "").trim() === info.letter);
+  }
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🧩 جدولِ کلماتِ روان‌شناسی</h2>
+      <p style={{ fontSize: 11.5, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>با توجه به راهنماها، خانه‌ها را پر کنید.</p>
+
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(${CROSSWORD_DATA.size}, 1fr)`, gap: 3, marginBottom: 18, maxWidth: 280, marginLeft: "auto", marginRight: "auto" }}>
+        {Array.from({ length: CROSSWORD_DATA.size }).map((_, r) =>
+          Array.from({ length: CROSSWORD_DATA.size }).map((_, c) => {
+            const key = cellKey(r, c);
+            const info = grid[key];
+            if (!info) return <div key={key} style={{ aspectRatio: "1", background: "transparent" }} />;
+            const isRight = checked && (answers[key] || "").trim() === info.letter;
+            const isWrong = checked && answers[key] && (answers[key] || "").trim() !== info.letter;
+            return (
+              <input key={key} maxLength={1} value={answers[key] || ""}
+                onChange={(e) => setAnswers({ ...answers, [key]: e.target.value })}
+                style={{
+                  aspectRatio: "1", textAlign: "center", fontSize: 14, fontWeight: 700, borderRadius: 4,
+                  border: `1.5px solid ${isRight ? "#4C8778" : isWrong ? "#A6432F" : "#C9DEE8"}`,
+                  background: isRight ? "#F3F8F5" : isWrong ? "#FBEEEA" : "#fff", color: "#1F2D3D",
+                }} />
+            );
+          })
+        )}
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        {CROSSWORD_DATA.words.map((w, i) => (
+          <p key={i} style={{ fontSize: 12, color: "#3A4A52", margin: "0 0 6px" }}>
+            {i + 1}. ({w.dir === "down" ? "عمودی" : "افقی"}) {w.clue} — {w.word.length} حرف
+          </p>
+        ))}
+      </div>
+
+      <button onClick={() => setChecked(true)} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
+        بررسیِ پاسخ‌ها
+      </button>
+      {checked && (
+        <p style={{ textAlign: "center", fontSize: 12.5, fontWeight: 700, color: isCorrect() ? "#4C8778" : "#A6432F", marginBottom: 8 }}>
+          {isCorrect() ? "🎉 آفرین، همه درست بود!" : "چند خانه هنوز اشتباه است — دوباره امتحان کنید"}
+        </p>
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+    </Card>
+  );
+}
+
+// بازیِ تطبیقِ کارت — رفتار با مفهوم
+const MATCH_PAIRS = [
+  { behavior: "چک‌کردنِ مخفیانه‌ی گوشیِ همسر", concept: "بازرسی" },
+  { behavior: "گفتنِ صادقانه‌ی نیازها", concept: "شفافیت" },
+  { behavior: "فکرکردنِ مکرر به یک سناریو", concept: "نشخوارِ فکری" },
+  { behavior: "احترام به حریمِ خصوصیِ متقابل", concept: "مرزِ سالم" },
+];
+
+function CardMatchGame({ onBack }) {
+  const [cards, setCards] = useState(() => {
+    const items = [];
+    MATCH_PAIRS.forEach((p, i) => {
+      items.push({ id: `b${i}`, text: p.behavior, pairId: i, type: "behavior" });
+      items.push({ id: `c${i}`, text: p.concept, pairId: i, type: "concept" });
+    });
+    return items.sort(() => Math.random() - 0.5);
+  });
+  const [flipped, setFlipped] = useState([]);
+  const [matched, setMatched] = useState([]);
+  const [moves, setMoves] = useState(0);
+
+  function flip(card) {
+    if (flipped.length === 2 || flipped.includes(card.id) || matched.includes(card.pairId)) return;
+    const newFlipped = [...flipped, card.id];
+    setFlipped(newFlipped);
+    if (newFlipped.length === 2) {
+      setMoves((m) => m + 1);
+      const [id1, id2] = newFlipped;
+      const c1 = cards.find((c) => c.id === id1);
+      const c2 = cards.find((c) => c.id === id2);
+      if (c1.pairId === c2.pairId && c1.type !== c2.type) {
+        setTimeout(() => { setMatched((m) => [...m, c1.pairId]); setFlipped([]); }, 500);
+      } else {
+        setTimeout(() => setFlipped([]), 900);
+      }
+    }
+  }
+
+  const allMatched = matched.length === MATCH_PAIRS.length;
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🃏 بازیِ تطبیقِ کارت</h2>
+      <p style={{ fontSize: 11.5, color: "#5A7080", textAlign: "center", marginBottom: 6 }}>رفتار را با مفهومش جفت کنید</p>
+      <p style={{ fontSize: 11, color: "#8CA3B0", textAlign: "center", marginBottom: 16 }}>حرکت‌ها: {moves}</p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
+        {cards.map((card) => {
+          const isFlipped = flipped.includes(card.id) || matched.includes(card.pairId);
+          return (
+            <button key={card.id} onClick={() => flip(card)}
+              style={{
+                minHeight: 70, borderRadius: 12, border: `1.5px solid ${matched.includes(card.pairId) ? "#CFE6D8" : "#DCE8F0"}`,
+                background: matched.includes(card.pairId) ? "#F3F8F5" : isFlipped ? "#FBF3E2" : "#17383D",
+                color: isFlipped ? "#1F2D3D" : "transparent", cursor: "pointer", padding: 10, fontSize: 11.5, fontWeight: 600,
+              }}>
+              {isFlipped ? card.text : "؟"}
+            </button>
+          );
+        })}
+      </div>
+      {allMatched && <p style={{ textAlign: "center", fontSize: 13, fontWeight: 700, color: "#4C8778", marginBottom: 10 }}>🎉 عالی بود! در {moves} حرکت تمام کردید.</p>}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+    </Card>
+  );
+}
+
+// چرخِ احساسات
+const EMOTION_WHEEL_ITEMS = ["شادی", "ترس", "خشم", "غم", "شگفتی", "آرامش", "حسادت", "امید"];
+
+function EmotionWheel({ onBack }) {
+  const [rotation, setRotation] = useState(0);
+  const [landed, setLanded] = useState(null);
+  const [spinning, setSpinning] = useState(false);
+  const [reflection, setReflection] = useState("");
+  const [saved, setSaved] = useState(false);
+
+  function spin() {
+    setSpinning(true); setLanded(null); setSaved(false); setReflection("");
+    const spins = 5 + Math.random() * 3;
+    const finalDeg = spins * 360 + Math.random() * 360;
+    setRotation((r) => r + finalDeg);
+    setTimeout(() => {
+      const normalized = finalDeg % 360;
+      const idx = Math.floor(((360 - normalized) % 360) / (360 / EMOTION_WHEEL_ITEMS.length));
+      setLanded(EMOTION_WHEEL_ITEMS[idx]);
+      setSpinning(false);
+    }, 3000);
+  }
+
+  function saveReflection() {
+    try {
+      const key = "naghshe_emotion_wheel_log";
+      const log = JSON.parse(localStorage.getItem(key)) || [];
+      log.unshift({ emotion: landed, text: reflection, ts: Date.now() });
+      localStorage.setItem(key, JSON.stringify(log.slice(0, 100)));
+    } catch (e) {}
+    setSaved(true);
+  }
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 16 }}>🎡 چرخِ احساسات</h2>
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+        <div style={{ width: 200, height: 200, borderRadius: "50%", position: "relative", overflow: "hidden", border: "4px solid #17383D", transform: `rotate(${rotation}deg)`, transition: spinning ? "transform 3s cubic-bezier(0.2,0.8,0.3,1)" : "none" }}>
+          {EMOTION_WHEEL_ITEMS.map((emo, i) => {
+            const angle = (360 / EMOTION_WHEEL_ITEMS.length) * i;
+            const colors = ["#C99B4F", "#9C6B2F", "#17383D", "#4C8778", "#A6432F", "#5C7E7A", "#B8873A", "#7A5B2E"];
+            return (
+              <div key={i} style={{ position: "absolute", width: "50%", height: "50%", top: "50%", left: "50%", transformOrigin: "0 0", transform: `rotate(${angle}deg)`, background: colors[i % colors.length] }}>
+                <span style={{ position: "absolute", top: 14, left: 18, fontSize: 9.5, color: "#fff", fontWeight: 700, transform: `rotate(${90 / EMOTION_WHEEL_ITEMS.length}deg)`, whiteSpace: "nowrap" }}>{emo}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <button onClick={spin} disabled={spinning} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #C99B4F, #9C6B2F)", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 14 }}>
+        {spinning ? "در حالِ چرخش..." : "🎡 بچرخان"}
+      </button>
+      {landed && !spinning && (
+        <div style={{ background: "#FBF3E2", borderRadius: 12, padding: "14px", marginBottom: 10 }}>
+          <p style={{ fontSize: 13, fontWeight: 700, color: "#7A5B2E", marginBottom: 8 }}>چرخ رویِ «{landed}» ایستاد</p>
+          <p style={{ fontSize: 12, color: "#5A4020", marginBottom: 8 }}>یک لحظه‌ی اخیر که این احساس را داشتید یادداشت کنید:</p>
+          <textarea value={reflection} onChange={(e) => setReflection(e.target.value)}
+            style={{ width: "100%", minHeight: 60, padding: 10, borderRadius: 8, border: "1px solid #E8D8B0", fontSize: 12.5, boxSizing: "border-box", marginBottom: 8 }} />
+          {!saved ? (
+            <button onClick={saveReflection} disabled={!reflection.trim()} style={{ width: "100%", padding: "9px", borderRadius: 10, border: "none", background: "#9C6B2F", color: "#fff", fontWeight: 700, cursor: "pointer" }}>ثبت</button>
+          ) : (
+            <p style={{ fontSize: 12, color: "#4C8778", textAlign: "center" }}>✅ ثبت شد</p>
+          )}
+        </div>
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+    </Card>
+  );
+}
+
+// بینگویِ خودآگاهیِ روزانه
+const BINGO_PROMPTS = [
+  "امروز یک نیاز را مستقیم بیان کردم", "امروز یک فکرِ منفی را دیفیوژن کردم", "امروز به همسرم گفتم قدردانشم",
+  "امروز یک تنفسِ عمیق انجام دادم", "امروز بدونِ بازرسی، اضطرابم را تحمل کردم", "امروز یک لحظه‌ی خوب را یادداشت کردم",
+  "امروز به یک تمرین از جلسات برگشتم", "امروز به‌جایِ واکنش، مکث کردم", "امروز با خودم مهربان بودم",
+];
+
+function AwarenessBingo({ onBack }) {
+  const storageKey = "naghshe_awareness_bingo";
+  const [marked, setMarked] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || Array(9).fill(false); } catch (e) { return Array(9).fill(false); }
+  });
+  function toggle(i) {
+    const next = [...marked];
+    next[i] = !next[i];
+    setMarked(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+  }
+  const doneCount = marked.filter(Boolean).length;
+  const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  const bingoLine = lines.some((line) => line.every((i) => marked[i]));
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🎯 بینگویِ خودآگاهی</h2>
+      <p style={{ fontSize: 11.5, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>هر روز، خانه‌هایی که انجام دادید را بزنید — {doneCount} از ۹</p>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6, marginBottom: 16 }}>
+        {BINGO_PROMPTS.map((p, i) => (
+          <button key={i} onClick={() => toggle(i)}
+            style={{ minHeight: 90, borderRadius: 10, border: `1.5px solid ${marked[i] ? "#4C8778" : "#DCE8F0"}`, background: marked[i] ? "#F3F8F5" : "#fff", padding: 8, fontSize: 10, fontWeight: 600, color: marked[i] ? "#4C8778" : "#5A7080", cursor: "pointer" }}>
+            {marked[i] ? "✅ " : ""}{p}
+          </button>
+        ))}
+      </div>
+      {bingoLine && <p style={{ textAlign: "center", fontSize: 14, fontWeight: 800, color: "#B9822F", marginBottom: 10 }}>🎉 بینگو! یک ردیف را کامل کردید!</p>}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+    </Card>
+  );
+}
+
+// آزمونِ هم‌سویی زوجی — مبتنی‌بر مفهومِ علمیِ «شکافِ ادراک» (Perception Gap)
+// همان چیزی که ابزارهایِ معتبرِ زوج‌سنجی (مثلِ PREPARE/ENRICH) استفاده می‌کنند
+const COUPLE_GAP_DOMAINS = [
+  { key: "emotional", label: "نزدیکیِ عاطفی", q: "این هفته، چقدر احساسِ نزدیکیِ عاطفی با همسرم داشتم؟" },
+  { key: "communication", label: "کیفیتِ گفت‌وگو", q: "این هفته، چقدر گفت‌وگوهایمان روان و بدونِ تنش بود؟" },
+  { key: "trust", label: "اعتماد", q: "این هفته، چقدر احساسِ اعتمادِ کامل داشتم؟" },
+  { key: "goals", label: "هم‌راستاییِ اهداف", q: "چقدر احساس می‌کنم دربارهٔ اهدافِ مشترکمان هم‌نظریم؟" },
+  { key: "conflict", label: "مدیریتِ تعارض", q: "آخرین باری که اختلاف داشتیم، چقدر خوب حلش کردیم؟" },
+  { key: "appreciation", label: "قدردانی", q: "چقدر احساس می‌کنم قدردانیِ من دیده و شنیده می‌شود؟" },
+  { key: "time", label: "زمانِ باکیفیت", q: "این هفته، چقدر زمانِ باکیفیت (بدونِ حواس‌پرتی) باهم گذراندیم؟" },
+  { key: "affection", label: "محبتِ فیزیکی", q: "چقدر از سطحِ محبتِ فیزیکیِ‌مان (در حدِ راحتی، نه لزوماً جنسی) راضی‌ام؟" },
+  { key: "finance", label: "هماهنگیِ مالی", q: "چقدر احساس می‌کنم دربارهٔ مسائلِ مالی هماهنگیم؟" },
+  { key: "future", label: "چشم‌اندازِ آینده", q: "چقدر نسبت به آینده‌ی رابطه‌مان خوش‌بینم؟" },
+];
+
+function CoupleAlignmentGame({ onBack }) {
+  const [stage, setStage] = useState("intro"); // intro | rating | waiting | results
+  const [role, setRole] = useState(null);
+  const [code, setCode] = useState("");
+  const [joinCode, setJoinCode] = useState("");
+  const [ratings, setRatings] = useState(Array(COUPLE_GAP_DOMAINS.length).fill(null));
+  const [err, setErr] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [results, setResults] = useState(null);
+
+  async function createGame() {
+    setBusy(true); setErr("");
+    try {
+      const r = await fetchWithTimeout("/api/couple-game", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "create" }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error);
+      setCode(d.code); setRole("a"); setStage("rating");
+    } catch (e) { setErr(e.message); }
+    setBusy(false);
+  }
+
+  function joinGame() {
+    if (joinCode.trim().length !== 6) { setErr("کد باید ۶ کاراکتر باشد"); return; }
+    setCode(joinCode.trim().toUpperCase()); setRole("b"); setStage("rating"); setErr("");
+  }
+
+  async function submitRatings() {
+    if (ratings.some((r) => r === null)) { setErr("لطفاً به همه‌ی سوالات پاسخ دهید"); return; }
+    setBusy(true); setErr("");
+    try {
+      const r = await fetchWithTimeout("/api/couple-game", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "submit", code, role, answers: ratings }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error);
+      if (d.bothDone) await checkResults();
+      else setStage("waiting");
+    } catch (e) { setErr(e.message); }
+    setBusy(false);
+  }
+
+  async function checkResults() {
+    setBusy(true);
+    try {
+      const r = await fetchWithTimeout(`/api/couple-game?code=${code}`);
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error);
+      if (d.hasA && d.hasB) { setResults({ a: d.answersA, b: d.answersB }); setStage("results"); }
+    } catch (e) { setErr(e.message); }
+    setBusy(false);
+  }
+
+  if (stage === "intro") {
+    return (
+      <Card>
+        <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🔗 آزمونِ هم‌سویی زوجی</h2>
+        <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18, lineHeight: 1.9 }}>
+          هرکدام جداگانه، در گوشیِ خودتان، به ۱۰ سوال پاسخ می‌دهید. بعد، تفاوتِ دیدگاه‌هایتان (نه درست/غلط، فقط تفاوتِ ادراک) نشان داده می‌شود.
+        </p>
+        <button onClick={createGame} disabled={busy}
+          style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+          {busy ? "..." : "شروعِ آزمونِ جدید (من اول شروع می‌کنم)"}
+        </button>
+        <p style={{ textAlign: "center", fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>— یا —</p>
+        <input value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} placeholder="کدی که همسرم فرستاده را وارد کنم" maxLength={6}
+          style={{ width: "100%", padding: "12px", borderRadius: 10, border: "1px solid #DCE8F0", marginBottom: 10, fontSize: 15, textAlign: "center", letterSpacing: 2 }} />
+        <button onClick={joinGame} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+          پیوستن با کد
+        </button>
+        {err && <p style={{ color: "#A6432F", fontSize: 12, textAlign: "center", marginBottom: 10 }}>⚠ {err}</p>}
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+      </Card>
+    );
+  }
+
+  if (stage === "rating") {
+    return (
+      <Card>
+        {role === "a" && (
+          <div style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px", marginBottom: 16, textAlign: "center" }}>
+            <p style={{ fontSize: 11.5, color: "#7A5B2E", marginBottom: 4 }}>این کد را برایِ همسرتان بفرستید:</p>
+            <p style={{ fontSize: 22, fontWeight: 800, color: "#9C6B2F", letterSpacing: 3 }}>{code}</p>
+          </div>
+        )}
+        <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>هرکدام را از ۱ (اصلاً) تا ۵ (خیلی‌زیاد) نمره بدهید — پاسخ‌هایتان تا اتمامِ هردو نفر، پنهان می‌ماند.</p>
+        {COUPLE_GAP_DOMAINS.map((d, i) => (
+          <div key={d.key} style={{ marginBottom: 14 }}>
+            <p style={{ fontSize: 12.5, color: "#1F2D3D", marginBottom: 6 }}>{d.q}</p>
+            <div style={{ display: "flex", gap: 6 }}>
+              {[1, 2, 3, 4, 5].map((v) => (
+                <button key={v} onClick={() => { const r = [...ratings]; r[i] = v; setRatings(r); }}
+                  style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: `1.5px solid ${ratings[i] === v ? "#17383D" : "#DCE8F0"}`, background: ratings[i] === v ? "#17383D" : "#fff", color: ratings[i] === v ? "#fff" : "#5A7080", fontWeight: 700, cursor: "pointer" }}>
+                  {v}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+        {err && <p style={{ color: "#A6432F", fontSize: 12, textAlign: "center", marginBottom: 10 }}>⚠ {err}</p>}
+        <button onClick={submitRatings} disabled={busy}
+          style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+          {busy ? "..." : "ثبتِ پاسخ‌ها"}
+        </button>
+      </Card>
+    );
+  }
+
+  if (stage === "waiting") {
+    return (
+      <Card>
+        <p style={{ fontSize: 40, textAlign: "center", marginBottom: 10 }}>⏳</p>
+        <h2 style={{ fontSize: 15, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 10 }}>منتظرِ همسرتان</h2>
+        <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18 }}>
+          پاسخ‌هایِ شما ثبت شد. وقتی همسرتان هم پاسخ داد (با همین کد: <b>{code}</b>)، نتیجه نشان داده می‌شود.
+        </p>
+        <button onClick={checkResults} disabled={busy} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
+          {busy ? "..." : "🔄 چک کردنِ نتیجه"}
+        </button>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت (بعداً چک می‌کنم)</button>
+      </Card>
+    );
+  }
+
+  if (stage === "results" && results) {
+    const gaps = COUPLE_GAP_DOMAINS.map((d, i) => ({ ...d, a: results.a[i], b: results.b[i], gap: Math.abs(results.a[i] - results.b[i]) }));
+    const avgGap = gaps.reduce((s, g) => s + g.gap, 0) / gaps.length;
+    const sorted = [...gaps].sort((x, y) => y.gap - x.gap);
+    return (
+      <Card>
+        <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🧩 نتیجه‌ی هم‌سویی</h2>
+        <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 16, lineHeight: 1.9 }}>
+          {avgGap <= 0.8 ? "هم‌سویی‌ِ بالایی در ادراکِ رابطه دارید 🌱" : avgGap <= 1.6 ? "در بیشترِ حوزه‌ها هم‌نظرید، با چند تفاوتِ قابلِ‌گفت‌وگو." : "چند شکافِ ادراکیِ قابلِ‌توجه دیده می‌شود — فرصتِ خوبی برایِ گفت‌وگوست."}
+        </p>
+        {sorted.map((g) => (
+          <div key={g.key} style={{ background: g.gap >= 2 ? "#FBEEEA" : g.gap >= 1 ? "#FBF3E2" : "#F3F8F5", borderRadius: 12, padding: "12px 14px", marginBottom: 8 }}>
+            <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 4 }}>{g.label}</p>
+            <p style={{ fontSize: 11.5, color: "#5A7080" }}>شما: {g.a} · همسرتان: {g.b} {g.gap >= 2 ? "· شکافِ زیاد ⚠️" : g.gap === 0 ? "· کاملاً هم‌نظر ✅" : ""}</p>
+          </div>
+        ))}
+        <p style={{ fontSize: 11, color: "#8CA3B0", textAlign: "center", margin: "14px 0" }}>این نتیجه، «درست/غلط» ندارد — فقط نشان می‌دهد کجاها ارزشِ گفت‌وگویِ بیشتر دارد.</p>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+      </Card>
+    );
+  }
+
+  return null;
+}
+
+function GamesHub({ onBack, navigate }) {
+  const games = [
+    { key: "adventure", icon: "📖", title: "داستانِ انتخابی", desc: "انتخاب کنید و ببینید کجا می‌رسد" },
+    { key: "crossword", icon: "🧩", title: "جدولِ کلمات", desc: "واژگانِ روان‌شناسیِ رابطه" },
+    { key: "cardmatch", icon: "🃏", title: "تطبیقِ کارت", desc: "رفتار را با مفهوم جفت کنید" },
+    { key: "wheel", icon: "🎡", title: "چرخِ احساسات", desc: "احساس را بشناسید و ثبت کنید" },
+    { key: "bingo", icon: "🎯", title: "بینگویِ خودآگاهی", desc: "چالشِ روزانه‌یِ کوچک" },
+    { key: "couple", icon: "🔗", title: "هم‌سویی زوجی", desc: "هردو جداگانه پاسخ دهید، نتیجه مقایسه می‌شود" },
+  ];
+  return (
+    <Card>
+      <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🎮 سرگرمیِ خودآگاه</h2>
+      <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18 }}>یادگیری از طریقِ بازی — سرگرم‌کننده و کاربردی</p>
+      {games.map((g) => (
+        <button key={g.key} onClick={() => navigate(g.key)}
+          style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, textAlign: "right", padding: "14px", borderRadius: 14, border: "1px solid #DCE8F0", background: "#fff", marginBottom: 10, cursor: "pointer" }}>
+          <span style={{ fontSize: 26 }}>{g.icon}</span>
+          <span>
+            <p style={{ fontSize: 13.5, fontWeight: 700, color: "#1F2D3D", margin: "0 0 2px" }}>{g.title}</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", margin: 0 }}>{g.desc}</p>
+          </span>
+        </button>
+      ))}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 6 }}>بازگشت</button>
+    </Card>
+  );
+}
+
 function PartnerGuide({ onBack }) {
   const tips = [
     { title: "این یک اتهام نیست", text: "همسرتان با بدبینی دست‌وپنجه نرم می‌کند، معمولاً به‌خاطرِ تجربه‌هایِ گذشته یا سبکِ دلبستگی‌اش — نه لزوماً به‌خاطرِ کاری که شما کرده‌اید. شخصی‌سازیِ آن، معمولاً دفاعی‌بودن را افزایش می‌دهد." },
@@ -3450,6 +3993,7 @@ function App() {
     else if (key === "consultCall") setScreen("feedback");
     else if (key === "slipPrevention") setScreen("slipPrevention");
     else if (key === "distrust") openSessionLibrary("distrust");
+    else if (key === "games") setScreen("gamesHub");
   }
   useEffect(() => {
     try {
@@ -4718,6 +5262,15 @@ function App() {
         {screen === "unifiedReport" && (
           <UnifiedProgressReport pkgKey={libraryPkg} onBack={() => setScreen("sessionLibrary")} />
         )}
+        {screen === "gamesHub" && (
+          <GamesHub onBack={() => setScreen("topics")} navigate={(g) => setScreen(`game_${g}`)} />
+        )}
+        {screen === "game_adventure" && <AdventureGame onBack={() => setScreen("gamesHub")} />}
+        {screen === "game_crossword" && <CrosswordPuzzle onBack={() => setScreen("gamesHub")} />}
+        {screen === "game_cardmatch" && <CardMatchGame onBack={() => setScreen("gamesHub")} />}
+        {screen === "game_wheel" && <EmotionWheel onBack={() => setScreen("gamesHub")} />}
+        {screen === "game_bingo" && <AwarenessBingo onBack={() => setScreen("gamesHub")} />}
+        {screen === "game_couple" && <CoupleAlignmentGame onBack={() => setScreen("gamesHub")} />}
         {screen === "distrustPartnerGuide" && (
           <PartnerGuide onBack={() => setScreen("sessionLibrary")} />
         )}
