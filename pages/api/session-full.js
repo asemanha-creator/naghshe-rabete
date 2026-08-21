@@ -15,7 +15,7 @@ export default async function handler(req, res) {
     const isAdmin = await verifyAdminToken(adminToken);
     // بستهٔ «بی‌اعتمادی» کاملاً رایگان است — همه‌ی جلساتش بدونِ نیازِ خرید باز است
     // سوپرایزِ ۱۵روزِ پیاپی: جلسه‌ی دومِ هر بسته، به‌عنوانِ پاداشِ وفاداری، رایگان می‌شود
-    let unlocked = isAdmin || Number(num) === 1 || pkgKey === "distrust" || (streakBonus === "1" && Number(num) === 2);
+    let unlocked = isAdmin || Number(num) === 1 || pkgKey === "distrust" || pkgKey === "anger" || (streakBonus === "1" && Number(num) === 2);
     if (!unlocked && email) {
       const raw = (await redis.get(`unlocked:${email.toLowerCase().trim()}`)) || [];
       const list = typeof raw === "string" ? JSON.parse(raw) : raw;
