@@ -1,6 +1,7 @@
 import { Redis } from "@upstash/redis";
 import { getSessionContent } from "../../lib/sessionContent";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 const redis = Redis.fromEnv();
 import { verifyAdminToken } from "../../lib/auth";
@@ -21,6 +22,9 @@ function sessionMatchesSearch(sess, query) {
 // فهرستِ جلساتِ یک بسته — فقط عنوان/رویکرد/پیش‌نمایشِ کوچک را می‌فرستد؛ هرگز متنِ کامل را
 export default async function handler(req, res) {
   try {
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`session-library:${ip}`, 120, 3600);
+    if (!rl.allowed) return res.status(429).json({ error: "تعدادِ درخواست‌هایتان زیاد بوده — کمی صبر کنید" });
     if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
     const { pkgKey, weakestDomain, searchQuery, email, adminToken } = req.query;
     const total = TREATMENT_PACKAGES_SESSIONS[pkgKey];
