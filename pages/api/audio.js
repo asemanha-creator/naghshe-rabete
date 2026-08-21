@@ -1,11 +1,16 @@
 import { Redis } from "@upstash/redis";
 import { verifyAdminToken } from "../../lib/auth";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 const redis = Redis.fromEnv();
 
 // بازیابی/حذفِ آدرسِ صوتیِ هر جلسه
 export default async function handler(req, res) {
   try {
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`audio:${ip}`, 80, 3600);
+    if (!rl.allowed) return res.status(429).json({ error: "تعدادِ درخواست‌هایتان زیاد بوده — کمی صبر کنید" });
     if (req.method === "GET") {
       const sessionId = req.query.sessionId;
       if (!sessionId) return res.status(400).json({ error: "sessionId لازم است" });
@@ -29,6 +34,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "method not allowed" });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "userdata", "خطایِ سرور در audio.js", { error: e.message });
     res.status(500).json({ error: e.message || "unknown error" });
   }
 }
