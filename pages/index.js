@@ -15,75 +15,201 @@ const WEBINAR_PACKAGE_LINK = "https://zarinp.al/your-webinar-link";
 const CONSULT_BOOKING_LINK = "tel:+989015091346"; // تا آماده‌شدنِ درگاهِ پرداخت، تماسِ مستقیم
 
 // بسته‌های درمانیِ زوج‌درمانی (ACT/EFT/گاتمن) — قیمت‌ها بر اساسِ تعرفه‌ی رسمیِ سازمانِ نظام (سطحِ دکتری) محاسبه شده‌اند
-const DISTRUST_QUIZ = [
+const DISTRUST_QUIZ_BANK = [
   {
     q: "اگر به همسرم شک می‌کنم، حتماً او کاری اشتباه کرده که باعثِ این شک شده.",
     options: [
-      { text: "درست است", correct: false, explain: "این باور، یکی از رایج‌ترین باورهایِ غلط است. پژوهش‌ها نشان می‌دهند بخشِ بزرگی از بدبینی، ریشه در تاریخچه‌ی فردی (دلبستگی، تجربه‌هایِ قبلی) دارد، نه لزوماً رفتارِ همسرِ فعلی. شک، همیشه «مدرک» نیست." },
-      { text: "نادرست است", correct: true, explain: "دقیقاً درست است. شک می‌تواند از منابعِ کاملاً متفاوتی بیاید — گاهی از رفتارِ واقعیِ همسر، گاهی از الگوهایِ ذهنیِ قدیمی‌ترِ خودمان." },
+      { text: "درست است", correct: false, explain: "این باور، یکی از رایج‌ترین باورهایِ غلط است. پژوهش‌ها نشان می‌دهند بخشِ بزرگی از بدبینی، ریشه در تاریخچه‌ی فردی دارد، نه لزوماً رفتارِ همسرِ فعلی." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست است. شک می‌تواند از منابعِ کاملاً متفاوتی بیاید — گاهی از رفتارِ واقعی، گاهی از الگوهایِ ذهنیِ قدیمی‌تر." },
     ],
   },
   {
     q: "چک‌کردنِ مکررِ گوشیِ همسرم، بهترین راه برایِ کاهشِ اضطرابم است.",
     options: [
-      { text: "درست است", correct: false, explain: "برعکس! این کار فقط تسکینِ **موقت** می‌دهد. پژوهش‌هایِ روان‌شناسیِ اضطراب نشان می‌دهند این‌گونه «رفتارهایِ اطمینان‌طلبانه»، در درازمدت اضطراب را **تقویت** می‌کنند، نه کاهش — دقیقاً همان چرخه‌ای که در اختلالِ وسواسی هم دیده می‌شود." },
-      { text: "نادرست است", correct: true, explain: "درست تشخیص دادید. بازرسیِ مکرر، چرخه‌ای معیوب می‌سازد: آرامشِ کوتاه، بازگشتِ اضطرابِ قوی‌تر." },
+      { text: "درست است", correct: false, explain: "برعکس! این کار فقط تسکینِ موقت می‌دهد و در درازمدت اضطراب را تقویت می‌کند — دقیقاً همان چرخه‌ای که در اختلالِ وسواسی هم دیده می‌شود." },
+      { text: "نادرست است", correct: true, explain: "درست تشخیص دادید. بازرسیِ مکرر، چرخه‌ای معیوب می‌سازد." },
     ],
   },
   {
     q: "اگر واقعاً به کسی اعتماد داشته باشم، هرگز کوچک‌ترین شکی به ذهنم نمی‌آید.",
     options: [
-      { text: "درست است", correct: false, explain: "اعتماد، به‌معنایِ نبودِ کاملِ شک نیست. حتی در سالم‌ترین رابطه‌ها هم گاهی افکارِ شکاکانه می‌آیند — تفاوت در این است که فرد چطور با آن افکار برخورد می‌کند، نه اینکه اصلاً نیایند." },
-      { text: "نادرست است", correct: true, explain: "دقیقاً. هدفِ درمان، رسیدن به «صفرِ فکرِ شکاکانه» نیست — بلکه یادگیریِ رابطه‌ی سالم‌تر با این افکار است." },
+      { text: "درست است", correct: false, explain: "اعتماد، به‌معنایِ نبودِ کاملِ شک نیست. حتی در سالم‌ترین رابطه‌ها هم گاهی افکارِ شکاکانه می‌آیند." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً. هدف، رسیدن به «صفرِ فکرِ شکاکانه» نیست، بلکه رابطه‌ی سالم‌تر با آن افکار است." },
     ],
   },
   {
     q: "بدبینیِ من، فقط به رابطه‌ی فعلی‌ام مربوط است و ربطی به گذشته‌ام ندارد.",
     options: [
-      { text: "درست است", correct: false, explain: "برایِ بسیاری از افراد، الگویِ بدبینی ریشه در تجربه‌هایِ اولیه‌یِ زندگی دارد — سبکِ دلبستگی، تجربه‌ی رهاشدن یا خیانتِ گذشته. این الگو حتی در رابطه‌ای کاملاً امن هم می‌تواند فعال شود." },
-      { text: "نادرست است", correct: true, explain: "درست است. شناختِ ریشه‌هایِ گذشته (نه برایِ سرزنش، بلکه برایِ درک)، یکی از قدم‌هایِ کلیدیِ این برنامه است." },
+      { text: "درست است", correct: false, explain: "برایِ بسیاری، الگویِ بدبینی ریشه در سبکِ دلبستگی یا تجربه‌ی رهاشدن/خیانتِ گذشته دارد — حتی در رابطه‌ای کاملاً امن هم فعال می‌شود." },
+      { text: "نادرست است", correct: true, explain: "درست است. شناختِ ریشه‌هایِ گذشته، یکی از قدم‌هایِ کلیدیِ درمان است." },
     ],
   },
   {
-    q: "اگر شهودم به من می‌گوید چیزی درست نیست، همیشه باید بی‌چون‌وچرا به آن اعتماد کنم.",
+    q: "اگر شهودم می‌گوید چیزی درست نیست، همیشه باید بی‌چون‌وچرا به آن اعتماد کنم.",
     options: [
-      { text: "درست است", correct: false, explain: "شهودِ واقعی و اضطرابِ مزمن، گاهی خیلی شبیه به‌نظر می‌رسند اما منشأشان فرق دارد. شهودِ واقعی معمولاً به یک رویدادِ مشخص مرتبط است؛ اضطراب، اغلب همیشگی و بدونِ محرکِ روشن است. یادگیریِ تمایزِ این دو، مهارتی قابلِ‌آموزش است." },
-      { text: "نادرست است", correct: true, explain: "دقیقاً — نه هر احساسِ قوی، شهودِ قابلِ‌اعتماد است. تشخیصِ این تفاوت، یکی از مهارت‌هایِ اصلیِ این دوره است." },
+      { text: "درست است", correct: false, explain: "شهودِ واقعی و اضطرابِ مزمن، خیلی شبیه به‌نظر می‌رسند اما منشأشان فرق دارد. تشخیصِ این تفاوت، مهارتی قابلِ‌آموزش است." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً — نه هر احساسِ قوی، شهودِ قابلِ‌اعتماد است." },
     ],
   },
   {
     q: "صحبت‌کردن دربارهٔ نیازِ اطمینان با همسرم، نشانه‌ی ضعف است.",
     options: [
-      { text: "درست است", correct: false, explain: "برعکس — بیانِ صادقانه‌یِ نیاز (به‌جایِ بازجویی یا سکوت)، نشانه‌ی بلوغِ عاطفی است. پژوهش‌هایِ زوج‌درمانی (از‌جمله کارِ جان گاتمن) نشان می‌دهند زوج‌هایی که می‌توانند نیازهایِ آسیب‌پذیرانه را مستقیم بیان کنند، رابطه‌هایِ پایدارتری دارند." },
-      { text: "نادرست است", correct: true, explain: "درست است. صداقتِ آسیب‌پذیرانه، از بازجویی یا سکوتِ نگران‌کننده، بسیار سالم‌تر است." },
+      { text: "درست است", correct: false, explain: "برعکس — بیانِ صادقانه‌یِ نیاز، نشانه‌ی بلوغِ عاطفی است. پژوهش‌هایِ گاتمن نشان می‌دهند این کار، رابطه را پایدارتر می‌کند." },
+      { text: "نادرست است", correct: true, explain: "درست است. صداقتِ آسیب‌پذیرانه، از بازجویی یا سکوت، بسیار سالم‌تر است." },
     ],
   },
   {
-    q: "بهترین راه برایِ مدیریتِ یک فکرِ شکاکانه، این است که آن را کاملاً از ذهن بیرون کنم و به آن فکر نکنم.",
+    q: "بهترین راه برایِ مدیریتِ یک فکرِ شکاکانه، سرکوبِ کاملِ آن از ذهن است.",
     options: [
-      { text: "درست است", correct: false, explain: "پژوهش‌هایِ روان‌شناسی (پدیده‌ی «اثرِ بازگشتِ سرکوب») نشان می‌دهند سرکوب‌کردنِ فکر، آن را قوی‌تر و مکررتر می‌کند، نه ضعیف‌تر. راهِ موثرتر، تغییرِ رابطه‌مان با فکر است (مثلِ تکنیک‌هایِ دیفیوژنِ شناختی)، نه جنگیدن با آن." },
-      { text: "نادرست است", correct: true, explain: "دقیقاً درست. هدف، حذفِ فکر نیست — بلکه یادگیریِ فاصله‌گرفتن از آن بدونِ باورِ کامل به آن است." },
+      { text: "درست است", correct: false, explain: "پژوهش‌ها نشان می‌دهند سرکوب‌کردنِ فکر، آن را قوی‌تر و مکررتر می‌کند. راهِ موثرتر، تغییرِ رابطه‌مان با فکر است." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. هدف، حذفِ فکر نیست، بلکه فاصله‌گرفتن از باورِ کاملِ آن است." },
     ],
   },
   {
-    q: "اگر بدنم دچارِ اضطرابِ شدید (تپش‌قلب، تنگیِ‌نفس) شود، فقط با «فکرکردنِ درست» می‌توانم آرام شوم.",
+    q: "اگر بدنم دچارِ اضطرابِ شدید شود، فقط با فکرکردنِ درست می‌توانم آرام شوم.",
     options: [
-      { text: "درست است", correct: false, explain: "وقتی اضطراب به‌اوج می‌رسد، بخشِ منطقیِ مغز موقتاً «آفلاین» می‌شود. در این لحظات، ابتدا باید بدن را آرام کرد (مثلاً با تکنیک‌هایی مثلِ آبِ سرد یا تنفسِ کنترل‌شده) — و بعد سراغِ فکرها رفت." },
-      { text: "نادرست است", correct: true, explain: "درست تشخیص دادید. مدیریتِ بدن، پیش‌نیازِ مدیریتِ فکر است، به‌خصوص در اوجِ اضطراب." },
+      { text: "درست است", correct: false, explain: "وقتی اضطراب به‌اوج می‌رسد، بخشِ منطقیِ مغز موقتاً آفلاین می‌شود. ابتدا باید بدن را آرام کرد، بعد سراغِ فکرها رفت." },
+      { text: "نادرست است", correct: true, explain: "درست تشخیص دادید. مدیریتِ بدن، پیش‌نیازِ مدیریتِ فکر است." },
     ],
   },
   {
-    q: "مرزهایِ مشخص در رابطه (مثلِ توافق بر پیام‌دادن هنگامِ دیرکردن)، همان بازرسی است.",
+    q: "مرزهایِ توافقی در رابطه (مثلِ پیام‌دادنِ هنگامِ دیرکردن)، همان بازرسی است.",
     options: [
-      { text: "درست است", correct: false, explain: "این دو کاملاً متفاوت‌اند. مرزِ سالم، چیزی است که هردو طرف **آگاهانه و شفاف** توافق کرده‌اند. بازرسی، یک‌طرفه، مخفیانه، و مبتنی‌بر کنترل است. تفاوت در توافق و شفافیت است، نه در خودِ عمل." },
-      { text: "نادرست است", correct: true, explain: "دقیقاً درست. مرزِ توافقی، اعتمادساز است؛ بازرسیِ مخفیانه، اعتمادسوز." },
+      { text: "درست است", correct: false, explain: "مرزِ سالم، دوطرفه و شفاف است؛ بازرسی، یک‌طرفه و مخفیانه است. تفاوت در توافق است، نه در خودِ عمل." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. مرزِ توافقی، اعتمادساز است." },
     ],
   },
   {
-    q: "بدبینیِ عمیق، معمولاً با ۱۰ جلسه به‌طورِ کامل و برایِ همیشه از بین می‌رود.",
+    q: "بدبینیِ عمیق، معمولاً با چند جلسه به‌طورِ کامل و برایِ همیشه از بین می‌رود.",
     options: [
-      { text: "درست است", correct: false, explain: "واقع‌بینانه باشیم: بدبینیِ ریشه‌دار، به‌ندرت یک‌شبه یا حتی در ۱۰ جلسه کاملاً محو می‌شود. هدفِ این برنامه، دادنِ **ابزارِ واقعی** برایِ مدیریتِ آن است — نه وعده‌ی درمانِ فوری و همیشگی." },
-      { text: "نادرست است", correct: true, explain: "درست است، و این صداقت مهم است. تغییرِ الگوهایِ عمیق، زمان می‌برد؛ اما ابزارهایی که یاد می‌گیرید، واقعی و ماندگارند." },
+      { text: "درست است", correct: false, explain: "واقع‌بینانه باشیم: تغییرِ الگوهایِ عمیق، زمان می‌برد. هدف، دادنِ ابزارِ واقعی است، نه وعده‌ی درمانِ فوری." },
+      { text: "نادرست است", correct: true, explain: "درست است، و این صداقت مهم است." },
+    ],
+  },
+  {
+    q: "نشخوارِ فکری (فکرکردنِ مکرر به یک سناریو) دقیقاً همان چیزی است که یک فکرِ شکاکانه‌ی معمولی است.",
+    options: [
+      { text: "درست است", correct: false, explain: "نشخوار، ذهن را در یک حلقه‌ی بسته و بدونِ نتیجه گیر می‌اندازد — با فکرِ یک‌باره فرق دارد و راهکارِ اختصاصی (مثلِ «زمانِ نگرانی») می‌خواهد." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. نشخوار، الگویی جداگانه و قابلِ‌مدیریت با تکنیکِ خاصِ خودش است." },
+    ],
+  },
+  {
+    q: "اگر همسرم دیر جواب بدهد، بهترین کار این است که فوراً بپرسم کجا بوده و با کی حرف زده.",
+    options: [
+      { text: "درست است", correct: false, explain: "این نوع پرسش، بازجویی محسوب می‌شود و معمولاً واکنشِ دفاعی برمی‌انگیزد. بیانِ نیاز (نه اتهام) موثرتر است." },
+      { text: "نادرست است", correct: true, explain: "درست است. زبانِ «وقتی X، من Y حس می‌کنم» بسیار سالم‌تر از بازجویی است." },
+    ],
+  },
+  {
+    q: "دلبستگیِ اضطرابی همیشه یعنی فرد در کودکی بدرفتاری دیده است.",
+    options: [
+      { text: "درست است", correct: false, explain: "دلبستگیِ اضطرابی می‌تواند از بی‌ثباتیِ نسبی، نه لزوماً بدرفتاری، شکل بگیرد — مثلاً والدینی که گاهی در دسترس بودند و گاهی نه." },
+      { text: "نادرست است", correct: true, explain: "درست است؛ طیفِ علت‌ها گسترده‌تر از بدرفتاریِ شدید است." },
+    ],
+  },
+  {
+    q: "وقتی اضطرابِ شدید دارم، بهترین اولین قدم این است که فوراً با همسرم دربارهٔ نگرانی‌ام صحبت کنم.",
+    options: [
+      { text: "درست است", correct: false, explain: "بهتر است ابتدا با تکنیک‌هایِ آرام‌سازی (مثلِ TIPP) بدن را آرام کنید، سپس در حالتِ آرام‌تر گفت‌وگو کنید — نه در اوجِ هیجان." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. زمان‌بندیِ گفت‌وگو، به‌اندازه‌ی محتوایش مهم است." },
+    ],
+  },
+  {
+    q: "اگر رفتارهایِ بازرسی را ناگهان و کاملاً قطع کنم، بهترین نتیجه را می‌گیرم.",
+    options: [
+      { text: "درست است", correct: false, explain: "کاهشِ تدریجی (نردبانِ کاهشِ بازرسی) معمولاً موثرتر و پایدارتر از توقفِ ناگهانی است، که اغلب به شکست و ناامیدی می‌انجامد." },
+      { text: "نادرست است", correct: true, explain: "درست است. تغییرِ تدریجی، پایدارتر از تغییرِ ناگهانی است." },
+    ],
+  },
+  {
+    q: "«اعتمادِ کسب‌شده» یعنی همسرم باید یک‌بار برایِ همیشه ثابت کند قابلِ‌اعتماد است.",
+    options: [
+      { text: "درست است", correct: false, explain: "طبقِ گاتمن، اعتماد از لحظاتِ کوچکِ تکرارشونده‌ی همسویی ساخته می‌شود، نه یک اثباتِ یک‌باره و قطعی." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. اعتماد، فرآیندی تدریجی و مستمر است." },
+    ],
+  },
+  {
+    q: "بخشِ «محافظِ» درونی که باعثِ افکارِ شکاکانه می‌شود، دشمنِ من است و باید سرکوب شود.",
+    options: [
+      { text: "درست است", correct: false, explain: "در رویکردِ IFS، این بخش تلاش می‌کند از شما محافظت کند، حتی اگر روشش کارآمد نباشد. جنگیدن با آن، آن را قوی‌تر می‌کند." },
+      { text: "نادرست است", correct: true, explain: "درست است. گفت‌وگویِ دلسوزانه با این بخش، موثرتر از سرکوب است." },
+    ],
+  },
+  {
+    q: "اگر افکارِ مثبت دربارهٔ همسرم هم داشته باشم، یعنی بدبینی‌ام واقعی نیست.",
+    options: [
+      { text: "درست است", correct: false, explain: "داشتنِ هم‌زمانِ افکارِ مثبت و منفی، کاملاً طبیعی است. بدبینی، مسئله‌ی «همه‌یا‌هیچ» نیست." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. وجودِ افکارِ مثبت، تجربه‌ی بدبینی را بی‌اعتبار نمی‌کند." },
+    ],
+  },
+  {
+    q: "پیگیریِ منظمِ شاخص‌هایِ بدبینی (مثلاً هفته‌ای دوبار) کارِ زائدی است اگر همین الان حالم خوب باشد.",
+    options: [
+      { text: "درست است", correct: false, explain: "پیگیریِ منظم، حتی در روزهایِ خوب، به دیدنِ الگوها و پیشگیریِ زودهنگام از بازگشت کمک می‌کند." },
+      { text: "نادرست است", correct: true, explain: "درست است. رصدِ مداوم، ابزاری برایِ آگاهی است، نه فقط برایِ روزهایِ بد." },
+    ],
+  },
+  {
+    q: "همه‌ی انواعِ حسادت یا بدبینی، یک منشأِ یکسان دارند.",
+    options: [
+      { text: "درست است", correct: false, explain: "پژوهش‌ها چند زیرگونه شناسایی کرده‌اند: واکنشی، اضطرابی/پیشگیرانه، کنترل‌محور، و مقایسه‌ای — هرکدام کمی متفاوت درمان می‌شوند." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. شناختِ نوعِ خاصِ خودتان، به انتخابِ راهکارِ مناسب‌تر کمک می‌کند." },
+    ],
+  },
+  {
+    q: "اگر همسرم گوشی‌اش را رمزدار کند، حتماً چیزی برایِ پنهان‌کردن دارد.",
+    options: [
+      { text: "درست است", correct: false, explain: "رمزدارکردنِ گوشی، دلایلِ متعددی می‌تواند داشته باشد (امنیت، حریمِ خصوصیِ عمومی، عادت) که ربطی به وفاداری ندارند." },
+      { text: "نادرست است", correct: true, explain: "درست است. تفسیرِ یک‌جانبه از رفتارهایِ خنثی، یکی از خطاهایِ شناختیِ رایج است." },
+    ],
+  },
+  {
+    q: "اگر یک‌بار در گذشته (با هرکسی) فریب خورده باشم، منطقی است که دیگر هرگز کاملاً اعتماد نکنم.",
+    options: [
+      { text: "درست است", correct: false, explain: "این باور، هرچند قابلِ‌فهم، فرد را در طرحواره‌ی رهاشدگی/بی‌ثباتی گیر می‌اندازد. هدفِ درمان، اعتمادِ آگاهانه است، نه بی‌اعتمادیِ دائمی." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. تجربه‌ی گذشته، سرنوشتِ رابطه‌ی فعلی را تعیین نمی‌کند." },
+    ],
+  },
+  {
+    q: "وقتی همسرم به من می‌گوید دوستت دارم، اما بدبینی‌ام باقی می‌ماند، یعنی حرفش را باور نمی‌کنم و این یعنی رابطه تمام است.",
+    options: [
+      { text: "درست است", correct: false, explain: "باقی‌ماندنِ گاهی‌اوقاتِ شک، حتی بعدِ اطمینان‌بخشی، طبیعی است — به‌خصوص وقتی الگو ریشه‌دار است. این به‌معنایِ پایانِ رابطه نیست." },
+      { text: "نادرست است", correct: true, explain: "درست است. تغییرِ این الگو، تدریجی است، نه آنی." },
+    ],
+  },
+  {
+    q: "تکنیکِ «نام‌گذاریِ ذهن» (مثلِ گفتنِ «ذهنم دارد این فکر را نشان می‌دهد») یعنی فکر را انکار می‌کنم.",
+    options: [
+      { text: "درست است", correct: false, explain: "این تکنیک، انکار نیست — بلکه ایجادِ فاصله‌ی سالم بینِ «شما» و «فکر» است، بدونِ نیازِ باورِ کامل یا انکارِ کامل." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. دیفیوژنِ شناختی، نه انکار است نه پذیرشِ کور." },
+    ],
+  },
+  {
+    q: "اگر رابطه‌ی قبلی‌ام با خیانتِ واقعی تمام شده، بدبینی‌ام در رابطه‌ی جدید کاملاً موجه و بدونِ نیازِ کار است.",
+    options: [
+      { text: "درست است", correct: false, explain: "حتی وقتی ریشه‌ی تاریخی موجه است، اگر بدبینی به کیفیتِ زندگی و رابطه‌ی جدید آسیب می‌زند، همچنان ارزشِ کار دارد — نه برایِ نادیده‌گرفتنِ گذشته، بلکه برایِ نگذاشتنِ گذشته بر رابطه‌ی جدید حکومت کند." },
+      { text: "نادرست است", correct: true, explain: "درست است. موجه‌بودنِ ریشه، به‌معنایِ نیازنداشتن به مدیریت نیست." },
+    ],
+  },
+  {
+    q: "پرسیدنِ سوال از خودم («آیا این شهود است یا اضطراب؟») در لحظه‌ی شک، کارِ زمان‌بری است و فایده‌ای ندارد.",
+    options: [
+      { text: "درست است", correct: false, explain: "این مکثِ کوتاه، دقیقاً همان چیزی است که به تصمیم‌گیریِ آگاهانه (به‌جایِ واکنشِ خودکار) کمک می‌کند — حتی چند ثانیه فرق می‌سازد." },
+      { text: "نادرست است", correct: true, explain: "درست است. این مکثِ کوچک، یکی از موثرترین ابزارهایِ این دوره است." },
+    ],
+  },
+  {
+    q: "اگر همسرم من را در جمع با موبایلش می‌بیند و لبخند می‌زند، منطقی‌ترین تفسیر این است که با فردِ دیگری در ارتباط است.",
+    options: [
+      { text: "درست است", correct: false, explain: "این یک نمونه‌ی روشن از «فکرخوانی» و «فیلترِ منفی» است — تفاسیرِ بی‌شمارِ دیگری (پیامِ دوست، خبرِ خنده‌دار، شبکه‌هایِ اجتماعی) به همان اندازه یا بیشتر محتمل‌اند." },
+      { text: "نادرست است", correct: true, explain: "دقیقاً درست. این دقیقاً همان خطایِ شناختی‌ای است که تکنیکِ «بررسیِ شواهد» برایِ آن ساخته شده." },
+    ],
+  },
+  {
+    q: "چیزی به‌نامِ «مرزهایِ سالمِ رابطه» یک مفهومِ غربی است و در فرهنگِ ما کاربردی ندارد.",
+    options: [
+      { text: "درست است", correct: false, explain: "شفافیت و توافقِ متقابل، مفهومی جهانی است، نه صرفاً غربی — فقط شکلِ بیانش ممکن است بینِ فرهنگ‌ها متفاوت باشد." },
+      { text: "نادرست است", correct: true, explain: "درست است. مرزگذاریِ سالم و صادقانه، در هر فرهنگی ارزشمند است." },
     ],
   },
 ];
@@ -2795,6 +2921,100 @@ function ThoughtTracker({ onBack }) {
 }
 
 // بازسنجیِ دوره‌ای — پیشنهاد می‌شود هفته‌ای دو بار برایِ دیدنِ روند
+// گزارشِ یکپارچه — ترکیبِ بازسنجی، پایشِ افکار، و پیشرفتِ تکالیف در یک تصویرِ واحد
+function UnifiedDistrustReport({ onBack }) {
+  const assessments = (() => { try { return JSON.parse(localStorage.getItem("naghshe_distrust_assessments")) || []; } catch (e) { return []; } })();
+  const thoughts = (() => { try { return JSON.parse(localStorage.getItem("naghshe_distrust_thoughts")) || []; } catch (e) { return []; } })();
+
+  const first = assessments[assessments.length - 1];
+  const last = assessments[0];
+  const last7 = thoughts.filter((t) => Date.now() - t.ts < 7 * 86400000);
+  const counts = { negative: 0, positive: 0, rumination: 0 };
+  last7.forEach((t) => { counts[t.type] = (counts[t.type] || 0) + 1; });
+
+  let hwDone = 0, hwTotal = 0;
+  for (let num = 1; num <= 10; num++) {
+    try {
+      const titles = JSON.parse(localStorage.getItem(`naghshe_distrust_hw_distrust-${num}_titles`)) || [];
+      const done = JSON.parse(localStorage.getItem(`naghshe_distrust_hw_distrust-${num}`)) || [];
+      hwTotal += titles.length;
+      hwDone += done.filter(Boolean).length;
+    } catch (e) {}
+  }
+
+  const overallNarrative = (() => {
+    if (!last) return "هنوز داده‌ی کافی برایِ تحلیل ندارید — با تکمیلِ اولین بازسنجی و چند روز پایشِ افکار شروع کنید.";
+    let parts = [];
+    if (first && assessments.length > 1) {
+      const diff = last.total - first.total;
+      if (diff <= -4) parts.push("از اولین سنجش تا الان، شاخصِ کلیِ بدبینی‌تان به‌طورِ محسوسی کاهش یافته — این یک پیشرفتِ واقعی است");
+      else if (diff >= 4) parts.push("شاخصِ کلی نسبت به اولین سنجش بالاتر رفته — این می‌تواند به‌خاطرِ یک دوره‌ی استرس‌زا باشد، نه لزوماً بازگشتِ کامل");
+      else parts.push("شاخصِ کلی نسبتاً پایدار مانده");
+    }
+    if (last7.length > 0) {
+      if (counts.negative > counts.positive * 2) parts.push("در هفته‌ی اخیر، افکارِ منفی به‌مراتب بیشتر از افکارِ مثبت ثبت شده‌اند");
+      else if (counts.positive >= counts.negative) parts.push("در هفته‌ی اخیر، توازنِ نسبتاً خوبی بینِ افکارِ مثبت و منفی داشته‌اید");
+      if (counts.rumination >= 3) parts.push("نشخوارِ فکری در این هفته تکرار شده — یادآوریِ تکنیکِ «زمانِ اختصاصیِ نگرانی» (جلسه‌ی ۳) می‌تواند کمک کند");
+    }
+    if (hwTotal > 0) {
+      const pct = Math.round((hwDone / hwTotal) * 100);
+      if (pct >= 70) parts.push(`${pct}٪ از تکالیف را انجام داده‌اید — تعهدِ خوبی به مسیر دارید`);
+      else if (pct > 0) parts.push(`${pct}٪ از تکالیف را انجام داده‌اید — بدونِ فشار، هروقت آماده بودید به بقیه برگردید`);
+    }
+    return parts.length ? parts.join("؛ ") + "." : "به مسیر ادامه دهید تا تحلیلِ دقیق‌تری ممکن شود.";
+  })();
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 16 }}>🧩 گزارشِ یکپارچه‌ی مسیرِ درمان</h2>
+
+      <div style={{ background: "#FBF3E2", borderRadius: 14, padding: "16px", marginBottom: 16 }}>
+        <p style={{ fontSize: 12.5, fontWeight: 700, color: "#7A5B2E", marginBottom: 8 }}>📖 خلاصه‌ی روایی</p>
+        <p style={{ fontSize: 12.5, color: "#5A4020", lineHeight: 2 }}>{overallNarrative}</p>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+        <div style={{ background: "#F3F8F5", borderRadius: 12, padding: "12px", textAlign: "center" }}>
+          <p style={{ fontSize: 10.5, color: "#4C8778", fontWeight: 700, marginBottom: 4 }}>آخرین شاخص</p>
+          <p style={{ fontSize: 20, fontWeight: 800, color: "#1F2D3D" }}>{last ? `${last.total}/۳۲` : "—"}</p>
+        </div>
+        <div style={{ background: "#F7FAFC", borderRadius: 12, padding: "12px", textAlign: "center" }}>
+          <p style={{ fontSize: 10.5, color: "#5A7080", fontWeight: 700, marginBottom: 4 }}>تعدادِ سنجش‌ها</p>
+          <p style={{ fontSize: 20, fontWeight: 800, color: "#1F2D3D" }}>{assessments.length}</p>
+        </div>
+        <div style={{ background: "#FBEEEA", borderRadius: 12, padding: "12px", textAlign: "center" }}>
+          <p style={{ fontSize: 10.5, color: "#A6432F", fontWeight: 700, marginBottom: 4 }}>افکارِ منفی (هفته)</p>
+          <p style={{ fontSize: 20, fontWeight: 800, color: "#1F2D3D" }}>{counts.negative}</p>
+        </div>
+        <div style={{ background: "#F3F8F5", borderRadius: 12, padding: "12px", textAlign: "center" }}>
+          <p style={{ fontSize: 10.5, color: "#4C8778", fontWeight: 700, marginBottom: 4 }}>افکارِ مثبت (هفته)</p>
+          <p style={{ fontSize: 20, fontWeight: 800, color: "#1F2D3D" }}>{counts.positive}</p>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: 16 }}>
+        <p style={{ fontSize: 12, fontWeight: 700, color: "#1F2D3D", marginBottom: 6 }}>📚 پیشرفتِ تکالیف</p>
+        <div style={{ height: 10, background: "#EDF2F5", borderRadius: 999, overflow: "hidden" }}>
+          <div style={{ height: "100%", width: `${hwTotal ? (hwDone / hwTotal) * 100 : 0}%`, background: "#9C6B2F", borderRadius: 999 }} />
+        </div>
+        <p style={{ fontSize: 11, color: "#8CA3B0", marginTop: 4 }}>{hwDone} از {hwTotal} تکلیف انجام شده</p>
+      </div>
+
+      {counts.rumination >= 3 && (
+        <div style={{ background: "#FBF3E2", border: "1px solid #E8D8B0", borderRadius: 12, padding: "12px 14px", marginBottom: 16 }}>
+          <p style={{ fontSize: 11.5, color: "#7A5B2E", lineHeight: 1.9 }}>
+            🔄 نشخوارِ فکری‌تان در این هفته {counts.rumination} بار ثبت شده. جلسه‌ی ۳ (فنِ «زمانِ اختصاصیِ نگرانی») را دوباره مرور کنید.
+          </p>
+        </div>
+      )}
+
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>
+        بازگشت
+      </button>
+    </Card>
+  );
+}
+
 function BiweeklyAssessment({ onBack }) {
   const storageKey = "naghshe_distrust_assessments";
   const [history, setHistory] = useState(() => {
@@ -2884,8 +3104,13 @@ function DistrustAwarenessQuiz({ onBack }) {
   const [selected, setSelected] = useState(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+  // هر بار که آزمون شروع می‌شود، ۱۰ سوالِ تصادفی از بانکِ ۲۸تاییِ سوالات انتخاب می‌شود — تا هربار تازه باشد
+  const [quizSet, setQuizSet] = useState(() => {
+    const shuffled = [...DISTRUST_QUIZ_BANK].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 10);
+  });
 
-  const current = DISTRUST_QUIZ[qIndex];
+  const current = quizSet[qIndex];
 
   function pick(opt, idx) {
     if (selected !== null) return;
@@ -2894,7 +3119,7 @@ function DistrustAwarenessQuiz({ onBack }) {
   }
 
   function next() {
-    if (qIndex + 1 >= DISTRUST_QUIZ.length) {
+    if (qIndex + 1 >= quizSet.length) {
       setFinished(true);
     } else {
       setQIndex((i) => i + 1);
@@ -2903,6 +3128,8 @@ function DistrustAwarenessQuiz({ onBack }) {
   }
 
   function restart() {
+    const shuffled = [...DISTRUST_QUIZ_BANK].sort(() => Math.random() - 0.5);
+    setQuizSet(shuffled.slice(0, 10));
     setQIndex(0); setSelected(null); setScore(0); setFinished(false);
   }
 
@@ -2912,7 +3139,7 @@ function DistrustAwarenessQuiz({ onBack }) {
         <p style={{ fontSize: 30, textAlign: "center", marginBottom: 8 }}>🎯</p>
         <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 10 }}>نتیجه‌ی آزمونِ آگاهی</h2>
         <p style={{ fontSize: 13, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>
-          از {DISTRUST_QUIZ.length} سوال، به <b style={{ color: "#4C8778" }}>{score}</b> موردِ درست پاسخ دادید.
+          از {quizSet.length} سوال، به <b style={{ color: "#4C8778" }}>{score}</b> موردِ درست پاسخ دادید.
         </p>
         <p style={{ fontSize: 12, color: "#5A7080", lineHeight: 1.9, textAlign: "center", marginBottom: 20 }}>
           {score >= 8
@@ -2933,9 +3160,9 @@ function DistrustAwarenessQuiz({ onBack }) {
 
   return (
     <Card>
-      <p style={{ fontSize: 10.5, color: "#9C6B2F", fontWeight: 700, marginBottom: 10 }}>سوال {qIndex + 1} از {DISTRUST_QUIZ.length}</p>
+      <p style={{ fontSize: 10.5, color: "#9C6B2F", fontWeight: 700, marginBottom: 10 }}>سوال {qIndex + 1} از {quizSet.length}</p>
       <div style={{ height: 5, background: "#F2E4C8", borderRadius: 999, marginBottom: 16, overflow: "hidden" }}>
-        <div style={{ height: "100%", width: `${((qIndex + (selected !== null ? 1 : 0)) / DISTRUST_QUIZ.length) * 100}%`, background: "#9C6B2F", transition: "width 0.3s" }} />
+        <div style={{ height: "100%", width: `${((qIndex + (selected !== null ? 1 : 0)) / quizSet.length) * 100}%`, background: "#9C6B2F", transition: "width 0.3s" }} />
       </div>
       <p style={{ fontSize: 14.5, fontWeight: 700, color: "#1F2D3D", lineHeight: 1.9, marginBottom: 18 }}>{current.q}</p>
       {current.options.map((opt, idx) => {
@@ -2959,7 +3186,7 @@ function DistrustAwarenessQuiz({ onBack }) {
       })}
       {selected !== null && (
         <button onClick={next} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #C99B4F, #9C6B2F)", color: "#fff", fontWeight: 700, cursor: "pointer", marginTop: 10 }}>
-          {qIndex + 1 >= DISTRUST_QUIZ.length ? "دیدنِ نتیجه" : "سوالِ بعدی ←"}
+          {qIndex + 1 >= quizSet.length ? "دیدنِ نتیجه" : "سوالِ بعدی ←"}
         </button>
       )}
       <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>
@@ -4353,6 +4580,9 @@ function App() {
           </Card>
         )}
 
+        {screen === "distrustReport" && (
+          <UnifiedDistrustReport onBack={() => setScreen("sessionLibrary")} />
+        )}
         {screen === "distrustQuiz" && (
           <DistrustAwarenessQuiz onBack={() => setScreen("sessionLibrary")} />
         )}
@@ -4436,6 +4666,10 @@ function App() {
 
             {libraryPkg === "distrust" && (
               <>
+                <button onClick={() => setScreen("distrustReport")}
+                  style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #C99B4F, #9C6B2F)", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10, fontSize: 13 }}>
+                  🧩 گزارشِ یکپارچه‌ی مسیرِ درمان
+                </button>
                 <button onClick={() => setScreen("distrustAssessment")}
                   style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #9C6B2F", background: "#FBF3E2", color: "#9C6B2F", fontWeight: 700, cursor: "pointer", marginBottom: 8, fontSize: 12.5 }}>
                   📈 بازسنجیِ شاخص‌هایِ بدبینی (پیشنهاد: هفته‌ای ۲ بار)
