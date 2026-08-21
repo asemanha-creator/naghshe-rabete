@@ -1,11 +1,15 @@
 import { Redis } from "@upstash/redis";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
 import { verifyAdminToken } from "../../lib/auth";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 const redis = Redis.fromEnv();
 
 export default async function handler(req, res) {
   try {
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`status:${ip}`, 80, 3600);
+    if (!rl.allowed) return res.status(429).json({ error: "تعدادِ درخواست‌هایتان زیاد بوده — کمی صبر کنید" });
     const { email } = req.method === "GET" ? req.query : req.body;
     if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
     const key = `unlocked:${email.toLowerCase().trim()}`;
