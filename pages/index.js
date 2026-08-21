@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 
 // ---------- Branding ----------
 const BRAND = {
@@ -3288,6 +3288,26 @@ function ChatWidget({ scores, overall, mode }) {
 
 function App() {
   const [screen, setScreen] = useState("topics");
+  const isPoppingRef = useRef(false);
+
+  // اتصالِ صفحاتِ اپ به تاریخچه‌ی مرورگر — تا دکمه‌ی «بازگشت» گوشی/مرورگر هم کار کند
+  useEffect(() => {
+    function onPopState(e) {
+      isPoppingRef.current = true;
+      setScreen((e.state && e.state.screen) || "topics");
+    }
+    window.addEventListener("popstate", onPopState);
+    try { window.history.replaceState({ screen: "topics" }, ""); } catch (err) {}
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  useEffect(() => {
+    if (isPoppingRef.current) {
+      isPoppingRef.current = false;
+      return;
+    }
+    try { window.history.pushState({ screen }, ""); } catch (err) {}
+  }, [screen]);
   const [todayTip, setTodayTip] = useState(() => getTodayTip());
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [globalSearch, setGlobalSearch] = useState("");
