@@ -3088,6 +3088,33 @@ function UnifiedProgressReport({ pkgKey, onBack }) {
   );
 }
 
+// راهنمایِ کوتاه برایِ همسر — یک منبعِ مستقل، نه جلسه‌ای که باید «گذرانده» شود
+function PartnerGuide({ onBack }) {
+  const tips = [
+    { title: "این یک اتهام نیست", text: "همسرتان با بدبینی دست‌وپنجه نرم می‌کند، معمولاً به‌خاطرِ تجربه‌هایِ گذشته یا سبکِ دلبستگی‌اش — نه لزوماً به‌خاطرِ کاری که شما کرده‌اید. شخصی‌سازیِ آن، معمولاً دفاعی‌بودن را افزایش می‌دهد." },
+    { title: "پاسخ‌هایِ مفید", text: "«می‌بینم نگرانی — می‌خواهی دربارهٔ آن حرف بزنیم؟» یا «من اینجام و حرفت را جدی می‌گیرم» — بدونِ اینکه فوراً وارد دفاعِ از خودتان شوید." },
+    { title: "چه‌نگویید", text: "«باز شروع کردی» یا «چقدر مسخره‌ای» — این جملات، حسِ شرم را تشدید می‌کنند و چرخه‌ی بی‌اعتمادی را بدتر می‌کنند." },
+    { title: "شفافیتِ داوطلبانه کمک می‌کند", text: "به‌جایِ اینکه فقط وقتی پرسیده می‌شوید توضیح دهید، گاهی خودتان (بدونِ اینکه او بپرسد) کوچک اطلاع دهید — مثلاً «امشب دیر می‌آیم، با همکارها هستم» — این لحظاتِ کوچکِ شفافیت، اعتماد می‌سازد." },
+    { title: "صبر با خودتان هم داشته باشید", text: "حمایت از کسی که بدبین است، خسته‌کننده هم هست. اگر نیاز به فاصله یا کمکِ خودتان دارید، این هم طبیعی و قابلِ‌قبول است — لازم نیست کامل باشید." },
+    { title: "این بخشِ درمانِ اوست، نه شما", text: "شما می‌توانید حمایت کنید، اما مسئولِ «درمان‌کردنِ» بدبینیِ او نیستید. این جلسات، ابزاری به خودِ او می‌دهند؛ نقشِ شما، همراهی است، نه حل‌کردن." },
+  ];
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>💛 راهنمایِ کوتاه برایِ همسر</h2>
+      <p style={{ fontSize: 11.5, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>اگر همسرتان در حالِ گذراندنِ این دوره است، این نکات می‌تواند کمک کند.</p>
+      {tips.map((t, i) => (
+        <div key={i} style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 10 }}>
+          <p style={{ fontSize: 12.5, fontWeight: 700, color: "#7A5B2E", marginBottom: 4 }}>{t.title}</p>
+          <p style={{ fontSize: 12, color: "#5A4020", lineHeight: 1.9, margin: 0 }}>{t.text}</p>
+        </div>
+      ))}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>
+        بازگشت
+      </button>
+    </Card>
+  );
+}
+
 function BiweeklyAssessment({ onBack }) {
   const storageKey = "naghshe_distrust_assessments";
   const [history, setHistory] = useState(() => {
@@ -4691,6 +4718,9 @@ function App() {
         {screen === "unifiedReport" && (
           <UnifiedProgressReport pkgKey={libraryPkg} onBack={() => setScreen("sessionLibrary")} />
         )}
+        {screen === "distrustPartnerGuide" && (
+          <PartnerGuide onBack={() => setScreen("sessionLibrary")} />
+        )}
         {screen === "distrustReport" && (
           <UnifiedDistrustReport onBack={() => setScreen("sessionLibrary")} />
         )}
@@ -4796,8 +4826,12 @@ function App() {
                   📝 پایشِ افکار (منفی / مثبت / نشخوارِ فکری)
                 </button>
                 <button onClick={() => setScreen("distrustQuiz")}
-                  style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #9C6B2F", background: "#fff", color: "#9C6B2F", fontWeight: 700, cursor: "pointer", marginBottom: 14, fontSize: 12.5 }}>
+                  style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #9C6B2F", background: "#fff", color: "#9C6B2F", fontWeight: 700, cursor: "pointer", marginBottom: 8, fontSize: 12.5 }}>
                   🎯 آزمونِ آگاهی: چقدر باورهایِ رایجِ بدبینی را می‌شناسید؟
+                </button>
+                <button onClick={() => setScreen("distrustPartnerGuide")}
+                  style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #9C6B2F", background: "#fff", color: "#9C6B2F", fontWeight: 700, cursor: "pointer", marginBottom: 14, fontSize: 12.5 }}>
+                  💛 راهنمای کوتاه برای همسر
                 </button>
               </>
             )}
