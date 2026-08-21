@@ -586,6 +586,7 @@ const TOPICS = [
   { key: "distrust", title: "بدبینی", subtitle: "", icon: "🔍", core: "#9C6B2F", bg: "#F2E4C8", blobA: "#C99B4F", blobB: "#E4C989", enabled: true },
   { key: "games", title: "سرگرمی", subtitle: "خودآگاهی از طریقِ بازی", icon: "🎮", core: "#5C7E7A", bg: "#DCEAE8", blobA: "#7BA39E", blobB: "#A9C9C5", enabled: true },
   { key: "anger", title: "کنترلِ خشم", subtitle: "", icon: "🔥", core: "#A6432F", bg: "#F5DDD5", blobA: "#C77358", blobB: "#E8ADA0", enabled: true },
+  { key: "mytools", title: "ابزارهایِ من", subtitle: "بسازید و پیش ببرید", icon: "🛠️", core: "#4C6B5A", bg: "#DCE8E0", blobA: "#7A9C87", blobB: "#B0C9BB", enabled: true },
   { key: "anxiety", title: "اضطراب", subtitle: "دلواپسیِ روزمره", icon: "🌊", core: "#A66456", bg: "#F2DFD6", blobA: "#C9938A", blobB: "#E6C4BC", enabled: false },
   { key: "mood", title: "افسردگی", subtitle: "خلقِ پایین", icon: "🌫️", core: "#17383D", bg: "#DDE5E0", blobA: "#5C7E7A", blobB: "#AEC2BC", enabled: false },
   { key: "attention", title: "تمرکز و توجه", subtitle: "پراکندگیِ ذهن", icon: "🎯", core: "#B8873A", bg: "#F5EAD0", blobA: "#D4B361", blobB: "#EBD79A", enabled: false },
@@ -3640,6 +3641,346 @@ function CoupleAlignmentGame({ onBack }) {
   return null;
 }
 
+// ========== ابزارهایِ شخصیِ من — چیزهایی که خودِ کاربر می‌سازد و اثرِ واقعی در بهبودی دارد ==========
+
+// ۱. کتابچه‌ی راهنمایِ منِ آینده — مجموعه‌ای شخصی از تکنیک‌هایی که واقعاً برایِ خودِ فرد کار کرده
+function MyGuidebook({ onBack }) {
+  const storageKey = "naghshe_my_guidebook";
+  const [entries, setEntries] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
+  });
+  const [title, setTitle] = useState("");
+  const [note, setNote] = useState("");
+
+  function addEntry() {
+    if (!title.trim()) return;
+    const entry = { title: title.trim(), note: note.trim(), ts: Date.now() };
+    const next = [entry, ...entries];
+    setEntries(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    setTitle(""); setNote("");
+  }
+  function removeEntry(idx) {
+    const next = entries.filter((_, i) => i !== idx);
+    setEntries(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+  }
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>📖 کتابچه‌ی راهنمایِ منِ آینده</h2>
+      <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18, lineHeight: 1.9 }}>
+        هر تکنیک یا بینشی که در جلسات دیدید و <b>واقعاً برایِ خودتان جواب داد</b> را اینجا ثبت کنید — این کتابچه، مالِ خودِ شماست و روزهایِ سخت به کارتان می‌آید.
+      </p>
+      <div style={{ background: "#F7FAFC", borderRadius: 12, padding: "14px", marginBottom: 16 }}>
+        <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="عنوانِ کوتاه (مثلاً «تنفسِ ۴-۷-۸»)"
+          style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, marginBottom: 8, boxSizing: "border-box" }} />
+        <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="چرا برایِ شما جواب داد؟ چطور استفاده‌اش می‌کنید؟"
+          style={{ width: "100%", minHeight: 70, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, marginBottom: 8, boxSizing: "border-box" }} />
+        <button onClick={addEntry} disabled={!title.trim()} style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer" }}>افزودن به کتابچه</button>
+      </div>
+      {entries.length === 0 ? (
+        <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>هنوز چیزی اضافه نکرده‌اید — از اولین جلسه‌ای که چیزی یاد گرفتید شروع کنید.</p>
+      ) : (
+        entries.map((e, i) => (
+          <div key={i} style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 8, position: "relative" }}>
+            <button onClick={() => removeEntry(i)} style={{ position: "absolute", left: 10, top: 10, border: "none", background: "none", color: "#B9822F", cursor: "pointer", fontSize: 14 }}>✕</button>
+            <p style={{ fontSize: 13, fontWeight: 700, color: "#7A5B2E", margin: "0 0 4px" }}>{e.title}</p>
+            {e.note && <p style={{ fontSize: 12, color: "#5A4020", lineHeight: 1.8, margin: 0 }}>{e.note}</p>}
+          </div>
+        ))
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
+    </Card>
+  );
+}
+
+// ۲. قراردادِ رابطه — زوج، خودشان بر پایه‌ی سوالاتِ راهنما، اصولِ رابطه‌شان را می‌نویسند
+const RELATIONSHIP_CONTRACT_PROMPTS = [
+  { key: "values", label: "۳ ارزشی که برایِ رابطه‌مان مهم‌ترین‌اند" },
+  { key: "boundaries", label: "مرزهایی که با هم توافق داریم" },
+  { key: "communication", label: "وقتی دعوا می‌کنیم، این‌کار را می‌کنیم (نه آن‌کار)" },
+  { key: "reassurance", label: "این‌کارها به هم حسِ اطمینان می‌دهد" },
+  { key: "commitment", label: "تعهدِ مشترکمان برایِ آینده" },
+];
+
+function RelationshipContract({ onBack }) {
+  const storageKey = "naghshe_relationship_contract";
+  const [answers, setAnswers] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || {}; } catch (e) { return {}; }
+  });
+  const [signed, setSigned] = useState(() => {
+    try { return !!localStorage.getItem(storageKey + "_signed"); } catch (e) { return false; }
+  });
+
+  function update(key, value) {
+    const next = { ...answers, [key]: value };
+    setAnswers(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+  }
+  function sign() {
+    setSigned(true);
+    try { localStorage.setItem(storageKey + "_signed", String(Date.now())); } catch (e) {}
+  }
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🤝 قراردادِ رابطه‌مان</h2>
+      <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18, lineHeight: 1.9 }}>
+        این سندی است که <b>خودتان و همسرتان</b> می‌سازید — نوشتنِ مشترکِ اصولِ رابطه، بر پایه‌ی پژوهش‌هایِ گاتمن، تعهد را واقعی‌تر می‌کند.
+      </p>
+      {RELATIONSHIP_CONTRACT_PROMPTS.map((p) => (
+        <div key={p.key} style={{ marginBottom: 14 }}>
+          <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 6 }}>{p.label}</p>
+          <textarea value={answers[p.key] || ""} onChange={(e) => update(p.key, e.target.value)} disabled={signed}
+            style={{ width: "100%", minHeight: 55, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, boxSizing: "border-box", background: signed ? "#F7FAFC" : "#fff" }} />
+        </div>
+      ))}
+      {!signed ? (
+        <button onClick={sign} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer" }}>
+          ✍️ امضایِ قرارداد
+        </button>
+      ) : (
+        <p style={{ textAlign: "center", fontSize: 13, fontWeight: 700, color: "#4C8778", background: "#F3F8F5", padding: "12px", borderRadius: 10 }}>
+          ✅ این قرارداد را با هم امضا کرده‌اید — گاه‌به‌گاه دوباره مرورش کنید.
+        </p>
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
+    </Card>
+  );
+}
+
+// ۳. دفترچه‌ی خاطراتِ مثبت — مبتنی‌بر روان‌شناسیِ مثبت‌گرا (savoring)
+function PositiveMemoryJournal({ onBack }) {
+  const storageKey = "naghshe_positive_memories";
+  const [entries, setEntries] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
+  });
+  const [text, setText] = useState("");
+
+  function addEntry() {
+    if (!text.trim()) return;
+    const entry = { text: text.trim(), ts: Date.now() };
+    const next = [entry, ...entries];
+    setEntries(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    setText("");
+  }
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>💛 دفترچه‌ی خاطراتِ خوب</h2>
+      <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18, lineHeight: 1.9 }}>
+        پژوهش‌هایِ روان‌شناسیِ مثبت‌گرا نشان می‌دهند یادآوریِ آگاهانه‌ی لحظاتِ خوب («savoring»)، رضایتِ رابطه را افزایش می‌دهد. یک لحظه‌ی خوبِ اخیر با همسرتان را بنویسید.
+      </p>
+      <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="مثلاً: دیشب باهم خندیدیم وقتی..."
+        style={{ width: "100%", minHeight: 70, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, boxSizing: "border-box", marginBottom: 8 }} />
+      <button onClick={addEntry} disabled={!text.trim()} style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "#B8873A", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>ثبتِ این خاطره</button>
+      {entries.length === 0 ? (
+        <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>هنوز خاطره‌ای ثبت نکرده‌اید.</p>
+      ) : (
+        entries.map((e, i) => (
+          <div key={i} style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 8 }}>
+            <p style={{ fontSize: 12, color: "#5A4020", lineHeight: 1.8, margin: "0 0 4px" }}>{e.text}</p>
+            <p style={{ fontSize: 10, color: "#9C8355", margin: 0 }}>{new Date(e.ts).toLocaleDateString("fa-IR")}</p>
+          </div>
+        ))
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
+    </Card>
+  );
+}
+
+// ۴. طراحیِ آیینِ شخصی — مبتنی‌بر مفهومِ «آیین‌هایِ پیوند» گاتمن
+function PersonalRitual({ onBack }) {
+  const storageKey = "naghshe_personal_ritual";
+  const [ritual, setRitual] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || null; } catch (e) { return null; }
+  });
+  const [name, setName] = useState("");
+  const [steps, setSteps] = useState("");
+  const [frequency, setFrequency] = useState("daily");
+  const [doneLog, setDoneLog] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey + "_log")) || []; } catch (e) { return []; }
+  });
+
+  function saveRitual() {
+    if (!name.trim()) return;
+    const r = { name: name.trim(), steps: steps.trim(), frequency };
+    setRitual(r);
+    try { localStorage.setItem(storageKey, JSON.stringify(r)); } catch (e) {}
+  }
+  function markDoneToday() {
+    const today = new Date().toDateString();
+    if (doneLog.includes(today)) return;
+    const next = [...doneLog, today];
+    setDoneLog(next);
+    try { localStorage.setItem(storageKey + "_log", JSON.stringify(next)); } catch (e) {}
+  }
+  const doneToday = doneLog.includes(new Date().toDateString());
+
+  if (!ritual) {
+    return (
+      <Card>
+        <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🕯️ طراحیِ آیینِ شخصیِ ما</h2>
+        <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18, lineHeight: 1.9 }}>
+          گاتمن نشان داده «آیین‌هایِ پیوند» (کارهایِ کوچکِ تکرارشونده) رابطه را تقویت می‌کنند. خودتان یک آیینِ کوچک طراحی کنید.
+        </p>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="نامِ آیین (مثلاً «چایِ شبانه»)"
+          style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, marginBottom: 8, boxSizing: "border-box" }} />
+        <textarea value={steps} onChange={(e) => setSteps(e.target.value)} placeholder="این آیین دقیقاً چطور انجام می‌شود؟"
+          style={{ width: "100%", minHeight: 60, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, marginBottom: 8, boxSizing: "border-box" }} />
+        <select value={frequency} onChange={(e) => setFrequency(e.target.value)} style={{ width: "100%", padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, marginBottom: 12 }}>
+          <option value="daily">روزانه</option>
+          <option value="weekly">هفتگی</option>
+        </select>
+        <button onClick={saveRitual} disabled={!name.trim()} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer" }}>ساختنِ آیین</button>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>بازگشت</button>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🕯️ {ritual.name}</h2>
+      <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 6 }}>{ritual.frequency === "daily" ? "روزانه" : "هفتگی"}</p>
+      {ritual.steps && <p style={{ fontSize: 12, color: "#3A4A52", textAlign: "center", lineHeight: 1.9, marginBottom: 16 }}>{ritual.steps}</p>}
+      <p style={{ textAlign: "center", fontSize: 13, fontWeight: 700, color: "#B8873A", marginBottom: 16 }}>🔥 {doneLog.length} بار انجام شده</p>
+      <button onClick={markDoneToday} disabled={doneToday} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: doneToday ? "#EDF2F5" : "linear-gradient(160deg, #C99B4F, #9C6B2F)", color: doneToday ? "#8CA3B0" : "#fff", fontWeight: 700, cursor: doneToday ? "default" : "pointer", marginBottom: 10 }}>
+        {doneToday ? "✅ امروز انجام شد" : "امروز انجامش دادیم"}
+      </button>
+      <button onClick={() => { setRitual(null); try { localStorage.removeItem(storageKey); } catch (e) {} }} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "1px solid #DCE8F0", background: "#fff", color: "#8CA3B0", cursor: "pointer", fontSize: 11.5, marginBottom: 8 }}>طراحیِ آیینِ جدید</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+    </Card>
+  );
+}
+
+// ۵. کارتِ اضطرارِ سفارشی — کاربر خودش از میانِ تکنیک‌ها انتخاب و متنش را می‌نویسد
+function CustomCrisisCard({ onBack }) {
+  const storageKey = "naghshe_custom_crisis_card";
+  const [items, setItems] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
+  });
+  const [text, setText] = useState("");
+
+  function addItem() {
+    if (!text.trim() || items.length >= 6) return;
+    const next = [...items, text.trim()];
+    setItems(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    setText("");
+  }
+  function removeItem(i) {
+    const next = items.filter((_, idx) => idx !== i);
+    setItems(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+  }
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🆘 کارتِ اضطرارِ من</h2>
+      <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18, lineHeight: 1.9 }}>
+        خودتان تا ۶ موردی که در لحظاتِ سخت واقعاً کمکتان می‌کند را بنویسید — این کارت، بعداً همیشه در دسترستان است.
+      </p>
+      {items.length < 6 && (
+        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="مثلاً: تنفسِ ۴-۷-۸"
+            style={{ flex: 1, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5 }} />
+          <button onClick={addItem} disabled={!text.trim()} style={{ padding: "10px 16px", borderRadius: 8, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer" }}>+</button>
+        </div>
+      )}
+      {items.length === 0 ? (
+        <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>هنوز موردی اضافه نکرده‌اید.</p>
+      ) : (
+        <div style={{ background: "#FBEEEA", border: "1.5px solid #E8C9BC", borderRadius: 14, padding: "16px" }}>
+          {items.map((item, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+              <p style={{ fontSize: 13, color: "#A6432F", fontWeight: 700, margin: 0 }}>{i + 1}. {item}</p>
+              <button onClick={() => removeItem(i)} style={{ border: "none", background: "none", color: "#A6432F", cursor: "pointer" }}>✕</button>
+            </div>
+          ))}
+        </div>
+      )}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 14 }}>بازگشت</button>
+    </Card>
+  );
+}
+
+// ۶. نقشه‌ی راهِ شخصی — هدف‌گذاریِ رفتاری
+function PersonalRoadmap({ onBack }) {
+  const storageKey = "naghshe_personal_roadmap";
+  const [goals, setGoals] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
+  });
+  const [text, setText] = useState("");
+
+  function addGoal() {
+    if (!text.trim()) return;
+    const next = [...goals, { text: text.trim(), done: false, ts: Date.now() }];
+    setGoals(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    setText("");
+  }
+  function toggleGoal(i) {
+    const next = [...goals];
+    next[i].done = !next[i].done;
+    setGoals(next);
+    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+  }
+
+  const doneCount = goals.filter((g) => g.done).length;
+
+  return (
+    <Card>
+      <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🗺️ نقشه‌ی راهِ من</h2>
+      <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18, lineHeight: 1.9 }}>
+        اهدافِ خودتان را در مسیرِ بهبودی تعریف کنید — چیزهایی که می‌خواهید در ماه‌هایِ آینده تغییر دهید.
+      </p>
+      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+        <input value={text} onChange={(e) => setText(e.target.value)} placeholder="مثلاً: هفته‌ای یک‌بار گفت‌وگویِ عمیق"
+          style={{ flex: 1, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5 }} />
+        <button onClick={addGoal} disabled={!text.trim()} style={{ padding: "10px 16px", borderRadius: 8, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer" }}>+</button>
+      </div>
+      {goals.length > 0 && <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center", marginBottom: 10 }}>{doneCount} از {goals.length} هدف محقق شده</p>}
+      {goals.map((g, i) => (
+        <label key={i} onClick={() => toggleGoal(i)} style={{ display: "flex", alignItems: "center", gap: 10, background: g.done ? "#F3F8F5" : "#F7FAFC", borderRadius: 10, padding: "10px 12px", marginBottom: 6, cursor: "pointer" }}>
+          <span style={{ width: 18, height: 18, borderRadius: 5, border: `1.5px solid ${g.done ? "#4C8778" : "#C9DEE8"}`, background: g.done ? "#4C8778" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 11, flexShrink: 0 }}>{g.done ? "✓" : ""}</span>
+          <span style={{ fontSize: 12.5, color: g.done ? "#8CA3B0" : "#1F2D3D", textDecoration: g.done ? "line-through" : "none" }}>{g.text}</span>
+        </label>
+      ))}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 14 }}>بازگشت</button>
+    </Card>
+  );
+}
+
+function MyToolsHub({ onBack, navigate }) {
+  const tools = [
+    { key: "guidebook", icon: "📖", title: "کتابچه‌ی راهنمایِ منِ آینده", desc: "تکنیک‌هایی که واقعاً برایتان جواب داد" },
+    { key: "contract", icon: "🤝", title: "قراردادِ رابطه‌مان", desc: "اصولی که با همسرتان می‌نویسید" },
+    { key: "memories", icon: "💛", title: "دفترچه‌ی خاطراتِ خوب", desc: "لحظاتِ خوبِ رابطه‌تان را ثبت کنید" },
+    { key: "ritual", icon: "🕯️", title: "آیینِ شخصیِ ما", desc: "یک رسمِ کوچکِ پیونددهنده طراحی کنید" },
+    { key: "crisis", icon: "🆘", title: "کارتِ اضطرارِ من", desc: "تکنیک‌هایِ منتخبِ خودتان" },
+    { key: "roadmap", icon: "🗺️", title: "نقشه‌ی راهِ من", desc: "اهدافِ شخصیِ بهبودی" },
+  ];
+  return (
+    <Card>
+      <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🛠️ ابزارهایِ شخصیِ من</h2>
+      <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 18, lineHeight: 1.9 }}>چیزهایی که خودتان می‌سازید — و دقیقاً به همین دلیل، بیشتر به کارتان می‌آیند.</p>
+      {tools.map((t) => (
+        <button key={t.key} onClick={() => navigate(t.key)}
+          style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, textAlign: "right", padding: "14px", borderRadius: 14, border: "1px solid #DCE8F0", background: "#fff", marginBottom: 10, cursor: "pointer" }}>
+          <span style={{ fontSize: 26 }}>{t.icon}</span>
+          <span>
+            <p style={{ fontSize: 13.5, fontWeight: 700, color: "#1F2D3D", margin: "0 0 2px" }}>{t.title}</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", margin: 0 }}>{t.desc}</p>
+          </span>
+        </button>
+      ))}
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 6 }}>بازگشت</button>
+    </Card>
+  );
+}
+
 function GamesHub({ onBack, navigate }) {
   const games = [
     { key: "adventure", icon: "📖", title: "داستانِ انتخابی", desc: "انتخاب کنید و ببینید کجا می‌رسد" },
@@ -4031,6 +4372,7 @@ function App() {
     else if (key === "slipPrevention") setScreen("slipPrevention");
     else if (key === "distrust") openSessionLibrary("distrust");
     else if (key === "anger") openSessionLibrary("anger");
+    else if (key === "mytools") setScreen("myToolsHub");
     else if (key === "games") setScreen("gamesHub");
   }
   useEffect(() => {
@@ -4782,11 +5124,34 @@ function App() {
                 </p>
               )}
               {showBio && (
-                <div style={{ background: "#fff", border: "1px solid #DCE8F0", borderRadius: 14, padding: "12px 14px", margin: "6px auto 10px", maxWidth: 320, textAlign: "right" }}>
-                  <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: 0 }}>{BRAND.credential}</p>
-                  <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 11.5, color: "#17383D", margin: "8px 0 0", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
-                  <a href="https://civilica.com/p/74353/" target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 11.5, color: "#17383D", margin: "6px 0 0", fontWeight: 600, textDecoration: "none" }}>📄 لینکِ مقالاتِ علمی‌پژوهشیِ دکتر عقیلی</a>
-                  <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 11.5, color: "#17383D", margin: "6px 0 0", fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
+                <div style={{ background: "#fff", border: "1px solid #DCE8F0", borderRadius: 14, padding: "16px", margin: "6px auto 10px", maxWidth: 340, textAlign: "right" }}>
+                  <p style={{ fontSize: 13, fontWeight: 800, color: "#17383D", margin: "0 0 10px", textAlign: "center" }}>دکتر مجتبی عقیلی</p>
+
+                  <p style={{ fontSize: 11, fontWeight: 700, color: "#9C6B2F", margin: "0 0 4px" }}>🎓 جایگاهِ علمی</p>
+                  <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 10px" }}>
+                    دانشیارِ روان‌شناسیِ سلامت در دانشگاهِ پیامِ نورِ گرگان، و پژوهشگرِ ممتازِ دانشگاه در سه دوره‌ی متوالی. دکترایِ روان‌شناسی را از دانشگاهِ Mysore در هند گذرانده و تاکنون بیش از ۱۲۸ مقاله‌ی علمی‌پژوهشی منتشر کرده است.
+                  </p>
+
+                  <p style={{ fontSize: 11, fontWeight: 700, color: "#9C6B2F", margin: "0 0 4px" }}>🩺 تخصصِ بالینی</p>
+                  <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 10px" }}>
+                    علاوه‌بر فعالیتِ دانشگاهی، به‌عنوانِ درمانگر و مدرس، کارگاه‌هایِ تخصصی برایِ روان‌شناسان و مشاورانِ سراسرِ کشور برگزار می‌کند. حوزه‌هایِ تخصصیِ بالینی‌اش شاملِ درمانِ پذیرش و تعهد (ACT)، روشِ گاتمن، زوج‌درمانیِ هیجان‌محور (EFT)، و درمانِ خیانتِ زناشویی است.
+                  </p>
+
+                  <p style={{ fontSize: 11, fontWeight: 700, color: "#9C6B2F", margin: "0 0 4px" }}>📚 پژوهش و نگارش</p>
+                  <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 10px" }}>
+                    علاقه‌ی دیرینه‌ای به فلسفه‌ی علمِ روان‌شناسی دارد و پیش‌تر کتاب‌هایی در حوزه‌ی فلسفه‌ی علم و فیلسوفانِ معاصرِ علم تالیف کرده. همچنین یکی از دغدغه‌هایِ اصلی‌اش، پیوند‌زدنِ ادبیاتِ کلاسیکِ فارسی (به‌ویژه اشعارِ حافظ و مولانا) با رویکردهایِ نوینِ درمانی، و بومی‌سازیِ رویکردهایِ غربی (ACT، گاتمن، EFT) برایِ زمینه‌یِ فرهنگیِ ایرانی است.
+                  </p>
+
+                  <p style={{ fontSize: 11, fontWeight: 700, color: "#9C6B2F", margin: "0 0 4px" }}>🏢 سازمان</p>
+                  <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 10px" }}>
+                    اداره‌کننده‌یِ «آکادمیِ روان‌شناختیِ دکتر مجتبی عقیلی» و موسسه‌ی «رابین بینشِ آرتان» در گرگان — که این اپلیکیشن هم زیرِ همین چتر توسعه یافته است.
+                  </p>
+
+                  <div style={{ borderTop: "1px solid #EDF2F5", marginTop: 4, paddingTop: 10 }}>
+                    <a href={`https://instagram.com/${BRAND.instagram}`} target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 11.5, color: "#17383D", margin: "0 0 6px", fontWeight: 600, textDecoration: "none" }}>📷 instagram.com/{BRAND.instagram}</a>
+                    <a href="https://civilica.com/p/74353/" target="_blank" rel="noreferrer" style={{ display: "block", fontSize: 11.5, color: "#17383D", margin: "0 0 6px", fontWeight: 600, textDecoration: "none" }}>📄 لینکِ مقالاتِ علمی‌پژوهشی</a>
+                    <a href={`tel:+98${BRAND.phone.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d)).replace(/^0/, "")}`} style={{ display: "block", fontSize: 11.5, color: "#17383D", margin: 0, fontWeight: 600, textDecoration: "none" }}>📞 {BRAND.phone}</a>
+                  </div>
                 </div>
               )}
 
@@ -5303,6 +5668,15 @@ function App() {
         {screen === "unifiedReport" && (
           <UnifiedProgressReport pkgKey={libraryPkg} onBack={() => setScreen("sessionLibrary")} />
         )}
+        {screen === "myToolsHub" && (
+          <MyToolsHub onBack={() => setScreen("topics")} navigate={(t) => setScreen(`mytool_${t}`)} />
+        )}
+        {screen === "mytool_guidebook" && <MyGuidebook onBack={() => setScreen("myToolsHub")} />}
+        {screen === "mytool_contract" && <RelationshipContract onBack={() => setScreen("myToolsHub")} />}
+        {screen === "mytool_memories" && <PositiveMemoryJournal onBack={() => setScreen("myToolsHub")} />}
+        {screen === "mytool_ritual" && <PersonalRitual onBack={() => setScreen("myToolsHub")} />}
+        {screen === "mytool_crisis" && <CustomCrisisCard onBack={() => setScreen("myToolsHub")} />}
+        {screen === "mytool_roadmap" && <PersonalRoadmap onBack={() => setScreen("myToolsHub")} />}
         {screen === "gamesHub" && (
           <GamesHub onBack={() => setScreen("topics")} navigate={(g) => setScreen(`game_${g}`)} />
         )}
