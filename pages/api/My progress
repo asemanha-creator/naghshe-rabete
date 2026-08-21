@@ -1,11 +1,15 @@
 import { Redis } from "@upstash/redis";
 import { verifySession } from "../../lib/auth";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 
 const redis = Redis.fromEnv();
 
 // بازیابیِ پیشرفتِ خودِ کاربر — حالا با تاییدِ نشست، نه ایمیلِ خام
 export default async function handler(req, res) {
   try {
+    const ip = getClientIp(req);
+    const rl = await checkRateLimit(`my-progress:${ip}`, 60, 3600);
+    if (!rl.allowed) return res.status(429).json({ error: "تعدادِ درخواست‌هایتان زیاد بوده — کمی صبر کنید" });
     if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
     const token = req.query.token;
     const email = await verifySession(token);
