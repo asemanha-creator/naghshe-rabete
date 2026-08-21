@@ -1,6 +1,7 @@
 import { put } from "@vercel/blob";
 import { Redis } from "@upstash/redis";
 import { verifyAdminToken } from "../../lib/auth";
+import { logEvent, LOG_LEVELS } from "../../lib/logger";
 
 const redis = Redis.fromEnv();
 
@@ -20,6 +21,7 @@ export default async function handler(req, res) {
     const blob = await put(`audio/${sessionId}-${Date.now()}-${fileName}`, buffer, {
       access: "public",
       contentType: contentType || "audio/mp4",
+      token: process.env.AUDIO_BLOB_READ_WRITE_TOKEN, // فضایِ Blobِ عمومیِ اختصاصیِ صوت
     });
 
     await redis.set(`session_audio:${sessionId}`, blob.url);
@@ -27,6 +29,7 @@ export default async function handler(req, res) {
     res.status(200).json({ ok: true, url: blob.url });
   } catch (e) {
     console.error(e);
+    await logEvent(LOG_LEVELS.ERROR, "userdata", "خطایِ سرور در audio-upload.js", { error: e.message });
     res.status(500).json({ error: e.message || "خطایِ آپلود" });
   }
 }
