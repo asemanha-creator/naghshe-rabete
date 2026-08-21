@@ -255,6 +255,14 @@ const TREATMENT_PACKAGES = {
     inPersonEquivalent: 18750000,
     note: "برنامه‌ی کاملاً رایگانِ ۱۰جلسه‌ای، چندرویکردی (سی‌بی‌تی، اکت، DBT، EFT، طرحواره‌درمانی، IFS، گاتمن) — برایِ کسانی که با شکِ مداوم یا اضطرابِ دائمی دربارهٔ وفاداریِ همسرشان دست‌وپنجه نرم می‌کنند",
   },
+  anger: {
+    label: "بستهٔ کنترلِ خشم و پرخاشگری (رایگان)",
+    track: "anger",
+    sessions: 10,
+    price: 0,
+    inPersonEquivalent: 18750000,
+    note: "برنامه‌ی کاملاً رایگانِ ۱۰جلسه‌ای، چندرویکردی (سی‌بی‌تی، اکت، DBT، EFT، IFS، گاتمن) — برایِ کسانی که با خشمِ مکرر یا پرخاشگریِ کلامی/رفتاری در رابطه دست‌وپنجه نرم می‌کنند",
+  },
 };
 function toman(n) {
   return n.toLocaleString("fa-IR") + " تومان";
@@ -577,6 +585,7 @@ const TOPICS = [
   { key: "aggression", title: "پرخاشگری", subtitle: "کنترلِ خشم", icon: "🔥", core: "#3D5A5E", bg: "#DCE6E4", blobA: "#7A9C9E", blobB: "#BBD0CF", enabled: false },
   { key: "distrust", title: "بدبینی", subtitle: "", icon: "🔍", core: "#9C6B2F", bg: "#F2E4C8", blobA: "#C99B4F", blobB: "#E4C989", enabled: true },
   { key: "games", title: "سرگرمی", subtitle: "خودآگاهی از طریقِ بازی", icon: "🎮", core: "#5C7E7A", bg: "#DCEAE8", blobA: "#7BA39E", blobB: "#A9C9C5", enabled: true },
+  { key: "anger", title: "کنترلِ خشم", subtitle: "", icon: "🔥", core: "#A6432F", bg: "#F5DDD5", blobA: "#C77358", blobB: "#E8ADA0", enabled: true },
   { key: "anxiety", title: "اضطراب", subtitle: "دلواپسیِ روزمره", icon: "🌊", core: "#A66456", bg: "#F2DFD6", blobA: "#C9938A", blobB: "#E6C4BC", enabled: false },
   { key: "mood", title: "افسردگی", subtitle: "خلقِ پایین", icon: "🌫️", core: "#17383D", bg: "#DDE5E0", blobA: "#5C7E7A", blobB: "#AEC2BC", enabled: false },
   { key: "attention", title: "تمرکز و توجه", subtitle: "پراکندگیِ ذهن", icon: "🎯", core: "#B8873A", bg: "#F5EAD0", blobA: "#D4B361", blobB: "#EBD79A", enabled: false },
@@ -3993,6 +4002,7 @@ function App() {
     else if (key === "consultCall") setScreen("feedback");
     else if (key === "slipPrevention") setScreen("slipPrevention");
     else if (key === "distrust") openSessionLibrary("distrust");
+    else if (key === "anger") openSessionLibrary("anger");
     else if (key === "games") setScreen("gamesHub");
   }
   useEffect(() => {
@@ -5313,7 +5323,7 @@ function App() {
                   <div style={{ height: 8, background: "#EDF2F5", borderRadius: 999, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${pct}%`, background: "#B8873A", borderRadius: 999, transition: "width 0.3s" }} />
                   </div>
-                  {user && doneCount < total && libraryPkg !== "distrust" && (() => {
+                  {user && doneCount < total && libraryPkg !== "distrust" && libraryPkg !== "anger" && (() => {
                     const noDiscountPrice = TREATMENT_PACKAGES[libraryPkg].sessions * sessionPrice(libraryPkg);
                     const bundlePrice = Math.round((noDiscountPrice * 0.65) / 10000) * 10000;
                     return (
@@ -5446,7 +5456,7 @@ function App() {
                   <div style={{ flex: 1 }}>
                     <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", margin: 0 }}>
                       جلسه‌ی {num}: {title}
-                      {(num === 1 || libraryPkg === "distrust") && <span style={{ fontSize: 9.5, color: "#B9822F", fontWeight: 800, marginRight: 6 }}>· 🎁 رایگان</span>}
+                      {(num === 1 || libraryPkg === "distrust" || libraryPkg === "anger") && <span style={{ fontSize: 9.5, color: "#B9822F", fontWeight: 800, marginRight: 6 }}>· 🎁 رایگان</span>}
                       {num === 1 && libraryWeakestDomain && <span style={{ fontSize: 9.5, color: "#4C8778", fontWeight: 700, marginRight: 6 }}>· شخصی‌سازی‌شده</span>}
                       {!isSessionLikelyRelevant(libraryPkg, num, context) && <span style={{ fontSize: 9.5, color: "#B9822F", fontWeight: 700, marginRight: 6 }}>· شاید کمتر کاربردی</span>}
                     </p>
