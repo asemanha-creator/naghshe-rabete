@@ -4156,6 +4156,9 @@ function App() {
   const [audioPkgKey, setAudioPkgKey] = useState("moderate");
   const [audioNum, setAudioNum] = useState(1);
   const [audioUploadMsg, setAudioUploadMsg] = useState("");
+  const [videoPkgKey, setVideoPkgKey] = useState("moderate");
+  const [videoNum, setVideoNum] = useState(1);
+  const [videoUploadMsg, setVideoUploadMsg] = useState("");
   const [backupBusy, setBackupBusy] = useState(false);
   const [backupMsg, setBackupMsg] = useState("");
   const [backupList, setBackupList] = useState([]);
@@ -5611,7 +5614,6 @@ function App() {
                 style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>
                 ‹ بازگشت به فهرستِ جلسات
               </button>
-              <SessionAudioPlayer sessionKey={sessKey} />
               <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>
                 جلسه‌ی {viewingSession.num}: {sess.title}
               </h2>
@@ -6236,6 +6238,33 @@ function App() {
               } catch (err) { setAudioUploadMsg("❌ " + err.message); }
             }} style={{ width: "100%", fontSize: 12 }} />
             {audioUploadMsg && <p style={{ fontSize: 11, color: "#4C8778", marginTop: 6 }}>{audioUploadMsg}</p>}
+          </Card>
+          <Card>
+            <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🎥 آپلودِ ویدیویِ هر جلسه</p>
+            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>فایلِ ویدیوییِ کوتاه (مثلاً ۲ دقیقه) را انتخاب کنید — مستقیم به فضایِ ذخیره‌سازی می‌رود، محدودیتِ حجمِ سختگیرانه ندارد.</p>
+            <select value={videoPkgKey} onChange={(e) => setVideoPkgKey(e.target.value)} style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12, marginBottom: 6 }}>
+              {Object.entries(TREATMENT_PACKAGES).map(([k, p]) => <option key={k} value={k}>{p.label}</option>)}
+            </select>
+            <select value={videoNum} onChange={(e) => setVideoNum(Number(e.target.value))} style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12, marginBottom: 8 }}>
+              {Array.from({ length: TREATMENT_PACKAGES[videoPkgKey].sessions }, (_, i) => i + 1).map((n) => <option key={n} value={n}>جلسه {n}</option>)}
+            </select>
+            <input type="file" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm" onChange={async (e) => {
+              const file = e.target.files[0];
+              if (!file) return;
+              if (file.size > 200 * 1024 * 1024) { setVideoUploadMsg("❌ فایل بزرگ‌تر از ۲۰۰ مگابایت است"); return; }
+              setVideoUploadMsg("در حالِ آپلود... (ممکن است کمی طول بکشد)");
+              try {
+                const { upload } = await import("@vercel/blob/client");
+                const sid = `${videoPkgKey}-${videoNum}`;
+                await upload(file.name, file, {
+                  access: "public",
+                  handleUploadUrl: "/api/video-upload",
+                  clientPayload: JSON.stringify({ adminToken, sessionId: sid }),
+                });
+                setVideoUploadMsg("✅ آپلود و ذخیره شد");
+              } catch (err) { setVideoUploadMsg("❌ " + err.message); }
+            }} style={{ width: "100%", fontSize: 12 }} />
+            {videoUploadMsg && <p style={{ fontSize: 11, color: "#4C8778", marginTop: 6 }}>{videoUploadMsg}</p>}
           </Card>
           <Card style={{ border: "1.5px solid #A6432F" }}>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📬 پیشنهادات / انتقادات / تیکت‌ها</p>
