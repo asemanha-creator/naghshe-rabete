@@ -23,6 +23,16 @@ export default async function handler(req, res) {
     }
 
     const sess = getSessionContent(pkgKey, Number(num), weakestDomain || null, level || "excellent");
+    // اتصالِ لینکِ واقعیِ صوت/ویدیویی که ادمین آپلود کرده (اگر باشد)
+    const sessionKey = `${pkgKey}-${num}`;
+    try {
+      const [realAudio, realVideo] = await Promise.all([
+        redis.get(`session_audio:${sessionKey}`),
+        redis.get(`session_video:${sessionKey}`),
+      ]);
+      if (realAudio) sess.audioUrl = realAudio;
+      if (realVideo) sess.videoUrl = realVideo;
+    } catch (e) { console.error("media lookup failed (non-critical):", e); }
 
     if (!unlocked) {
       // بدونِ دسترسی، فقط پیش‌نمایشِ کوچک برمی‌گردد، نه متنِ کامل
