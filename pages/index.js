@@ -4470,6 +4470,12 @@ function App() {
     try {
       const goto = new URLSearchParams(window.location.search).get("goto");
       if (goto) navigateToTopic(goto);
+      const sharedPkg = new URLSearchParams(window.location.search).get("pkg");
+      const sharedNum = new URLSearchParams(window.location.search).get("session");
+      if (sharedPkg && sharedNum && TREATMENT_PACKAGES[sharedPkg]) {
+        setViewingSession({ pkgKey: sharedPkg, num: Number(sharedNum), weakestDomain: null });
+        setScreen("sessionReader");
+      }
     } catch (e) {}
   }, []);
   const [adminToken, setAdminToken] = useState(() => {
@@ -4611,6 +4617,7 @@ function App() {
   const [libraryFetchError, setLibraryFetchError] = useState("");
   const [unlockedSessions, setUnlockedSessions] = useState([]);
   const [viewingSession, setViewingSession] = useState(null);
+  const [shareMsg, setShareMsg] = useState("");
   const [adminUnlockEmail, setAdminUnlockEmail] = useState("");
   const [adminUnlockMsg, setAdminUnlockMsg] = useState("");
   const [generatedCode, setGeneratedCode] = useState("");
@@ -4780,6 +4787,18 @@ function App() {
       const r = await fetchWithTimeout("/api/redeem", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "generate", sessionId: sessionId(pkgKey, num), adminToken }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || "خطا");
+      setGeneratedCode(data.code);
+    } catch (e) { setAdminUnlockMsg(e.message); }
+  }
+
+  async function generateGiftCodeForWholePackage(pkgKey) {
+    try {
+      const r = await fetchWithTimeout("/api/redeem", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "generate", sessionId: `PKG:${pkgKey}`, adminToken }),
       });
       const data = await r.json();
       if (!r.ok) throw new Error(data.error || "خطا");
@@ -6112,10 +6131,24 @@ function App() {
                 </div>
               )}
             <Card>
-              <button onClick={() => setScreen("sessionLibrary")}
-                style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>
-                ‹ بازگشت به فهرستِ جلسات
-              </button>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <button onClick={() => setScreen("sessionLibrary")}
+                  style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer" }}>
+                  ‹ بازگشت به فهرستِ جلسات
+                </button>
+                <button onClick={async () => {
+                  const shareUrl = `https://naghshe-rabete-ashy.vercel.app/?pkg=${viewingSession.pkgKey}&session=${viewingSession.num}`;
+                  const shareText = `این جلسه از «گدار» را ببین: ${sess.title}`;
+                  if (navigator.share) {
+                    try { await navigator.share({ title: sess.title, text: shareText, url: shareUrl }); } catch (e) {}
+                  } else {
+                    try { await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`); setShareMsg("✅ لینک کپی شد"); setTimeout(() => setShareMsg(""), 2500); } catch (e) {}
+                  }
+                }} style={{ border: "1px solid #DCE8F0", background: "#fff", color: "#5A7080", fontSize: 11, borderRadius: 8, padding: "5px 10px", cursor: "pointer" }}>
+                  🔗 اشتراک‌گذاری
+                </button>
+              </div>
+              {shareMsg && <p style={{ fontSize: 11, color: "#4C8778", textAlign: "center", marginBottom: 8 }}>{shareMsg}</p>}
               <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>
                 جلسه‌ی {viewingSession.num}: {sess.title}
               </h2>
@@ -6704,6 +6737,10 @@ function App() {
             {Object.entries(TREATMENT_PACKAGES).map(([pkgKey, pkg]) => (
               <div key={pkgKey} style={{ marginBottom: 8 }}>
                 <p style={{ fontSize: 11.5, color: "#5A7080", margin: "0 0 5px" }}>{pkg.label}:</p>
+                <button onClick={() => generateGiftCodeForWholePackage(pkgKey)}
+                  style={{ padding: "5px 10px", borderRadius: 8, border: "1.5px solid #17383D", background: "#F1E8D4", color: "#17383D", fontSize: 11, fontWeight: 700, cursor: "pointer", marginBottom: 5 }}>
+                  🎁 کدِ کلِ بسته (هدیه)
+                </button>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                   {Array.from({ length: pkg.sessions }, (_, i) => i + 1).map((num) => (
                     <button key={num} onClick={() => generateActivationCode(pkgKey, num)}
