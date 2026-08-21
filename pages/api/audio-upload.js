@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     const blob = await put(`audio/${sessionId}-${Date.now()}-${fileName}`, buffer, {
       access: "public",
       contentType: contentType || "audio/mp4",
-      token: process.env.AUDIO_BLOB_READ_WRITE_TOKEN, // فضایِ Blobِ عمومیِ اختصاصیِ صوت
+      storeId: process.env.AUDIO_STORE_ID, // فضایِ Blobِ عمومیِ اختصاصیِ صوت
     });
 
     await redis.set(`session_audio:${sessionId}`, blob.url);
