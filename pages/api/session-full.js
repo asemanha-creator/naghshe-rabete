@@ -9,12 +9,13 @@ import { verifyAdminToken } from "../../lib/auth";
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
-    const { pkgKey, num, weakestDomain, level, email, adminToken } = req.query;
+    const { pkgKey, num, weakestDomain, level, email, adminToken, streakBonus } = req.query;
     if (!pkgKey || !num) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
 
     const isAdmin = await verifyAdminToken(adminToken);
     // بستهٔ «بی‌اعتمادی» کاملاً رایگان است — همه‌ی جلساتش بدونِ نیازِ خرید باز است
-    let unlocked = isAdmin || Number(num) === 1 || pkgKey === "distrust";
+    // سوپرایزِ ۱۵روزِ پیاپی: جلسه‌ی دومِ هر بسته، به‌عنوانِ پاداشِ وفاداری، رایگان می‌شود
+    let unlocked = isAdmin || Number(num) === 1 || pkgKey === "distrust" || (streakBonus === "1" && Number(num) === 2);
     if (!unlocked && email) {
       const raw = (await redis.get(`unlocked:${email.toLowerCase().trim()}`)) || [];
       const list = typeof raw === "string" ? JSON.parse(raw) : raw;
