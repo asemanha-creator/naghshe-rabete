@@ -6514,7 +6514,6 @@ function App() {
   const [authPhone, setAuthPhone] = useState("");
   const [otpStep, setOtpStep] = useState("phone"); // "phone" | "code"
   const [otpCode, setOtpCode] = useState("");
-  const [forgotEmail, setForgotEmail] = useState("");
   const [forgotMsg, setForgotMsg] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [authErr, setAuthErr] = useState("");
@@ -7314,33 +7313,6 @@ function App() {
           </Card>
         )}
 
-        {screen === "forgotPassword" && (
-          <Card>
-            <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 10 }}>بازیابیِ رمزِعبور</h2>
-            <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>ایمیلِ حسابتان را وارد کنید — لینکِ بازیابی برایتان ارسال می‌شود.</p>
-            <input value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} placeholder="ایمیل"
-              style={{ width: "100%", padding: "11px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 13 }} />
-            {forgotMsg && <p style={{ color: forgotMsg.startsWith("✅") ? "#4C8778" : "#A6432F", fontSize: 12, marginBottom: 10, textAlign: "center" }}>{forgotMsg}</p>}
-            <button onClick={async () => {
-              setForgotMsg(""); setAuthBusy(true);
-              try {
-                const r = await fetchWithTimeout("/api/forgot-password", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: forgotEmail }) });
-                const d = await r.json();
-                if (!r.ok) throw new Error(d.error || "خطا");
-                setForgotMsg("✅ اگر این ایمیل ثبت‌نام کرده باشد، لینکِ بازیابی برایش ارسال شد. صندوقِ ورودی (و اسپم) را چک کنید.");
-              } catch (e) { setForgotMsg("❌ " + e.message); }
-              setAuthBusy(false);
-            }} disabled={authBusy}
-              style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", cursor: "pointer", marginBottom: 10 }}>
-              {authBusy ? "..." : "ارسالِ لینکِ بازیابی"}
-            </button>
-            <button onClick={() => { setForgotMsg(""); setScreen("authLogin"); }}
-              style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12.5 }}>
-              بازگشت به ورود
-            </button>
-          </Card>
-        )}
-
         {screen === "resetPassword" && (
           <Card>
             <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 10 }}>تنظیمِ رمزِ جدید</h2>
@@ -7366,7 +7338,7 @@ function App() {
           </Card>
         )}
 
-        {(screen === "authLogin" || screen === "authSignup") && (
+        {screen === "authLogin" && (
           <Card>
             <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>ورود / ثبتِ‌نام</h2>
             <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 16 }}>با شماره‌موبایلتان، بدونِ نیازِ رمزِعبور</p>
