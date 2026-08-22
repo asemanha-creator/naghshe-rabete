@@ -1598,6 +1598,7 @@ function Technique({ id, name, time, howTo, effect, more }) {
     try { return localStorage.getItem(`tech_note_${id}`) || ""; } catch (e) { return ""; }
   });
   const [noteSaved, setNoteSaved] = useState(true);
+  const [showCrisisSupport, setShowCrisisSupport] = useState(false);
   const [feedback, setFeedback] = useState(() => {
     try { return localStorage.getItem(`tech_fb_${id}`) || null; } catch (e) { return null; }
   });
@@ -1622,12 +1623,26 @@ function Technique({ id, name, time, howTo, effect, more }) {
       fetchWithTimeout("/api/session-notes", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ techniqueId: id, note, token: userToken }),
-      }).then(() => setNoteSaved(true)).catch(() => {});
+      }).then((r) => r.json()).then((d) => { setNoteSaved(true); if (d.riskFlag) setShowCrisisSupport(true); }).catch(() => {});
     }, 1200);
     return () => clearTimeout(t);
   }, [note, noteSaved, id]);
   return (
     <div style={{ marginBottom: 12, paddingBottom: 12, borderBottom: "1px solid #F0F4F7" }}>
+      {showCrisisSupport && (
+        <div style={{ background: "#FBEEEA", border: "1.5px solid #E8ADA0", borderRadius: 12, padding: "14px", marginBottom: 12 }}>
+          <p style={{ fontSize: 12.5, fontWeight: 700, color: "#8A3A2A", margin: "0 0 8px" }}>💙 اگر این روزها سخت می‌گذرد</p>
+          <p style={{ fontSize: 12, color: "#6B3428", lineHeight: 1.9, margin: "0 0 8px" }}>
+            متوجه شدیم شاید حالتان اصلاً خوب نیست. تنها نیستید — صحبت‌کردن با یک متخصص می‌تواند کمک کند.
+          </p>
+          <p style={{ fontSize: 12, color: "#6B3428", lineHeight: 1.9, margin: "0 0 8px" }}>
+            📞 اورژانسِ اجتماعی: <b>۱۲۳</b> (شبانه‌روزی، رایگان)
+          </p>
+          <p style={{ fontSize: 11, color: "#8A5A4E", margin: 0 }}>
+            اگر مایل بودید، می‌توانید همین حالا با دفترِ دکتر عقیلی هم تماس بگیرید.
+          </p>
+        </div>
+      )}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 5 }}>
         <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: 0 }}>{name}</p>
         {time && <span style={{ fontSize: 10, color: "#8CA3B0", fontWeight: 600, flexShrink: 0 }}>⏱️ {time}</span>}
@@ -6505,6 +6520,7 @@ function App() {
   const [authErr, setAuthErr] = useState("");
   const [authBusy, setAuthBusy] = useState(false);
   const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [showPrivacyText, setShowPrivacyText] = useState(false);
 
   useEffect(() => {
@@ -6520,6 +6536,7 @@ function App() {
   }
 
   async function sendOtpCode() {
+    if (!ageConfirmed) { setAuthErr("لطفاً تایید کنید که ۱۸ سال یا بیشتر دارید."); return; }
     if (!privacyConsent) { setAuthErr("لطفاً ابتدا با شرایطِ حریمِ خصوصی موافقت کنید."); return; }
     if (!/^09\d{9}$/.test(authPhone)) { setAuthErr("شماره‌موبایل باید به‌فرمتِ ۰۹xxxxxxxxx باشد."); return; }
     setAuthErr(""); setAuthBusy(true);
@@ -7358,6 +7375,14 @@ function App() {
               <>
                 <input value={authPhone} onChange={(e) => setAuthPhone(e.target.value.replace(/[^\d]/g, ""))} placeholder="۰۹xxxxxxxxx" type="tel" maxLength={11}
                   style={{ width: "100%", padding: "13px", borderRadius: 10, border: "1px solid #C9DEE8", marginBottom: 14, fontSize: 15, textAlign: "center", letterSpacing: 1 }} />
+                <div style={{ background: "#F7FAFC", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
+                  <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer" }}>
+                    <input type="checkbox" checked={ageConfirmed} onChange={(e) => setAgeConfirmed(e.target.checked)} style={{ marginTop: 3 }} />
+                    <span style={{ fontSize: 11.5, color: "#3A4A52", lineHeight: 1.8 }}>
+                      تایید می‌کنم که ۱۸ سال یا بیشتر دارم.
+                    </span>
+                  </label>
+                </div>
                 <div style={{ background: "#F7FAFC", borderRadius: 10, padding: "10px 12px", marginBottom: 14 }}>
                   <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer" }}>
                     <input type="checkbox" checked={privacyConsent} onChange={(e) => setPrivacyConsent(e.target.checked)} style={{ marginTop: 3 }} />
