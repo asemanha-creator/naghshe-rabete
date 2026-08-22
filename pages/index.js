@@ -2982,13 +2982,34 @@ const DISTRUST_INDICATORS = [
 ];
 
 // پایشِ افکار — ثبتِ افکارِ منفی/مثبت/نشخوارِ فکری با ساعتِ دقیق
-function ThoughtTracker({ onBack }) {
+function ThoughtTracker({ onBack, userToken }) {
   const storageKey = "naghshe_distrust_thoughts";
   const [entries, setEntries] = useState(() => {
     try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
   });
   const [note, setNote] = useState("");
   const [pendingType, setPendingType] = useState(null);
+
+  // بارگذاریِ نسخه‌ی سرور هنگامِ باز‌شدن (اگر کاربر واردشده باشد) — تا داده از گوشیِ دیگر هم در دسترس باشد
+  useEffect(() => {
+    if (!userToken) return;
+    fetchWithTimeout(`/api/user-data?token=${encodeURIComponent(userToken)}&key=distrust_thoughts`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && Array.isArray(d.value) && d.value.length > 0) {
+          setEntries(d.value);
+          try { localStorage.setItem(storageKey, JSON.stringify(d.value)); } catch (e) {}
+        }
+      }).catch(() => {});
+  }, [userToken]);
+
+  function syncToServer(next) {
+    if (!userToken) return;
+    fetchWithTimeout("/api/user-data", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: userToken, key: "distrust_thoughts", value: next }),
+    }).catch(() => {});
+  }
 
   function logThought(type) {
     setPendingType(type);
@@ -2998,6 +3019,7 @@ function ThoughtTracker({ onBack }) {
     const next = [entry, ...entries];
     setEntries(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    syncToServer(next);
     setNote(""); setPendingType(null);
   }
 
@@ -5011,7 +5033,7 @@ function CoupleAlignmentGame({ onBack }) {
 // ========== ابزارهایِ شخصیِ من — چیزهایی که خودِ کاربر می‌سازد و اثرِ واقعی در بهبودی دارد ==========
 
 // ۱. کتابچه‌ی راهنمایِ منِ آینده — مجموعه‌ای شخصی از تکنیک‌هایی که واقعاً برایِ خودِ فرد کار کرده
-function MyGuidebook({ onBack }) {
+function MyGuidebook({ onBack, userToken }) {
   const storageKey = "naghshe_my_guidebook";
   const [entries, setEntries] = useState(() => {
     try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
@@ -5019,18 +5041,40 @@ function MyGuidebook({ onBack }) {
   const [title, setTitle] = useState("");
   const [note, setNote] = useState("");
 
+  useEffect(() => {
+    if (!userToken) return;
+    fetchWithTimeout(`/api/user-data?token=${encodeURIComponent(userToken)}&key=my_guidebook`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && Array.isArray(d.value) && d.value.length > 0) {
+          setEntries(d.value);
+          try { localStorage.setItem(storageKey, JSON.stringify(d.value)); } catch (e) {}
+        }
+      }).catch(() => {});
+  }, [userToken]);
+
+  function syncToServer(next) {
+    if (!userToken) return;
+    fetchWithTimeout("/api/user-data", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: userToken, key: "my_guidebook", value: next }),
+    }).catch(() => {});
+  }
+
   function addEntry() {
     if (!title.trim()) return;
     const entry = { title: title.trim(), note: note.trim(), ts: Date.now() };
     const next = [entry, ...entries];
     setEntries(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    syncToServer(next);
     setTitle(""); setNote("");
   }
   function removeEntry(idx) {
     const next = entries.filter((_, i) => i !== idx);
     setEntries(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    syncToServer(next);
   }
 
   return (
@@ -5209,12 +5253,24 @@ function RelationshipContract({ onBack }) {
 }
 
 // ۳. دفترچه‌ی خاطراتِ مثبت — مبتنی‌بر روان‌شناسیِ مثبت‌گرا (savoring)
-function PositiveMemoryJournal({ onBack }) {
+function PositiveMemoryJournal({ onBack, userToken }) {
   const storageKey = "naghshe_positive_memories";
   const [entries, setEntries] = useState(() => {
     try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
   });
   const [text, setText] = useState("");
+
+  useEffect(() => {
+    if (!userToken) return;
+    fetchWithTimeout(`/api/user-data?token=${encodeURIComponent(userToken)}&key=positive_memories`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && Array.isArray(d.value) && d.value.length > 0) {
+          setEntries(d.value);
+          try { localStorage.setItem(storageKey, JSON.stringify(d.value)); } catch (e) {}
+        }
+      }).catch(() => {});
+  }, [userToken]);
 
   function addEntry() {
     if (!text.trim()) return;
@@ -5222,6 +5278,12 @@ function PositiveMemoryJournal({ onBack }) {
     const next = [entry, ...entries];
     setEntries(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    if (userToken) {
+      fetchWithTimeout("/api/user-data", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: userToken, key: "positive_memories", value: next }),
+      }).catch(() => {});
+    }
     setText("");
   }
 
@@ -5250,7 +5312,7 @@ function PositiveMemoryJournal({ onBack }) {
 }
 
 // ۴. طراحیِ آیینِ شخصی — مبتنی‌بر مفهومِ «آیین‌هایِ پیوند» گاتمن
-function PersonalRitual({ onBack }) {
+function PersonalRitual({ onBack, userToken }) {
   const storageKey = "naghshe_personal_ritual";
   const [ritual, setRitual] = useState(() => {
     try { return JSON.parse(localStorage.getItem(storageKey)) || null; } catch (e) { return null; }
@@ -5262,11 +5324,31 @@ function PersonalRitual({ onBack }) {
     try { return JSON.parse(localStorage.getItem(storageKey + "_log")) || []; } catch (e) { return []; }
   });
 
+  useEffect(() => {
+    if (!userToken) return;
+    fetchWithTimeout(`/api/user-data?token=${encodeURIComponent(userToken)}&key=personal_ritual`)
+      .then((r) => r.json())
+      .then((d) => { if (d.ok && d.value) { setRitual(d.value); try { localStorage.setItem(storageKey, JSON.stringify(d.value)); } catch (e) {} } }).catch(() => {});
+    fetchWithTimeout(`/api/user-data?token=${encodeURIComponent(userToken)}&key=personal_ritual_log`)
+      .then((r) => r.json())
+      .then((d) => { if (d.ok && Array.isArray(d.value) && d.value.length > 0) { setDoneLog(d.value); try { localStorage.setItem(storageKey + "_log", JSON.stringify(d.value)); } catch (e) {} } }).catch(() => {});
+  }, [userToken]);
+
+  function syncRitual(r) {
+    if (!userToken) return;
+    fetchWithTimeout("/api/user-data", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: userToken, key: "personal_ritual", value: r }) }).catch(() => {});
+  }
+  function syncLog(l) {
+    if (!userToken) return;
+    fetchWithTimeout("/api/user-data", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: userToken, key: "personal_ritual_log", value: l }) }).catch(() => {});
+  }
+
   function saveRitual() {
     if (!name.trim()) return;
     const r = { name: name.trim(), steps: steps.trim(), frequency };
     setRitual(r);
     try { localStorage.setItem(storageKey, JSON.stringify(r)); } catch (e) {}
+    syncRitual(r);
   }
   function markDoneToday() {
     const today = new Date().toDateString();
@@ -5274,6 +5356,7 @@ function PersonalRitual({ onBack }) {
     const next = [...doneLog, today];
     setDoneLog(next);
     try { localStorage.setItem(storageKey + "_log", JSON.stringify(next)); } catch (e) {}
+    syncLog(next);
   }
   const doneToday = doneLog.includes(new Date().toDateString());
 
@@ -5314,24 +5397,38 @@ function PersonalRitual({ onBack }) {
 }
 
 // ۵. کارتِ اضطرارِ سفارشی — کاربر خودش از میانِ تکنیک‌ها انتخاب و متنش را می‌نویسد
-function CustomCrisisCard({ onBack }) {
+function CustomCrisisCard({ onBack, userToken }) {
   const storageKey = "naghshe_custom_crisis_card";
   const [items, setItems] = useState(() => {
     try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
   });
   const [text, setText] = useState("");
 
+  useEffect(() => {
+    if (!userToken) return;
+    fetchWithTimeout(`/api/user-data?token=${encodeURIComponent(userToken)}&key=custom_crisis_card`)
+      .then((r) => r.json())
+      .then((d) => { if (d.ok && Array.isArray(d.value) && d.value.length > 0) { setItems(d.value); try { localStorage.setItem(storageKey, JSON.stringify(d.value)); } catch (e) {} } }).catch(() => {});
+  }, [userToken]);
+
+  function syncToServer(next) {
+    if (!userToken) return;
+    fetchWithTimeout("/api/user-data", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: userToken, key: "custom_crisis_card", value: next }) }).catch(() => {});
+  }
+
   function addItem() {
     if (!text.trim() || items.length >= 6) return;
     const next = [...items, text.trim()];
     setItems(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    syncToServer(next);
     setText("");
   }
   function removeItem(i) {
     const next = items.filter((_, idx) => idx !== i);
     setItems(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    syncToServer(next);
   }
 
   return (
@@ -5365,18 +5462,31 @@ function CustomCrisisCard({ onBack }) {
 }
 
 // ۶. نقشه‌ی راهِ شخصی — هدف‌گذاریِ رفتاری
-function PersonalRoadmap({ onBack }) {
+function PersonalRoadmap({ onBack, userToken }) {
   const storageKey = "naghshe_personal_roadmap";
   const [goals, setGoals] = useState(() => {
     try { return JSON.parse(localStorage.getItem(storageKey)) || []; } catch (e) { return []; }
   });
   const [text, setText] = useState("");
 
+  useEffect(() => {
+    if (!userToken) return;
+    fetchWithTimeout(`/api/user-data?token=${encodeURIComponent(userToken)}&key=personal_roadmap`)
+      .then((r) => r.json())
+      .then((d) => { if (d.ok && Array.isArray(d.value) && d.value.length > 0) { setGoals(d.value); try { localStorage.setItem(storageKey, JSON.stringify(d.value)); } catch (e) {} } }).catch(() => {});
+  }, [userToken]);
+
+  function syncToServer(next) {
+    if (!userToken) return;
+    fetchWithTimeout("/api/user-data", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token: userToken, key: "personal_roadmap", value: next }) }).catch(() => {});
+  }
+
   function addGoal() {
     if (!text.trim()) return;
     const next = [...goals, { text: text.trim(), done: false, ts: Date.now() }];
     setGoals(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    syncToServer(next);
     setText("");
   }
   function toggleGoal(i) {
@@ -5384,6 +5494,7 @@ function PersonalRoadmap({ onBack }) {
     next[i].done = !next[i].done;
     setGoals(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    syncToServer(next);
   }
 
   const doneCount = goals.filter((g) => g.done).length;
@@ -5575,6 +5686,18 @@ function BiweeklyAssessment({ onBack, userToken }) {
   const [answers, setAnswers] = useState(Array(8).fill(null));
   const [showForm, setShowForm] = useState(history.length === 0);
 
+  useEffect(() => {
+    if (!userToken) return;
+    fetchWithTimeout(`/api/user-data?token=${encodeURIComponent(userToken)}&key=distrust_assessments`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok && Array.isArray(d.value) && d.value.length > 0) {
+          setHistory(d.value); setShowForm(false);
+          try { localStorage.setItem(storageKey, JSON.stringify(d.value)); } catch (e) {}
+        }
+      }).catch(() => {});
+  }, [userToken]);
+
   function submit() {
     if (answers.some((a) => a === null)) return;
     const total = answers.reduce((a, b) => a + b, 0);
@@ -5582,6 +5705,12 @@ function BiweeklyAssessment({ onBack, userToken }) {
     const next = [entry, ...history];
     setHistory(next);
     try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch (e) {}
+    if (userToken) {
+      fetchWithTimeout("/api/user-data", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: userToken, key: "distrust_assessments", value: next }),
+      }).catch(() => {});
+    }
     setAnswers(Array(8).fill(null));
     setShowForm(false);
   }
@@ -7282,12 +7411,12 @@ function App() {
         {screen === "myToolsHub" && (
           <MyToolsHub onBack={() => setScreen("topics")} navigate={(t) => setScreen(`mytool_${t}`)} />
         )}
-        {screen === "mytool_guidebook" && <MyGuidebook onBack={() => setScreen("myToolsHub")} />}
+        {screen === "mytool_guidebook" && <MyGuidebook onBack={() => setScreen("myToolsHub")} userToken={user?.token} />}
         {screen === "mytool_contract" && <RelationshipContract onBack={() => setScreen("myToolsHub")} />}
-        {screen === "mytool_memories" && <PositiveMemoryJournal onBack={() => setScreen("myToolsHub")} />}
-        {screen === "mytool_ritual" && <PersonalRitual onBack={() => setScreen("myToolsHub")} />}
-        {screen === "mytool_crisis" && <CustomCrisisCard onBack={() => setScreen("myToolsHub")} />}
-        {screen === "mytool_roadmap" && <PersonalRoadmap onBack={() => setScreen("myToolsHub")} />}
+        {screen === "mytool_memories" && <PositiveMemoryJournal onBack={() => setScreen("myToolsHub")} userToken={user?.token} />}
+        {screen === "mytool_ritual" && <PersonalRitual onBack={() => setScreen("myToolsHub")} userToken={user?.token} />}
+        {screen === "mytool_crisis" && <CustomCrisisCard onBack={() => setScreen("myToolsHub")} userToken={user?.token} />}
+        {screen === "mytool_roadmap" && <PersonalRoadmap onBack={() => setScreen("myToolsHub")} userToken={user?.token} />}
         {screen === "gamesHub" && (
           <GamesHub onBack={() => setScreen("topics")} navigate={(g) => setScreen(`game_${g}`)} />
         )}
@@ -7307,7 +7436,7 @@ function App() {
           <DistrustAwarenessQuiz onBack={() => setScreen("sessionLibrary")} />
         )}
         {screen === "distrustThoughts" && (
-          <ThoughtTracker onBack={() => setScreen("sessionLibrary")} />
+          <ThoughtTracker onBack={() => setScreen("sessionLibrary")} userToken={user?.token} />
         )}
         {screen === "distrustAssessment" && (
           <BiweeklyAssessment onBack={() => setScreen("sessionLibrary")} userToken={user?.token} />
