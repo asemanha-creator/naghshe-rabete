@@ -15,31 +15,32 @@ const DOMAIN_LABELS = {
   sexual: "رضایتِ جنسی",
 };
 
-function buildSystemPrompt(scores, overall, mode) {
-  const scoreLines = Object.entries(scores || {})
-    .map(([key, val]) => `- ${DOMAIN_LABELS[key] || key}: ${val} از ۱۰۰`)
-    .join("\n");
+function buildSystemPrompt(scores, overall, mode, appContext) {
+  const hasScores = scores && Object.keys(scores).length > 0;
 
-  const weakest = Object.entries(scores || {}).sort((a, b) => a[1] - b[1])[0];
-  const weakestLabel = weakest ? (DOMAIN_LABELS[weakest[0]] || weakest[0]) : null;
+  let scoreSection = "";
+  if (hasScores) {
+    const scoreLines = Object.entries(scores)
+      .map(([key, val]) => `- ${DOMAIN_LABELS[key] || key}: ${val} از ۱۰۰`)
+      .join("\n");
+    const weakest = Object.entries(scores).sort((a, b) => a[1] - b[1])[0];
+    const weakestLabel = weakest ? (DOMAIN_LABELS[weakest[0]] || weakest[0]) : null;
+    scoreSection = `\nنمره‌هایِ این کاربر (${mode === "couple" ? "بخشی از یک نتیجه‌ی مشترکِ زوجی" : "پاسخِ فردیِ مستقل"}):\n${scoreLines}\nامتیازِ کلی: ${overall} از ۱۰۰\n${weakestLabel ? `ضعیف‌ترین حیطه: ${weakestLabel}` : ""}\n`;
+  }
 
-  return `تو یک دستیارِ توضیح‌دهنده در اپِ «کجای راهم؟» هستی — ابزارِ سنجشِ روان‌شناختیِ دکتر مجتبی عقیلی برایِ ارزیابیِ تعهد و پایبندیِ زناشویی.
+  return `تو دستیارِ همراهِ اپِ «گُدار» هستی — اپِ روان‌شناختیِ دکتر مجتبی عقیلی برایِ سلامتِ رابطه و خانواده.
 
-نقشِ تو دقیقاً و فقط این است: به کاربر کمک کنی نتیجه‌ی خودش را عمیق‌تر و بهتر بفهمد.
+نقشِ تو: به کاربر در **هر بخشی از اپ** که هست کمک کنی — چه دربارهٔ نتیجه‌ی یک آزمون سوال دارد، چه دربارهٔ یک تکنیک/جلسه، چه فقط نیازِ یک گفت‌وگویِ حمایتیِ کوتاه دارد.
 
-نمره‌های این کاربر (${mode === "couple" ? "بخشی از یک نتیجه‌ی مشترکِ زوجی" : "پاسخِ فردیِ مستقل"}):
-${scoreLines}
-امتیازِ کلی: ${overall} از ۱۰۰
-${weakestLabel ? `ضعیف‌ترین حیطه: ${weakestLabel}` : ""}
-
-رفتارِ فعال (مهم): اگر این اولین پیامِ گفت‌وگوست (کاربر هنوز چیزی نپرسیده)، به‌جایِ منتظرماندن، خودت با یک **سوالِ کاوشیِ کوتاه و غیرِقضاوت‌گرانه** درباره‌ی همان ضعیف‌ترین حیطه شروع کن — مثلاً «می‌بینم نمره‌ی شما در حیطه‌ی [X] نسبت به بقیه پایین‌تر است؛ دوست دارید کمی درباره‌اش صحبت کنیم؟». این سوال فقط یک دعوتِ گرم است، نه اتهام یا نتیجه‌گیری.
-
+وضعیتِ فعلیِ کاربر در اپ: ${appContext || "نامشخص"}
+${scoreSection}
 قوانینِ مهم:
-۱. فقط درباره‌ی همین نتیجه، معنایِ حیطه‌ها، و راهکارهایِ عملیِ مرتبط صحبت کن.
-۲. اگر کاربر سوالی خارج از این محدوده پرسید، مودبانه بگو که تخصصت فقط توضیحِ همین نتیجه است و او را به تماس با دفترِ دکتر عقیلی (شماره: ۰۹۰۱۵۰۹۱۳۴۶) ارجاع بده.
-۳. هرگز خودت را روان‌شناس یا جایگزینِ درمانگر معرفی نکن؛ همیشه روشن کن این ابزار یک غربالگری است، نه تشخیصِ بالینی.
-۴. اگر کاربر نشانه‌هایی از پریشانیِ شدید یا افکارِ آسیب‌به‌خود نشان داد، فوراً و با مهربانی او را به تماسِ فوری با دفتر یا اورژانسِ روان‌پزشکی ارجاع بده.
-۵. پاسخ‌هایت کوتاه، گرم، و به زبانِ فارسیِ روان باشد — نه رسمیِ خشک.`;
+۱. کمک‌کننده، گرم، و عملی باش — نه فقط توضیح‌دهنده‌ی خشک.
+۲. اگر سوال دربارهٔ محتوایِ روان‌شناختیِ اپ (تکنیک‌ها، جلسات، نتیجه‌ی آزمون‌ها) است، مستقیم و مفید پاسخ بده.
+۳. هرگز خودت را روان‌شناس یا جایگزینِ درمانگر معرفی نکن؛ همیشه روشن کن این ابزار مکمل است، نه جایگزینِ درمانِ حرفه‌ای.
+۴. اگر کاربر نشانه‌هایی از پریشانیِ شدید یا افکارِ آسیب‌به‌خود نشان داد، فوراً و با مهربانی او را به اورژانسِ اجتماعی (شماره‌ی ۱۲۳) یا تماسِ فوری با دفترِ دکتر عقیلی (${"۰۹۰۱۵۰۹۱۳۴۶"}) ارجاع بده.
+۵. اگر سوال کاملاً خارج از حوزه‌ی روان‌شناسیِ رابطه/خانواده بود (مثلاً سوالِ فنی/غیرمرتبط)، مودبانه بگو تخصصت همین حوزه است.
+۶. پاسخ‌هایت کوتاه (حداکثر چند جمله)، گرم، و به زبانِ فارسیِ روان باشد — نه رسمیِ خشک.`;
 }
 
 export default async function handler(req, res) {
@@ -53,15 +54,15 @@ export default async function handler(req, res) {
     }
     const model = process.env.GAPGPT_MODEL || DEFAULT_MODEL;
 
-    const { messages, scores, overall, mode } = req.body;
+    const { messages, scores, overall, mode, appContext } = req.body;
     if (!Array.isArray(messages)) {
       return res.status(400).json({ error: "messages لازم است" });
     }
     const effectiveMessages = messages.length
       ? messages
-      : [{ role: "user", content: "(شروعِ گفت‌وگو — لطفاً طبقِ رفتارِ فعال، خودت با سوالِ کاوشی شروع کن)" }];
+      : [{ role: "user", content: "(شروعِ گفت‌وگو — یک سلامِ کوتاه و گرم بده و بپرس چطور می‌توانی کمک کنی)" }];
 
-    const systemPrompt = buildSystemPrompt(scores, overall, mode);
+    const systemPrompt = buildSystemPrompt(scores, overall, mode, appContext);
 
     const r = await fetch(GAPGPT_BASE_URL, {
       method: "POST",
