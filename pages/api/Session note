@@ -49,6 +49,20 @@ export default async function handler(req, res) {
       const alerts = typeof rawAlerts === "string" ? JSON.parse(rawAlerts) : rawAlerts;
       alerts.unshift(alert);
       await redis.set("risk_alerts:list", JSON.stringify(alerts.slice(0, 200)));
+      await logEvent(LOG_LEVELS.CRITICAL, "userdata", "کلمه‌ی هشدارِ بحرانی در یادداشتِ کاربر یافت شد", { email: emailKey, techniqueId });
+      // ایمیلِ فوری، جدا از کانالِ CRITICAL — چون این یک وضعیتِ حساسِ بالینی است، نه فقط یک خطایِ فنی
+      if (process.env.RESEND_API_KEY && process.env.ADMIN_NOTIFICATION_EMAIL) {
+        fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            from: "گدار <onboarding@resend.dev>",
+            to: process.env.ADMIN_NOTIFICATION_EMAIL,
+            subject: "🚨 هشدارِ حساسِ بالینی — نیازِ توجهِ فوری",
+            html: `<p>یک کاربر (${emailKey}) عبارتی هشداردهنده در یادداشتش نوشته.</p><p>زمینه: ${techniqueId}</p><p>متن (بخشی از آن): ${note.slice(0, 200)}</p>`,
+          }),
+        }).catch((e) => console.error("risk alert email failed:", e));
+      }
     }
 
     res.status(200).json({ ok: true });
