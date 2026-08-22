@@ -1,16 +1,29 @@
 import { Redis } from "@upstash/redis";
-import { verifyAdminToken } from "../../lib/auth";
+import { verifyAdminToken, verifyTherapistToken } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
 
 const redis = Redis.fromEnv();
 
 // داشبوردِ بالینی: تجمیعِ جلساتِ بازشده، روندِ خلق، و یادداشت‌هایِ یک مراجعِ خاص
+// دسترسی: ادمینِ اصلی (همه‌ی مراجعین)، یا هر درمانگر (فقط مراجعینِ خودش)
 export default async function handler(req, res) {
   try {
     if (req.method !== "GET") return res.status(405).json({ error: "method not allowed" });
-    if (!(await verifyAdminToken(req.query.adminToken))) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+    const isAdmin = await verifyAdminToken(req.query.adminToken);
+    const therapistId = req.query.therapistToken ? await verifyTherapistToken(req.query.therapistToken) : null;
+    if (!isAdmin && !therapistId) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+
     const email = (req.query.email || "").toLowerCase().trim();
     if (!email) return res.status(400).json({ error: "ایمیل لازم است" });
+
+    // اگر درمانگر (نه ادمینِ اصلی) درخواست می‌دهد، باید این مراجع واقعاً متعلق به همان درمانگر باشد
+    if (!isAdmin && therapistId) {
+      const ownerTherapist = await redis.get(`patient_therapist:${email}`);
+      if (ownerTherapist !== therapistId) {
+        await logEvent(LOG_LEVELS.WARN, "admin", "تلاشِ دسترسیِ درمانگر به مراجعِ متعلق به دیگری", { therapistId, email });
+        return res.status(403).json({ error: "این مراجع به شما تعلق ندارد" });
+      }
+    }
 
     // جلساتِ بازشده
     const rawUnlocked = (await redis.get(`unlocked:${email}`)) || [];
