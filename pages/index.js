@@ -5992,6 +5992,8 @@ function App() {
   const [therapistLoginPass, setTherapistLoginPass] = useState("");
   const [therapistSession, setTherapistSession] = useState(null);
   const [therapistDash, setTherapistDash] = useState(null);
+  const [therapistPatientEmail, setTherapistPatientEmail] = useState(null);
+  const [therapistPatientData, setTherapistPatientData] = useState(null);
   const [feedbackType, setFeedbackType] = useState("پیشنهاد");
   const [feedbackMsg, setFeedbackMsg] = useState("");
   const [feedbackContact, setFeedbackContact] = useState("");
@@ -7108,7 +7110,7 @@ function App() {
             <button onClick={async () => {
               const r = await fetchWithTimeout("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "login", therapistId: therapistLoginId, password: therapistLoginPass }) });
               const d = await r.json();
-              if (d.ok) { setTherapistSession(d); setScreen("therapistDashboard"); } else setTherapistMsg(d.error);
+              if (d.ok) { setTherapistSession(d); try { localStorage.setItem("naghshe_therapist_token", d.token); } catch (e) {} setScreen("therapistDashboard"); } else setTherapistMsg(d.error);
             }} style={{ width: "100%", padding: 10, borderRadius: 8, border: "none", background: "#17383D", color: "#fff" }}>ورود</button>
             {therapistMsg && <p style={{ color: "red", fontSize: 12 }}>{therapistMsg}</p>}
           </Card>
@@ -7124,7 +7126,7 @@ function App() {
               <button onClick={() => navigator.clipboard.writeText(`https://naghshe-rabete-ashy.vercel.app/?ref=${therapistSession.id}`)} style={{ fontSize: 11, padding: "8px 14px", borderRadius: 6, border: "none", background: "#17383D", color: "#fff" }}>کپی</button>
             </div>
             <button onClick={async () => {
-              const r = await fetchWithTimeout("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "dashboard", therapistId: therapistSession.id }) });
+              const r = await fetchWithTimeout("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "dashboard", therapistId: therapistSession.id, therapistToken: therapistSession.token }) });
               const d = await r.json();
               if (d.ok) setTherapistDash(d);
             }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", color: "#17383D", background: "#fff", marginBottom: 10 }}>بروزرسانیِ فروش</button>
@@ -7132,10 +7134,37 @@ function App() {
               <>
                 <p style={{ fontSize: 13, marginBottom: 8 }}>تعدادِ فروش: {therapistDash.count}</p>
                 {therapistDash.sales.map((s, i) => (
-                  <div key={i} style={{ fontSize: 12, padding: "4px 0", borderBottom: "1px solid #eee" }}>{s.email} — {s.sessionId} — {new Date(s.ts).toLocaleDateString("fa-IR")}</div>
+                  <div key={i} style={{ fontSize: 12, padding: "6px 0", borderBottom: "1px solid #eee", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span>{s.email} — {s.sessionId} — {new Date(s.ts).toLocaleDateString("fa-IR")}</span>
+                    <button onClick={() => { setTherapistPatientEmail(s.email); setTherapistPatientData(null); }} style={{ fontSize: 10.5, padding: "4px 8px", borderRadius: 6, border: "1px solid #4C8778", background: "#F3F8F5", color: "#4C8778", cursor: "pointer" }}>مشاهده</button>
+                  </div>
                 ))}
               </>
             )}
+            {therapistPatientEmail && (() => {
+              if (!therapistPatientData) {
+                fetchWithTimeout(`/api/patient-dashboard?therapistToken=${encodeURIComponent(therapistSession.token)}&email=${encodeURIComponent(therapistPatientEmail)}`)
+                  .then((r) => r.json()).then((d) => { if (d.ok) setTherapistPatientData(d); });
+              }
+              return (
+                <div style={{ marginTop: 14, background: "#F7FAFC", borderRadius: 12, padding: "14px", border: "1px solid #DCE8F0" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                    <p style={{ fontSize: 13, fontWeight: 700, color: "#1F2D3D", margin: 0 }}>{therapistPatientEmail}</p>
+                    <button onClick={() => setTherapistPatientEmail(null)} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 11, cursor: "pointer" }}>بستن ✕</button>
+                  </div>
+                  {!therapistPatientData ? <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>در حالِ بارگذاری...</p> : (
+                    <>
+                      <p style={{ fontSize: 11.5, color: "#4C8778", marginBottom: 6 }}>🔓 جلساتِ بازشده: {therapistPatientData.unlockedSessions?.length || 0}</p>
+                      <p style={{ fontSize: 11.5, color: "#7A5B2E", marginBottom: 6 }}>📈 ثبت‌هایِ خلق: {therapistPatientData.moodLog?.length || 0}</p>
+                      <p style={{ fontSize: 11.5, color: "#5A7080", marginBottom: 6 }}>📝 یادداشت‌ها: {therapistPatientData.notes?.length || 0}</p>
+                      {(therapistPatientData.notes || []).slice(0, 5).map((n, i) => (
+                        <p key={i} style={{ fontSize: 11, color: "#3A4A52", margin: "0 0 6px", borderBottom: "1px solid #EDF2F5", paddingBottom: 6 }}>{n.note}</p>
+                      ))}
+                    </>
+                  )}
+                </div>
+              );
+            })()}
           </Card>
         )}
 
