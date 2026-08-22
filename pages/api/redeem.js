@@ -78,7 +78,13 @@ export default async function handler(req, res) {
       await redis.set(key, JSON.stringify(data));
 
       if (data.therapistId) {
-        await redis.set(`patient_therapist:${email}`, data.therapistId);
+        // اگر این مراجع قبلاً به درمانگرِ دیگری متصل بوده، آن را خاموش جایگزین نکن — فقط لاگ کن تا بعداً بررسی شود
+        const existingTherapist = await redis.get(`patient_therapist:${email}`);
+        if (existingTherapist && existingTherapist !== data.therapistId) {
+          await logEvent(LOG_LEVELS.WARN, "admin", "تلاش برایِ تغییرِ درمانگرِ یک مراجعِ موجود — نادیده گرفته شد", { email, existingTherapist, attemptedTherapistId: data.therapistId });
+        } else {
+          await redis.set(`patient_therapist:${email}`, data.therapistId);
+        }
         const salesKey = `therapist_sales:${data.therapistId}`;
         const rawSales = (await redis.get(salesKey)) || [];
         const sales = typeof rawSales === "string" ? JSON.parse(rawSales) : rawSales;
