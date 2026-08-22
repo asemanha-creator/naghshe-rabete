@@ -8749,6 +8749,11 @@ function App() {
                     <p style={{ margin: 0, color: "#617685" }}>
                       {new Date(l.ts).toLocaleString("fa-IR")} {l.meta?.email ? `· ${l.meta.email}` : ""}
                     </p>
+                    {l.meta && Object.keys(l.meta).length > 0 && (
+                      <pre style={{ margin: "4px 0 0", padding: "6px 8px", background: "#fff", borderRadius: 6, fontSize: 9.5, color: "#3A4A52", whiteSpace: "pre-wrap", wordBreak: "break-word", direction: "ltr", textAlign: "left" }}>
+                        {JSON.stringify(l.meta, null, 2)}
+                      </pre>
+                    )}
                   </div>
                 ))}
               </div>
