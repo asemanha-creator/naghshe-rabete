@@ -3064,7 +3064,7 @@ function ThoughtTracker({ onBack, userToken }) {
           <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="مثلاً: وقتی دیر جواب داد..."
             style={{ width: "100%", minHeight: 60, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, marginBottom: 8, boxSizing: "border-box" }} />
           <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={confirmLog} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "none", background: typeColors[pendingType], color: "#fff", fontWeight: 700, cursor: "pointer" }}>ثبت</button>
+            <button onClick={confirmLog} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "none", background: typeColors[pendingType], color: "#fff", fontWeight: 700, cursor: "pointer" }}>ثبتِ این فکر</button>
             <button onClick={() => { setPendingType(null); setNote(""); }} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "1px solid #DCE8F0", background: "#fff", color: "#8CA3B0", cursor: "pointer" }}>انصراف</button>
           </div>
         </div>
@@ -3569,7 +3569,7 @@ function EmotionWheel({ onBack }) {
           <textarea value={reflection} onChange={(e) => setReflection(e.target.value)}
             style={{ width: "100%", minHeight: 60, padding: 10, borderRadius: 8, border: "1px solid #E8D8B0", fontSize: 12.5, boxSizing: "border-box", marginBottom: 8 }} />
           {!saved ? (
-            <button onClick={saveReflection} disabled={!reflection.trim()} style={{ width: "100%", padding: "9px", borderRadius: 10, border: "none", background: "#9C6B2F", color: "#fff", fontWeight: 700, cursor: "pointer" }}>ثبت</button>
+            <button onClick={saveReflection} disabled={!reflection.trim()} style={{ width: "100%", padding: "9px", borderRadius: 10, border: "none", background: "#9C6B2F", color: "#fff", fontWeight: 700, cursor: "pointer" }}>ثبتِ این خاطره</button>
           ) : (
             <p style={{ fontSize: 12, color: "#4C8778", textAlign: "center" }}>✅ ثبت شد</p>
           )}
@@ -7065,7 +7065,7 @@ function App() {
               const d = await r.json();
               setFeedbackStatus(d.ok ? "✅ ارسال شد، ممنون از شما" : "❌ خطا");
               if (d.ok) setFeedbackMsg("");
-            }} style={{ width: "100%", padding: 10, borderRadius: 8, border: "none", background: "#17383D", color: "#fff" }}>ارسال</button>
+            }} style={{ width: "100%", padding: 10, borderRadius: 8, border: "none", background: "#17383D", color: "#fff" }}>ارسالِ پیام به دفتر</button>
             {feedbackStatus && <p style={{ fontSize: 12, marginTop: 8 }}>{feedbackStatus}</p>}
             <p style={{ fontSize: 12, marginTop: 14, color: "#666" }}>یا مستقیم تماس بگیرید: {BRAND.phone}</p>
           </Card>
@@ -7481,7 +7481,7 @@ function App() {
                         </div>
                         <button onClick={() => startZarinpalPayment(libraryPkg, null)} disabled={paymentBusy}
                           style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, boxShadow: "0 8px 16px rgba(23,56,61,0.35), inset 0 1.5px 0 rgba(255,255,255,0.25), inset 0 -2px 4px rgba(0,0,0,0.2)", transition: "transform 0.15s ease", fontSize: 12.5, cursor: "pointer" }}>
-                          💳 {paymentBusy ? "..." : `خریدِ کاملِ بسته — ${toman(bundlePrice)}`}
+                          💳 {paymentBusy ? "..." : `پرداخت و فعال‌سازیِ کاملِ بسته — ${toman(bundlePrice)}`}
                         </button>
                       </div>
                     );
@@ -7621,7 +7621,7 @@ function App() {
                   ) : (
                     <button onClick={() => startZarinpalPayment(libraryPkg, num)} disabled={paymentBusy}
                       style={{ padding: "7px 10px", borderRadius: 10, border: "1px solid #17383D", color: "#17383D", background: "#fff", fontWeight: 700, fontSize: 10.5, flexShrink: 0, cursor: "pointer", textAlign: "center" }}>
-                      💳 خریدِ تکی<br />{toman(sessionPrice(libraryPkg))}
+                      💳 پرداخت و فعال‌سازیِ این جلسه<br />{toman(sessionPrice(libraryPkg))}
                     </button>
                   )}
                 </div>
@@ -8450,7 +8450,7 @@ function App() {
               const r = await fetchWithTimeout(`/api/feedback?adminToken=${adminToken}`);
               const d = await r.json();
               if (d.ok) setFeedbackList(d.list);
-            }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", color: "#17383D", background: "#fff", fontSize: 11, marginBottom: 8 }}>بروزرسانی</button>
+            }} style={{ padding: "6px 12px", borderRadius: 8, border: "1px solid #17383D", color: "#17383D", background: "#fff", fontSize: 11, marginBottom: 8 }}>نمایشِ پیام‌هایِ جدید</button>
             {feedbackList.map((f, i) => (
               <div key={i} style={{ fontSize: 12, padding: "6px 0", borderBottom: "1px solid #eee" }}>
                 <b>{f.type}</b> — {f.message} {f.contact && `(${f.contact})`} — {new Date(f.ts).toLocaleDateString("fa-IR")}
