@@ -82,6 +82,7 @@ export default async function handler(req, res) {
 
     const data = await r.json();
     if (!r.ok) {
+      await logEvent(LOG_LEVELS.ERROR, "content", "خطایِ GapGPT در چت", { model, status: r.status, gapgptError: data?.error });
       return res.status(502).json({
         error: data?.error?.message || `خطا در ارتباط با GapGPT (مدل «${model}» را در پنلِ خودتان بررسی کنید)`,
       });
