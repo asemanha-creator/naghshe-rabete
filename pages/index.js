@@ -1558,7 +1558,7 @@ function LikertRow({ text, value, onChange }) {
           </button>
         ))}
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, fontSize: 10.5, color: "#8CA3B0" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, fontSize: 10.5, color: "#617685" }}>
         <span>{labels[0]}</span>
         <span>{labels[4]}</span>
       </div>
@@ -1645,7 +1645,7 @@ function Technique({ id, name, time, howTo, effect, more }) {
       )}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 5 }}>
         <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: 0 }}>{name}</p>
-        {time && <span style={{ fontSize: 10, color: "#8CA3B0", fontWeight: 600, flexShrink: 0 }}>⏱️ {time}</span>}
+        {time && <span style={{ fontSize: 10, color: "#617685", fontWeight: 600, flexShrink: 0 }}>⏱️ {time}</span>}
       </div>
       <p style={{ fontSize: 12.5, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 5px", whiteSpace: "pre-line" }}>{howTo}</p>
       <p style={{ fontSize: 11.5, color: "#4C8778", fontWeight: 600, margin: "0 0 6px" }}>✔ تاثیر: {effect}</p>
@@ -1662,30 +1662,30 @@ function Technique({ id, name, time, howTo, effect, more }) {
       )}
       {id && (
         <div style={{ marginTop: 10 }}>
-          <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: "0 0 5px" }}>📝 یادداشتِ من (اینجا بنویسید، خودکار ذخیره می‌شود)</p>
+          <p style={{ fontSize: 10.5, color: "#617685", margin: "0 0 5px" }}>📝 یادداشتِ من (اینجا بنویسید، خودکار ذخیره می‌شود)</p>
           <textarea value={note} onChange={(e) => handleNoteChange(e.target.value)} placeholder="پاسخ/تمرینِ خودتان را اینجا بنویسید..."
             style={{ width: "100%", minHeight: 60, padding: "8px 10px", borderRadius: 9, border: "1px solid #DCE8F0", fontSize: 12, fontFamily: "inherit", resize: "vertical", boxSizing: "border-box" }} />
-          {note && <p style={{ fontSize: 9.5, color: noteSaved ? "#8CA3B0" : "#B9822F", margin: "3px 0 0" }}>{noteSaved ? "ذخیره شد ✓" : "در حالِ ذخیره..."}</p>}
+          {note && <p style={{ fontSize: 9.5, color: noteSaved ? "#617685" : "#B9822F", margin: "3px 0 0" }}>{noteSaved ? "ذخیره شد ✓" : "در حالِ ذخیره..."}</p>}
         </div>
       )}
       {id && (
         <div style={{ marginTop: 8 }}>
-          <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: "0 0 5px" }}>این تکنیک برای شما مفید بود؟</p>
+          <p style={{ fontSize: 10.5, color: "#617685", margin: "0 0 5px" }}>این تکنیک برای شما مفید بود؟</p>
           <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
             <button onClick={() => giveFeedback("very")}
-              style={{ fontSize: 10, padding: "3px 8px", borderRadius: 999, border: `1px solid ${feedback === "very" ? "#4C8778" : "#DCE8F0"}`, background: feedback === "very" ? "#4C8778" : "#fff", color: feedback === "very" ? "#fff" : "#5A7080", cursor: "pointer" }}>
+              style={{ fontSize: 10, padding: "8px 12px", borderRadius: 999, border: `1px solid ${feedback === "very" ? "#4C8778" : "#DCE8F0"}`, background: feedback === "very" ? "#4C8778" : "#fff", color: feedback === "very" ? "#fff" : "#5A7080", cursor: "pointer" }}>
               ✓ خیلی مفید بود
             </button>
             <button onClick={() => giveFeedback("somewhat")}
-              style={{ fontSize: 10, padding: "3px 8px", borderRadius: 999, border: `1px solid ${feedback === "somewhat" ? "#B9822F" : "#DCE8F0"}`, background: feedback === "somewhat" ? "#B9822F" : "#fff", color: feedback === "somewhat" ? "#fff" : "#5A7080", cursor: "pointer" }}>
+              style={{ fontSize: 10, padding: "8px 12px", borderRadius: 999, border: `1px solid ${feedback === "somewhat" ? "#B9822F" : "#DCE8F0"}`, background: feedback === "somewhat" ? "#B9822F" : "#fff", color: feedback === "somewhat" ? "#fff" : "#5A7080", cursor: "pointer" }}>
               🤔 تا حدی
             </button>
             <button onClick={() => giveFeedback("no")}
-              style={{ fontSize: 10, padding: "3px 8px", borderRadius: 999, border: `1px solid ${feedback === "no" ? "#A6432F" : "#DCE8F0"}`, background: feedback === "no" ? "#A6432F" : "#fff", color: feedback === "no" ? "#fff" : "#5A7080", cursor: "pointer" }}>
+              style={{ fontSize: 10, padding: "8px 12px", borderRadius: 999, border: `1px solid ${feedback === "no" ? "#A6432F" : "#DCE8F0"}`, background: feedback === "no" ? "#A6432F" : "#fff", color: feedback === "no" ? "#fff" : "#5A7080", cursor: "pointer" }}>
               ✗ مفید نبود
             </button>
             <button onClick={() => giveFeedback("confusing")}
-              style={{ fontSize: 10, padding: "3px 8px", borderRadius: 999, border: `1px solid ${feedback === "confusing" ? "#8A5A4E" : "#DCE8F0"}`, background: feedback === "confusing" ? "#8A5A4E" : "#fff", color: feedback === "confusing" ? "#fff" : "#5A7080", cursor: "pointer" }}>
+              style={{ fontSize: 10, padding: "8px 12px", borderRadius: 999, border: `1px solid ${feedback === "confusing" ? "#8A5A4E" : "#DCE8F0"}`, background: feedback === "confusing" ? "#8A5A4E" : "#fff", color: feedback === "confusing" ? "#fff" : "#5A7080", cursor: "pointer" }}>
               😕 گیج‌کننده بود
             </button>
           </div>
@@ -1715,7 +1715,7 @@ function InteractiveChecklist({ sessionKey, items }) {
         <button key={j} onClick={() => toggle(j)}
           style={{ display: "flex", alignItems: "flex-start", gap: 7, marginBottom: j < items.length - 1 ? 6 : 0, background: "none", border: "none", padding: 0, cursor: "pointer", width: "100%", textAlign: "right" }}>
           <span style={{ color: "#4C8778", fontSize: 14, flexShrink: 0, marginTop: 1 }}>{checked[j] ? "☑" : "☐"}</span>
-          <span style={{ fontSize: 12, color: checked[j] ? "#8CA3B0" : "#3A4A52", lineHeight: 1.8, textDecoration: checked[j] ? "line-through" : "none" }}>{it}</span>
+          <span style={{ fontSize: 12, color: checked[j] ? "#617685" : "#3A4A52", lineHeight: 1.8, textDecoration: checked[j] ? "line-through" : "none" }}>{it}</span>
         </button>
       ))}
     </div>
@@ -1847,19 +1847,19 @@ function FAQScreen({ onBack }) {
     <Card>
       <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>❓ سوالاتِ کلیدیِ خیانتِ زناشویی</h2>
-      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 14 }}>
+      <p style={{ fontSize: 11.5, color: "#617685", marginBottom: 14 }}>
         رتبه‌بندی‌شده بر اساسِ اهمیت — راهنماییِ سریع، نه جایگزینِ جلساتِ کامل.
       </p>
       <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="🔍 جست‌وجو در سوالات..."
         style={{ width: "100%", padding: "10px 14px", borderRadius: 12, border: "1.5px solid #C9DEE8", fontSize: 12.5, marginBottom: 14, boxSizing: "border-box" }} />
       {filtered.length === 0 ? (
-        <p style={{ textAlign: "center", fontSize: 12, color: "#8CA3B0", padding: "20px 0" }}>چیزی پیدا نشد.</p>
+        <p style={{ textAlign: "center", fontSize: 12, color: "#617685", padding: "20px 0" }}>چیزی پیدا نشد.</p>
       ) : filtered.map((f) => (
         <div key={f.rank} style={{ borderBottom: "1px solid #F0F4F7", marginBottom: 4 }}>
           <button onClick={() => setOpenId(openId === f.rank ? null : f.rank)}
             style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 2px", border: "none", background: "none", cursor: "pointer", textAlign: "right" }}>
             <span style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D" }}>
-              <span style={{ color: "#8CA3B0", fontWeight: 600 }}>#{f.rank}</span> {f.q}
+              <span style={{ color: "#617685", fontWeight: 600 }}>#{f.rank}</span> {f.q}
             </span>
             <span style={{ fontSize: 16, color: "#17383D", flexShrink: 0, marginRight: 6, transform: openId === f.rank ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
           </button>
@@ -1871,7 +1871,7 @@ function FAQScreen({ onBack }) {
           )}
         </div>
       ))}
-      <p style={{ textAlign: "center", fontSize: 10, color: "#8CA3B0", marginTop: 14 }}>
+      <p style={{ textAlign: "center", fontSize: 10, color: "#617685", marginTop: 14 }}>
         {INFIDELITY_FAQ.length} سوال از ۵۰۰ — به‌مرور تکمیل می‌شود.
       </p>
     </Card>
@@ -1917,7 +1917,7 @@ function RoadmapVisual({ pkgKey, unlockedSidsForPkg }) {
               <p style={{ fontSize: 9, color: isFuture ? "#A3B2BA" : "#3A4A52", fontWeight: isCurrent ? 700 : 500, lineHeight: 1.4, margin: 0, padding: "0 2px" }}>
                 {phase.label}
               </p>
-              <p style={{ fontSize: 8.5, color: "#8CA3B0", margin: "2px 0 0" }}>{doneInPhase}/{sessionsInPhase}</p>
+              <p style={{ fontSize: 8.5, color: "#617685", margin: "2px 0 0" }}>{doneInPhase}/{sessionsInPhase}</p>
             </div>
           );
         })}
@@ -1931,7 +1931,7 @@ function GrowthScoreGauge({ score, components }) {
   if (score == null) {
     return (
       <div style={{ background: "#F7FAFC", borderRadius: 14, padding: "16px", textAlign: "center", marginBottom: 18 }}>
-        <p style={{ fontSize: 12, color: "#8CA3B0", margin: 0 }}>هنوز داده‌ی کافی برایِ محاسبه‌ی امتیازِ رشد نیست.</p>
+        <p style={{ fontSize: 12, color: "#617685", margin: 0 }}>هنوز داده‌ی کافی برایِ محاسبه‌ی امتیازِ رشد نیست.</p>
       </div>
     );
   }
@@ -1940,11 +1940,11 @@ function GrowthScoreGauge({ score, components }) {
   return (
     <div style={{ background: `linear-gradient(135deg, ${color}18, ${color}08)`, border: `1.5px solid ${color}40`, borderRadius: 16, padding: "18px 16px", marginBottom: 18, textAlign: "center" }}>
       <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>🌟 امتیازِ رشدِ کلی</p>
-      <p style={{ fontSize: 38, fontWeight: 800, color, margin: "0 0 10px", lineHeight: 1 }}>{score}<span style={{ fontSize: 16, color: "#8CA3B0" }}>/۱۰۰</span></p>
+      <p style={{ fontSize: 38, fontWeight: 800, color, margin: "0 0 10px", lineHeight: 1 }}>{score}<span style={{ fontSize: 16, color: "#617685" }}>/۱۰۰</span></p>
       <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
         {Object.entries(components).map(([key, val]) => (
           <div key={key} style={{ background: "#fff", borderRadius: 999, padding: "4px 11px", fontSize: 10 }}>
-            <span style={{ color: "#8CA3B0" }}>{labels[key]}: </span>
+            <span style={{ color: "#617685" }}>{labels[key]}: </span>
             <span style={{ fontWeight: 700, color: "#3A4A52" }}>{Math.round(val)}٪</span>
           </div>
         ))}
@@ -2002,10 +2002,10 @@ function MyProgressScreen({ onBack, userEmail, userToken }) {
     <Card>
       <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📈 پیشرفتِ من</h2>
-      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>نمایِ یکپارچه‌یِ پیشرفتِ شما در همه‌ی برنامه‌هایی که تا‌کنون دنبال کرده‌اید.</p>
+      <p style={{ fontSize: 11.5, color: "#617685", marginBottom: 16 }}>نمایِ یکپارچه‌یِ پیشرفتِ شما در همه‌ی برنامه‌هایی که تا‌کنون دنبال کرده‌اید.</p>
 
       {loading ? (
-        <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>در حالِ بارگذاری...</p>
+        <p style={{ fontSize: 12, color: "#617685", textAlign: "center" }}>در حالِ بارگذاری...</p>
       ) : sessionExpired ? (
         <div style={{ textAlign: "center", padding: "20px 12px", background: "#FBF3E2", borderRadius: 12 }}>
           <p style={{ fontSize: 26, marginBottom: 8 }}>🔑</p>
@@ -2022,7 +2022,7 @@ function MyProgressScreen({ onBack, userEmail, userToken }) {
 
           {history.length === 0 ? (
             <div style={{ background: "#F7FAFC", borderRadius: 12, padding: "20px", textAlign: "center" }}>
-              <p style={{ fontSize: 12.5, color: "#8CA3B0", margin: 0 }}>هنوز داده‌ای ثبت نشده — بعد از انجامِ چند جلسه، نمودارتان اینجا نمایان می‌شود.</p>
+              <p style={{ fontSize: 12.5, color: "#617685", margin: 0 }}>هنوز داده‌ای ثبت نشده — بعد از انجامِ چند جلسه، نمودارتان اینجا نمایان می‌شود.</p>
             </div>
           ) : (
             <>
@@ -2045,7 +2045,7 @@ function MyProgressScreen({ onBack, userEmail, userToken }) {
               <MiniLineChart points={beforePoints} color="#B9822F" />
               <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "16px 0 6px" }}>روندِ «بعد از جلسه»:</p>
               <MiniLineChart points={afterPoints} color="#4C8778" />
-              <p style={{ fontSize: 10, color: "#8CA3B0", marginTop: 14, textAlign: "center" }}>تعدادِ کلِ ثبت‌ها: {history.length}</p>
+              <p style={{ fontSize: 10, color: "#617685", marginTop: 14, textAlign: "center" }}>تعدادِ کلِ ثبت‌ها: {history.length}</p>
             </>
           )}
         </>
@@ -2269,7 +2269,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
     <Card>
       <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🛑 خودآگاهیِ دوره‌ای — پیشگیری از خیانت</h2>
-      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>هر دوره ۶ موضوعِ چرخشی (۱۲ سوالِ گزینه‌ای) می‌پرسد. کاملاً خصوصی، بدونِ نامِ افراد.</p>
+      <p style={{ fontSize: 11.5, color: "#617685", marginBottom: 16 }}>هر دوره ۶ موضوعِ چرخشی (۱۲ سوالِ گزینه‌ای) می‌پرسد. کاملاً خصوصی، بدونِ نامِ افراد.</p>
 
       {!active && !lastResult && (
         <>
@@ -2302,14 +2302,14 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
                     <div key={ti} style={{ background: "#fff", border: "1px solid #F0E6D8", borderRadius: 8, padding: "10px 12px", marginBottom: 6 }}>
                       <p style={{ fontSize: 11.5, fontWeight: 700, color: "#7A5B2E", margin: "0 0 4px" }}>{ti + 1}. {t.name}</p>
                       <p style={{ fontSize: 11, color: "#3A4A52", lineHeight: 1.8, margin: "0 0 4px" }}>{t.howTo}</p>
-                      <p style={{ fontSize: 10, color: "#8CA3B0", margin: 0 }}>💡 {t.effect}</p>
+                      <p style={{ fontSize: 10, color: "#617685", margin: 0 }}>💡 {t.effect}</p>
                     </div>
                   ))}
                 </div>
               )}
             </div>
           ))}
-          <button onClick={() => setShowTechniqueLibrary(false)} style={{ width: "100%", padding: "9px", borderRadius: 10, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بستنِ کتابخانه</button>
+          <button onClick={() => setShowTechniqueLibrary(false)} style={{ width: "100%", padding: "9px", borderRadius: 10, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بستنِ کتابخانه</button>
         </div>
       )}
 
@@ -2351,10 +2351,10 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
           {lastResult.concerningThemes.length === 0 ? (
             <div>
               <p style={{ fontSize: 12.5, color: "#4C8778", marginBottom: 10 }}>در این دوره، هیچ موردِ نگران‌کننده‌ای ثبت نشد. 🌱</p>
-              <a onClick={() => window.__naghsheOpenModerate && window.__naghsheOpenModerate()}
-                style={{ fontSize: 10.5, color: "#8CA3B0", cursor: "pointer", textDecoration: "underline" }}>
+              <button onClick={() => window.__naghsheOpenModerate && window.__naghsheOpenModerate()}
+                style={{ fontSize: 10.5, color: "#617685", cursor: "pointer", textDecoration: "underline" , border: "none", background: "none", padding: 0, font: "inherit"}}>
                 برایِ تقویتِ بیشترِ رابطه، حتی در حالتِ خوب، می‌توانید نگاهی به «افزایشِ وفاداری» هم بیندازید ←
-              </a>
+              </button>
             </div>
           ) : (
             <>
@@ -2396,17 +2396,17 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
                             <div key={ti} style={{ background: "#fff", border: "1px solid #F0E6D8", borderRadius: 8, padding: "10px 12px", marginBottom: 6 }}>
                               <p style={{ fontSize: 11.5, fontWeight: 700, color: "#7A5B2E", margin: "0 0 4px" }}>{ti + 1}. {t.name}</p>
                               <p style={{ fontSize: 11, color: "#3A4A52", lineHeight: 1.8, margin: "0 0 4px" }}>{t.howTo}</p>
-                              <p style={{ fontSize: 10, color: "#8CA3B0", margin: 0 }}>💡 {t.effect}</p>
+                              <p style={{ fontSize: 10, color: "#617685", margin: 0 }}>💡 {t.effect}</p>
                             </div>
                           ))}
                         </div>
                       )}
                     </div>
                   )}
-                  <a onClick={() => window.__naghsheOpenModerate && window.__naghsheOpenModerate()}
-                    style={{ fontSize: 10.5, color: "#8A5A4E", cursor: "pointer", textDecoration: "underline" }}>
+                  <button onClick={() => window.__naghsheOpenModerate && window.__naghsheOpenModerate()}
+                    style={{ fontSize: 10.5, color: "#8A5A4E", cursor: "pointer", textDecoration: "underline" , border: "none", background: "none", padding: 0, font: "inherit"}}>
                     برایِ کارِ عمیق‌تر: {c.suggest} ←
-                  </a>
+                  </button>
                 </div>
               ))}
               {lastResult.comparison.length > 0 && (
@@ -2416,7 +2416,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
               )}
             </>
           )}
-          <p style={{ fontSize: 11, color: "#8CA3B0", marginTop: 10 }}>دوره‌ی بعدی: {new Date(lastResult.nextDate).toLocaleDateString("fa-IR")}</p>
+          <p style={{ fontSize: 11, color: "#617685", marginTop: 10 }}>دوره‌ی بعدی: {new Date(lastResult.nextDate).toLocaleDateString("fa-IR")}</p>
         </div>
       )}
 
@@ -2430,7 +2430,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
             return (
               <div style={{ background: "#fff", border: "1px solid #EDF2F5", borderRadius: 14, padding: "16px", marginBottom: 16 }}>
                 <p style={{ fontSize: 13, fontWeight: 700, color: "#1F2D3D", marginBottom: 4 }}>📈 نمودارِ روندِ شما</p>
-                <p style={{ fontSize: 10.5, color: "#8CA3B0", marginBottom: 12 }}>تعدادِ الگوهایِ نگران‌کننده، دوره‌به‌دوره (هرچه پایین‌تر، بهتر)</p>
+                <p style={{ fontSize: 10.5, color: "#617685", marginBottom: 12 }}>تعدادِ الگوهایِ نگران‌کننده، دوره‌به‌دوره (هرچه پایین‌تر، بهتر)</p>
                 <svg width="100%" height={chartH + 24} viewBox={`0 0 ${svgW} ${chartH + 24}`} style={{ overflow: "visible" }}>
                   {chartRounds.map((r, i) => {
                     const count = Object.values(r.answers).filter((a) => a.concerning).length;
@@ -2440,7 +2440,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
                     return (
                       <g key={i}>
                         <rect x={x} y={chartH - h} width={barW} height={h} rx={4} fill={color} opacity={i === chartRounds.length - 1 ? 1 : 0.55} />
-                        <text x={x + barW / 2} y={chartH + 14} fontSize="8" fill="#8CA3B0" textAnchor="middle">
+                        <text x={x + barW / 2} y={chartH + 14} fontSize="8" fill="#617685" textAnchor="middle">
                           {new Date(r.ts).toLocaleDateString("fa-IR", { month: "numeric", day: "numeric" })}
                         </text>
                       </g>
@@ -2453,7 +2453,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
                   const avg = (arr) => arr.reduce((s, r) => s + Object.values(r.answers).filter((a) => a.concerning).length, 0) / arr.length;
                   const trend = avg(secondHalf) - avg(firstHalf);
                   return (
-                    <p style={{ fontSize: 11.5, fontWeight: 700, color: trend < -0.3 ? "#4C8778" : trend > 0.3 ? "#A6432F" : "#8CA3B0", marginTop: 10 }}>
+                    <p style={{ fontSize: 11.5, fontWeight: 700, color: trend < -0.3 ? "#4C8778" : trend > 0.3 ? "#A6432F" : "#617685", marginTop: 10 }}>
                       {trend < -0.3 ? "🌱 روندِ شما رو‌به‌بهبود است — ادامه دهید." : trend > 0.3 ? "⚠ روندِ اخیر نسبت به قبل، نگران‌کننده‌تر شده — شاید وقتِ توجهِ بیشتری باشد." : "روندتان نسبتاً ثابت است."}
                     </p>
                   );
@@ -2496,7 +2496,7 @@ function SlipPreventionScreen({ onBack, userEmail, userToken }) {
                   })}
                   <line x1="0" y1={chartH} x2={chartW} y2={chartH} stroke="#EDF2F5" strokeWidth="1" />
                 </svg>
-                <p style={{ fontSize: 10, color: "#8CA3B0", marginTop: 6, textAlign: "center" }}>هر ستون یک دوره است؛ ارتفاعِ بیشتر = موضوعاتِ نگران‌کننده‌ی بیشتر در آن دوره</p>
+                <p style={{ fontSize: 10, color: "#617685", marginTop: 6, textAlign: "center" }}>هر ستون یک دوره است؛ ارتفاعِ بیشتر = موضوعاتِ نگران‌کننده‌ی بیشتر در آن دوره</p>
               </div>
             );
           })()}
@@ -2585,7 +2585,7 @@ function SafetyPlanScreen({ onBack, userEmail, userToken }) {
     <Card>
       <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🛡️ برنامه‌ی ایمنیِ من</h2>
-      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>
+      <p style={{ fontSize: 11.5, color: "#617685", marginBottom: 16 }}>
         این صفحه، مستقل از جلسات، همیشه در دسترسِ شماست — برایِ لحظاتی که احساسِ بحران می‌کنید. همین حالا، در آرامش، پرش کنید.
       </p>
       {fields.map((f) => (
@@ -2595,7 +2595,7 @@ function SafetyPlanScreen({ onBack, userEmail, userToken }) {
             style={{ width: "100%", minHeight: 70, padding: "9px 11px", borderRadius: 10, border: "1px solid #DCE8F0", fontSize: 12.5, fontFamily: "inherit", resize: "vertical", boxSizing: "border-box" }} />
         </div>
       ))}
-      {userEmail && <p style={{ fontSize: 9.5, color: saveError ? "#A6432F" : saved ? "#8CA3B0" : "#B9822F", textAlign: "center" }}>{saveError ? "⚠️ ذخیره در سرور ناموفق بود — فقط روی گوشی مانده" : saved ? "ذخیره شد ✓" : "در حالِ ذخیره..."}</p>}
+      {userEmail && <p style={{ fontSize: 9.5, color: saveError ? "#A6432F" : saved ? "#617685" : "#B9822F", textAlign: "center" }}>{saveError ? "⚠️ ذخیره در سرور ناموفق بود — فقط روی گوشی مانده" : saved ? "ذخیره شد ✓" : "در حالِ ذخیره..."}</p>}
       <div style={{ background: "#FBF0EC", border: "1px solid #E8C9BC", borderRadius: 10, padding: "12px 14px", marginTop: 8 }}>
         <p style={{ fontSize: 12, color: "#8A5A4E", fontWeight: 700, margin: "0 0 4px" }}>📞 اورژانسِ فوری</p>
         <p style={{ fontSize: 12, color: "#8A5A4E", margin: 0 }}>در بحرانِ حاد، همین حالا با اورژانس (۱۱۵) یا نزدیک‌ترین مرکزِ درمانی تماس بگیرید — منتظرِ نوبتِ جلسه نمانید.</p>
@@ -2653,7 +2653,7 @@ function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, default
       <Card>
         <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
         <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>✅ چک‌این ثبت شد</h2>
-        <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>ممنون — چک‌اینِ بعدی طبقِ زمان‌بندی‌تان یادآوری می‌شود.</p>
+        <p style={{ fontSize: 11.5, color: "#617685", marginBottom: 16 }}>ممنون — چک‌اینِ بعدی طبقِ زمان‌بندی‌تان یادآوری می‌شود.</p>
         {suggestions.length > 0 ? (
           <>
             <p style={{ fontSize: 12.5, fontWeight: 700, color: "#B9822F", margin: "0 0 10px" }}>بر اساسِ پاسخ‌هایتان، پیشنهاد می‌کنیم این جلسات را مرور کنید:</p>
@@ -2677,7 +2677,7 @@ function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, default
     <Card>
       <button onClick={onBack} style={{ border: "none", background: "none", color: "#17383D", fontSize: 12, cursor: "pointer", marginBottom: 10 }}>‹ بازگشت</button>
       <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📋 چک‌اینِ دوره‌ای</h2>
-      <p style={{ fontSize: 11.5, color: "#8CA3B0", marginBottom: 16 }}>۶ سوالِ کوتاه، ۲ دقیقه — برایِ رصدِ روندِ حالتان بینِ جلسات.</p>
+      <p style={{ fontSize: 11.5, color: "#617685", marginBottom: 16 }}>۶ سوالِ کوتاه، ۲ دقیقه — برایِ رصدِ روندِ حالتان بینِ جلسات.</p>
 
       {CHECKIN_ITEMS.map((item) => (
         <div key={item.key} style={{ marginBottom: 14 }}>
@@ -2703,7 +2703,7 @@ function CheckinScreen({ onBack, userEmail, userToken, unlockedSessions, default
             </button>
           ))}
         </div>
-        {defaultIntervalDays && <p style={{ fontSize: 10, color: "#8CA3B0", margin: "6px 0 0" }}>پیشنهادِ ما بر اساسِ مسیرِ درمانی‌تان: هر {defaultIntervalDays} روز.</p>}
+        {defaultIntervalDays && <p style={{ fontSize: 10, color: "#617685", margin: "6px 0 0" }}>پیشنهادِ ما بر اساسِ مسیرِ درمانی‌تان: هر {defaultIntervalDays} روز.</p>}
       </div>
 
       <button onClick={handleSubmit} disabled={!allAnswered || saving}
@@ -2851,7 +2851,7 @@ function RadarChart({ p1, p2, domains }) {
         <span><span style={{ display: "inline-block", width: 9, height: 9, background: "#EDF0CC", borderRadius: 2, marginInlineEnd: 3 }} />تعهدِ متوسط رو‌به‌بالا</span>
         <span><span style={{ display: "inline-block", width: 9, height: 9, background: "#DDEBDD", borderRadius: 2, marginInlineEnd: 3 }} />متعهد و پایبند</span>
       </div>
-      <p style={{ textAlign: "center", fontSize: 11, color: "#8CA3B0", marginTop: 6 }}>
+      <p style={{ textAlign: "center", fontSize: 11, color: "#617685", marginTop: 6 }}>
         هرچه نقطه به لبه‌ی بیرونی نزدیک‌تر باشد، تعهد و پایبندی در آن حیطه بیشتر است؛ نزدیکی به مرکز یعنی تعهدِ پایین‌تر و خطرِ بیشتر.
       </p>
     </div>
@@ -2862,7 +2862,7 @@ function RadarChart({ p1, p2, domains }) {
 function DomainBarChart({ p1, p2, domains }) {
   return (
     <div style={{ padding: "4px 2px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9.5, color: "#B7C6CE", padding: "0 0 4px", marginRight: 40 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9.5, color: "#617685", padding: "0 0 4px", marginRight: 40 }}>
         <span>۰</span><span>۲۵</span><span>۵۰</span><span>۷۵</span><span>۱۰۰</span>
       </div>
       {domains.map((d) => (
@@ -2922,7 +2922,7 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
     if (gateStep === 3) {
       return (
         <div style={{ marginTop: 18, padding: "16px 16px 14px", borderRadius: 18, background: "#FBF0EC", border: "1px solid #E8C9BC" }}>
-          <button onClick={() => setGateStep(2)} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 10.5, cursor: "pointer", marginBottom: 8, padding: 0 }}>‹ بازگشت</button>
+          <button onClick={() => setGateStep(2)} style={{ border: "none", background: "none", color: "#617685", fontSize: 10.5, cursor: "pointer", marginBottom: 8, padding: 0 }}>‹ بازگشت</button>
           <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: "0 0 12px" }}>
             شما در این ماجرا کدام نقش را دارید؟
           </p>
@@ -2950,7 +2950,7 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
       background: isPostInfidelity ? "#FBF0EC" : "#F3F8F5",
       border: `1px solid ${isPostInfidelity ? "#E8C9BC" : "#CFE6D8"}`,
     }}>
-      <button onClick={() => { setChosenTrack(null); setGateStep(2); }} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 10.5, cursor: "pointer", marginBottom: 6, padding: 0 }}>
+      <button onClick={() => { setChosenTrack(null); setGateStep(2); }} style={{ border: "none", background: "none", color: "#617685", fontSize: 10.5, cursor: "pointer", marginBottom: 6, padding: 0 }}>
         ‹ تغییرِ پاسخ
       </button>
       <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>
@@ -2964,7 +2964,7 @@ function PricingTiers({ tier, scores, onOpenLibrary }) {
           <span style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D" }}>{pkg.label} ({pkg.sessions} جلسه)</span>
           <span style={{ fontSize: 15, fontWeight: 800, color: "#17383D" }}>{toman(pkg.price)}</span>
         </div>
-        <p style={{ fontSize: 11, color: "#8CA3B0", margin: "0 0 6px" }}>{pkg.note}</p>
+        <p style={{ fontSize: 11, color: "#617685", margin: "0 0 6px" }}>{pkg.note}</p>
         <p style={{ fontSize: 11, color: "#5A7080", margin: 0 }}>
           معادلِ حضوری: <span style={{ textDecoration: "line-through" }}>{toman(pkg.inPersonEquivalent)}</span>{" "}
           <span style={{ color: "#4C8778", fontWeight: 700 }}>({toman(savings)} صرفه‌جویی)</span>
@@ -3065,7 +3065,7 @@ function ThoughtTracker({ onBack, userToken }) {
             style={{ width: "100%", minHeight: 60, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, marginBottom: 8, boxSizing: "border-box" }} />
           <div style={{ display: "flex", gap: 8 }}>
             <button onClick={confirmLog} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "none", background: typeColors[pendingType], color: "#fff", fontWeight: 700, cursor: "pointer" }}>ثبتِ این فکر</button>
-            <button onClick={() => { setPendingType(null); setNote(""); }} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "1px solid #DCE8F0", background: "#fff", color: "#8CA3B0", cursor: "pointer" }}>انصراف</button>
+            <button onClick={() => { setPendingType(null); setNote(""); }} style={{ flex: 1, padding: "9px", borderRadius: 10, border: "1px solid #DCE8F0", background: "#fff", color: "#617685", cursor: "pointer" }}>انصراف</button>
           </div>
         </div>
       ) : (
@@ -3097,7 +3097,7 @@ function ThoughtTracker({ onBack, userToken }) {
           ))}
         </>
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 10 }}>
         بازگشت
       </button>
     </Card>
@@ -3181,7 +3181,7 @@ function UnifiedDistrustReport({ onBack }) {
         <div style={{ height: 10, background: "#EDF2F5", borderRadius: 999, overflow: "hidden" }}>
           <div style={{ height: "100%", width: `${hwTotal ? (hwDone / hwTotal) * 100 : 0}%`, background: "#9C6B2F", borderRadius: 999 }} />
         </div>
-        <p style={{ fontSize: 11, color: "#8CA3B0", marginTop: 4 }}>{hwDone} از {hwTotal} تکلیف انجام شده</p>
+        <p style={{ fontSize: 11, color: "#617685", marginTop: 4 }}>{hwDone} از {hwTotal} تکلیف انجام شده</p>
       </div>
 
       {counts.rumination >= 3 && (
@@ -3192,7 +3192,7 @@ function UnifiedDistrustReport({ onBack }) {
         </div>
       )}
 
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>
         بازگشت
       </button>
     </Card>
@@ -3251,7 +3251,7 @@ function UnifiedProgressReport({ pkgKey, onBack }) {
         <div style={{ height: 10, background: "#EDF2F5", borderRadius: 999, overflow: "hidden" }}>
           <div style={{ height: "100%", width: `${hwTotal ? (hwDone / hwTotal) * 100 : 0}%`, background: "#17383D", borderRadius: 999 }} />
         </div>
-        <p style={{ fontSize: 11, color: "#8CA3B0", marginTop: 4 }}>{hwDone} از {hwTotal} تکلیف انجام شده</p>
+        <p style={{ fontSize: 11, color: "#617685", marginTop: 4 }}>{hwDone} از {hwTotal} تکلیف انجام شده</p>
       </div>
       {avgBefore !== null && (
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
@@ -3265,7 +3265,7 @@ function UnifiedProgressReport({ pkgKey, onBack }) {
           </div>
         </div>
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 8 }}>
         بازگشت
       </button>
     </Card>
@@ -3336,10 +3336,10 @@ function AdventureGame({ onBack }) {
           <button key={i} onClick={() => { setScenarioIdx(i); setNodeKey(sc.start); }}
             style={{ width: "100%", textAlign: "right", padding: "14px", borderRadius: 12, border: "1px solid #DCE8F0", background: "#fff", marginBottom: 10, cursor: "pointer" }}>
             <p style={{ fontSize: 13, fontWeight: 700, color: "#1F2D3D", margin: "0 0 4px" }}>{sc.title}</p>
-            <p style={{ fontSize: 11.5, color: "#8CA3B0", margin: 0 }}>{sc.intro}</p>
+            <p style={{ fontSize: 11.5, color: "#617685", margin: 0 }}>{sc.intro}</p>
           </button>
         ))}
-        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
       </Card>
     );
   }
@@ -3349,7 +3349,7 @@ function AdventureGame({ onBack }) {
 
   return (
     <Card>
-      <p style={{ fontSize: 10.5, color: "#8CA3B0", marginBottom: 10 }}>{scenario.title}</p>
+      <p style={{ fontSize: 10.5, color: "#617685", marginBottom: 10 }}>{scenario.title}</p>
       <p style={{ fontSize: 14, color: "#1F2D3D", lineHeight: 1.9, marginBottom: 18, fontWeight: node.ending ? 700 : 400 }}>{node.text}</p>
       {node.choices && node.choices.map((c, i) => (
         <button key={i} onClick={() => setNodeKey(c.next)}
@@ -3363,7 +3363,7 @@ function AdventureGame({ onBack }) {
           سناریویِ دیگر ←
         </button>
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>بازگشت به فهرست</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 8 }}>بازگشت به فهرست</button>
     </Card>
   );
 }
@@ -3439,7 +3439,7 @@ function CrosswordPuzzle({ onBack }) {
           {isCorrect() ? "🎉 آفرین، همه درست بود!" : "چند خانه هنوز اشتباه است — دوباره امتحان کنید"}
         </p>
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
     </Card>
   );
 }
@@ -3488,7 +3488,7 @@ function CardMatchGame({ onBack }) {
     <Card>
       <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 6 }}>🃏 بازیِ تطبیقِ کارت</h2>
       <p style={{ fontSize: 11.5, color: "#5A7080", textAlign: "center", marginBottom: 6 }}>رفتار را با مفهومش جفت کنید</p>
-      <p style={{ fontSize: 11, color: "#8CA3B0", textAlign: "center", marginBottom: 16 }}>حرکت‌ها: {moves}</p>
+      <p style={{ fontSize: 11, color: "#617685", textAlign: "center", marginBottom: 16 }}>حرکت‌ها: {moves}</p>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
         {cards.map((card) => {
           const isFlipped = flipped.includes(card.id) || matched.includes(card.pairId);
@@ -3505,7 +3505,7 @@ function CardMatchGame({ onBack }) {
         })}
       </div>
       {allMatched && <p style={{ textAlign: "center", fontSize: 13, fontWeight: 700, color: "#4C8778", marginBottom: 10 }}>🎉 عالی بود! در {moves} حرکت تمام کردید.</p>}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
     </Card>
   );
 }
@@ -3575,7 +3575,7 @@ function EmotionWheel({ onBack }) {
           )}
         </div>
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
     </Card>
   );
 }
@@ -3615,7 +3615,7 @@ function AwarenessBingo({ onBack }) {
         ))}
       </div>
       {bingoLine && <p style={{ textAlign: "center", fontSize: 14, fontWeight: 800, color: "#B9822F", marginBottom: 10 }}>🎉 بینگو! یک ردیف را کامل کردید!</p>}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
     </Card>
   );
 }
@@ -4960,14 +4960,14 @@ function CoupleAlignmentGame({ onBack }) {
           style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
           {busy ? "..." : "شروعِ آزمونِ جدید (من اول شروع می‌کنم)"}
         </button>
-        <p style={{ textAlign: "center", fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>— یا —</p>
+        <p style={{ textAlign: "center", fontSize: 11, color: "#617685", marginBottom: 10 }}>— یا —</p>
         <input value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} placeholder="کدی که همسرم فرستاده را وارد کنم" maxLength={6}
           style={{ width: "100%", padding: "12px", borderRadius: 10, border: "1px solid #DCE8F0", marginBottom: 10, fontSize: 15, textAlign: "center", letterSpacing: 2 }} />
         <button onClick={joinGame} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
           پیوستن با کد
         </button>
         {err && <p style={{ color: "#A6432F", fontSize: 12, textAlign: "center", marginBottom: 10 }}>⚠ {err}</p>}
-        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
       </Card>
     );
   }
@@ -5015,7 +5015,7 @@ function CoupleAlignmentGame({ onBack }) {
         <button onClick={checkResults} disabled={busy} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
           {busy ? "..." : "🔄 چک کردنِ نتیجه"}
         </button>
-        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت (بعداً چک می‌کنم)</button>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بازگشت (بعداً چک می‌کنم)</button>
       </Card>
     );
   }
@@ -5036,8 +5036,8 @@ function CoupleAlignmentGame({ onBack }) {
             <p style={{ fontSize: 11.5, color: "#5A7080" }}>شما: {g.a} · همسرتان: {g.b} {g.gap >= 2 ? "· شکافِ زیاد ⚠️" : g.gap === 0 ? "· کاملاً هم‌نظر ✅" : ""}</p>
           </div>
         ))}
-        <p style={{ fontSize: 11, color: "#8CA3B0", textAlign: "center", margin: "14px 0" }}>این نتیجه، «درست/غلط» ندارد — فقط نشان می‌دهد کجاها ارزشِ گفت‌وگویِ بیشتر دارد.</p>
-        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+        <p style={{ fontSize: 11, color: "#617685", textAlign: "center", margin: "14px 0" }}>این نتیجه، «درست/غلط» ندارد — فقط نشان می‌دهد کجاها ارزشِ گفت‌وگویِ بیشتر دارد.</p>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
       </Card>
     );
   }
@@ -5106,7 +5106,7 @@ function MyGuidebook({ onBack, userToken }) {
         <button onClick={addEntry} disabled={!title.trim()} style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer" }}>افزودن به کتابچه</button>
       </div>
       {entries.length === 0 ? (
-        <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>هنوز چیزی اضافه نکرده‌اید — از اولین جلسه‌ای که چیزی یاد گرفتید شروع کنید.</p>
+        <p style={{ fontSize: 12, color: "#617685", textAlign: "center" }}>هنوز چیزی اضافه نکرده‌اید — از اولین جلسه‌ای که چیزی یاد گرفتید شروع کنید.</p>
       ) : (
         entries.map((e, i) => (
           <div key={i} style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 8, position: "relative" }}>
@@ -5116,7 +5116,7 @@ function MyGuidebook({ onBack, userToken }) {
           </div>
         ))
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
     </Card>
   );
 }
@@ -5214,14 +5214,14 @@ function RelationshipContract({ onBack }) {
           style={{ width: "100%", padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
           {busy ? "..." : "شروعِ قراردادِ جدید (من اول شروع می‌کنم)"}
         </button>
-        <p style={{ textAlign: "center", fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>— یا —</p>
+        <p style={{ textAlign: "center", fontSize: 11, color: "#617685", marginBottom: 10 }}>— یا —</p>
         <input value={joinCode} onChange={(e) => setJoinCode(e.target.value.toUpperCase())} placeholder="کدی که همسرم فرستاده" maxLength={6}
           style={{ width: "100%", padding: "12px", borderRadius: 10, border: "1px solid #DCE8F0", marginBottom: 10, fontSize: 15, textAlign: "center", letterSpacing: 2 }} />
         <button onClick={joinContract} disabled={busy} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 10 }}>
           پیوستن با کد
         </button>
         {err && <p style={{ color: "#A6432F", fontSize: 12, textAlign: "center", marginBottom: 10 }}>⚠ {err}</p>}
-        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
       </Card>
     );
   }
@@ -5236,7 +5236,7 @@ function RelationshipContract({ onBack }) {
           <p style={{ fontSize: 22, fontWeight: 800, color: "#9C6B2F", letterSpacing: 3 }}>{code}</p>
         </div>
       )}
-      <p style={{ fontSize: 11, color: "#8CA3B0", textAlign: "center", marginBottom: 14 }}>هردویتان می‌توانید هرقسمت را ویرایش کنید — تغییراتِ هم را می‌بینید.</p>
+      <p style={{ fontSize: 11, color: "#617685", textAlign: "center", marginBottom: 14 }}>هردویتان می‌توانید هرقسمت را ویرایش کنید — تغییراتِ هم را می‌بینید.</p>
       {RELATIONSHIP_CONTRACT_PROMPTS.map((p) => (
         <div key={p.key} style={{ marginBottom: 14 }}>
           <p style={{ fontSize: 12.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 6 }}>{p.label}</p>
@@ -5249,7 +5249,7 @@ function RelationshipContract({ onBack }) {
       </button>
       {!bothSigned ? (
         <>
-          <p style={{ fontSize: 11.5, color: "#8CA3B0", textAlign: "center", marginBottom: 8 }}>
+          <p style={{ fontSize: 11.5, color: "#617685", textAlign: "center", marginBottom: 8 }}>
             امضایِ شما: {role === "a" ? (signedA ? "✅" : "◻") : (signedB ? "✅" : "◻")} · امضایِ همسرتان: {role === "a" ? (signedB ? "✅" : "◻") : (signedA ? "✅" : "◻")}
           </p>
           <button onClick={sign} disabled={busy || (role === "a" ? signedA : signedB)}
@@ -5262,7 +5262,7 @@ function RelationshipContract({ onBack }) {
           ✅ هردویتان امضا کرده‌اید — این قرارداد، رسمی و مشترک است.
         </p>
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
     </Card>
   );
 }
@@ -5312,7 +5312,7 @@ function PositiveMemoryJournal({ onBack, userToken }) {
         style={{ width: "100%", minHeight: 70, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5, boxSizing: "border-box", marginBottom: 8 }} />
       <button onClick={addEntry} disabled={!text.trim()} style={{ width: "100%", padding: "10px", borderRadius: 10, border: "none", background: "#B8873A", color: "#fff", fontWeight: 700, cursor: "pointer", marginBottom: 16 }}>ثبتِ این خاطره</button>
       {entries.length === 0 ? (
-        <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>هنوز خاطره‌ای ثبت نکرده‌اید.</p>
+        <p style={{ fontSize: 12, color: "#617685", textAlign: "center" }}>هنوز خاطره‌ای ثبت نکرده‌اید.</p>
       ) : (
         entries.map((e, i) => (
           <div key={i} style={{ background: "#FBF3E2", borderRadius: 12, padding: "12px 14px", marginBottom: 8 }}>
@@ -5321,7 +5321,7 @@ function PositiveMemoryJournal({ onBack, userToken }) {
           </div>
         ))
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
     </Card>
   );
 }
@@ -5391,7 +5391,7 @@ function PersonalRitual({ onBack, userToken }) {
           <option value="weekly">هفتگی</option>
         </select>
         <button onClick={saveRitual} disabled={!name.trim()} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: "linear-gradient(160deg, #2C5560, #17383D 55%, #0E2529)", color: "#fff", fontWeight: 700, cursor: "pointer" }}>ساختنِ آیین</button>
-        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>بازگشت</button>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 8 }}>بازگشت</button>
       </Card>
     );
   }
@@ -5402,11 +5402,11 @@ function PersonalRitual({ onBack, userToken }) {
       <p style={{ fontSize: 12, color: "#5A7080", textAlign: "center", marginBottom: 6 }}>{ritual.frequency === "daily" ? "روزانه" : "هفتگی"}</p>
       {ritual.steps && <p style={{ fontSize: 12, color: "#3A4A52", textAlign: "center", lineHeight: 1.9, marginBottom: 16 }}>{ritual.steps}</p>}
       <p style={{ textAlign: "center", fontSize: 13, fontWeight: 700, color: "#B8873A", marginBottom: 16 }}>🔥 {doneLog.length} بار انجام شده</p>
-      <button onClick={markDoneToday} disabled={doneToday} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: doneToday ? "#EDF2F5" : "linear-gradient(160deg, #C99B4F, #9C6B2F)", color: doneToday ? "#8CA3B0" : "#fff", fontWeight: 700, cursor: doneToday ? "default" : "pointer", marginBottom: 10 }}>
+      <button onClick={markDoneToday} disabled={doneToday} style={{ width: "100%", padding: "12px", borderRadius: 12, border: "none", background: doneToday ? "#EDF2F5" : "linear-gradient(160deg, #C99B4F, #9C6B2F)", color: doneToday ? "#617685" : "#fff", fontWeight: 700, cursor: doneToday ? "default" : "pointer", marginBottom: 10 }}>
         {doneToday ? "✅ امروز انجام شد" : "امروز انجامش دادیم"}
       </button>
-      <button onClick={() => { setRitual(null); try { localStorage.removeItem(storageKey); } catch (e) {} }} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "1px solid #DCE8F0", background: "#fff", color: "#8CA3B0", cursor: "pointer", fontSize: 11.5, marginBottom: 8 }}>طراحیِ آیینِ جدید</button>
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
+      <button onClick={() => { setRitual(null); try { localStorage.removeItem(storageKey); } catch (e) {} }} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "1px solid #DCE8F0", background: "#fff", color: "#617685", cursor: "pointer", fontSize: 11.5, marginBottom: 8 }}>طراحیِ آیینِ جدید</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>بازگشت</button>
     </Card>
   );
 }
@@ -5460,7 +5460,7 @@ function CustomCrisisCard({ onBack, userToken }) {
         </div>
       )}
       {items.length === 0 ? (
-        <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>هنوز موردی اضافه نکرده‌اید.</p>
+        <p style={{ fontSize: 12, color: "#617685", textAlign: "center" }}>هنوز موردی اضافه نکرده‌اید.</p>
       ) : (
         <div style={{ background: "#FBEEEA", border: "1.5px solid #E8C9BC", borderRadius: 14, padding: "16px" }}>
           {items.map((item, i) => (
@@ -5471,7 +5471,7 @@ function CustomCrisisCard({ onBack, userToken }) {
           ))}
         </div>
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 14 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 14 }}>بازگشت</button>
     </Card>
   );
 }
@@ -5525,14 +5525,14 @@ function PersonalRoadmap({ onBack, userToken }) {
           style={{ flex: 1, padding: 10, borderRadius: 8, border: "1px solid #DCE8F0", fontSize: 12.5 }} />
         <button onClick={addGoal} disabled={!text.trim()} style={{ padding: "10px 16px", borderRadius: 8, border: "none", background: "#17383D", color: "#fff", fontWeight: 700, cursor: "pointer" }}>+</button>
       </div>
-      {goals.length > 0 && <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center", marginBottom: 10 }}>{doneCount} از {goals.length} هدف محقق شده</p>}
+      {goals.length > 0 && <p style={{ fontSize: 12, color: "#617685", textAlign: "center", marginBottom: 10 }}>{doneCount} از {goals.length} هدف محقق شده</p>}
       {goals.map((g, i) => (
         <label key={i} onClick={() => toggleGoal(i)} style={{ display: "flex", alignItems: "center", gap: 10, background: g.done ? "#F3F8F5" : "#F7FAFC", borderRadius: 10, padding: "10px 12px", marginBottom: 6, cursor: "pointer" }}>
           <span style={{ width: 18, height: 18, borderRadius: 5, border: `1.5px solid ${g.done ? "#4C8778" : "#C9DEE8"}`, background: g.done ? "#4C8778" : "#fff", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 11, flexShrink: 0 }}>{g.done ? "✓" : ""}</span>
-          <span style={{ fontSize: 12.5, color: g.done ? "#8CA3B0" : "#1F2D3D", textDecoration: g.done ? "line-through" : "none" }}>{g.text}</span>
+          <span style={{ fontSize: 12.5, color: g.done ? "#617685" : "#1F2D3D", textDecoration: g.done ? "line-through" : "none" }}>{g.text}</span>
         </label>
       ))}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 14 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 14 }}>بازگشت</button>
     </Card>
   );
 }
@@ -5556,11 +5556,11 @@ function MyToolsHub({ onBack, navigate }) {
           <span style={{ fontSize: 26 }}>{t.icon}</span>
           <span>
             <p style={{ fontSize: 13.5, fontWeight: 700, color: "#1F2D3D", margin: "0 0 2px" }}>{t.title}</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", margin: 0 }}>{t.desc}</p>
+            <p style={{ fontSize: 11, color: "#617685", margin: 0 }}>{t.desc}</p>
           </span>
         </button>
       ))}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 6 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 6 }}>بازگشت</button>
     </Card>
   );
 }
@@ -5591,7 +5591,7 @@ function QuickTechniqueLibrary({ onBack }) {
             <p style={{ fontSize: 12, color: "#3A4A52", lineHeight: 1.9, margin: 0 }}>{t.howTo}</p>
           </div>
         ))}
-        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت به صفحه‌ی اصلی</button>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت به صفحه‌ی اصلی</button>
       </Card>
     );
   }
@@ -5605,7 +5605,7 @@ function QuickTechniqueLibrary({ onBack }) {
 
       {query.trim() ? (
         Object.keys(QUICK_TECHNIQUE_TOPICS).filter(matchesQuery).length === 0 ? (
-          <p style={{ textAlign: "center", fontSize: 12, color: "#8CA3B0" }}>چیزی برایِ «{query}» پیدا نشد.</p>
+          <p style={{ textAlign: "center", fontSize: 12, color: "#617685" }}>چیزی برایِ «{query}» پیدا نشد.</p>
         ) : (
           Object.keys(QUICK_TECHNIQUE_TOPICS).filter(matchesQuery).map((key) => (
             <button key={key} onClick={() => setOpenTopic(key)}
@@ -5634,7 +5634,7 @@ function QuickTechniqueLibrary({ onBack }) {
           </div>
         ))
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 10 }}>بازگشت</button>
     </Card>
   );
 }
@@ -5658,11 +5658,11 @@ function GamesHub({ onBack, navigate }) {
           <span style={{ fontSize: 26 }}>{g.icon}</span>
           <span>
             <p style={{ fontSize: 13.5, fontWeight: 700, color: "#1F2D3D", margin: "0 0 2px" }}>{g.title}</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", margin: 0 }}>{g.desc}</p>
+            <p style={{ fontSize: 11, color: "#617685", margin: 0 }}>{g.desc}</p>
           </span>
         </button>
       ))}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 6 }}>بازگشت</button>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 6 }}>بازگشت</button>
     </Card>
   );
 }
@@ -5686,7 +5686,7 @@ function PartnerGuide({ onBack }) {
           <p style={{ fontSize: 12, color: "#5A4020", lineHeight: 1.9, margin: 0 }}>{t.text}</p>
         </div>
       ))}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 8 }}>
         بازگشت
       </button>
     </Card>
@@ -5732,7 +5732,7 @@ function BiweeklyAssessment({ onBack, userToken }) {
 
   const last = history[0];
   const prev = history[1];
-  let trendMsg = null, trendColor = "#8CA3B0", isWorsening = false;
+  let trendMsg = null, trendColor = "#617685", isWorsening = false;
   if (last && prev) {
     const diff = last.total - prev.total;
     if (diff <= -3) { trendMsg = `${Math.abs(diff)} نمره بهتر از سنجشِ قبلی — روندِ خوبی دارید 🌱`; trendColor = "#4C8778"; }
@@ -5789,7 +5789,7 @@ function BiweeklyAssessment({ onBack, userToken }) {
           ))}
         </>
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 10 }}>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 10 }}>
         بازگشت
       </button>
     </Card>
@@ -5848,7 +5848,7 @@ function DistrustAwarenessQuiz({ onBack }) {
         <button onClick={restart} style={{ width: "100%", padding: "11px", borderRadius: 12, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", marginBottom: 8 }}>
           دوباره امتحان کنم
         </button>
-        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12.5 }}>
+        <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12.5 }}>
           بازگشت
         </button>
       </Card>
@@ -5886,7 +5886,7 @@ function DistrustAwarenessQuiz({ onBack }) {
           {qIndex + 1 >= quizSet.length ? "دیدنِ نتیجه" : "سوالِ بعدی ←"}
         </button>
       )}
-      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12, marginTop: 8 }}>
+      <button onClick={onBack} style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12, marginTop: 8 }}>
         بازگشت
       </button>
     </Card>
@@ -5950,7 +5950,7 @@ function ChatWidget({ scores, overall, mode }) {
           </div>
           <div style={{ flex: 1, overflowY: "auto", padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8 }}>
             {messages.length === 0 && !busy && (
-              <p style={{ fontSize: 11.5, color: "#8CA3B0", lineHeight: 1.9 }}>
+              <p style={{ fontSize: 11.5, color: "#617685", lineHeight: 1.9 }}>
                 هرچیزی درباره‌ی نتیجه‌ی خودتان (مثلاً معنایِ یک حیطه، یا این‌که چرا نمره‌تان پایین/بالاست) بپرسید.
               </p>
             )}
@@ -5964,7 +5964,7 @@ function ChatWidget({ scores, overall, mode }) {
                 {m.content}
               </div>
             ))}
-            {busy && <div style={{ fontSize: 11.5, color: "#8CA3B0" }}>در حالِ نوشتن...</div>}
+            {busy && <div style={{ fontSize: 11.5, color: "#617685" }}>در حالِ نوشتن...</div>}
             {err && <div style={{ fontSize: 11.5, color: "#A6432F" }}>⚠ {err}</div>}
           </div>
           <div style={{ display: "flex", borderTop: "1px solid #EEF3F6", padding: 8, gap: 6 }}>
@@ -6826,15 +6826,15 @@ function App() {
               {user ? (
                 <p style={{ fontSize: 11, color: "#5A7080", margin: "0 0 12px" }}>
                   سلام {user.name || user.email} ·{" "}
-                  <a onClick={() => setScreen("myProgress")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>📈 پیشرفتِ من</a> ·{" "}
-                  <a onClick={() => setScreen("checkin")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>📋 چک‌این</a> ·{" "}
-                  <a onClick={() => setScreen("safetyPlan")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>🛡️ برنامه‌ی ایمنی</a> ·{" "}
-                  <a onClick={logout} style={{ color: "#8CA3B0", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
+                  <button onClick={() => setScreen("myProgress")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 , border: "none", background: "none", padding: 0, font: "inherit"}}>📈 پیشرفتِ من</button> ·{" "}
+                  <button onClick={() => setScreen("checkin")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 , border: "none", background: "none", padding: 0, font: "inherit"}}>📋 چک‌این</button> ·{" "}
+                  <button onClick={() => setScreen("safetyPlan")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 , border: "none", background: "none", padding: 0, font: "inherit"}}>🛡️ برنامه‌ی ایمنی</button> ·{" "}
+                  <button onClick={logout} style={{ color: "#617685", cursor: "pointer", textDecoration: "underline" , border: "none", background: "none", padding: 0, font: "inherit"}}>خروج</button>
                 </p>
               ) : (
                 <p style={{ fontSize: 11, margin: "0 0 12px" }}>
-                  <a onClick={() => setScreen("authLogin")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 }}>ورود / ثبت‌نام</a>
-                  <span style={{ color: "#8CA3B0" }}> — برایِ دیدنِ پیشرفت، چک‌این، و برنامه‌ی ایمنی</span>
+                  <button onClick={() => setScreen("authLogin")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline", fontWeight: 700 , border: "none", background: "none", padding: 0, font: "inherit"}}>ورود / ثبت‌نام</button>
+                  <span style={{ color: "#617685" }}> — برایِ دیدنِ پیشرفت، چک‌این، و برنامه‌ی ایمنی</span>
                 </p>
               )}
               {showBio && (
@@ -6878,7 +6878,7 @@ function App() {
                 <div style={{ display: "flex", gap: 3, background: "#fff", borderRadius: 999, padding: 3, border: "1px solid #DCE8F0" }}>
                   {[{ label: "A", scale: 1 }, { label: "A", scale: 1.15, big: true }, { label: "A", scale: 1.3, big: true }].map((f, i) => (
                     <button key={i} onClick={() => changeFontScale(f.scale)}
-                      style={{ border: "none", borderRadius: 999, padding: "3px 9px", background: fontScale === f.scale ? "#17383D" : "transparent", color: fontScale === f.scale ? "#fff" : "#8CA3B0", fontSize: f.big ? 13 : 10, fontWeight: 700, cursor: "pointer" }}>
+                      style={{ border: "none", borderRadius: 999, padding: "3px 9px", background: fontScale === f.scale ? "#17383D" : "transparent", color: fontScale === f.scale ? "#fff" : "#617685", fontSize: f.big ? 13 : 10, fontWeight: 700, cursor: "pointer" }}>
                       {f.label}
                     </button>
                   ))}
@@ -6899,20 +6899,20 @@ function App() {
                   const faqHits = INFIDELITY_FAQ.filter((f) => (f.q + " " + f.a + " " + f.category).toLowerCase().includes(q)).slice(0, 4);
                   const topicHits = TOPICS.filter((t) => t.enabled && (t.title + " " + t.subtitle).toLowerCase().includes(q)).slice(0, 3);
                   if (faqHits.length === 0 && topicHits.length === 0) {
-                    return <div style={{ position: "absolute", top: "105%", right: 0, left: 0, background: "#fff", border: "1px solid #DCE8F0", borderRadius: 12, padding: "12px", fontSize: 11.5, color: "#8CA3B0", textAlign: "center", zIndex: 20, boxShadow: "0 8px 20px rgba(0,0,0,0.08)" }}>نتیجه‌ای پیدا نشد</div>;
+                    return <div style={{ position: "absolute", top: "105%", right: 0, left: 0, background: "#fff", border: "1px solid #DCE8F0", borderRadius: 12, padding: "12px", fontSize: 11.5, color: "#617685", textAlign: "center", zIndex: 20, boxShadow: "0 8px 20px rgba(0,0,0,0.08)" }}>نتیجه‌ای پیدا نشد</div>;
                   }
                   return (
                     <div style={{ position: "absolute", top: "105%", right: 0, left: 0, background: "#fff", border: "1px solid #DCE8F0", borderRadius: 12, padding: "8px", zIndex: 20, boxShadow: "0 8px 20px rgba(0,0,0,0.08)", maxHeight: 280, overflowY: "auto" }}>
                       {topicHits.map((t) => (
                         <div key={t.key} onClick={() => { setGlobalSearch(""); navigateToTopic(t.key); }}
                           style={{ padding: "8px 10px", borderRadius: 8, cursor: "pointer", fontSize: 12, display: "flex", alignItems: "center", gap: 6 }}>
-                          <span>{t.icon}</span><b>{t.title}</b><span style={{ color: "#8CA3B0", fontSize: 10.5 }}>· موضوع</span>
+                          <span>{t.icon}</span><b>{t.title}</b><span style={{ color: "#617685", fontSize: 10.5 }}>· موضوع</span>
                         </div>
                       ))}
                       {faqHits.map((f) => (
                         <div key={f.rank} onClick={() => { setGlobalSearch(""); setScreen("faq"); }}
                           style={{ padding: "8px 10px", borderRadius: 8, cursor: "pointer", fontSize: 12 }}>
-                          ❓ {f.q} <span style={{ color: "#8CA3B0", fontSize: 10.5 }}>· سوالِ متداول</span>
+                          ❓ {f.q} <span style={{ color: "#617685", fontSize: 10.5 }}>· سوالِ متداول</span>
                         </div>
                       ))}
                     </div>
@@ -6925,7 +6925,7 @@ function App() {
                   <p style={{ fontSize: 12.5, fontWeight: 700, color: paymentResultMsg.ok ? "#4C8778" : "#A6432F", margin: 0 }}>
                     {paymentResultMsg.ok ? "✅" : "⚠️"} {paymentResultMsg.text}
                   </p>
-                  <button onClick={() => setPaymentResultMsg(null)} style={{ position: "absolute", left: 8, top: 8, border: "none", background: "none", color: "#8CA3B0", cursor: "pointer", fontSize: 14 }}>✕</button>
+                  <button onClick={() => setPaymentResultMsg(null)} style={{ position: "absolute", left: 8, top: 8, border: "none", background: "none", color: "#617685", cursor: "pointer", fontSize: 14 }}>✕</button>
                 </div>
               )}
               <p style={{ fontSize: 11.5, color: "#5A7080", margin: 0 }}>می‌خواهید امروز رویِ کدام موضوع کار کنیم؟</p>
@@ -6984,7 +6984,7 @@ function App() {
             {TOPICS.some((t) => !t.enabled) && (
               <div style={{ marginTop: 16 }}>
                 <button onClick={() => setShowComingSoon(!showComingSoon)}
-                  style={{ width: "100%", padding: "9px", borderRadius: 10, border: "1px dashed #C9D4DA", background: "transparent", color: "#8CA3B0", fontSize: 11, cursor: "pointer" }}>
+                  style={{ width: "100%", padding: "9px", borderRadius: 10, border: "1px dashed #C9D4DA", background: "transparent", color: "#617685", fontSize: 11, cursor: "pointer" }}>
                   {showComingSoon ? "▲ بستنِ ماژول‌هایِ به‌زودی" : `▼ ${TOPICS.filter((t) => !t.enabled).length} ماژولِ دیگر، در حالِ آماده‌سازی`}
                 </button>
                 {showComingSoon && (
@@ -7006,16 +7006,16 @@ function App() {
             )}
 
             <p style={{ textAlign: "center", marginTop: 10 }}>
-              <a onClick={() => setScreen("therapistLogin")} style={{ fontSize: 11, color: "#999", cursor: "pointer" }}>ورودِ همکاران</a>
+              <button onClick={() => setScreen("therapistLogin")} style={{ fontSize: 11, color: "#999", cursor: "pointer" , border: "none", background: "none", padding: 0, font: "inherit"}}>ورودِ همکاران</button>
               {" · "}
-              <a onClick={() => setScreen("feedback")} style={{ fontSize: 11, color: "#999", cursor: "pointer" }}>تماس / پیشنهاد / گزارشِ خرابی</a>
+              <button onClick={() => setScreen("feedback")} style={{ fontSize: 11, color: "#999", cursor: "pointer" , border: "none", background: "none", padding: 0, font: "inherit"}}>تماس / پیشنهاد / گزارشِ خرابی</button>
             </p>
           </div>
         )}
 
         {screen === "aboutUs" && (
           <Card>
-            <a onClick={() => goBack("topics")} style={{ fontSize: 12, color: "#17383D", cursor: "pointer" }}>‹ بازگشت</a>
+            <button onClick={() => goBack("topics")} style={{ fontSize: 12, color: "#17383D", cursor: "pointer" , border: "none", background: "none", padding: 0, font: "inherit"}}>‹ بازگشت</button>
             <h2 style={{ fontWeight: 800, margin: "10px 0" }}>دربارهٔ ما</h2>
 
             <p style={{ fontSize: 13, lineHeight: 2 }}>
@@ -7050,7 +7050,7 @@ function App() {
 
         {screen === "feedback" && (
           <Card>
-            <a onClick={() => goBack("topics")} style={{ fontSize: 12, color: "#17383D", cursor: "pointer" }}>‹ بازگشت</a>
+            <button onClick={() => goBack("topics")} style={{ fontSize: 12, color: "#17383D", cursor: "pointer" , border: "none", background: "none", padding: 0, font: "inherit"}}>‹ بازگشت</button>
             <h2 style={{ fontWeight: 800, margin: "10px 0" }}>تماس با ما</h2>
             <select value={feedbackType} onChange={(e) => setFeedbackType(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }}>
               <option value="پیشنهاد">پیشنهاد</option>
@@ -7058,8 +7058,8 @@ function App() {
               <option value="گزارشِ خرابی">گزارشِ خرابی (تیکت)</option>
               <option value="تماس با مدیریت">تماس با مدیریت</option>
             </select>
-            <textarea placeholder="پیامِ خود را بنویسید..." value={feedbackMsg} onChange={(e) => setFeedbackMsg(e.target.value)} style={{ width: "100%", minHeight: 100, padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
-            <input placeholder="ایمیل یا شماره برایِ پیگیری (اختیاری)" value={feedbackContact} onChange={(e) => setFeedbackContact(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
+            <textarea placeholder="پیامِ خود را بنویسید..." aria-label="پیامِ خود را بنویسید..." value={feedbackMsg} onChange={(e) => setFeedbackMsg(e.target.value)} style={{ width: "100%", minHeight: 100, padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
+            <input placeholder="ایمیل یا شماره برایِ پیگیری (اختیاری)" aria-label="ایمیل یا شماره برایِ پیگیری (اختیاری)" value={feedbackContact} onChange={(e) => setFeedbackContact(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
             <button onClick={async () => {
               const r = await fetchWithTimeout("/api/feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: feedbackType, message: feedbackMsg, contact: feedbackContact, email: user?.email }) });
               const d = await r.json();
@@ -7108,15 +7108,15 @@ function App() {
                 <span style={{ fontSize: 15, lineHeight: 1 }}>🌿</span>
               </div>
               <div style={{ position: "absolute", top: 10, right: 12, fontSize: 11 }}>
-                <a onClick={() => goBack("topics")} style={{ color: "#EAF2F9", cursor: "pointer" }}>‹ موضوعاتِ دیگر</a>
+                <button onClick={() => goBack("topics")} style={{ color: "#EAF2F9", cursor: "pointer" , border: "none", background: "none", padding: 0, font: "inherit"}}>‹ موضوعاتِ دیگر</button>
               </div>
               <div style={{ position: "absolute", top: 10, left: 12, fontSize: 11 }}>
                 {user ? (
                   <span style={{ color: "#EAF2F9" }}>
-                    سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a> · <a onClick={() => setScreen("checkin")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>چک‌این</a> · <a onClick={() => setScreen("safetyPlan")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>برنامه‌ی ایمنی</a> · <a onClick={logout} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>خروج</a>
+                    سلام {user.name || user.email} · <button onClick={() => setScreen("myProgress")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" , border: "none", background: "none", padding: 0, font: "inherit"}}>پیشرفتِ من</button> · <button onClick={() => setScreen("checkin")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" , border: "none", background: "none", padding: 0, font: "inherit"}}>چک‌این</button> · <button onClick={() => setScreen("safetyPlan")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" , border: "none", background: "none", padding: 0, font: "inherit"}}>برنامه‌ی ایمنی</button> · <button onClick={logout} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" , border: "none", background: "none", padding: 0, font: "inherit"}}>خروج</button>
                   </span>
                 ) : (
-                  <a onClick={() => setScreen("authLogin")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" }}>ورود / ثبت‌نام</a>
+                  <button onClick={() => setScreen("authLogin")} style={{ color: "#F0C578", cursor: "pointer", textDecoration: "underline" , border: "none", background: "none", padding: 0, font: "inherit"}}>ورود / ثبت‌نام</button>
                 )}
               </div>
               <p style={{ fontSize: 13, color: "#D6E4F0", margin: "0 0 4px", fontWeight: 700 }}>{BRAND.academy}</p>
@@ -7141,7 +7141,7 @@ function App() {
                   </div>
                 </div>
               )}
-              <p style={{ fontSize: 12, fontWeight: 700, color: "#8CA3B0", textAlign: "center", margin: "0 0 14px" }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: "#617685", textAlign: "center", margin: "0 0 14px" }}>
                 یکی از این دو روش را انتخاب کنید
               </p>
 
@@ -7149,7 +7149,7 @@ function App() {
                 <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 12, background: "#17383D", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>👫</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 14, fontWeight: 800, color: "#1F2D3D" }}>زوجی — نقشه‌ی مشترک</div>
-                  <div style={{ fontSize: 11, color: "#8CA3B0", marginTop: 2 }}>هردویتان پاسخ می‌دهید، نقشه‌ی مشترک می‌بینید</div>
+                  <div style={{ fontSize: 11, color: "#617685", marginTop: 2 }}>هردویتان پاسخ می‌دهید، نقشه‌ی مشترک می‌بینید</div>
                 </div>
                 <div style={{ fontSize: 18, color: "#17383D" }}>‹</div>
               </button>
@@ -7158,7 +7158,7 @@ function App() {
                 <div style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 12, background: "#E8975C", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>🧍</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 14, fontWeight: 800, color: "#1F2D3D" }}>فردی و مستقل</div>
-                  <div style={{ fontSize: 11, color: "#8CA3B0", marginTop: 2 }}>بدونِ نیازِ همسر؛ فقط نتیجه‌ی خودتان</div>
+                  <div style={{ fontSize: 11, color: "#617685", marginTop: 2 }}>بدونِ نیازِ همسر؛ فقط نتیجه‌ی خودتان</div>
                 </div>
                 <div style={{ fontSize: 18, color: "#E8975C" }}>‹</div>
               </button>
@@ -7183,12 +7183,12 @@ function App() {
 
             <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "22px 0" }}>
               <div style={{ flex: 1, height: 1, background: "#DCEAF2" }} />
-              <span style={{ fontSize: 12, color: "#8CA3B0" }}>یا</span>
+              <span style={{ fontSize: 12, color: "#617685" }}>یا</span>
               <div style={{ flex: 1, height: 1, background: "#DCEAF2" }} />
             </div>
 
             <p style={{ fontSize: 12.5, color: "#5A7080", marginBottom: 4 }}>بازگشت با کدِ قبلی رابطه‌تان:</p>
-            <p style={{ fontSize: 10.5, color: "#9AAEB9", marginBottom: 8, lineHeight: 1.7 }}>
+            <p style={{ fontSize: 10.5, color: "#617685", marginBottom: 8, lineHeight: 1.7 }}>
               اگر قبلاً شروع کرده‌اید، کدِ ۶ حرفی‌تان را اینجا وارد کنید تا دقیقاً از همان‌جا ادامه دهید یا نتیجه را دوباره ببینید.
             </p>
             <div style={{ display: "flex", gap: 8 }}>
@@ -7199,10 +7199,10 @@ function App() {
               </button>
             </div>
             {err && <p style={{ color: "#A6432F", fontSize: 12.5, marginTop: 8 }}>{err}</p>}
-            <p style={{ fontSize: 10.5, color: "#9AAEB9", marginTop: 18, lineHeight: 1.8 }}>
+            <p style={{ fontSize: 10.5, color: "#617685", marginTop: 18, lineHeight: 1.8 }}>
               پاسخ‌ها با یک کدِ اختصاصی ذخیره می‌شود؛ هرکس این کد را داشته باشد می‌تواند نتیجه را ببیند، پس آن را نزد خود نگه دارید.
             </p>
-            <button onClick={() => setScreen("adminLogin")} className="no-print" style={{ marginTop: 18, background: "none", border: "none", color: "#B7C6CE", fontSize: 10.5, cursor: "pointer", textDecoration: "underline" }}>
+            <button onClick={() => setScreen("adminLogin")} className="no-print" style={{ marginTop: 18, background: "none", border: "none", color: "#617685", fontSize: 10.5, cursor: "pointer", textDecoration: "underline" }}>
               پنل آموزشی (فقط برایِ پژوهشگر)
             </button>
 
@@ -7224,13 +7224,13 @@ function App() {
         {screen === "treatmentDirect" && (
           <Card>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14 }}>
-              <a onClick={() => goBack("topics")} style={{ color: "#17383D", fontSize: 12, cursor: "pointer" }}>‹ موضوعاتِ دیگر</a>
+              <button onClick={() => goBack("topics")} style={{ color: "#17383D", fontSize: 12, cursor: "pointer" , border: "none", background: "none", padding: 0, font: "inherit"}}>‹ موضوعاتِ دیگر</button>
               {user ? (
-                <span style={{ fontSize: 11, color: "#8CA3B0" }}>
-                  سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a>
+                <span style={{ fontSize: 11, color: "#617685" }}>
+                  سلام {user.name || user.email} · <button onClick={() => setScreen("myProgress")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline" , border: "none", background: "none", padding: 0, font: "inherit"}}>پیشرفتِ من</button>
                 </span>
               ) : (
-                <a onClick={() => setScreen("authLogin")} style={{ color: "#17383D", fontSize: 11, cursor: "pointer", textDecoration: "underline" }}>ورود / ثبت‌نام</a>
+                <button onClick={() => setScreen("authLogin")} style={{ color: "#17383D", fontSize: 11, cursor: "pointer", textDecoration: "underline" , border: "none", background: "none", padding: 0, font: "inherit"}}>ورود / ثبت‌نام</button>
               )}
             </div>
             <h2 style={{ fontSize: 18, fontWeight: 800, color: "#1F2D3D", marginBottom: 6 }}>💞 خیانتِ زناشویی — درمان و بازسازی</h2>
@@ -7255,8 +7255,8 @@ function App() {
         {screen === "therapistLogin" && (
           <Card>
             <p style={{ fontWeight: 800, marginBottom: 10 }}>ورودِ درمانگر</p>
-            <input placeholder="کدِ درمانگر" value={therapistLoginId} onChange={(e) => setTherapistLoginId(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
-            <input placeholder="رمز" type="password" value={therapistLoginPass} onChange={(e) => setTherapistLoginPass(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
+            <input placeholder="کدِ درمانگر" aria-label="کدِ درمانگر" value={therapistLoginId} onChange={(e) => setTherapistLoginId(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
+            <input placeholder="رمز" aria-label="رمز" type="password" value={therapistLoginPass} onChange={(e) => setTherapistLoginPass(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }} />
             <button onClick={async () => {
               const r = await fetchWithTimeout("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "login", therapistId: therapistLoginId, password: therapistLoginPass }) });
               const d = await r.json();
@@ -7300,9 +7300,9 @@ function App() {
                 <div style={{ marginTop: 14, background: "#F7FAFC", borderRadius: 12, padding: "14px", border: "1px solid #DCE8F0" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                     <p style={{ fontSize: 13, fontWeight: 700, color: "#1F2D3D", margin: 0 }}>{therapistPatientEmail}</p>
-                    <button onClick={() => setTherapistPatientEmail(null)} style={{ border: "none", background: "none", color: "#8CA3B0", fontSize: 11, cursor: "pointer" }}>بستن ✕</button>
+                    <button onClick={() => setTherapistPatientEmail(null)} style={{ border: "none", background: "none", color: "#617685", fontSize: 11, cursor: "pointer" }}>بستن ✕</button>
                   </div>
-                  {!therapistPatientData ? <p style={{ fontSize: 12, color: "#8CA3B0", textAlign: "center" }}>در حالِ بارگذاری...</p> : (
+                  {!therapistPatientData ? <p style={{ fontSize: 12, color: "#617685", textAlign: "center" }}>در حالِ بارگذاری...</p> : (
                     <>
                       <p style={{ fontSize: 11.5, color: "#4C8778", marginBottom: 6 }}>🔓 جلساتِ بازشده: {therapistPatientData.unlockedSessions?.length || 0}</p>
                       <p style={{ fontSize: 11.5, color: "#7A5B2E", marginBottom: 6 }}>📈 ثبت‌هایِ خلق: {therapistPatientData.moodLog?.length || 0}</p>
@@ -7364,7 +7364,7 @@ function App() {
                   <label style={{ display: "flex", alignItems: "flex-start", gap: 8, cursor: "pointer" }}>
                     <input type="checkbox" checked={privacyConsent} onChange={(e) => setPrivacyConsent(e.target.checked)} style={{ marginTop: 3 }} />
                     <span style={{ fontSize: 11.5, color: "#3A4A52", lineHeight: 1.8 }}>
-                      با <a onClick={(e) => { e.preventDefault(); setShowPrivacyText(!showPrivacyText); }} style={{ color: "#17383D", fontWeight: 700, textDecoration: "underline", cursor: "pointer" }}>شرایطِ حریمِ خصوصی</a> موافقم.
+                      با <button onClick={(e) => { e.preventDefault(); setShowPrivacyText(!showPrivacyText); }} style={{ color: "#17383D", fontWeight: 700, textDecoration: "underline", cursor: "pointer" , border: "none", background: "none", padding: 0, font: "inherit"}}>شرایطِ حریمِ خصوصی</button> موافقم.
                     </span>
                   </label>
                   {showPrivacyText && (
@@ -7392,13 +7392,13 @@ function App() {
                   {authBusy ? "..." : "تاییدِ کد و ورود"}
                 </button>
                 <button onClick={() => { setOtpStep("phone"); setOtpCode(""); setAuthErr(""); }}
-                  style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>
+                  style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>
                   تغییرِ شماره / ارسالِ دوباره
                 </button>
               </>
             )}
             <button onClick={() => setScreen("start")}
-              style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12.5 }}>
+              style={{ width: "100%", padding: "9px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12.5 }}>
               بازگشت
             </button>
           </Card>
@@ -7454,7 +7454,7 @@ function App() {
             <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", textAlign: "center", marginBottom: 4 }}>
               {TREATMENT_PACKAGES[libraryPkg].label}
             </h2>
-            <p style={{ fontSize: 11.5, color: "#8CA3B0", textAlign: "center", marginBottom: 8 }}>
+            <p style={{ fontSize: 11.5, color: "#617685", textAlign: "center", marginBottom: 8 }}>
               {TREATMENT_PACKAGES[libraryPkg].sessions} جلسه · هر جلسه {toman(sessionPrice(libraryPkg))}
             </p>
             {(() => {
@@ -7476,7 +7476,7 @@ function App() {
                     return (
                       <div style={{ marginTop: 10 }}>
                         <div style={{ textAlign: "center", marginBottom: 6 }}>
-                          <span style={{ fontSize: 11, color: "#8CA3B0", textDecoration: "line-through" }}>{toman(noDiscountPrice)}</span>
+                          <span style={{ fontSize: 11, color: "#617685", textDecoration: "line-through" }}>{toman(noDiscountPrice)}</span>
                           <span style={{ fontSize: 10.5, fontWeight: 800, color: "#A6432F", marginRight: 8, background: "#FBEEEA", padding: "2px 8px", borderRadius: 999 }}>۳۵٪ تخفیف</span>
                         </div>
                         <button onClick={() => startZarinpalPayment(libraryPkg, null)} disabled={paymentBusy}
@@ -7493,7 +7493,7 @@ function App() {
               <PartnerSyncWidget userEmail={user.email} userToken={user.token} pkgKey={libraryPkg} totalSessions={TREATMENT_PACKAGES[libraryPkg].sessions} />
             )}
             <p style={{ textAlign: "center", marginBottom: 16, fontSize: 11 }}>
-              <span style={{ color: "#8CA3B0" }}>مسیرِ من اشتباه است — نمایشِ: </span>
+              <span style={{ color: "#617685" }}>مسیرِ من اشتباه است — نمایشِ: </span>
               {Object.entries(TREATMENT_PACKAGES).filter(([k]) => k !== libraryPkg).map(([k, v], i, arr) => (
                 <span key={k}>
                   <button onClick={() => setLibraryPkg(k)}
@@ -7556,7 +7556,7 @@ function App() {
                 style={{ width: "100%", padding: "10px 14px", borderRadius: 12, border: "1.5px solid #C9DEE8", fontSize: 12.5, boxSizing: "border-box" }} />
               {librarySearchQuery && (
                 <button onClick={() => setLibrarySearchQuery("")}
-                  style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", border: "none", background: "none", color: "#8CA3B0", fontSize: 14, cursor: "pointer" }}>
+                  style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", border: "none", background: "none", color: "#617685", fontSize: 14, cursor: "pointer" }}>
                   ✕
                 </button>
               )}
@@ -7564,7 +7564,7 @@ function App() {
 
             {(() => {
               if (libraryLoading && !libraryServerSessions) {
-                return <p style={{ textAlign: "center", fontSize: 12, color: "#8CA3B0", padding: "20px 0" }}>در حالِ بارگذاری...</p>;
+                return <p style={{ textAlign: "center", fontSize: 12, color: "#617685", padding: "20px 0" }}>در حالِ بارگذاری...</p>;
               }
               if (libraryFetchError) {
                 return (
@@ -7577,7 +7577,7 @@ function App() {
               const items = libraryServerSessions || [];
               if (librarySearchQuery && items.length === 0) {
                 return (
-                  <p style={{ textAlign: "center", fontSize: 12, color: "#8CA3B0", padding: "20px 0" }}>
+                  <p style={{ textAlign: "center", fontSize: 12, color: "#617685", padding: "20px 0" }}>
                     چیزی برایِ «{librarySearchQuery}» در این بسته پیدا نشد.
                   </p>
                 );
@@ -7597,7 +7597,7 @@ function App() {
                   display: "flex", alignItems: "center", gap: 10, padding: "12px 14px", borderRadius: 14,
                   background: unlocked ? "#F3F8F5" : "#F7FAFC", border: `1px solid ${unlocked ? "#CFE6D8" : "#EEF3F6"}`,
                 }}>
-                  <div style={{ width: 34, height: 34, borderRadius: "50%", background: unlocked ? "#4C8778" : "#DCE8F0", color: unlocked ? "#fff" : "#8CA3B0", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 13, flexShrink: 0 }}>
+                  <div style={{ width: 34, height: 34, borderRadius: "50%", background: unlocked ? "#4C8778" : "#DCE8F0", color: unlocked ? "#fff" : "#617685", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 13, flexShrink: 0 }}>
                     {unlocked ? "✓" : num}
                   </div>
                   <div style={{ flex: 1 }}>
@@ -7607,7 +7607,7 @@ function App() {
                       {num === 1 && libraryWeakestDomain && <span style={{ fontSize: 9.5, color: "#4C8778", fontWeight: 700, marginRight: 6 }}>· شخصی‌سازی‌شده</span>}
                       {!isSessionLikelyRelevant(libraryPkg, num, context) && <span style={{ fontSize: 9.5, color: "#B9822F", fontWeight: 700, marginRight: 6 }}>· شاید کمتر کاربردی</span>}
                     </p>
-                    <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: "2px 0 0" }}>رویکرد: {approach}</p>
+                    <p style={{ fontSize: 10.5, color: "#617685", margin: "2px 0 0" }}>رویکرد: {approach}</p>
                   </div>
                   {unlocked ? (
                     <button onClick={() => { setViewingSession({ pkgKey: libraryPkg, num, weakestDomain: libraryWeakestDomain, bonusClaim: isStreakBonus }); setScreen("sessionReader"); }}
@@ -7676,7 +7676,7 @@ function App() {
             )}
 
             <button onClick={() => setScreen("topics")}
-              style={{ width: "100%", marginTop: 14, padding: "10px", borderRadius: 12, border: "none", background: "transparent", color: "#8CA3B0", cursor: "pointer", fontSize: 12 }}>
+              style={{ width: "100%", marginTop: 14, padding: "10px", borderRadius: 12, border: "none", background: "transparent", color: "#617685", cursor: "pointer", fontSize: 12 }}>
               بازگشت
             </button>
           </Card>
@@ -7686,7 +7686,7 @@ function App() {
           if (!fetchedSessionData) {
             return (
               <Card>
-                <p style={{ textAlign: "center", fontSize: 12, color: "#8CA3B0", padding: "30px 0" }}>در حالِ بارگذاریِ جلسه...</p>
+                <p style={{ textAlign: "center", fontSize: 12, color: "#617685", padding: "30px 0" }}>در حالِ بارگذاریِ جلسه...</p>
               </Card>
             );
           }
@@ -7767,7 +7767,7 @@ function App() {
                   } else {
                     try { await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`); setShareMsg("✅ لینک کپی شد"); setTimeout(() => setShareMsg(""), 2500); } catch (e) {}
                   }
-                }} style={{ border: "1px solid #DCE8F0", background: "#fff", color: "#5A7080", fontSize: 11, borderRadius: 8, padding: "5px 10px", cursor: "pointer" }}>
+                }} style={{ border: "1px solid #DCE8F0", background: "#fff", color: "#5A7080", fontSize: 11, borderRadius: 8, padding: "9px 12px", cursor: "pointer" }}>
                   🔗 اشتراک‌گذاری
                 </button>
               </div>
@@ -7775,7 +7775,7 @@ function App() {
               <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>
                 جلسه‌ی {viewingSession.num}: {sess.title}
               </h2>
-              <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 12 }}>رویکردِ محور: {sess.approach}</p>
+              <p style={{ fontSize: 11, color: "#617685", marginBottom: 12 }}>رویکردِ محور: {sess.approach}</p>
               {sess.summary && (
                 <div style={{ background: "#F1E8D4", borderRadius: 10, padding: "9px 12px", marginBottom: 14 }}>
                   <p style={{ fontSize: 11.5, color: "#17383D", fontWeight: 700, margin: 0 }}>👁️ این جلسه در یک نگاه: {sess.summary}</p>
@@ -7783,7 +7783,7 @@ function App() {
               )}
               {sess.hasLevels && (
                 <div style={{ marginBottom: 14 }}>
-                  <p style={{ fontSize: 11, color: "#8CA3B0", margin: "0 0 6px" }}>سطحِ این جلسه:</p>
+                  <p style={{ fontSize: 11, color: "#617685", margin: "0 0 6px" }}>سطحِ این جلسه:</p>
                   <div style={{ display: "flex", gap: 6 }}>
                     {[["simple", "ساده"], ["excellent", "عالی"], ["advanced", "پیشرفته"]].map(([key, label]) => (
                       <button key={key} onClick={() => setSessionLevel(key)}
@@ -7806,11 +7806,11 @@ function App() {
               <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
                 <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 10, background: sess.audioUrl ? "#F3F8F5" : "#F7FAFC", border: `1px solid ${sess.audioUrl ? "#CFE6D8" : "#EEF3F6"}` }}>
                   <span style={{ fontSize: 15 }}>🎧</span>
-                  <span style={{ fontSize: 10.5, color: sess.audioUrl ? "#4C8778" : "#8CA3B0", fontWeight: 600 }}>{sess.audioUrl ? "پخشِ صوتی" : "صوت — به‌زودی"}</span>
+                  <span style={{ fontSize: 10.5, color: sess.audioUrl ? "#4C8778" : "#617685", fontWeight: 600 }}>{sess.audioUrl ? "پخشِ صوتی" : "صوت — به‌زودی"}</span>
                 </div>
                 <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", borderRadius: 10, background: sess.videoUrl ? "#F3F8F5" : "#F7FAFC", border: `1px solid ${sess.videoUrl ? "#CFE6D8" : "#EEF3F6"}` }}>
                   <span style={{ fontSize: 15 }}>🎥</span>
-                  <span style={{ fontSize: 10.5, color: sess.videoUrl ? "#4C8778" : "#8CA3B0", fontWeight: 600 }}>{sess.videoUrl ? "پخشِ تصویری" : "تصویر — به‌زودی"}</span>
+                  <span style={{ fontSize: 10.5, color: sess.videoUrl ? "#4C8778" : "#617685", fontWeight: 600 }}>{sess.videoUrl ? "پخشِ تصویری" : "تصویر — به‌زودی"}</span>
                 </div>
               </div>
               {sess.videoUrl && (
@@ -7877,12 +7877,12 @@ function App() {
                               border: `1.5px solid ${done[i] ? "#4C8778" : "#C9DEE8"}`, background: done[i] ? "#4C8778" : "#fff",
                               display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "#fff",
                             }}>{done[i] ? "✓" : ""}</span>
-                            <span style={{ fontSize: 12, color: done[i] ? "#8CA3B0" : "#3A4A52", textDecoration: done[i] ? "line-through" : "none", flex: 1 }}>
+                            <span style={{ fontSize: 12, color: done[i] ? "#617685" : "#3A4A52", textDecoration: done[i] ? "line-through" : "none", flex: 1 }}>
                               {cleanTitle}
                             </span>
                           </label>
                           <button onClick={(e) => { e.stopPropagation(); addToGuidebook(cleanTitle, `از جلسه‌ی ${viewingSession.num}`); setHwTick((tt) => tt + 1); }} disabled={alreadyAdded}
-                            style={{ marginRight: 26, marginTop: 3, fontSize: 10, padding: "3px 8px", borderRadius: 999, border: `1px solid ${alreadyAdded ? "#CFE6D8" : "#B8873A"}`, background: alreadyAdded ? "#F3F8F5" : "#fff", color: alreadyAdded ? "#4C8778" : "#B8873A", cursor: alreadyAdded ? "default" : "pointer" }}>
+                            style={{ marginRight: 26, marginTop: 3, fontSize: 10, padding: "8px 12px", borderRadius: 999, border: `1px solid ${alreadyAdded ? "#CFE6D8" : "#B8873A"}`, background: alreadyAdded ? "#F3F8F5" : "#fff", color: alreadyAdded ? "#4C8778" : "#B8873A", cursor: alreadyAdded ? "default" : "pointer" }}>
                             {alreadyAdded ? "✅ در کتابچه‌ام هست" : "📖 افزودن به کتابچه‌ام"}
                           </button>
                         </div>
@@ -7957,7 +7957,7 @@ function App() {
           <Card>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
               <span style={{ fontSize: 12.5, fontWeight: 700, color: partner === 1 ? "#17383D" : "#E8975C" }}>نفر {partner === 1 ? "اول" : "دوم"}</span>
-              <span style={{ fontSize: 11.5, color: "#8CA3B0" }}>بخش {domainIdx + 1} از {DOMAINS.length + 1}</span>
+              <span style={{ fontSize: 11.5, color: "#617685" }}>بخش {domainIdx + 1} از {DOMAINS.length + 1}</span>
             </div>
             <div style={{ height: 5, background: "#F1E8D4", borderRadius: 4, overflow: "hidden", marginBottom: 18 }}>
               <div style={{ height: "100%", width: `${(domainIdx / (DOMAINS.length + 1)) * 100}%`, background: partner === 1 ? "#17383D" : "#E8975C", transition: "width .3s" }} />
@@ -7966,7 +7966,7 @@ function App() {
             {!isSdPage ? (
               <>
                 <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>{domain.title}</h2>
-                <p style={{ fontSize: 12, color: "#8CA3B0", margin: "0 0 4px" }}>با اولین حسی که دارید پاسخ دهید؛ پاسخ درست یا غلط وجود ندارد.</p>
+                <p style={{ fontSize: 12, color: "#617685", margin: "0 0 4px" }}>با اولین حسی که دارید پاسخ دهید؛ پاسخ درست یا غلط وجود ندارد.</p>
                 {shuffledIdx.map((origI) => (
                   <LikertRow key={origI} text={domain.items[origI].t} value={domainAnswers[origI]} onChange={(v) => answerItem(origI, v)} />
                 ))}
@@ -7974,7 +7974,7 @@ function App() {
             ) : (
               <>
                 <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", margin: "0 0 4px" }}>چند گویه‌ی پایانی</h2>
-                <p style={{ fontSize: 12, color: "#8CA3B0", margin: "0 0 4px" }}>این چند گویه به ما کمک می‌کند نتیجه را دقیق‌تر تفسیر کنیم.</p>
+                <p style={{ fontSize: 12, color: "#617685", margin: "0 0 4px" }}>این چند گویه به ما کمک می‌کند نتیجه را دقیق‌تر تفسیر کنیم.</p>
                 {SD_ITEMS.map((t, i) => (
                   <LikertRow key={i} text={t} value={currentSd[i]} onChange={(v) => answerItem(i, v)} />
                 ))}
@@ -8008,7 +8008,7 @@ function App() {
               <div style={{ textAlign: "center", marginBottom: 14 }}>
                 <div style={{ fontSize: 30, marginBottom: 6 }}>🔒</div>
                 <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>نتیجه‌ی شخصیِ شما (نفرِ {partner === 1 ? "اول" : "دوم"})</h2>
-                <p style={{ fontSize: 11.5, color: "#8CA3B0", lineHeight: 1.85 }}>
+                <p style={{ fontSize: 11.5, color: "#617685", lineHeight: 1.85 }}>
                   این صفحه فقط برایِ خودِ شماست؛ همسرتان این جزئیات را نمی‌بیند. نتیجه‌ی مشترک (بدونِ این جزئیاتِ شخصی) در قدمِ بعد نمایش داده می‌شود.
                 </p>
               </div>
@@ -8024,7 +8024,7 @@ function App() {
                   <div style={{ flex: 1, height: 8, background: "#F1E8D4", borderRadius: 4, overflow: "hidden" }}>
                     <div style={{ height: "100%", width: `${myScores[d.key]}%`, background: LEVEL_COLOR[level(myScores[d.key])] }} />
                   </div>
-                  <span style={{ fontSize: 11, color: "#8CA3B0", width: 26 }}>{myScores[d.key]}</span>
+                  <span style={{ fontSize: 11, color: "#617685", width: 26 }}>{myScores[d.key]}</span>
                 </div>
               ))}
 
@@ -8054,7 +8054,7 @@ function App() {
                     style={{ display: "block", width: "100%", padding: "12px", borderRadius: 10, background: "#17383D", color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13, marginBottom: 8 }}>
                     💬 ارسالِ لینک با پیامک برایِ همسر
                   </a>
-                  <p style={{ fontSize: 10, color: "#9AAEB9", marginBottom: 10 }}>
+                  <p style={{ fontSize: 10, color: "#617685", marginBottom: 10 }}>
                     برنامه‌ی پیامک باز می‌شود؛ فقط شماره‌ی همسرتان را انتخاب و «ارسال» را بزنید.
                   </p>
                   <textarea readOnly value={buildJoinUrl()} rows={2} onFocus={(e) => e.target.select()}
@@ -8064,7 +8064,7 @@ function App() {
                   }} style={{ width: "100%", marginTop: 8, padding: "10px", borderRadius: 10, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontWeight: 700, cursor: "pointer", fontSize: 12.5 }}>
                     {linkCopyStatus === "copied" ? "✅ کپی شد! برایِ همسرتان بفرستید" : linkCopyStatus === "failed" ? "❌ کپیِ خودکار کار نکرد — از باکسِ بالا با انگشت انتخاب کنید" : "📋 اگر پیامک باز نشد: کپیِ لینک"}
                   </button>
-                  <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 8, lineHeight: 1.7 }}>
+                  <p style={{ fontSize: 10, color: "#617685", marginTop: 8, lineHeight: 1.7 }}>
                     وقتی همسرتان این لینک را باز کند، پاسخ‌های شما از قبل بارگذاری شده و او فقط پاسخ‌های خودش را کامل می‌کند؛ در پایان، هر دویِ شما نقشه‌ی مشترک را (روی گوشیِ او) می‌بینید.
                   </p>
                 </div>
@@ -8090,7 +8090,7 @@ function App() {
               <div style={{ textAlign: "center", marginBottom: 14 }}>
                 <div style={{ fontSize: 30, marginBottom: 6 }}>✅</div>
                 <h2 style={{ fontSize: 17, fontWeight: 800, color: "#1F2D3D", margin: "0 0 6px" }}>نتیجه‌ی شما</h2>
-                <p style={{ fontSize: 11.5, color: "#8CA3B0", lineHeight: 1.85 }}>کدِ شما: <b style={{ color: "#17383D" }}>{code}</b></p>
+                <p style={{ fontSize: 11.5, color: "#617685", lineHeight: 1.85 }}>کدِ شما: <b style={{ color: "#17383D" }}>{code}</b></p>
               </div>
 
               {(() => {
@@ -8118,19 +8118,19 @@ function App() {
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                       <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
                         <div style={{ fontSize: 20, fontWeight: 800, color: LEVEL_COLOR[level(myOverall)] }}>{myOverall}٪</div>
-                        <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>درصدِ وضعیتِ کلی</div>
+                        <div style={{ fontSize: 10.5, color: "#617685" }}>درصدِ وضعیتِ کلی</div>
                       </div>
                       <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
                         <div style={{ fontSize: 14, fontWeight: 800, color: "#17383D" }}>{weakestOv.d.short}</div>
-                        <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>بیشترین مشکل در این ناحیه</div>
+                        <div style={{ fontSize: 10.5, color: "#617685" }}>بیشترین مشکل در این ناحیه</div>
                       </div>
                       <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
                         <div style={{ fontSize: 14, fontWeight: 800, color: sevColor }}>{severity}</div>
-                        <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>شدتِ وضعیت</div>
+                        <div style={{ fontSize: 10.5, color: "#617685" }}>شدتِ وضعیت</div>
                       </div>
                       <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
                         <div style={{ fontSize: 12, fontWeight: 700, color: "#17383D", lineHeight: 1.5 }}>{treatability}</div>
-                        <div style={{ fontSize: 10.5, color: "#8CA3B0", marginTop: 4 }}>چشم‌اندازِ بهبود</div>
+                        <div style={{ fontSize: 10.5, color: "#617685", marginTop: 4 }}>چشم‌اندازِ بهبود</div>
                       </div>
                     </div>
                   </div>
@@ -8297,7 +8297,7 @@ function App() {
               ورود
             </button>
             {err && <p style={{ color: "#A6432F", fontSize: 12.5, marginTop: 8 }}>{err}</p>}
-            <button onClick={() => { setErr(""); setScreen("start"); }} style={{ marginTop: 14, background: "none", border: "none", color: "#8CA3B0", fontSize: 12, cursor: "pointer" }}>بازگشت</button>
+            <button onClick={() => { setErr(""); setScreen("start"); }} style={{ marginTop: 14, background: "none", border: "none", color: "#617685", fontSize: 12, cursor: "pointer" }}>بازگشت</button>
           </Card>
         )}
 
@@ -8312,7 +8312,7 @@ function App() {
                 {riskAlerts.map((a, i) => (
                   <div key={i} style={{ background: "#fff", borderRadius: 10, padding: "10px 12px", marginBottom: 8, border: "1px solid #E8C9BC" }}>
                     <p style={{ fontSize: 11.5, fontWeight: 700, color: "#1F2D3D", margin: "0 0 3px" }}>{a.userEmail}</p>
-                    <p style={{ fontSize: 10, color: "#8CA3B0", margin: "0 0 4px" }}>{new Date(a.ts).toLocaleString("fa-IR")} · {a.techniqueId}</p>
+                    <p style={{ fontSize: 10, color: "#617685", margin: "0 0 4px" }}>{new Date(a.ts).toLocaleString("fa-IR")} · {a.techniqueId}</p>
                     <p style={{ fontSize: 11.5, color: "#5A7080", margin: 0 }}>«{a.notePreview}...»</p>
                   </div>
                 ))}
@@ -8321,7 +8321,7 @@ function App() {
           )}
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>👁️ پیش‌نمایشِ صفحه‌ی نتیجه (بدونِ پرکردنِ فرم، بدونِ ذخیره‌شدن)</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>برایِ بررسی و طراحی؛ داده‌ها تصادفی‌اند و در پایگاه‌داده ثبت نمی‌شوند.</p>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>برایِ بررسی و طراحی؛ داده‌ها تصادفی‌اند و در پایگاه‌داده ثبت نمی‌شوند.</p>
             <p style={{ fontSize: 11.5, fontWeight: 700, color: "#5A7080", margin: "0 0 6px" }}>نتیجه‌ی فردی:</p>
             <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
               <button onClick={() => previewResults("solo", "healthy")} style={{ flex: 1, padding: "8px", borderRadius: 9, border: "1px solid #4C8778", background: "#fff", color: "#4C8778", fontSize: 11, cursor: "pointer" }}>سالم</button>
@@ -8345,7 +8345,7 @@ function App() {
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                   {Array.from({ length: pkg.sessions }, (_, i) => i + 1).map((num) => (
                     <button key={num} onClick={() => adminUnlockSession(pkgKey, num)}
-                      style={{ padding: "5px 10px", borderRadius: 8, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontSize: 11, cursor: "pointer" }}>
+                      style={{ padding: "9px 12px", borderRadius: 8, border: "1px solid #17383D", background: "#fff", color: "#17383D", fontSize: 11, cursor: "pointer" }}>
                       جلسه {num}
                     </button>
                   ))}
@@ -8356,18 +8356,18 @@ function App() {
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🎫 ساختِ کدِ فعال‌سازی (برایِ واریزِ کارت‌به‌کارت)</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>بعد از دریافتِ پول، رویِ شماره‌ی جلسه بزنید و کدِ ساخته‌شده را برایِ مشتری پیامک کنید. مشتری خودش در اپ واردش می‌کند.</p>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>بعد از دریافتِ پول، رویِ شماره‌ی جلسه بزنید و کدِ ساخته‌شده را برایِ مشتری پیامک کنید. مشتری خودش در اپ واردش می‌کند.</p>
             {Object.entries(TREATMENT_PACKAGES).map(([pkgKey, pkg]) => (
               <div key={pkgKey} style={{ marginBottom: 8 }}>
                 <p style={{ fontSize: 11.5, color: "#5A7080", margin: "0 0 5px" }}>{pkg.label}:</p>
                 <button onClick={() => generateGiftCodeForWholePackage(pkgKey)}
-                  style={{ padding: "5px 10px", borderRadius: 8, border: "1.5px solid #17383D", background: "#F1E8D4", color: "#17383D", fontSize: 11, fontWeight: 700, cursor: "pointer", marginBottom: 5 }}>
+                  style={{ padding: "9px 12px", borderRadius: 8, border: "1.5px solid #17383D", background: "#F1E8D4", color: "#17383D", fontSize: 11, fontWeight: 700, cursor: "pointer", marginBottom: 5 }}>
                   🎁 کدِ کلِ بسته (هدیه)
                 </button>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
                   {Array.from({ length: pkg.sessions }, (_, i) => i + 1).map((num) => (
                     <button key={num} onClick={() => generateActivationCode(pkgKey, num)}
-                      style={{ padding: "5px 10px", borderRadius: 8, border: "1px solid #B9822F", background: "#fff", color: "#B9822F", fontSize: 11, cursor: "pointer" }}>
+                      style={{ padding: "9px 12px", borderRadius: 8, border: "1px solid #B9822F", background: "#fff", color: "#B9822F", fontSize: 11, cursor: "pointer" }}>
                       جلسه {num}
                     </button>
                   ))}
@@ -8383,7 +8383,7 @@ function App() {
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🎙️ آپلودِ صوتِ هر جلسه</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>فایلِ mp3/m4a را برایِ همان جلسه انتخاب کنید؛ خودکار ذخیره و به پخش‌کننده‌ی همان جلسه وصل می‌شود.</p>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>فایلِ mp3/m4a را برایِ همان جلسه انتخاب کنید؛ خودکار ذخیره و به پخش‌کننده‌ی همان جلسه وصل می‌شود.</p>
             <select value={audioPkgKey} onChange={(e) => setAudioPkgKey(e.target.value)} style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12, marginBottom: 6 }}>
               {Object.entries(TREATMENT_PACKAGES).map(([k, p]) => <option key={k} value={k}>{p.label}</option>)}
             </select>
@@ -8417,7 +8417,7 @@ function App() {
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🎥 آپلودِ ویدیویِ هر جلسه</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>فایلِ ویدیوییِ کوتاه (مثلاً ۲ دقیقه) را انتخاب کنید — مستقیم به فضایِ ذخیره‌سازی می‌رود، محدودیتِ حجمِ سختگیرانه ندارد.</p>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>فایلِ ویدیوییِ کوتاه (مثلاً ۲ دقیقه) را انتخاب کنید — مستقیم به فضایِ ذخیره‌سازی می‌رود، محدودیتِ حجمِ سختگیرانه ندارد.</p>
             <select value={videoPkgKey} onChange={(e) => setVideoPkgKey(e.target.value)} style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12, marginBottom: 6 }}>
               {Object.entries(TREATMENT_PACKAGES).map(([k, p]) => <option key={k} value={k}>{p.label}</option>)}
             </select>
@@ -8460,10 +8460,10 @@ function App() {
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>👥 مدیریتِ همکاران/درمانگران</p>
             <div style={{ display: "flex", gap: 6, marginBottom: 8, flexWrap: "wrap" }}>
-              <input placeholder="کدِ درمانگر (لاتین)" value={newTherapistId} onChange={(e) => setNewTherapistId(e.target.value)} style={{ flex: 1, minWidth: 100, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
-              <input placeholder="نام" value={newTherapistName} onChange={(e) => setNewTherapistName(e.target.value)} style={{ flex: 1, minWidth: 100, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
-              <input placeholder="رمز" value={newTherapistPass} onChange={(e) => setNewTherapistPass(e.target.value)} style={{ width: 90, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
-              <input placeholder="سهم٪" type="number" value={newTherapistShare} onChange={(e) => setNewTherapistShare(e.target.value)} style={{ width: 60, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
+              <input placeholder="کدِ درمانگر (لاتین)" aria-label="کدِ درمانگر (لاتین)" value={newTherapistId} onChange={(e) => setNewTherapistId(e.target.value)} style={{ flex: 1, minWidth: 100, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
+              <input placeholder="نام" aria-label="نام" value={newTherapistName} onChange={(e) => setNewTherapistName(e.target.value)} style={{ flex: 1, minWidth: 100, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
+              <input placeholder="رمز" aria-label="رمز" value={newTherapistPass} onChange={(e) => setNewTherapistPass(e.target.value)} style={{ width: 90, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
+              <input placeholder="سهم٪" aria-label="سهم٪" type="number" value={newTherapistShare} onChange={(e) => setNewTherapistShare(e.target.value)} style={{ width: 60, padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12 }} />
             </div>
             <button onClick={async () => {
               const r = await fetchWithTimeout("/api/therapist", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create", adminToken, therapistId: newTherapistId, name: newTherapistName, password: newTherapistPass, sharePercent: Number(newTherapistShare) || 70 }) });
@@ -8478,7 +8478,7 @@ function App() {
                 <div>{t.name} ({t.id}) — سهم: {t.sharePercent}٪ — فروش: {t.salesCount}</div>
                 <div style={{ display: "flex", gap: 6, marginTop: 4, alignItems: "center" }}>
                   <input readOnly value={`https://naghshe-rabete-ashy.vercel.app/?ref=${t.id}`} style={{ flex: 1, fontSize: 10, padding: 5, borderRadius: 6, border: "1px solid #ddd", color: "#666" }} onClick={(e) => e.target.select()} />
-                  <button onClick={() => navigator.clipboard.writeText(`https://naghshe-rabete-ashy.vercel.app/?ref=${t.id}`)} style={{ fontSize: 10, padding: "5px 10px", borderRadius: 6, border: "1px solid #17383D", color: "#17383D", background: "#fff" }}>کپی</button>
+                  <button onClick={() => navigator.clipboard.writeText(`https://naghshe-rabete-ashy.vercel.app/?ref=${t.id}`)} style={{ fontSize: 10, padding: "9px 12px", borderRadius: 6, border: "1px solid #17383D", color: "#17383D", background: "#fff" }}>کپی</button>
                 </div>
               </div>
             ))}
@@ -8495,7 +8495,7 @@ function App() {
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#A6432F", marginBottom: 4 }}>🗑️ حذفِ کاملِ داده‌هایِ یک کاربر</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>
               برایِ وفای به قولِ «حقِ حذف» در متنِ رضایتِ حریمِ خصوصی. این عملیات <b>غیرقابلِ‌بازگشت</b> است — همه‌ی پاسخ‌ها، یادداشت‌ها، و روندِ خلقِ این کاربر برایِ همیشه پاک می‌شود.
             </p>
             <input value={deleteEmailInput} onChange={(e) => setDeleteEmailInput(e.target.value)} placeholder="ایمیلِ کاربر"
@@ -8515,7 +8515,7 @@ function App() {
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>⏰ کاربرانِ نیازمندِ پیگیری</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>
               چون سرویسِ ارسالِ خودکارِ ایمیل/پیامک هنوز وصل نیست، این فهرست کمک می‌کند کاربرانی که مدتی است فعالیتی نداشته‌اند را خودتان پیگیری کنید.
             </p>
             <button onClick={loadInactiveUsers}
@@ -8525,7 +8525,7 @@ function App() {
             {inactiveUsers && (
               <div style={{ maxHeight: 240, overflowY: "auto" }}>
                 {inactiveUsers.length === 0 ? (
-                  <p style={{ fontSize: 11, color: "#8CA3B0" }}>هنوز کاربری با فعالیتِ ثبت‌شده وجود ندارد.</p>
+                  <p style={{ fontSize: 11, color: "#617685" }}>هنوز کاربری با فعالیتِ ثبت‌شده وجود ندارد.</p>
                 ) : inactiveUsers.map((u, i) => {
                   const daysAgo = u.lastActive ? Math.floor((Date.now() - u.lastActive) / 86400000) : null;
                   const isStale = daysAgo === null || daysAgo >= 7;
@@ -8543,7 +8543,7 @@ function App() {
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>👤 داشبوردِ بالینیِ یک مراجع</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>
               با واردکردنِ ایمیلِ یک مراجع، جلساتِ بازشده، روندِ خلق، و یادداشت‌هایِ او را ببینید.
             </p>
             <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
@@ -8584,7 +8584,7 @@ function App() {
                 </p>
                 <div style={{ maxHeight: 100, overflowY: "auto", background: "#F7FAFC", borderRadius: 9, padding: "8px 10px", marginBottom: 12 }}>
                   {(patientData.unlockedSessions || []).length === 0 ? (
-                    <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: 0 }}>هنوز جلسه‌ای باز نشده.</p>
+                    <p style={{ fontSize: 10.5, color: "#617685", margin: 0 }}>هنوز جلسه‌ای باز نشده.</p>
                   ) : patientData.unlockedSessions.map((s, i) => (
                     <p key={i} style={{ fontSize: 10.5, color: "#3A4A52", margin: "2px 0" }}>• {s}</p>
                   ))}
@@ -8594,7 +8594,7 @@ function App() {
                   📈 روندِ خلق ({patientData.moodLog?.length || 0} ثبت):
                 </p>
                 {(patientData.moodLog || []).length === 0 ? (
-                  <p style={{ fontSize: 10.5, color: "#8CA3B0", marginBottom: 12 }}>هنوز خلقی ثبت نشده.</p>
+                  <p style={{ fontSize: 10.5, color: "#617685", marginBottom: 12 }}>هنوز خلقی ثبت نشده.</p>
                 ) : (
                   <div style={{ marginBottom: 12 }}>
                     <MiniLineChart points={patientData.moodLog.filter((m) => m.phase === "before").sort((a, b) => a.ts - b.ts)} color="#B9822F" />
@@ -8605,7 +8605,7 @@ function App() {
                   📋 چک‌این‌هایِ دوره‌ای ({patientData.checkinLog?.length || 0}) — بازه: هر {patientData.checkinIntervalDays || "؟"} روز:
                 </p>
                 {(patientData.checkinLog || []).length === 0 ? (
-                  <p style={{ fontSize: 10.5, color: "#8CA3B0", marginBottom: 12 }}>هنوز چک‌اینی ثبت نشده.</p>
+                  <p style={{ fontSize: 10.5, color: "#617685", marginBottom: 12 }}>هنوز چک‌اینی ثبت نشده.</p>
                 ) : (() => {
                   const last = patientData.checkinLog[patientData.checkinLog.length - 1];
                   const avg = Object.values(last.answers).reduce((s, v) => s + v, 0) / Object.values(last.answers).length;
@@ -8625,10 +8625,10 @@ function App() {
                 </p>
                 <div style={{ maxHeight: 200, overflowY: "auto" }}>
                   {(patientData.notes || []).length === 0 ? (
-                    <p style={{ fontSize: 10.5, color: "#8CA3B0" }}>هنوز یادداشتی ثبت نشده.</p>
+                    <p style={{ fontSize: 10.5, color: "#617685" }}>هنوز یادداشتی ثبت نشده.</p>
                   ) : patientData.notes.map((n, i) => (
                     <div key={i} style={{ background: "#F7FAFC", borderRadius: 9, padding: "8px 10px", marginBottom: 6 }}>
-                      <p style={{ fontSize: 9.5, color: "#8CA3B0", margin: "0 0 3px" }}>{n.techniqueId}</p>
+                      <p style={{ fontSize: 9.5, color: "#617685", margin: "0 0 3px" }}>{n.techniqueId}</p>
                       <p style={{ fontSize: 11, color: "#3A4A52", margin: 0, whiteSpace: "pre-line" }}>{n.note}</p>
                     </div>
                   ))}
@@ -8638,7 +8638,7 @@ function App() {
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📊 تحلیلِ بازخوردِ تکنیک‌ها</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>
               نشان می‌دهد چند نفر گفته‌اند هر تکنیک برایشان کار کرده یا نه — برایِ فهمیدنِ نقاطِ قوت/ضعفِ محتوا.
             </p>
             <button onClick={loadTechniqueReport}
@@ -8660,12 +8660,12 @@ function App() {
               </div>
             )}
             {techniqueReport.length === 0 && techniqueReportLoaded && (
-              <p style={{ fontSize: 11, color: "#8CA3B0" }}>هنوز بازخوردی ثبت نشده.</p>
+              <p style={{ fontSize: 11, color: "#617685" }}>هنوز بازخوردی ثبت نشده.</p>
             )}
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🗄️ بک‌آپِ خودکارِ داده‌ها</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>
               هر ساعت، یک نسخه‌ی کاملِ داده‌ها (پاسخ‌ها، حساب‌ها، جلساتِ بازشده) خودکار در **Vercel Blob Storage** (سرویسِ ذخیره‌سازیِ جداگانه از Redis) ذخیره می‌شود — اگر مشکلی برایِ Redis پیش بیاید، این نسخه‌ها سالم می‌مانند.
             </p>
             <button onClick={runManualBackup} disabled={backupBusy}
@@ -8690,7 +8690,7 @@ function App() {
           </Card>
           <Card style={{ border: "1.5px solid #A6432F" }}>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>⚠️ پرداخت‌هایِ نیازمندِ بررسیِ دستی</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>
               اگر پولی گرفته شده اما به‌خاطرِ خطایِ فنی، جلسه به‌طورِ خودکار باز نشده باشد، اینجا نمایان می‌شود.
             </p>
             <button onClick={async () => {
@@ -8708,14 +8708,14 @@ function App() {
               failedPayments.map((f, i) => (
                 <div key={i} style={{ background: "#FBEEEA", borderRadius: 8, padding: "8px 10px", marginBottom: 6, fontSize: 11 }}>
                   <p style={{ margin: "0 0 2px", fontWeight: 700 }}>{f.email} — {f.pkgKey}{f.num ? ` جلسه‌ی ${f.num}` : " (کاملِ بسته)"}</p>
-                  <p style={{ margin: 0, color: "#8CA3B0" }}>مبلغ: {f.amount?.toLocaleString("fa-IR")} ت · کدِ پیگیری: {f.refId} · {new Date(f.ts).toLocaleString("fa-IR")}</p>
+                  <p style={{ margin: 0, color: "#617685" }}>مبلغ: {f.amount?.toLocaleString("fa-IR")} ت · کدِ پیگیری: {f.refId} · {new Date(f.ts).toLocaleString("fa-IR")}</p>
                 </div>
               ))
             )}
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>📋 لاگِ رخدادهایِ سیستم</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>ثبتِ ساختاریافته‌ی رخدادهایِ ورود، پرداخت، و خطاهایِ سیستم.</p>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>ثبتِ ساختاریافته‌ی رخدادهایِ ورود، پرداخت، و خطاهایِ سیستم.</p>
             <select value={logCategory} onChange={(e) => setLogCategory(e.target.value)}
               style={{ width: "100%", padding: 8, borderRadius: 8, border: "1px solid #ddd", fontSize: 12, marginBottom: 8 }}>
               <option value="critical">🔴 فقط بحرانی</option>
@@ -8735,7 +8735,7 @@ function App() {
               نمایشِ لاگ‌ها
             </button>
             {logEntries.length === 0 ? (
-              <p style={{ fontSize: 11, color: "#8CA3B0" }}>چیزی برایِ نمایش نیست.</p>
+              <p style={{ fontSize: 11, color: "#617685" }}>چیزی برایِ نمایش نیست.</p>
             ) : (
               <div style={{ maxHeight: 280, overflowY: "auto" }}>
                 {logEntries.map((l, i) => (
@@ -8746,7 +8746,7 @@ function App() {
                     <p style={{ margin: "0 0 2px", fontWeight: 700, color: l.level === "CRITICAL" ? "#A6432F" : "#1F2D3D" }}>
                       [{l.level}] {l.message}
                     </p>
-                    <p style={{ margin: 0, color: "#8CA3B0" }}>
+                    <p style={{ margin: 0, color: "#617685" }}>
                       {new Date(l.ts).toLocaleString("fa-IR")} {l.meta?.email ? `· ${l.meta.email}` : ""}
                     </p>
                   </div>
@@ -8756,7 +8756,7 @@ function App() {
           </Card>
           <Card>
             <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", marginBottom: 4 }}>🔧 اصلاحِ یک‌بارهٔ ایمیل‌هایِ حروف‌بزرگ</p>
-            <p style={{ fontSize: 11, color: "#8CA3B0", marginBottom: 10 }}>
+            <p style={{ fontSize: 11, color: "#617685", marginBottom: 10 }}>
               اگر جلسه‌ای برایِ ایمیلی با حروفِ بزرگ باز شده بود، این دکمه آن را با نسخه‌ی درست ادغام می‌کند. فقط یک‌بار لازم است بزنید.
             </p>
             <button onClick={async () => {
@@ -8837,7 +8837,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
             style={{ display: "block", width: "100%", padding: "13px", borderRadius: 12, background: "#17383D", color: "#fff", fontWeight: 700, textAlign: "center", textDecoration: "none", fontSize: 13.5, marginBottom: 8 }}>
             💬 ارسالِ خودکار با پیامک به دفتر
           </a>
-          <p style={{ fontSize: 10.5, color: "#9AAEB9", marginBottom: 10, textAlign: "center" }}>
+          <p style={{ fontSize: 10.5, color: "#617685", marginBottom: 10, textAlign: "center" }}>
             با زدنِ این دکمه، برنامه‌ی پیامکِ گوشی‌تان با شماره و متنِ آماده باز می‌شود؛ فقط دکمه‌ی «ارسال» را بزنید.
           </p>
           <button onClick={async () => {
@@ -8860,12 +8860,12 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
       )}
       <Card>
         <div style={{ textAlign: "center", marginBottom: 6 }}>
-          <p style={{ fontSize: 10.5, color: "#8CA3B0", margin: "0 0 2px", fontWeight: 700 }}>{BRAND.academy}</p>
-          <p style={{ fontSize: 11.5, color: "#8CA3B0", margin: 0 }}>کدِ رابطه: <b style={{ color: "#17383D" }}>{code}</b></p>
+          <p style={{ fontSize: 10.5, color: "#617685", margin: "0 0 2px", fontWeight: 700 }}>{BRAND.academy}</p>
+          <p style={{ fontSize: 11.5, color: "#617685", margin: 0 }}>کدِ رابطه: <b style={{ color: "#17383D" }}>{code}</b></p>
           <h2 style={{ fontSize: 19, fontWeight: 800, color: "#1F2D3D", margin: "6px 0" }}>نقشه‌ی مشترک شما</h2>
           <p style={{ fontSize: 12.5, color: "#5A7080" }}>امتیاز کلی تعهد و پایبندیِ رابطه: <b style={{ color: LEVEL_COLOR[level(overall)] }}>{overall} از ۱۰۰</b></p>
           {(context.duration || context.age || context.children) && (
-            <p style={{ fontSize: 11, color: "#9AAEB9", margin: "2px 0 0" }}>
+            <p style={{ fontSize: 11, color: "#617685", margin: "2px 0 0" }}>
               {[context.duration, context.age, context.children].filter(Boolean).join(" · ")}
             </p>
           )}
@@ -8898,22 +8898,22 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                 <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
                   <div style={{ fontSize: 20, fontWeight: 800, color: LEVEL_COLOR[level(overall)] }}>{overall}٪</div>
-                  <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>درصدِ وضعیتِ کلی</div>
+                  <div style={{ fontSize: 10.5, color: "#617685" }}>درصدِ وضعیتِ کلی</div>
                 </div>
                 <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
                   <div style={{ fontSize: 14, fontWeight: 800, color: "#17383D" }}>{weakestOv.d.short}</div>
-                  <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>بیشترین مشکل در این ناحیه</div>
+                  <div style={{ fontSize: 10.5, color: "#617685" }}>بیشترین مشکل در این ناحیه</div>
                 </div>
                 <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
                   <div style={{ fontSize: 14, fontWeight: 800, color: sevColor }}>{severity}</div>
-                  <div style={{ fontSize: 10.5, color: "#8CA3B0" }}>شدتِ وضعیت</div>
+                  <div style={{ fontSize: 10.5, color: "#617685" }}>شدتِ وضعیت</div>
                 </div>
                 <div style={{ background: "#fff", borderRadius: 10, padding: "10px", textAlign: "center" }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: "#17383D", lineHeight: 1.5 }}>{treatability}</div>
-                  <div style={{ fontSize: 10.5, color: "#8CA3B0", marginTop: 4 }}>چشم‌اندازِ بهبود</div>
+                  <div style={{ fontSize: 10.5, color: "#617685", marginTop: 4 }}>چشم‌اندازِ بهبود</div>
                 </div>
               </div>
-              <p style={{ fontSize: 10, color: "#9AAEB9", lineHeight: 1.8, marginTop: 12, textAlign: "center" }}>
+              <p style={{ fontSize: 10, color: "#617685", lineHeight: 1.8, marginTop: 12, textAlign: "center" }}>
                 برایِ مرجع: زوج‌درمانیِ استاندارد معمولاً بینِ ۸ تا ۲۰ جلسه طول می‌کشد (آمارِ کلیِ حرفه‌ای، نه پیش‌بینیِ اختصاصیِ این آزمون برایِ رابطه‌ی شما).
               </p>
             </div>
@@ -8948,7 +8948,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
               <p style={{ fontSize: 13, fontWeight: 800, color: "#1F2D3D", margin: "0 0 8px" }}>📊 مقایسه با سنجشِ قبلی</p>
               <p style={{ fontSize: 12.5, color: "#4B6070", marginBottom: 10 }}>
                 امتیازِ کلی: از <b>{prevOverall}</b> به <b>{overall}</b>{" "}
-                <span style={{ color: deltaOverall > 0 ? "#4C7A5E" : deltaOverall < 0 ? "#A6432F" : "#8CA3B0", fontWeight: 700 }}>
+                <span style={{ color: deltaOverall > 0 ? "#4C7A5E" : deltaOverall < 0 ? "#A6432F" : "#617685", fontWeight: 700 }}>
                   ({deltaOverall > 0 ? "+" : ""}{deltaOverall})
                 </span>
               </p>
@@ -8959,7 +8959,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
                 return (
                   <div key={d.key} style={{ display: "flex", justifyContent: "space-between", fontSize: 11.5, color: "#4B6070", marginBottom: 4 }}>
                     <span>{d.short}</span>
-                    <span>{oldAvg} ← {newAvg} <b style={{ color: delta > 0 ? "#4C7A5E" : delta < 0 ? "#A6432F" : "#8CA3B0" }}>({delta > 0 ? "+" : ""}{delta})</b></span>
+                    <span>{oldAvg} ← {newAvg} <b style={{ color: delta > 0 ? "#4C7A5E" : delta < 0 ? "#A6432F" : "#617685" }}>({delta > 0 ? "+" : ""}{delta})</b></span>
                   </div>
                 );
               })}
@@ -9006,7 +9006,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
             <div style={{ border: `1.5px solid ${risk.color}55`, background: `${risk.color}14`, borderRadius: 14, padding: "14px 16px", marginBottom: 16 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontSize: 13.5, fontWeight: 800, color: risk.color }}>سطحِ خطرِ ترکیبی: {risk.band}</span>
-                <span style={{ fontSize: 11.5, color: "#8CA3B0" }}>شاخص: {risk.score}/۱۰۰</span>
+                <span style={{ fontSize: 11.5, color: "#617685" }}>شاخص: {risk.score}/۱۰۰</span>
               </div>
               <p style={{ fontSize: 10.5, color: "#7C8D97", lineHeight: 1.8, margin: "6px 0 0" }}>
                 این یک دسته‌بندیِ راهنما بر پایه‌ی ضعیف‌ترین حیطه و بزرگ‌ترین شکافِ ادراکی است، نه یک احتمالِ آماریِ اعتباریابی‌شده. تفسیرِ دقیق‌تر نیازمندِ ارزیابیِ تخصصی است.
@@ -9088,7 +9088,7 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
                     </div>
                   </div>
                 ))}
-                <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 6, lineHeight: 1.7 }}>
+                <p style={{ fontSize: 10, color: "#617685", marginTop: 6, lineHeight: 1.7 }}>
                   این موارد به‌دلیلِ اهمیتِ بالینیِ خودشان جدا پرچم‌گذاری شده‌اند و مستقل از این‌که کدامتان مطرح کرده، پیشنهاد می‌شود با یک متخصص در میان گذاشته شوند. جزئیاتِ دقیق‌تر و شخصی‌شده در صفحه‌ی نتیجه‌ی خصوصیِ هرکدام از شما (که قبل از این صفحه دیدید) موجود بود.
                 </p>
               </div>
@@ -9193,10 +9193,10 @@ function ResultsView({ code, scores, context, sd1, sd2, ans1, ans2, saveWarning,
           🖨 چاپ / ذخیره به‌صورت PDF
         </button>
 
-        <p style={{ fontSize: 10.5, color: "#9AAEB9", marginTop: 16, lineHeight: 1.8, textAlign: "center" }}>
+        <p style={{ fontSize: 10.5, color: "#617685", marginTop: 16, lineHeight: 1.8, textAlign: "center" }}>
           این ابزار یک غربالگری سریع است و جایگزین ارزیابی بالینی تخصصی نیست. کدِ «{code}» را نگه دارید تا هر زمان بخواهید به این نتیجه بازگردید.
         </p>
-        <button onClick={onGoAdmin} className="no-print" style={{ display: "block", margin: "10px auto 0", background: "none", border: "none", color: "#B7C6CE", fontSize: 10.5, cursor: "pointer", textDecoration: "underline" }}>
+        <button onClick={onGoAdmin} className="no-print" style={{ display: "block", margin: "10px auto 0", background: "none", border: "none", color: "#617685", fontSize: 10.5, cursor: "pointer", textDecoration: "underline" }}>
           (برایِ پژوهشگر) رفتن به پنلِ آموزشی — همین نشست
         </button>
 
@@ -9346,11 +9346,11 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
     <Card>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
         <h2 style={{ fontSize: 16, fontWeight: 800, color: "#1F2D3D", margin: 0 }}>پنل آموزشی</h2>
-        <button onClick={onBack} style={{ background: "none", border: "none", color: "#8CA3B0", fontSize: 12, cursor: "pointer" }}>خروج</button>
+        <button onClick={onBack} style={{ background: "none", border: "none", color: "#617685", fontSize: 12, cursor: "pointer" }}>خروج</button>
       </div>
 
       <details style={{ marginBottom: 14 }}>
-        <summary style={{ fontSize: 12, color: "#8CA3B0", cursor: "pointer", listStyle: "none", textAlign: "center" }}>
+        <summary style={{ fontSize: 12, color: "#617685", cursor: "pointer", listStyle: "none", textAlign: "center" }}>
           ➕ افزودنِ دستیِ داده‌ای که ذخیره‌سازیِ خودکار نداشت (پشتیبان)
         </summary>
         <div style={{ marginTop: 10, background: "#F7FAFC", borderRadius: 12, padding: 12 }}>
@@ -9399,7 +9399,7 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
               <div style={{ flex: 1, height: 8, background: "#F1E8D4", borderRadius: 4, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${domainAvgAll[d.key]}%`, background: "#17383D" }} />
               </div>
-              <span style={{ fontSize: 11, color: "#8CA3B0", width: 26 }}>{domainAvgAll[d.key]}</span>
+              <span style={{ fontSize: 11, color: "#617685", width: 26 }}>{domainAvgAll[d.key]}</span>
             </div>
           ))}
 
@@ -9448,7 +9448,7 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
           <div style={{ borderTop: "1px dashed #DCE8F0", margin: "18px 0 14px" }} />
 
           <p style={{ fontSize: 11.5, fontWeight: 700, color: "#1F2D3D", marginBottom: 2 }}>۲) فقط داده‌هایِ جدید (از آخرین کپی)</p>
-          <p style={{ fontSize: 10.5, color: "#8CA3B0", marginBottom: 8 }}>
+          <p style={{ fontSize: 10.5, color: "#617685", marginBottom: 8 }}>
             {lastExportAt ? `آخرین کپی: ${new Date(lastExportAt).toLocaleString("fa-IR")}` : "هنوز کپی نکرده‌اید"} — {newRows.length} نفرِ جدید
           </p>
           <button onClick={async () => {
@@ -9464,11 +9464,11 @@ function AdminDashboard({ rows, busy, onRefresh, onBack }) {
             <textarea readOnly value={buildRawCSV(newRows)} rows={5} onFocus={(e) => e.target.select()}
               style={{ width: "100%", padding: "8px 10px", marginTop: 8, borderRadius: 10, border: "2px solid #E8975C", fontSize: 10, fontFamily: "monospace", direction: "ltr", resize: "vertical", background: "#fff" }} />
           )}
-          <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 4, lineHeight: 1.7 }}>
+          <p style={{ fontSize: 10, color: "#617685", marginTop: 4, lineHeight: 1.7 }}>
             این دکمه فقط پاسخ‌هایی را می‌گیرد که بعد از آخرین‌بارِ کپی‌کردن اضافه شده‌اند (بر اساسِ زمانِ ذخیره‌شده در همین مرورگر).
           </p>
 
-          <p style={{ fontSize: 10, color: "#9AAEB9", marginTop: 12, textAlign: "center", lineHeight: 1.7 }}>
+          <p style={{ fontSize: 10, color: "#617685", marginTop: 12, textAlign: "center", lineHeight: 1.7 }}>
             این فایل، پاسخِ تک‌تکِ گویه‌ها برای هر نفر را دارد — همان چیزی که برای آلفای کرونباخ و تحلیل عاملی لازم است.
           </p>
           {!allRows.length && (
