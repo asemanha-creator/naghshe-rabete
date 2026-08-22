@@ -6005,6 +6005,11 @@ function App() {
     }
     try { window.history.pushState({ screen }, ""); } catch (err) {}
   }, [screen]);
+  // دکمه‌هایِ «بازگشت»یِ داخلِ اپ باید همیشه از این استفاده کنند، نه setScreen مستقیم —
+  // وگرنه یک رکوردِ تکراری به تاریخچه اضافه می‌شود و دکمه‌ی فیزیکیِ بازگشتِ مرورگر، رفتارِ غیرِمنتظره پیدا می‌کند
+  function goBack(fallback = "topics") {
+    try { window.history.back(); } catch (err) { setScreen(fallback); }
+  }
   const [todayTip, setTodayTip] = useState(() => getTodayTip());
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [globalSearch, setGlobalSearch] = useState("");
@@ -7010,7 +7015,7 @@ function App() {
 
         {screen === "aboutUs" && (
           <Card>
-            <a onClick={() => setScreen("topics")} style={{ fontSize: 12, color: "#17383D", cursor: "pointer" }}>‹ بازگشت</a>
+            <a onClick={() => goBack("topics")} style={{ fontSize: 12, color: "#17383D", cursor: "pointer" }}>‹ بازگشت</a>
             <h2 style={{ fontWeight: 800, margin: "10px 0" }}>دربارهٔ ما</h2>
 
             <p style={{ fontSize: 13, lineHeight: 2 }}>
@@ -7045,7 +7050,7 @@ function App() {
 
         {screen === "feedback" && (
           <Card>
-            <a onClick={() => setScreen("topics")} style={{ fontSize: 12, color: "#17383D", cursor: "pointer" }}>‹ بازگشت</a>
+            <a onClick={() => goBack("topics")} style={{ fontSize: 12, color: "#17383D", cursor: "pointer" }}>‹ بازگشت</a>
             <h2 style={{ fontWeight: 800, margin: "10px 0" }}>تماس با ما</h2>
             <select value={feedbackType} onChange={(e) => setFeedbackType(e.target.value)} style={{ width: "100%", padding: 10, marginBottom: 8, borderRadius: 8, border: "1px solid #ddd" }}>
               <option value="پیشنهاد">پیشنهاد</option>
@@ -7067,19 +7072,19 @@ function App() {
         )}
 
         {screen === "faq" && (
-          <FAQScreen onBack={() => setScreen("start")} />
+          <FAQScreen onBack={() => goBack("start")} />
         )}
 
         {screen === "myProgress" && (
-          <MyProgressScreen onBack={() => setScreen("topics")} userEmail={user?.email} userToken={user?.token} />
+          <MyProgressScreen onBack={() => goBack("topics")} userEmail={user?.email} userToken={user?.token} />
         )}
 
         {screen === "safetyPlan" && (
-          <SafetyPlanScreen onBack={() => setScreen("topics")} userEmail={user?.email} userToken={user?.token} />
+          <SafetyPlanScreen onBack={() => goBack("topics")} userEmail={user?.email} userToken={user?.token} />
         )}
 
         {screen === "slipPrevention" && (
-          <SlipPreventionScreen onBack={() => setScreen("topics")} userEmail={user?.email} userToken={user?.token} />
+          <SlipPreventionScreen onBack={() => goBack("topics")} userEmail={user?.email} userToken={user?.token} />
         )}
 
         {screen === "checkin" && (() => {
@@ -7088,7 +7093,7 @@ function App() {
             ? Math.min(...activePkgs.map((p) => SUGGESTED_CHECKIN_DAYS[p] || 7))
             : 7;
           return (
-            <CheckinScreen onBack={() => setScreen("topics")} userEmail={user?.email} userToken={user?.token}
+            <CheckinScreen onBack={() => goBack("topics")} userEmail={user?.email} userToken={user?.token}
               unlockedSessions={unlockedSessions} defaultIntervalDays={defaultIntervalDays} />
           );
         })()}
@@ -7103,7 +7108,7 @@ function App() {
                 <span style={{ fontSize: 15, lineHeight: 1 }}>🌿</span>
               </div>
               <div style={{ position: "absolute", top: 10, right: 12, fontSize: 11 }}>
-                <a onClick={() => setScreen("topics")} style={{ color: "#EAF2F9", cursor: "pointer" }}>‹ موضوعاتِ دیگر</a>
+                <a onClick={() => goBack("topics")} style={{ color: "#EAF2F9", cursor: "pointer" }}>‹ موضوعاتِ دیگر</a>
               </div>
               <div style={{ position: "absolute", top: 10, left: 12, fontSize: 11 }}>
                 {user ? (
@@ -7219,7 +7224,7 @@ function App() {
         {screen === "treatmentDirect" && (
           <Card>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14 }}>
-              <a onClick={() => setScreen("topics")} style={{ color: "#17383D", fontSize: 12, cursor: "pointer" }}>‹ موضوعاتِ دیگر</a>
+              <a onClick={() => goBack("topics")} style={{ color: "#17383D", fontSize: 12, cursor: "pointer" }}>‹ موضوعاتِ دیگر</a>
               {user ? (
                 <span style={{ fontSize: 11, color: "#8CA3B0" }}>
                   سلام {user.name || user.email} · <a onClick={() => setScreen("myProgress")} style={{ color: "#17383D", cursor: "pointer", textDecoration: "underline" }}>پیشرفتِ من</a>
@@ -7400,43 +7405,43 @@ function App() {
         )}
 
         {screen === "unifiedReport" && (
-          <UnifiedProgressReport pkgKey={libraryPkg} onBack={() => setScreen("sessionLibrary")} />
+          <UnifiedProgressReport pkgKey={libraryPkg} onBack={() => goBack("sessionLibrary")} />
         )}
         {screen === "quickLibrary" && (
-          <QuickTechniqueLibrary onBack={() => setScreen("topics")} />
+          <QuickTechniqueLibrary onBack={() => goBack("topics")} />
         )}
         {screen === "myToolsHub" && (
-          <MyToolsHub onBack={() => setScreen("topics")} navigate={(t) => setScreen(`mytool_${t}`)} />
+          <MyToolsHub onBack={() => goBack("topics")} navigate={(t) => setScreen(`mytool_${t}`)} />
         )}
-        {screen === "mytool_guidebook" && <MyGuidebook onBack={() => setScreen("myToolsHub")} userToken={user?.token} />}
-        {screen === "mytool_contract" && <RelationshipContract onBack={() => setScreen("myToolsHub")} />}
-        {screen === "mytool_memories" && <PositiveMemoryJournal onBack={() => setScreen("myToolsHub")} userToken={user?.token} />}
-        {screen === "mytool_ritual" && <PersonalRitual onBack={() => setScreen("myToolsHub")} userToken={user?.token} />}
-        {screen === "mytool_crisis" && <CustomCrisisCard onBack={() => setScreen("myToolsHub")} userToken={user?.token} />}
-        {screen === "mytool_roadmap" && <PersonalRoadmap onBack={() => setScreen("myToolsHub")} userToken={user?.token} />}
+        {screen === "mytool_guidebook" && <MyGuidebook onBack={() => goBack("myToolsHub")} userToken={user?.token} />}
+        {screen === "mytool_contract" && <RelationshipContract onBack={() => goBack("myToolsHub")} />}
+        {screen === "mytool_memories" && <PositiveMemoryJournal onBack={() => goBack("myToolsHub")} userToken={user?.token} />}
+        {screen === "mytool_ritual" && <PersonalRitual onBack={() => goBack("myToolsHub")} userToken={user?.token} />}
+        {screen === "mytool_crisis" && <CustomCrisisCard onBack={() => goBack("myToolsHub")} userToken={user?.token} />}
+        {screen === "mytool_roadmap" && <PersonalRoadmap onBack={() => goBack("myToolsHub")} userToken={user?.token} />}
         {screen === "gamesHub" && (
-          <GamesHub onBack={() => setScreen("topics")} navigate={(g) => setScreen(`game_${g}`)} />
+          <GamesHub onBack={() => goBack("topics")} navigate={(g) => setScreen(`game_${g}`)} />
         )}
-        {screen === "game_adventure" && <AdventureGame onBack={() => setScreen("gamesHub")} />}
-        {screen === "game_crossword" && <CrosswordPuzzle onBack={() => setScreen("gamesHub")} />}
-        {screen === "game_cardmatch" && <CardMatchGame onBack={() => setScreen("gamesHub")} />}
-        {screen === "game_wheel" && <EmotionWheel onBack={() => setScreen("gamesHub")} />}
-        {screen === "game_bingo" && <AwarenessBingo onBack={() => setScreen("gamesHub")} />}
-        {screen === "game_couple" && <CoupleAlignmentGame onBack={() => setScreen("gamesHub")} />}
+        {screen === "game_adventure" && <AdventureGame onBack={() => goBack("gamesHub")} />}
+        {screen === "game_crossword" && <CrosswordPuzzle onBack={() => goBack("gamesHub")} />}
+        {screen === "game_cardmatch" && <CardMatchGame onBack={() => goBack("gamesHub")} />}
+        {screen === "game_wheel" && <EmotionWheel onBack={() => goBack("gamesHub")} />}
+        {screen === "game_bingo" && <AwarenessBingo onBack={() => goBack("gamesHub")} />}
+        {screen === "game_couple" && <CoupleAlignmentGame onBack={() => goBack("gamesHub")} />}
         {screen === "distrustPartnerGuide" && (
-          <PartnerGuide onBack={() => setScreen("sessionLibrary")} />
+          <PartnerGuide onBack={() => goBack("sessionLibrary")} />
         )}
         {screen === "distrustReport" && (
-          <UnifiedDistrustReport onBack={() => setScreen("sessionLibrary")} />
+          <UnifiedDistrustReport onBack={() => goBack("sessionLibrary")} />
         )}
         {screen === "distrustQuiz" && (
-          <DistrustAwarenessQuiz onBack={() => setScreen("sessionLibrary")} />
+          <DistrustAwarenessQuiz onBack={() => goBack("sessionLibrary")} />
         )}
         {screen === "distrustThoughts" && (
-          <ThoughtTracker onBack={() => setScreen("sessionLibrary")} userToken={user?.token} />
+          <ThoughtTracker onBack={() => goBack("sessionLibrary")} userToken={user?.token} />
         )}
         {screen === "distrustAssessment" && (
-          <BiweeklyAssessment onBack={() => setScreen("sessionLibrary")} userToken={user?.token} />
+          <BiweeklyAssessment onBack={() => goBack("sessionLibrary")} userToken={user?.token} />
         )}
 
         {screen === "sessionLibrary" && (
@@ -8770,7 +8775,7 @@ function App() {
             </button>
             {fixEmailMsg && <p style={{ fontSize: 11, color: "#5A7080", marginTop: 8 }}>{fixEmailMsg}</p>}
           </Card>
-          <AdminDashboard rows={adminRows} busy={busy} onRefresh={loadAdmin} onBack={() => setScreen("start")} />
+          <AdminDashboard rows={adminRows} busy={busy} onRefresh={loadAdmin} onBack={() => goBack("start")} />
           </>
         )}
       </div>
