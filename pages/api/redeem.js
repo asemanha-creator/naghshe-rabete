@@ -1,11 +1,11 @@
 import { Redis } from "@upstash/redis";
-import { verifySession, verifyAdminToken } from "../../lib/auth";
+import { verifySession, verifyAdminToken, verifyTherapistToken } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
 import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 import { isNonEmptyString } from "../../lib/validate";
 
 const redis = Redis.fromEnv();
-
+const PACKAGE_SESSION_COUNTS = { moderate: 20, advanced: 8, betrayed: 30, unfaithful: 30, distrust: 10, anger: 10 };
 
 function randomCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -19,13 +19,17 @@ export default async function handler(req, res) {
   try {
     const { action } = req.body;
 
-    // ---------- ساختِ کد (فقط ادمین) ----------
+    // ---------- ساختِ کد (ادمینِ اصلی، یا هر درمانگرِ واردشده برایِ خودش) ----------
+    // نکته: sessionId می‌تواند یک جلسه‌ی خاص («moderate-3») یا کلِ یک بسته («PKG:moderate») باشد — برایِ هدیه‌دادنِ کاملِ بسته
     if (action === "generate") {
-      const { sessionId, adminToken, therapistId } = req.body;
-      if (!(await verifyAdminToken(adminToken))) return res.status(403).json({ error: "رمز نامعتبر است" });
+      const { sessionId, adminToken, therapistToken } = req.body;
+      const isAdmin = await verifyAdminToken(adminToken);
+      const therapistIdFromToken = therapistToken ? await verifyTherapistToken(therapistToken) : null;
+      if (!isAdmin && !therapistIdFromToken) return res.status(403).json({ error: "رمز نامعتبر است" });
       if (!sessionId) return res.status(400).json({ error: "sessionId لازم است" });
       const code = randomCode();
-      await redis.set(`code:${code}`, JSON.stringify({ sessionId, used: false, createdAt: Date.now(), therapistId: therapistId || null }));
+      // اگر درمانگر خودش وارد شده، کد خودکار به همان درمانگر متصل می‌شود
+      await redis.set(`code:${code}`, JSON.stringify({ sessionId, used: false, createdAt: Date.now(), therapistId: therapistIdFromToken || null }));
       return res.status(200).json({ ok: true, code });
     }
 
@@ -55,7 +59,17 @@ export default async function handler(req, res) {
       const uKey = `unlocked:${email}`;
       const rawU = (await redis.get(uKey)) || [];
       const current = typeof rawU === "string" ? JSON.parse(rawU) : rawU || [];
-      if (!current.includes(data.sessionId)) current.push(data.sessionId);
+
+      let unlockedSessionIds = [];
+      if (data.sessionId.startsWith("PKG:")) {
+        const pkgKey = data.sessionId.replace("PKG:", "");
+        const total = PACKAGE_SESSION_COUNTS[pkgKey];
+        if (!total) return res.status(400).json({ error: "بستهٔ نامعتبر در این کد" });
+        unlockedSessionIds = Array.from({ length: total }, (_, i) => `${pkgKey}-${i + 1}`);
+      } else {
+        unlockedSessionIds = [data.sessionId];
+      }
+      unlockedSessionIds.forEach((sid) => { if (!current.includes(sid)) current.push(sid); });
       await redis.set(uKey, JSON.stringify(current));
 
       data.used = true;
@@ -72,7 +86,7 @@ export default async function handler(req, res) {
         await redis.set(salesKey, JSON.stringify(sales));
       }
 
-      return res.status(200).json({ ok: true, sessionId: data.sessionId });
+      return res.status(200).json({ ok: true, sessionId: data.sessionId, unlockedCount: unlockedSessionIds.length });
     }
 
     return res.status(400).json({ error: "action نامعتبر است" });
