@@ -1,43 +1,80 @@
 import { Redis } from "@upstash/redis";
-import { verifyAdminToken } from "../../lib/auth";
+import crypto from "crypto";
+import { verifyAdminToken, createTherapistSession, verifyTherapistToken } from "../../lib/auth";
 import { logEvent, LOG_LEVELS } from "../../lib/logger";
+import { checkRateLimit, getClientIp } from "../../lib/rateLimit";
 const redis = Redis.fromEnv();
+
+function hashPassword(password, salt) {
+  return crypto.pbkdf2Sync(password, salt, 100000, 64, "sha512").toString("hex");
+}
 
 export default async function handler(req, res) {
   try {
     if (req.method !== "POST") return res.status(405).json({ error: "method not allowed" });
     const { action } = req.body;
+    const ip = getClientIp(req);
 
-    // ادمین: ساختِ درمانگرِ جدید
+    // ادمین: ساختِ درمانگرِ جدید — رمز حالا هش‌شده ذخیره می‌شود، نه متنِ خام
     if (action === "create") {
       const { adminToken, therapistId, name, password, sharePercent } = req.body;
       if (!(await verifyAdminToken(adminToken))) return res.status(403).json({ error: "رمز نامعتبر است" });
-      if (!therapistId || !name || !password) return res.status(400).json({ error: "اطلاعاتِ ناقص" });
-      const id = therapistId.toLowerCase().trim();
+      if (!therapistId || !name || !password || password.length < 6) return res.status(400).json({ error: "اطلاعاتِ ناقص — رمز حداقل ۶ کاراکتر" });
+      const id = therapistId.toLowerCase().trim().replace(/[^a-z0-9_-]/g, "");
+      if (!id) return res.status(400).json({ error: "شناسه باید فقط حروفِ انگلیسی/عدد باشد" });
       const exists = await redis.get(`therapist:${id}`);
       if (exists) return res.status(409).json({ error: "این کد قبلاً ثبت شده" });
-      await redis.set(`therapist:${id}`, JSON.stringify({ id, name, password, sharePercent: sharePercent || 70, createdAt: Date.now() }));
+      const salt = crypto.randomBytes(16).toString("hex");
+      const passwordHash = hashPassword(password, salt);
+      await redis.set(`therapist:${id}`, JSON.stringify({ id, name, salt, passwordHash, sharePercent: sharePercent || 70, createdAt: Date.now() }));
       await redis.sadd("therapists:index", id);
+      await logEvent(LOG_LEVELS.INFO, "admin", "حسابِ درمانگرِ جدید ساخته شد", { id, name });
       return res.status(200).json({ ok: true, id });
     }
 
-    // درمانگر: ورود
+    // درمانگر: ورود — حالا با محدودیتِ نرخ و توکنِ نشستِ واقعی (نه فقط دادن‌شناسه دوباره)
     if (action === "login") {
+      const rl = await checkRateLimit(`therapist-login:${ip}`, 10, 600);
+      if (!rl.allowed) {
+        await logEvent(LOG_LEVELS.WARN, "auth", "محدودیتِ نرخ فعال شد — تلاشِ بیش‌ازحدِ ورودِ درمانگر", { ip });
+        return res.status(429).json({ error: "تعدادِ تلاش‌هایتان زیاد بوده — چند دقیقه صبر کنید" });
+      }
       const { therapistId, password } = req.body;
-      const raw = await redis.get(`therapist:${(therapistId || "").toLowerCase().trim()}`);
+      const id = (therapistId || "").toLowerCase().trim();
+      const raw = await redis.get(`therapist:${id}`);
       if (!raw) return res.status(404).json({ error: "کد یافت نشد" });
       const data = typeof raw === "string" ? JSON.parse(raw) : raw;
-      if (data.password !== password) return res.status(403).json({ error: "رمز اشتباه است" });
-      return res.status(200).json({ ok: true, id: data.id, name: data.name, sharePercent: data.sharePercent });
+
+      let passwordOk = false;
+      if (data.passwordHash && data.salt) {
+        // حساب‌هایِ جدید — رمزِ هش‌شده
+        passwordOk = hashPassword(password, data.salt) === data.passwordHash;
+      } else if (data.password) {
+        // سازگاری با حساب‌هایِ خیلی‌قدیمی که هنوز رمزِ خام داشتند — بعدِ اولین ورود، خودکار هش می‌شوند
+        passwordOk = data.password === password;
+        if (passwordOk) {
+          const salt = crypto.randomBytes(16).toString("hex");
+          const passwordHash = hashPassword(password, salt);
+          await redis.set(`therapist:${id}`, JSON.stringify({ ...data, salt, passwordHash, password: undefined }));
+        }
+      }
+      if (!passwordOk) {
+        await logEvent(LOG_LEVELS.WARN, "auth", "تلاشِ ناموفقِ ورودِ درمانگر", { id });
+        return res.status(403).json({ error: "رمز اشتباه است" });
+      }
+
+      const token = await createTherapistSession(id);
+      await logEvent(LOG_LEVELS.INFO, "auth", "ورودِ موفقِ درمانگر", { id });
+      return res.status(200).json({ ok: true, token, id: data.id, name: data.name, sharePercent: data.sharePercent });
     }
 
-    // درمانگر یا ادمین: داشبورد فروش
+    // درمانگر یا ادمین: داشبورد فروش — حالا نیازِ توکنِ واقعی دارد، نه فقط ادعایِ therapistId
     if (action === "dashboard") {
-      const { therapistId, adminToken } = req.body;
-      if (!(await verifyAdminToken(adminToken))) {
-        // درمانگر فقط با ورودِ قبلی (therapistId معتبر) مجاز است — بررسیِ سبک
-        const t = await redis.get(`therapist:${therapistId}`);
-        if (!t) return res.status(403).json({ error: "دسترسی غیرمجاز" });
+      const { therapistId, adminToken, therapistToken } = req.body;
+      const isAdmin = await verifyAdminToken(adminToken);
+      const verifiedTherapistId = therapistToken ? await verifyTherapistToken(therapistToken) : null;
+      if (!isAdmin && (!verifiedTherapistId || verifiedTherapistId !== therapistId)) {
+        return res.status(403).json({ error: "دسترسی غیرمجاز" });
       }
       const rawSales = (await redis.get(`therapist_sales:${therapistId}`)) || [];
       const sales = typeof rawSales === "string" ? JSON.parse(rawSales) : rawSales;
